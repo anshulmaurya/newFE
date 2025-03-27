@@ -67,23 +67,21 @@ export default function Hero({ onScrollToFeatures, onScrollToWaitlist }: HeroPro
               <span className="w-3 h-3 rounded-full bg-green-500"></span>
               <span className="ml-2 text-slate-400">rtos_scheduler.c</span>
             </div>
-            <pre className="language-c">
-              <code>
-                <span className="text-pink-500">typedef struct</span> {'{'}
-                  <span className="text-primary">TaskHandle_t</span> handle;
-                  <span className="text-primary">uint8_t</span> priority;
-                  <span className="text-primary">TaskState_t</span> state;
-                {'}'} <span className="text-purple-500">Task_t</span>;
-
-                <span className="text-primary">void</span> <span className="text-blue-400">scheduler_init</span>(<span className="text-primary">void</span>) {'{'}
-                  <span className="text-slate-400">// Initialize the task scheduler</span>
-                  task_queue = <span className="text-pink-500">create_priority_queue</span>();
-                  <span className="text-pink-500">current_task</span> = <span className="text-primary">NULL</span>;
-                  
-                  <span className="text-purple-500">SysTick_Config</span>(SystemCoreClock / <span className="text-purple-500">1000</span>);
-                {'}'}
-              </code>
-            </pre>
+            <div className="code-block bg-slate-900 p-3 rounded-md font-mono text-sm overflow-auto">
+              <div><span className="text-pink-500">typedef struct</span> {'{'}</div>
+              <div className="pl-4"><span className="text-primary">TaskHandle_t</span> handle;</div>
+              <div className="pl-4"><span className="text-primary">uint8_t</span> priority;</div>
+              <div className="pl-4"><span className="text-primary">TaskState_t</span> state;</div>
+              <div>{'}'} <span className="text-purple-500">Task_t</span>;</div>
+              <div></div>
+              <div><span className="text-primary">void</span> <span className="text-blue-400">scheduler_init</span>(<span className="text-primary">void</span>) {'{'}</div>
+              <div className="pl-4"><span className="text-slate-400">// Initialize the task scheduler</span></div>
+              <div className="pl-4">task_queue = <span className="text-pink-500">create_priority_queue</span>();</div>
+              <div className="pl-4"><span className="text-pink-500">current_task</span> = <span className="text-primary">NULL</span>;</div>
+              <div></div>
+              <div className="pl-4"><span className="text-purple-500">SysTick_Config</span>(SystemCoreClock / <span className="text-purple-500">1000</span>);</div>
+              <div>{'}'}</div>
+            </div>
           </motion.div>
           
           <motion.div 
