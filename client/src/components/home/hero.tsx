@@ -67,19 +67,23 @@ export default function Hero({ onScrollToFeatures, onScrollToWaitlist }: HeroPro
               <span className="w-3 h-3 rounded-full bg-green-500"></span>
               <span className="ml-2 text-slate-400">rtos_scheduler.c</span>
             </div>
-            <pre>{`<span class="text-pink-500">typedef struct</span> {
-  <span class="text-primary">TaskHandle_t</span> handle;
-  <span class="text-primary">uint8_t</span> priority;
-  <span class="text-primary">TaskState_t</span> state;
-} <span class="text-purple-500">Task_t</span>;
+            <pre className="language-c">
+              <code>
+                <span className="text-pink-500">typedef struct</span> {'{'}
+                  <span className="text-primary">TaskHandle_t</span> handle;
+                  <span className="text-primary">uint8_t</span> priority;
+                  <span className="text-primary">TaskState_t</span> state;
+                {'}'} <span className="text-purple-500">Task_t</span>;
 
-<span class="text-primary">void</span> <span class="text-blue-400">scheduler_init</span>(<span class="text-primary">void</span>) {
-  <span class="text-slate-400">// Initialize the task scheduler</span>
-  task_queue = <span class="text-pink-500">create_priority_queue</span>();
-  <span class="text-pink-500">current_task</span> = <span class="text-primary">NULL</span>;
-  
-  <span class="text-purple-500">SysTick_Config</span>(SystemCoreClock / <span class="text-purple-500">1000</span>);
-}`}</pre>
+                <span className="text-primary">void</span> <span className="text-blue-400">scheduler_init</span>(<span className="text-primary">void</span>) {'{'}
+                  <span className="text-slate-400">// Initialize the task scheduler</span>
+                  task_queue = <span className="text-pink-500">create_priority_queue</span>();
+                  <span className="text-pink-500">current_task</span> = <span className="text-primary">NULL</span>;
+                  
+                  <span className="text-purple-500">SysTick_Config</span>(SystemCoreClock / <span className="text-purple-500">1000</span>);
+                {'}'}
+              </code>
+            </pre>
           </motion.div>
           
           <motion.div 

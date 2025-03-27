@@ -66,35 +66,36 @@ export default function Demo() {
                 <div className="px-4 py-1 text-sm text-slate-400">gpio.h</div>
               </div>
               <div className="p-4 font-mono text-sm overflow-auto h-80 code-block">
-<pre>{`
-<span class="text-slate-400">// PWM Generator Implementation
+                <pre className="language-c">
+                  <code>
+                    <span className="text-slate-400">// PWM Generator Implementation
 // TODO: Complete the code below</span>
 
-<span class="text-primary">#include</span> <span class="text-pink-500">"timer.h"</span>
-<span class="text-primary">#include</span> <span class="text-pink-500">"gpio.h"</span>
+                    <span className="text-primary">#include</span> <span className="text-pink-500">"timer.h"</span>
+                    <span className="text-primary">#include</span> <span className="text-pink-500">"gpio.h"</span>
 
-<span class="text-primary">void</span> <span class="text-blue-400">pwm_init</span>(<span class="text-primary">uint8_t</span> channel, <span class="text-primary">uint32_t</span> frequency) {
-  <span class="text-slate-400">// Initialize the timer peripheral</span>
-  <span class="text-purple-500">timer_init</span>(channel, frequency);
-  
-  <span class="text-slate-400">// Configure GPIO pin as output</span>
-  <span class="text-purple-500">gpio_set_mode</span>(PWM_PORT, PWM_PIN, GPIO_MODE_OUTPUT);
-  
-  <span class="text-slate-400">// TODO: Configure timer for PWM mode</span>
-  
-}
+                    <span className="text-primary">void</span> <span className="text-blue-400">pwm_init</span>(<span className="text-primary">uint8_t</span> channel, <span className="text-primary">uint32_t</span> frequency) {'{'}
+                      <span className="text-slate-400">// Initialize the timer peripheral</span>
+                      <span className="text-purple-500">timer_init</span>(channel, frequency);
+                      
+                      <span className="text-slate-400">// Configure GPIO pin as output</span>
+                      <span className="text-purple-500">gpio_set_mode</span>(PWM_PORT, PWM_PIN, GPIO_MODE_OUTPUT);
+                      
+                      <span className="text-slate-400">// TODO: Configure timer for PWM mode</span>
+                      
+                    {'}'}
 
-<span class="text-primary">void</span> <span class="text-blue-400">pwm_set_duty_cycle</span>(<span class="text-primary">uint8_t</span> channel, <span class="text-primary">uint8_t</span> duty_cycle) {
-  <span class="text-slate-400">// TODO: Set the PWM duty cycle (0-100%)</span>
-  <span class="text-slate-400">// Hint: Calculate the compare value based on the duty cycle</span>
-  
-  <span class="text-primary">uint32_t</span> period = <span class="text-purple-500">timer_get_period</span>(channel);
-  <span class="text-primary">uint32_t</span> compare_value = 0;
-  
-  <span class="text-slate-400">// Set the compare value</span>
-  
-}
-`}</pre>
+                    <span className="text-primary">void</span> <span className="text-blue-400">pwm_set_duty_cycle</span>(<span className="text-primary">uint8_t</span> channel, <span className="text-primary">uint8_t</span> duty_cycle) {'{'}
+                      <span className="text-slate-400">// TODO: Set the PWM duty cycle (0-100%)</span>
+                      <span className="text-slate-400">// Hint: Calculate the compare value based on the duty cycle</span>
+                      
+                      <span className="text-primary">uint32_t</span> period = <span className="text-purple-500">timer_get_period</span>(channel);
+                      <span className="text-primary">uint32_t</span> compare_value = 0;
+                      
+                      <span className="text-slate-400">// Set the compare value</span>
+                    {'}'}
+                  </code>
+                </pre>
               </div>
             </div>
             
