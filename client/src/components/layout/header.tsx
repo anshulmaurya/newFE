@@ -25,11 +25,11 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, onNavig
     <header className="relative z-10 border-b border-slate-700/30">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center text-primary-900 font-bold font-display text-xl animate-pulse duration-1000">
-            ES
+          <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center text-primary-900 font-bold font-display text-xl">
+            DSP
           </div>
           <h1 className="font-display font-bold text-xl sm:text-2xl tracking-tight">
-            <span className="text-white">Embedded</span><span className="text-primary">Systems</span>
+            <span className="text-white">DSP</span><span className="text-primary">CODER</span>
           </h1>
         </div>
         
