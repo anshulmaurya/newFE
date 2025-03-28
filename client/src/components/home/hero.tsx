@@ -20,9 +20,7 @@ export default function Hero({ onScrollToFeatures, onScrollToWaitlist }: HeroPro
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="text-white">Crack </span>
-            <span className="gradient-text">Embedded System</span>
-            <span className="text-white"> Interviews</span>
+            <span className="gradient-text">DSPCODER</span>
           </motion.h1>
           
           <motion.p 

@@ -1,11 +1,19 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   Play, 
   RotateCcw, 
-  HelpCircle 
+  HelpCircle,
+  AlertCircle,
+  Terminal,
+  Bug
 } from "lucide-react";
+import DemoHeaderFiles from "./demo-header-files";
 
 export default function Demo() {
+  const [activeFile, setActiveFile] = useState<'pwm.c' | 'timer.h' | 'gpio.h'>('pwm.c');
+  const [activeTab, setActiveTab] = useState<'terminal' | 'problems' | 'debug'>('terminal');
+  
   return (
     <section className="py-16 md:py-24 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-primary-900 via-slate-800/50 to-primary-900 pointer-events-none"></div>
@@ -102,16 +110,31 @@ export default function Demo() {
             <div className="w-full md:w-7/12 border-r border-[#3d3d3d] bg-[#1e1e1e]">
               {/* VS Code file tabs */}
               <div className="border-b border-[#3d3d3d] flex">
-                <div className="px-4 py-2 bg-[#1e1e1e] border-r border-[#3d3d3d] text-sm text-white flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                <div 
+                  className={`px-4 py-2 border-r border-[#3d3d3d] text-sm flex items-center gap-2 cursor-pointer ${activeFile === 'pwm.c' 
+                    ? 'bg-[#1e1e1e] text-white' 
+                    : 'bg-[#252526] text-slate-400'}`}
+                  onClick={() => setActiveFile('pwm.c')}
+                >
+                  <div className={`w-2 h-2 rounded-full ${activeFile === 'pwm.c' ? 'bg-primary' : 'bg-slate-500'}`}></div>
                   pwm.c
                 </div>
-                <div className="px-4 py-2 bg-[#252526] border-r border-[#3d3d3d] text-sm text-slate-400 flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-slate-500"></div>
+                <div 
+                  className={`px-4 py-2 border-r border-[#3d3d3d] text-sm flex items-center gap-2 cursor-pointer ${activeFile === 'timer.h' 
+                    ? 'bg-[#1e1e1e] text-white' 
+                    : 'bg-[#252526] text-slate-400'}`}
+                  onClick={() => setActiveFile('timer.h')}
+                >
+                  <div className={`w-2 h-2 rounded-full ${activeFile === 'timer.h' ? 'bg-primary' : 'bg-slate-500'}`}></div>
                   timer.h
                 </div>
-                <div className="px-4 py-2 bg-[#252526] border-r border-[#3d3d3d] text-sm text-slate-400 flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-slate-500"></div>
+                <div 
+                  className={`px-4 py-2 border-r border-[#3d3d3d] text-sm flex items-center gap-2 cursor-pointer ${activeFile === 'gpio.h' 
+                    ? 'bg-[#1e1e1e] text-white' 
+                    : 'bg-[#252526] text-slate-400'}`}
+                  onClick={() => setActiveFile('gpio.h')}
+                >
+                  <div className={`w-2 h-2 rounded-full ${activeFile === 'gpio.h' ? 'bg-primary' : 'bg-slate-500'}`}></div>
                   gpio.h
                 </div>
               </div>
@@ -120,40 +143,13 @@ export default function Demo() {
               <div className="flex h-80 overflow-auto code-block">
                 {/* Line numbers */}
                 <div className="px-2 py-4 text-right bg-[#1e1e1e] text-slate-600 font-mono text-xs select-none">
-                  {Array.from({ length: 19 }).map((_, i) => (
+                  {Array.from({ length: activeFile === 'pwm.c' ? 19 : activeFile === 'timer.h' ? 60 : 65 }).map((_, i) => (
                     <div key={i} className="h-6">{i + 1}</div>
                   ))}
                 </div>
                 
-                {/* Code content */}
-                <div className="p-4 font-mono text-sm flex-1 bg-[#1e1e1e]">
-                  <div><span className="text-slate-400">// PWM Generator Implementation</span></div>
-                  <div><span className="text-slate-400">// TODO: Complete the code below</span></div>
-                  <div></div>
-                  <div><span className="text-primary">#include</span> <span className="text-pink-500">"timer.h"</span></div>
-                  <div><span className="text-primary">#include</span> <span className="text-pink-500">"gpio.h"</span></div>
-                  <div></div>
-                  <div><span className="text-primary">void</span> <span className="text-blue-400">pwm_init</span>(<span className="text-primary">uint8_t</span> channel, <span className="text-primary">uint32_t</span> frequency) {"{"}</div>
-                  <div className="pl-4"><span className="text-slate-400">// Initialize the timer peripheral</span></div>
-                  <div className="pl-4"><span className="text-purple-500">timer_init</span>(channel, frequency);</div>
-                  <div></div>
-                  <div className="pl-4"><span className="text-slate-400">// Configure GPIO pin as output</span></div>
-                  <div className="pl-4"><span className="text-purple-500">gpio_set_mode</span>(PWM_PORT, PWM_PIN, GPIO_MODE_OUTPUT);</div>
-                  <div></div>
-                  <div className="pl-4"><span className="text-slate-400">// TODO: Configure timer for PWM mode</span></div>
-                  <div></div>
-                  <div>{"}"}</div>
-                  <div></div>
-                  <div><span className="text-primary">void</span> <span className="text-blue-400">pwm_set_duty_cycle</span>(<span className="text-primary">uint8_t</span> channel, <span className="text-primary">uint8_t</span> duty_cycle) {"{"}</div>
-                  <div className="pl-4"><span className="text-slate-400">// TODO: Set the PWM duty cycle (0-100%)</span></div>
-                  <div className="pl-4"><span className="text-slate-400">// Hint: Calculate the compare value based on the duty cycle</span></div>
-                  <div></div>
-                  <div className="pl-4"><span className="text-primary">uint32_t</span> period = <span className="text-purple-500">timer_get_period</span>(channel);</div>
-                  <div className="pl-4"><span className="text-primary">uint32_t</span> compare_value = 0;</div>
-                  <div></div>
-                  <div className="pl-4"><span className="text-slate-400">// Set the compare value</span></div>
-                  <div>{"}"}</div>
-                </div>
+                {/* Code content - dynamically show the selected file */}
+                <DemoHeaderFiles activeFile={activeFile} />
                 
                 {/* Minimap */}
                 <div className="w-[30px] bg-[#252526] opacity-70" aria-hidden="true"></div>
@@ -166,7 +162,7 @@ export default function Demo() {
                   <span>C/C++</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span>Line 18, Col 2</span>
+                  <span>Line {activeFile === 'pwm.c' ? '18' : activeFile === 'timer.h' ? '42' : '33'}, Col 2</span>
                   <span>UTF-8</span>
                 </div>
               </div>
@@ -176,51 +172,109 @@ export default function Demo() {
             <div className="w-full md:w-1/3 flex flex-col bg-[#1e1e1e]">
               {/* VS Code panel tabs */}
               <div className="border-b border-[#3d3d3d] bg-[#252526] flex items-center px-2">
-                <div className="px-3 py-2 border-b border-primary text-sm text-white">Terminal</div>
-                <div className="px-3 py-2 text-sm text-slate-400">Problems</div>
-                <div className="px-3 py-2 text-sm text-slate-400">Debug Console</div>
-              </div>
-              
-              {/* Terminal output */}
-              <div className="font-mono text-xs p-2 overflow-auto h-60 bg-[#1e1e1e]">
-                <div className="text-slate-400">
-                  <p className="py-0.5"><span className="text-green-400">$</span> <span className="text-white">gcc -o pwm pwm.c -I./include</span></p>
-                  <p className="py-0.5"><span className="text-green-400">$</span> <span className="text-white">./run_tests.sh</span></p>
-                  <p className="py-0.5">[INFO] Compiling source code...</p>
-                  <p className="py-0.5">[INFO] Build successful</p>
-                  <p className="py-0.5">[INFO] Running tests...</p>
-                  <p className="py-0.5"><span className="text-red-400">[ERROR] PWM duty cycle not properly configured</span></p>
-                  <p className="py-0.5"><span className="text-red-400">[ERROR] Test failed: Expected PWM output at 50% duty cycle</span></p>
-                  <p className="py-0.5">[INFO] 0 tests passed, 1 failed</p>
-                  <p className="py-0.5 text-white"><span className="animate-[blink_1s_infinite]">|</span></p>
+                <div 
+                  className={`px-3 py-2 text-sm flex items-center gap-1.5 cursor-pointer ${activeTab === 'terminal' 
+                    ? 'border-b border-primary text-white' 
+                    : 'text-slate-400 hover:text-slate-300'}`}
+                  onClick={() => setActiveTab('terminal')}
+                >
+                  <Terminal className="w-3 h-3" />
+                  <span>Terminal</span>
+                </div>
+                <div 
+                  className={`px-3 py-2 text-sm flex items-center gap-1.5 cursor-pointer ${activeTab === 'problems' 
+                    ? 'border-b border-primary text-white' 
+                    : 'text-slate-400 hover:text-slate-300'}`}
+                  onClick={() => setActiveTab('problems')}
+                >
+                  <AlertCircle className="w-3 h-3" />
+                  <span>Problems</span>
+                </div>
+                <div 
+                  className={`px-3 py-2 text-sm flex items-center gap-1.5 cursor-pointer ${activeTab === 'debug' 
+                    ? 'border-b border-primary text-white' 
+                    : 'text-slate-400 hover:text-slate-300'}`}
+                  onClick={() => setActiveTab('debug')}
+                >
+                  <Bug className="w-3 h-3" />
+                  <span>Debug Console</span>
                 </div>
               </div>
               
-              {/* VS Code problem panel */}
-              <div className="border-t border-[#3d3d3d] p-2">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs font-medium text-white">PROBLEMS (1)</p>
-                  <div className="flex items-center gap-2 text-slate-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              {/* Terminal output */}
+              {activeTab === 'terminal' && (
+                <div className="font-mono text-xs p-2 overflow-auto h-60 bg-[#1e1e1e]">
+                  <div className="text-slate-400">
+                    <p className="py-0.5"><span className="text-green-400">$</span> <span className="text-white">gcc -o pwm pwm.c -I./include</span></p>
+                    <p className="py-0.5"><span className="text-green-400">$</span> <span className="text-white">./run_tests.sh</span></p>
+                    <p className="py-0.5">[INFO] Compiling source code...</p>
+                    <p className="py-0.5">[INFO] Build successful</p>
+                    <p className="py-0.5">[INFO] Running tests...</p>
+                    <p className="py-0.5"><span className="text-red-400">[ERROR] PWM duty cycle not properly configured</span></p>
+                    <p className="py-0.5"><span className="text-red-400">[ERROR] Test failed: Expected PWM output at 50% duty cycle</span></p>
+                    <p className="py-0.5">[INFO] 0 tests passed, 1 failed</p>
+                    <p className="py-0.5 text-white"><span className="animate-[blink_1s_infinite]">|</span></p>
+                  </div>
+                </div>
+              )}
+              
+              {/* Problems panel */}
+              {activeTab === 'problems' && (
+                <div className="font-mono text-xs p-2 overflow-auto h-60 bg-[#1e1e1e]">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-medium text-white">PROBLEMS (2)</p>
+                    <div className="flex items-center gap-2 text-slate-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="mb-1 text-xs flex items-center gap-2 p-1 hover:bg-[#2a2d2e] cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="10"></circle>
                       <line x1="12" y1="8" x2="12" y2="12"></line>
                       <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    <span className="text-white">Missing PWM configuration in pwm_init() function</span>
+                    <span className="text-slate-500 ml-auto">pwm.c:13</span>
+                  </div>
+                  <div className="text-xs flex items-center gap-2 p-1 hover:bg-[#2a2d2e] cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
+                    <span className="text-white">Duty cycle not properly calculated in pwm_set_duty_cycle</span>
+                    <span className="text-slate-500 ml-auto">pwm.c:22</span>
                   </div>
                 </div>
-                <div className="text-xs flex items-center gap-2 p-1 hover:bg-[#2a2d2e]">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                  </svg>
-                  <span className="text-white">Missing PWM configuration in pwm_init() function</span>
-                  <span className="text-slate-500">pwm.c:12</span>
+              )}
+              
+              {/* Debug Console panel */}
+              {activeTab === 'debug' && (
+                <div className="font-mono text-xs p-2 overflow-auto h-60 bg-[#1e1e1e]">
+                  <div className="text-slate-400">
+                    <p className="py-0.5">[DEBUG] Program execution started</p>
+                    <p className="py-0.5">[DEBUG] timer_init() called with channel = 0, frequency = 1000</p>
+                    <p className="py-0.5">[DEBUG] gpio_set_mode() called with port = 1, pin = 5, mode = 1</p>
+                    <p className="py-0.5">[DEBUG] pwm_init() completed, but PWM mode not configured</p>
+                    <p className="py-0.5">[DEBUG] pwm_set_duty_cycle() called with channel = 0, duty_cycle = 50</p>
+                    <p className="py-0.5">[DEBUG] timer_get_period() returned value = 1000</p>
+                    <p className="py-0.5">[DEBUG] compare_value not set, still equals 0</p>
+                    <p className="py-0.5">[DEBUG] timer_set_compare() not called</p>
+                    <p className="py-0.5">[DEBUG] Output pin is generating constant LOW signal</p>
+                    <p className="py-0.5 mt-2 text-yellow-400">[HINT] To generate proper PWM signal:</p>
+                    <p className="py-0.5 text-yellow-400">[HINT] 1. Configure timer in PWM mode using timer_config_pwm_mode()</p>
+                    <p className="py-0.5 text-yellow-400">[HINT] 2. Calculate compare value based on duty_cycle percentage</p>
+                    <p className="py-0.5 text-white mt-1"><span className="animate-[blink_1s_infinite]">|</span></p>
+                  </div>
                 </div>
-              </div>
+              )}
               
               {/* PWM Visualization Panel with VS Code styling */}
               <div className="border-t border-[#3d3d3d] p-3">

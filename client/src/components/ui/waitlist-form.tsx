@@ -186,7 +186,7 @@ export default function WaitlistForm() {
         <Button 
           type="submit" 
           disabled={isSubmitting}
-          className="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-slate-900 font-bold rounded-lg transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
+          className="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-primary-900 font-bold rounded-lg transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
         >
           {isSubmitting ? "Processing..." : "Join the Waitlist"}
         </Button>
