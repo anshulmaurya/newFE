@@ -22,8 +22,8 @@ export default function Hero({ onScrollToFeatures, onScrollToWaitlist }: HeroPro
             transition={{ duration: 0.6 }}
           >
             <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl mb-4 leading-tight">
-              <span className="gradient-text">DSPCODER</span>
-              <div className="text-white text-xl md:text-2xl mt-2">Learning Embedded Systems <br/> Redefined</div>
+              <span className="gradient-text">Learning Embedded Systems</span>
+              <div className="text-white text-3xl md:text-4xl mt-2">Redefined</div>
             </h1>
             
             <p className="text-slate-300 text-lg mb-8 max-w-xl">
@@ -86,34 +86,65 @@ export default function Hero({ onScrollToFeatures, onScrollToWaitlist }: HeroPro
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="code-block rounded-lg p-4 font-mono text-sm sm:text-base shadow-xl border border-slate-700/50 overflow-hidden bg-slate-950/50 backdrop-blur-sm">
-              <div className="flex items-center mb-2 text-xs gap-2">
+              <div className="flex items-center mb-3 text-xs gap-2">
                 <span className="w-3 h-3 rounded-full bg-red-500"></span>
                 <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
                 <span className="w-3 h-3 rounded-full bg-green-500"></span>
-                <span className="ml-2 text-slate-400">rtos_scheduler.c</span>
+                <span className="ml-2 text-slate-400 font-medium">pwm_controller.c</span>
               </div>
-              <div className="code-block bg-slate-900 p-3 rounded-md font-mono text-sm overflow-auto">
-                <div><span className="text-pink-500">typedef struct</span> {'{'}</div>
-                <div className="pl-4"><span className="text-primary">TaskHandle_t</span> handle;</div>
-                <div className="pl-4"><span className="text-primary">uint8_t</span> priority;</div>
-                <div className="pl-4"><span className="text-primary">TaskState_t</span> state;</div>
-                <div>{'}'} <span className="text-purple-500">Task_t</span>;</div>
+
+              <div className="code-block bg-slate-900/80 p-4 rounded-md font-mono text-sm overflow-auto">
+                <div><span className="text-pink-500">#include</span> <span className="text-green-400">"timer.h"</span></div>
+                <div><span className="text-pink-500">#include</span> <span className="text-green-400">"gpio.h"</span></div>
                 <div></div>
-                <div><span className="text-primary">void</span> <span className="text-blue-400">scheduler_init</span>(<span className="text-primary">void</span>) {'{'}</div>
-                <div className="pl-4"><span className="text-slate-400">// Initialize the task scheduler</span></div>
-                <div className="pl-4">task_queue = <span className="text-pink-500">create_priority_queue</span>();</div>
-                <div className="pl-4"><span className="text-pink-500">current_task</span> = <span className="text-primary">NULL</span>;</div>
+                <div><span className="text-primary">void</span> <span className="text-blue-400">pwm_init</span>(<span className="text-primary">uint8_t</span> channel, <span className="text-primary">uint32_t</span> frequency) {'{'}</div>
+                <div className="pl-4"><span className="text-slate-400">// Configure timer for PWM generation</span></div>
+                <div className="pl-4"><span className="text-purple-500">timer_init</span>(channel, frequency);</div>
+                <div className="pl-4"><span className="text-purple-500">timer_set_mode</span>(channel, <span className="text-orange-400">TIMER_MODE_PWM</span>);</div>
                 <div></div>
-                <div className="pl-4"><span className="text-purple-500">SysTick_Config</span>(SystemCoreClock / <span className="text-purple-500">1000</span>);</div>
+                <div className="pl-4"><span className="text-slate-400">// Configure GPIO pin as output</span></div>
+                <div className="pl-4"><span className="text-purple-500">gpio_set_mode</span>(<span className="text-orange-400">PWM_PORT</span>, <span className="text-orange-400">PWM_PIN</span>, <span className="text-orange-400">GPIO_MODE_OUTPUT</span>);</div>
+                <div>{'}'}</div>
+                <div></div>
+                <div><span className="text-primary">void</span> <span className="text-blue-400">pwm_set_duty</span>(<span className="text-primary">uint8_t</span> channel, <span className="text-primary">uint8_t</span> duty_percent) {'{'}</div>
+                <div className="pl-4"><span className="text-primary">uint32_t</span> period = <span className="text-purple-500">timer_get_period</span>(channel);</div>
+                <div className="pl-4"><span className="text-primary">uint32_t</span> compare = (period * duty_percent) / <span className="text-purple-500">100</span>;</div>
+                <div className="pl-4"><span className="text-purple-500">timer_set_compare</span>(channel, compare);</div>
                 <div>{'}'}</div>
               </div>
               
               {/* Visual indicator for embedded system */}
-              <div className="mt-4 p-2 bg-slate-800/50 rounded flex items-center gap-3 border border-slate-700/50">
-                <div className="relative h-6 w-12 bg-slate-900 rounded-sm overflow-hidden">
-                  <div className="absolute top-0 left-0 h-full w-1/2 bg-primary animate-pulse"></div>
+              <div className="mt-5 p-3 bg-slate-800 rounded-md flex flex-col border border-slate-700">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-white font-medium">PWM Signal Visualization</span>
+                  <span className="px-2 py-1 bg-primary/20 rounded text-primary text-xs">50% Duty Cycle</span>
                 </div>
-                <span className="text-xs text-slate-400">PWM Signal: 50% Duty Cycle</span>
+                
+                {/* PWM Waveform */}
+                <div className="h-16 bg-slate-900 rounded-md relative overflow-hidden p-2">
+                  <svg className="w-full h-full" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+                    {/* Grid lines */}
+                    <line x1="0" y1="30" x2="200" y2="30" stroke="#333" strokeWidth="1" strokeDasharray="2,2" />
+                    <line x1="50" y1="0" x2="50" y2="60" stroke="#333" strokeWidth="1" strokeDasharray="2,2" />
+                    <line x1="100" y1="0" x2="100" y2="60" stroke="#333" strokeWidth="1" strokeDasharray="2,2" />
+                    <line x1="150" y1="0" x2="150" y2="60" stroke="#333" strokeWidth="1" strokeDasharray="2,2" />
+                    
+                    {/* PWM Wave - 50% duty cycle */}
+                    <path 
+                      d="M0,10 H50 V50 H100 V10 H150 V50 H200" 
+                      fill="none" 
+                      stroke="var(--primary)" 
+                      strokeWidth="3"
+                      className="animate-pulse"
+                    />
+                  </svg>
+                </div>
+                
+                <div className="flex justify-between text-xs text-slate-500 mt-1 px-1">
+                  <span>0ms</span>
+                  <span>Time</span>
+                  <span>4ms</span>
+                </div>
               </div>
             </div>
           </motion.div>
