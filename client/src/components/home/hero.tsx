@@ -2,10 +2,9 @@ import { motion } from "framer-motion";
 
 interface HeroProps {
   onScrollToFeatures: () => void;
-  onScrollToWaitlist: () => void;
 }
 
-export default function Hero({ onScrollToFeatures, onScrollToWaitlist }: HeroProps) {
+export default function Hero({ onScrollToFeatures }: HeroProps) {
   return (
     <section className="relative overflow-hidden pt-16 md:pt-24 pb-16">
       {/* Circuit board decorative elements */}
