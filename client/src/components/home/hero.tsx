@@ -110,64 +110,129 @@ export default function Hero({ onScrollToFeatures, onScrollToWaitlist }: HeroPro
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="code-block rounded-lg p-4 font-mono text-sm sm:text-base shadow-xl border border-slate-700/50 overflow-hidden bg-slate-950/50 backdrop-blur-sm">
-              <div className="flex items-center mb-3 text-xs gap-2">
-                <span className="w-3 h-3 rounded-full bg-red-500"></span>
-                <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
-                <span className="w-3 h-3 rounded-full bg-green-500"></span>
-                <span className="ml-2 text-slate-400 font-medium">pwm_controller.c</span>
-              </div>
-
-              <div className="code-block bg-slate-900/80 p-4 rounded-md font-mono text-sm overflow-auto">
-                <div><span className="text-pink-500">#include</span> <span className="text-green-400">"timer.h"</span></div>
-                <div><span className="text-pink-500">#include</span> <span className="text-green-400">"gpio.h"</span></div>
-                <div></div>
-                <div><span className="text-primary">void</span> <span className="text-blue-400">pwm_init</span>(<span className="text-primary">uint8_t</span> channel, <span className="text-primary">uint32_t</span> frequency) {'{'}</div>
-                <div className="pl-4"><span className="text-slate-400">// Configure timer for PWM generation</span></div>
-                <div className="pl-4"><span className="text-purple-500">timer_init</span>(channel, frequency);</div>
-                <div className="pl-4"><span className="text-purple-500">timer_set_mode</span>(channel, <span className="text-orange-400">TIMER_MODE_PWM</span>);</div>
-                <div></div>
-                <div className="pl-4"><span className="text-slate-400">// Configure GPIO pin as output</span></div>
-                <div className="pl-4"><span className="text-purple-500">gpio_set_mode</span>(<span className="text-orange-400">PWM_PORT</span>, <span className="text-orange-400">PWM_PIN</span>, <span className="text-orange-400">GPIO_MODE_OUTPUT</span>);</div>
-                <div>{'}'}</div>
-                <div></div>
-                <div><span className="text-primary">void</span> <span className="text-blue-400">pwm_set_duty</span>(<span className="text-primary">uint8_t</span> channel, <span className="text-primary">uint8_t</span> duty_percent) {'{'}</div>
-                <div className="pl-4"><span className="text-primary">uint32_t</span> period = <span className="text-purple-500">timer_get_period</span>(channel);</div>
-                <div className="pl-4"><span className="text-primary">uint32_t</span> compare = (period * duty_percent) / <span className="text-purple-500">100</span>;</div>
-                <div className="pl-4"><span className="text-purple-500">timer_set_compare</span>(channel, compare);</div>
-                <div>{'}'}</div>
+              {/* VS Code-like header */}
+              <div className="flex flex-col">
+                {/* Window controls and tabs */}
+                <div className="flex items-center text-xs border-b border-slate-700/50 pb-2">
+                  <div className="flex items-center gap-2 mr-4">
+                    <span className="w-3 h-3 rounded-full bg-red-500"></span>
+                    <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
+                    <span className="w-3 h-3 rounded-full bg-green-500"></span>
+                  </div>
+                  <div className="flex">
+                    <div className="px-3 py-1 bg-slate-800 rounded-t-md border-b-2 border-primary text-slate-300 font-medium flex items-center gap-2">
+                      <span className="text-blue-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M16 18l6-6-6-6" />
+                          <path d="M8 6l-6 6 6 6" />
+                        </svg>
+                      </span>
+                      <span>rtos_tasks.c</span>
+                    </div>
+                    <div className="px-3 py-1 text-slate-500 flex items-center">
+                      task_interface.h
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Line numbers and code */}
+                <div className="flex mt-2">
+                  {/* Line numbers */}
+                  <div className="pr-4 text-right text-slate-600 select-none border-r border-slate-700/50 mr-3">
+                    <div>1</div>
+                    <div>2</div>
+                    <div>3</div>
+                    <div>4</div>
+                    <div>5</div>
+                    <div>6</div>
+                    <div>7</div>
+                    <div>8</div>
+                    <div>9</div>
+                    <div>10</div>
+                    <div>11</div>
+                    <div>12</div>
+                    <div>13</div>
+                    <div>14</div>
+                    <div>15</div>
+                    <div>16</div>
+                    <div>17</div>
+                  </div>
+                  
+                  {/* Code */}
+                  <div className="flex-1 overflow-x-auto">
+                    <div><span className="text-pink-500">#include</span> <span className="text-green-400">&lt;FreeRTOS.h&gt;</span></div>
+                    <div><span className="text-pink-500">#include</span> <span className="text-green-400">&lt;task.h&gt;</span></div>
+                    <div><span className="text-pink-500">#include</span> <span className="text-green-400">&lt;semphr.h&gt;</span></div>
+                    <div></div>
+                    <div><span className="text-slate-400">// Mutex for sensor data access</span></div>
+                    <div><span className="text-blue-500">SemaphoreHandle_t</span> <span className="text-orange-400">sensorMutex</span>;</div>
+                    <div><span className="text-blue-500">SensorData_t</span> <span className="text-orange-400">sharedSensorData</span>;</div>
+                    <div></div>
+                    <div><span className="text-purple-500">void</span> <span className="text-blue-400">SensorTask</span>(<span className="text-purple-500">void</span>* <span className="text-orange-400">pvParameters</span>) {'{'}</div>
+                    <div className="pl-4"><span className="text-blue-500">while</span>(1) {'{'}</div>
+                    <div className="pl-8"><span className="text-slate-400">// Acquire new sensor readings</span></div>
+                    <div className="pl-8"><span className="text-blue-500">SensorData_t</span> <span className="text-orange-400">newData</span> = <span className="text-blue-400">ReadSensors</span>();</div>
+                    <div className="pl-8"></div>
+                    <div className="pl-8"><span className="text-slate-400">// Update shared data with mutex protection</span></div>
+                    <div className="pl-8"><span className="text-pink-500">if</span> (<span className="text-blue-400">xSemaphoreTake</span>(<span className="text-orange-400">sensorMutex</span>, <span className="text-orange-400">portMAX_DELAY</span>)) {'{'}</div>
+                    <div className="pl-12"><span className="text-orange-400">sharedSensorData</span> = <span className="text-orange-400">newData</span>;</div>
+                    <div className="pl-12"><span className="text-blue-400">xSemaphoreGive</span>(<span className="text-orange-400">sensorMutex</span>);</div>
+                    <div className="pl-8">{'}'}</div>
+                    <div className="pl-8"><span className="text-blue-400">vTaskDelay</span>(<span className="text-orange-400">pdMS_TO_TICKS</span>(100));</div>
+                    <div className="pl-4">{'}'}</div>
+                    <div>{'}'}</div>
+                  </div>
+                </div>
               </div>
               
-              {/* Visual indicator for embedded system */}
+              {/* Task visualization */}
               <div className="mt-5 p-3 bg-slate-800 rounded-md flex flex-col border border-slate-700">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-white font-medium">PWM Signal Visualization</span>
-                  <span className="px-2 py-1 bg-primary/20 rounded text-primary text-xs">50% Duty Cycle</span>
+                  <span className="text-sm text-white font-medium">Task Execution Visualization</span>
+                  <span className="px-2 py-1 bg-primary/20 rounded text-primary text-xs">RTOS Scheduler</span>
                 </div>
                 
-                {/* PWM Waveform */}
-                <div className="h-16 bg-slate-900 rounded-md relative overflow-hidden p-2">
-                  <svg className="w-full h-full" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-                    {/* Grid lines */}
-                    <line x1="0" y1="30" x2="200" y2="30" stroke="#333" strokeWidth="1" strokeDasharray="2,2" />
-                    <line x1="50" y1="0" x2="50" y2="60" stroke="#333" strokeWidth="1" strokeDasharray="2,2" />
-                    <line x1="100" y1="0" x2="100" y2="60" stroke="#333" strokeWidth="1" strokeDasharray="2,2" />
-                    <line x1="150" y1="0" x2="150" y2="60" stroke="#333" strokeWidth="1" strokeDasharray="2,2" />
-                    
-                    {/* PWM Wave - 50% duty cycle */}
-                    <path 
-                      d="M0,10 H50 V50 H100 V10 H150 V50 H200" 
-                      fill="none" 
-                      stroke="var(--primary)" 
-                      strokeWidth="3"
-                      className="animate-pulse"
-                    />
-                  </svg>
+                {/* Task scheduling visualization */}
+                <div className="h-16 bg-slate-900 rounded-md relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-full flex flex-col">
+                    <div className="h-1/3 border-b border-slate-800 flex">
+                      <div className="bg-primary/40 h-full w-[20%]"></div>
+                      <div className="bg-transparent h-full w-[10%]"></div>
+                      <div className="bg-primary/40 h-full w-[30%]"></div>
+                      <div className="bg-transparent h-full w-[15%]"></div>
+                      <div className="bg-primary/40 h-full w-[25%] animate-pulse"></div>
+                    </div>
+                    <div className="h-1/3 border-b border-slate-800 flex">
+                      <div className="bg-transparent h-full w-[15%]"></div>
+                      <div className="bg-blue-500/40 h-full w-[25%]"></div>
+                      <div className="bg-transparent h-full w-[20%]"></div>
+                      <div className="bg-blue-500/40 h-full w-[30%]"></div>
+                      <div className="bg-transparent h-full w-[10%] animate-pulse"></div>
+                    </div>
+                    <div className="h-1/3 flex">
+                      <div className="bg-transparent h-full w-[5%]"></div>
+                      <div className="bg-green-500/40 h-full w-[15%]"></div>
+                      <div className="bg-transparent h-full w-[10%]"></div>
+                      <div className="bg-green-500/40 h-full w-[20%]"></div>
+                      <div className="bg-transparent h-full w-[10%]"></div>
+                      <div className="bg-green-500/40 h-full w-[40%] animate-pulse"></div>
+                    </div>
+                  </div>
                 </div>
                 
-                <div className="flex justify-between text-xs text-slate-500 mt-1 px-1">
-                  <span>0ms</span>
-                  <span>Time</span>
-                  <span>4ms</span>
+                <div className="flex justify-between text-xs mt-2">
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-primary/60 rounded-sm"></div>
+                    <span className="text-slate-300">Sensor Task</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-blue-500/60 rounded-sm"></div>
+                    <span className="text-slate-300">Processing Task</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-500/60 rounded-sm"></div>
+                    <span className="text-slate-300">Output Task</span>
+                  </div>
                 </div>
               </div>
             </div>
