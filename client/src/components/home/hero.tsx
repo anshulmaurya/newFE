@@ -21,6 +21,7 @@ export default function Hero({ onScrollToFeatures, onScrollToWaitlist }: HeroPro
             transition={{ duration: 0.6 }}
           >
             <span className="gradient-text">DSPCODER</span>
+            <div className="text-white text-xl md:text-2xl mt-2">Learning Embedded Systems <br/> Redefined</div>
           </motion.h1>
           
           <motion.p 
