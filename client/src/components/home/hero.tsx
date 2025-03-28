@@ -21,9 +21,33 @@ export default function Hero({ onScrollToFeatures, onScrollToWaitlist }: HeroPro
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl mb-4 leading-tight">
-              <span className="gradient-text">Learning Embedded Systems</span>
-              <div className="text-white text-3xl md:text-4xl mt-2">Redefined</div>
+            <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight flex flex-col items-start">
+              <span className="gradient-text mb-1">Learning</span>
+              <span className="gradient-text mb-2">Embedded Systems</span>
+              <motion.div 
+                className="text-white text-3xl md:text-4xl relative"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.7, 
+                  delay: 0.8,
+                  ease: [0.22, 1, 0.36, 1] 
+                }}
+              >
+                <span className="relative">
+                  Redefined
+                  <motion.span 
+                    className="absolute -bottom-2 left-0 w-full h-1 bg-primary"
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ 
+                      duration: 0.8, 
+                      delay: 1.2,
+                      ease: [0.22, 1, 0.36, 1]
+                    }}
+                  />
+                </span>
+              </motion.div>
             </h1>
             
             <p className="text-slate-300 text-lg mb-8 max-w-xl">
