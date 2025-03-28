@@ -25,7 +25,7 @@ export default function Hero({ onScrollToFeatures, onScrollToWaitlist }: HeroPro
               <span className="gradient-text mb-1">Learning</span>
               <span className="gradient-text mb-2">Embedded Systems</span>
               <motion.div 
-                className="text-white text-3xl md:text-4xl relative"
+                className="relative"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ 
@@ -34,7 +34,7 @@ export default function Hero({ onScrollToFeatures, onScrollToWaitlist }: HeroPro
                   ease: [0.22, 1, 0.36, 1] 
                 }}
               >
-                <span className="relative">
+                <span className="gradient-text relative">
                   Redefined
                   <motion.span 
                     className="absolute -bottom-2 left-0 w-full h-1 bg-primary"
