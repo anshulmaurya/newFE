@@ -48,7 +48,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
           </button>
           <a 
             href="#" 
-            className="ml-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-lg text-sm text-slate-900 font-medium transition-colors inline-flex items-center gap-2"
+            className="ml-2 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 rounded-lg text-sm text-slate-900 font-bold transition-all inline-flex items-center gap-2 shadow-[0_0_15px_rgba(250,204,21,0.5)] hover:shadow-[0_0_20px_rgba(250,204,21,0.7)] border border-yellow-300"
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
@@ -96,7 +96,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
           </button>
           <a 
             href="#"
-            className="text-slate-900 py-2 font-medium flex items-center gap-2 mt-2 rounded-lg bg-yellow-500"
+            className="text-slate-900 py-2 font-bold flex items-center gap-2 mt-2 rounded-lg bg-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.5)] border border-yellow-300"
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
