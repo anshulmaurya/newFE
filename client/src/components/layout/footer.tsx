@@ -9,11 +9,22 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <div className="h-8 w-8 rounded-lg bg-[rgb(214,251,65)] flex items-center justify-center text-black font-bold font-display text-lg">
-                ES
+              <div className="h-8 w-8 flex items-center justify-center">
+                <svg version="1.1" viewBox="0.0 0.0 100.0 100.0" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" width="30" height="30">
+                  <clipPath id="p.0">
+                    <path d="m0 0l100.0 0l0 100.0l-100.0 0l0 -100.0z" clipRule="nonzero"/>
+                  </clipPath>
+                  <g clipPath="url(#p.0)">
+                    <path fill="#000000" fillOpacity="0.0" d="m0 0l100.0 0l0 100.0l-100.0 0z" fillRule="evenodd"/>
+                    <path fill="#000000" fillOpacity="0.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
+                    <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" strokeDasharray="8.0,3.0,1.0,3.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
+                    <path fill="#000000" fillOpacity="0.0" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
+                    <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
+                  </g>
+                </svg>
               </div>
               <h2 className="font-display font-bold text-lg tracking-tight">
-                <span className="text-white">Embedded</span><span className="text-[rgb(214,251,65)]">Systems</span>
+                <span className="text-white">dsp</span><span className="text-[rgb(214,251,65)]">coder.com</span>
               </h2>
             </div>
             <p className="text-gray-400 text-sm mb-4">
@@ -71,7 +82,7 @@ export default function Footer() {
         
         <div className="mt-10 pt-6 border-t border-gray-700/30 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            &copy; {new Date().getFullYear()} EmbeddedSystems.io. All rights reserved.
+            &copy; {new Date().getFullYear()} dspcoder.com. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0">
             <a 
