@@ -12,10 +12,10 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
       <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       
       <div className="w-full relative z-10 px-2 sm:px-3 md:px-4">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-6 max-w-[1600px] mx-auto">
+        <div className="flex flex-col xl:flex-row items-center justify-between gap-8 xl:gap-6 max-w-[1600px] mx-auto">
           {/* Left side: Title, Subheading, Buttons */}
           <motion.div 
-            className="lg:w-2/5 text-center lg:text-left mb-8 lg:mb-0"
+            className="w-full xl:w-2/5 text-center xl:text-left mb-8 xl:mb-0 max-w-2xl xl:max-w-none mx-auto"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
@@ -53,7 +53,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
               Master embedded programming with our interactive platform. Practice real problems, get instant feedback, and land your dream job.
             </p>
             
-            <div className="flex flex-col sm:flex-row items-center sm:items-start justify-center lg:justify-start gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start justify-center xl:justify-start gap-4 mb-6">
               <a 
                 href="https://discord.gg/embeddeddev" 
                 target="_blank" 
@@ -80,7 +80,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
             </div>
             
             <motion.div 
-              className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-gray-400 mt-4"
+              className="flex flex-wrap items-center justify-center xl:justify-start gap-6 text-gray-400 mt-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
@@ -114,7 +114,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
           
           {/* Right side: Code preview */}
           <motion.div 
-            className="lg:w-3/5"
+            className="w-full xl:w-3/5 max-w-4xl xl:max-w-none mx-auto"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
