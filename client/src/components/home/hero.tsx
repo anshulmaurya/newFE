@@ -211,7 +211,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
           
           {/* Right side: Code preview */}
           <motion.div 
-            className="w-full xl:w-3/5 max-w-4xl xl:max-w-none mx-auto"
+            className="w-full xl:w-[58%] max-w-[calc(4xl-10px)] xl:max-w-none mx-auto"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -230,7 +230,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <path d="M5.2 5.2L3.1 3.1c-.2-.2-.5-.2-.7 0L.5 5.2c-.2.2-.2.5 0 .7l2.1 2.1c.2.2.5.2.7 0L5.2 5.9c.2-.2.2-.5 0-.7z" />
                       </svg>
                     </span>
-                    <span className="font-semibold tracking-wide">EXPLORER</span>
+                    <span className="font-semibold tracking-wide">CODE EDITOR</span>
                   </div>
                 </div>
                 
@@ -347,6 +347,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                       </div>
                       
                       <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer">
+                        <span className="w-4"></span>
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -358,7 +359,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                           <polyline points="14 2 14 8 20 8"/>
                         </svg>
-                        <span>libdspcodera</span>
+                        <span>libdspcoder.a</span>
                       </div>
                       
                       <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer">
@@ -370,8 +371,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                           strokeLinejoin="round"
                           className="mr-1"
                         >
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                          <polyline points="14 2 14 8 20 8"/>
+                          <polyline points="6 9 12 15 18 9"/>
                         </svg>
                         <span>src</span>
                       </div>
@@ -380,6 +380,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'main.c' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} hover:bg-[rgb(30,30,32)] cursor-pointer`}
                         onClick={() => handleFileClick('main.c')}
                       >
+                        <span className="w-4"></span>
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -428,9 +429,9 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                     </div>
                     
                     {/* Code content */}
-                    <div className="flex">
+                    <div className="flex h-64 overflow-hidden">
                       {/* Line numbers */}
-                      <div className="text-right pr-2 pt-2 select-none text-gray-600 text-xs">
+                      <div className="text-right pr-2 pt-2 select-none text-gray-600 text-xs overflow-y-auto">
                         {fileContents[activeFile].code.map((line) => (
                           <div 
                             key={line.line} 
@@ -442,7 +443,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                       </div>
                       
                       {/* Actual code */}
-                      <div className="flex-1 pl-2 pt-2 text-xs overflow-x-auto text-gray-300">
+                      <div className="flex-1 pl-2 pt-2 text-xs overflow-y-auto overflow-x-auto text-gray-300">
                         {fileContents[activeFile].code.map((line) => (
                           <div 
                             key={line.line} 
