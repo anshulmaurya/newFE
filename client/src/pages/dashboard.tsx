@@ -157,8 +157,8 @@ const getStatusColor = (status: string): string => {
 // Dashboard component
 export default function Dashboard() {
   // State
-  const [category, setCategory] = useState<string>('');
-  const [difficulty, setDifficulty] = useState<string>('');
+  const [category, setCategory] = useState<string>('all');
+  const [difficulty, setDifficulty] = useState<string>('all');
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(16);
@@ -169,8 +169,11 @@ export default function Dashboard() {
   // API queries
   const { data: problemsData, isLoading: isLoadingProblems } = useQuery({
     queryKey: ['/api/problems', category, difficulty, search, page, limit, sortBy, sortOrder],
-    queryFn: () =>
-      apiRequest(`/api/problems?category=${category}&difficulty=${difficulty}&search=${search}&page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}`),
+    queryFn: () => {
+      const categoryParam = category === 'all' ? '' : category;
+      const difficultyParam = difficulty === 'all' ? '' : difficulty;
+      return apiRequest(`/api/problems?category=${categoryParam}&difficulty=${difficultyParam}&search=${search}&page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}`);
+    },
   });
 
   const { data: userProgress, isLoading: isLoadingProgress } = useQuery({
@@ -493,7 +496,7 @@ export default function Dashboard() {
               </SelectTrigger>
               <SelectContent className="bg-[rgb(36,36,38)] border-[rgb(48,48,50)] text-white">
                 <SelectGroup>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value="all">All Categories</SelectItem>
                   <SelectItem value="Memory Management">Memory Management</SelectItem>
                   <SelectItem value="Multithreading">Multithreading</SelectItem>
                   <SelectItem value="Data Structures">Data Structures</SelectItem>
@@ -511,7 +514,7 @@ export default function Dashboard() {
               </SelectTrigger>
               <SelectContent className="bg-[rgb(36,36,38)] border-[rgb(48,48,50)] text-white">
                 <SelectGroup>
-                  <SelectItem value="">All Difficulties</SelectItem>
+                  <SelectItem value="all">All Difficulties</SelectItem>
                   <SelectItem value="Easy">Easy</SelectItem>
                   <SelectItem value="Medium">Medium</SelectItem>
                   <SelectItem value="Hard">Hard</SelectItem>
