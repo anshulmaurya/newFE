@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 
 interface HeaderProps {
   onNavigateFeatures: () => void;
@@ -8,9 +8,20 @@ interface HeaderProps {
 
 export default function Header({ onNavigateFeatures, onNavigateProblems }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("Interview");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleOptionSelect = (option: string) => {
+    setSelectedOption(option);
+    setDropdownOpen(false);
   };
 
   const handleNavClick = (callback: () => void) => {
@@ -22,10 +33,10 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[rgb(24,24,26)]">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <div className="h-10 w-10 flex items-center justify-center">
-            <svg version="1.1" viewBox="0.0 0.0 100.0 100.0" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" width="40" height="40">
+      <div className="container mx-auto px-4 py-2 flex justify-between items-center">
+        <div className="flex items-center">
+          <div className="h-8 w-8 flex items-center justify-center">
+            <svg version="1.1" viewBox="0.0 0.0 100.0 100.0" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" width="32" height="32">
               <clipPath id="p.0">
                 <path d="m0 0l100.0 0l0 100.0l-100.0 0l0 -100.0z" clipRule="nonzero"/>
               </clipPath>
@@ -38,33 +49,64 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
               </g>
             </svg>
           </div>
-          <h1 className="font-display font-bold text-xl sm:text-2xl tracking-tight">
+          <h1 className="font-display font-bold text-lg tracking-tight">
             <span className="text-white">dsp</span><span className="text-[rgb(214,251,65)]">coder.com</span>
           </h1>
+          
+          {/* Vertical Separator */}
+          <div className="h-6 border-l border-gray-600 mx-4"></div>
+          
+          {/* Dropdown */}
+          <div className="relative">
+            <button 
+              onClick={toggleDropdown}
+              className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors py-1 px-2 rounded focus:outline-none"
+            >
+              <span>{selectedOption}</span>
+              <ChevronDown className="h-4 w-4" />
+            </button>
+            
+            {dropdownOpen && (
+              <div className="absolute top-full left-0 mt-1 w-32 bg-[rgb(36,36,38)] rounded-md shadow-lg overflow-hidden z-20">
+                <button 
+                  onClick={() => handleOptionSelect("Interview")}
+                  className={`block w-full text-left px-4 py-2 text-sm ${selectedOption === "Interview" ? "bg-[rgb(214,251,65)]/10 text-[rgb(214,251,65)]" : "text-gray-300 hover:bg-[rgb(40,40,42)]"}`}
+                >
+                  Interview
+                </button>
+                <button 
+                  onClick={() => handleOptionSelect("Project")}
+                  className={`block w-full text-left px-4 py-2 text-sm ${selectedOption === "Project" ? "bg-[rgb(214,251,65)]/10 text-[rgb(214,251,65)]" : "text-gray-300 hover:bg-[rgb(40,40,42)]"}`}
+                >
+                  Project
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-4">
           <button onClick={() => handleNavClick(() => window.scrollTo(0, 0))} className="nav-link group flex flex-col">
-            <span className="font-medium text-gray-300 hover:text-white transition-colors">Home</span>
+            <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Home</span>
             <span className="nav-indicator group-hover:w-full"></span>
           </button>
           <button onClick={() => handleNavClick(onNavigateFeatures)} className="nav-link group flex flex-col">
-            <span className="font-medium text-gray-300 hover:text-white transition-colors">Features</span>
+            <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Features</span>
             <span className="nav-indicator group-hover:w-full"></span>
           </button>
           <button onClick={() => handleNavClick(onNavigateProblems)} className="nav-link group flex flex-col">
-            <span className="font-medium text-gray-300 hover:text-white transition-colors">Problems</span>
+            <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Problems</span>
             <span className="nav-indicator group-hover:w-full"></span>
           </button>
           <a 
             href="#" 
-            className="ml-2 px-4 py-2 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-lg text-sm text-black font-bold transition-all inline-flex items-center gap-2 shadow-[0_0_15px_rgba(214,251,65,0.5)] hover:shadow-[0_0_20px_rgba(214,251,65,0.7)] border border-[rgb(224,255,75)]"
+            className="ml-2 px-3 py-1.5 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-lg text-xs text-black font-bold transition-all inline-flex items-center gap-1.5 shadow-[0_0_15px_rgba(214,251,65,0.5)] hover:shadow-[0_0_20px_rgba(214,251,65,0.7)] border border-[rgb(224,255,75)]"
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
-              width="16" 
-              height="16" 
+              width="14" 
+              height="14" 
               viewBox="0 0 24 24"
               fill="currentColor"
             >
@@ -87,6 +129,23 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
       {/* Mobile Menu */}
       <div className={`md:hidden glass absolute w-full z-20 py-4 px-4 ${mobileMenuOpen ? 'block' : 'hidden'}`}>
         <nav className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-2 mb-2">
+            <p className="text-xs text-gray-500">Mode:</p>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => handleOptionSelect("Interview")}
+                className={`px-3 py-1.5 text-xs rounded ${selectedOption === "Interview" ? "bg-[rgb(214,251,65)] text-black" : "bg-[rgb(36,36,38)] text-gray-300"}`}
+              >
+                Interview
+              </button>
+              <button
+                onClick={() => handleOptionSelect("Project")}
+                className={`px-3 py-1.5 text-xs rounded ${selectedOption === "Project" ? "bg-[rgb(214,251,65)] text-black" : "bg-[rgb(36,36,38)] text-gray-300"}`}
+              >
+                Project
+              </button>
+            </div>
+          </div>
           <button 
             onClick={() => handleNavClick(() => window.scrollTo(0, 0))} 
             className="text-gray-300 hover:text-white py-2 border-b border-gray-700/30"
@@ -111,8 +170,8 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
-              width="22" 
-              height="22" 
+              width="20" 
+              height="20" 
               viewBox="0 0 24 24"
               fill="currentColor"
               className="ml-2"
