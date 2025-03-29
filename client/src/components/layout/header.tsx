@@ -122,7 +122,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           <button onClick={() => navigateToNotes()} className="nav-link group px-2 py-1">
             <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Notes</span>
           </button>
-          <button onClick={() => handleNavClick(onNavigateProblems)} className="nav-link group px-2 py-1">
+          <button onClick={() => setLocation("/dashboard")} className="nav-link group px-2 py-1">
             <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Problems</span>
           </button>
           {/* Discord button removed as requested */}
@@ -186,7 +186,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
             Notes
           </button>
           <button 
-            onClick={() => handleNavClick(onNavigateProblems)} 
+            onClick={() => { setMobileMenuOpen(false); setLocation("/dashboard"); }} 
             className="text-gray-300 hover:text-white py-1.5 border-b border-gray-700/30 text-sm"
           >
             Problems

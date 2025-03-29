@@ -1,4 +1,16 @@
-import { type User, type InsertUser } from "@shared/schema";
+import { 
+  type User, 
+  type InsertUser, 
+  users, 
+  problems, 
+  userProgress, 
+  type Problem, 
+  type InsertProblem,
+  type UserProgress,
+  type InsertUserProgress
+} from "@shared/schema";
+import { db } from "./db";
+import { eq, and, desc, asc, sql, like, ilike, or } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -6,36 +18,266 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  
+  // Problem methods
+  getProblems(options?: {
+    category?: string;
+    difficulty?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }): Promise<{ problems: Problem[]; total: number }>;
+  getProblem(id: number): Promise<Problem | undefined>;
+  createProblem(problem: InsertProblem): Promise<Problem>;
+  
+  // User Progress methods
+  getUserProgress(userId: number): Promise<(UserProgress & { problem: Problem })[]>;
+  getUserProgressForProblem(userId: number, problemId: number): Promise<UserProgress | undefined>;
+  createUserProgress(userProgress: InsertUserProgress): Promise<UserProgress>;
+  updateUserProgress(id: number, userProgress: Partial<UserProgress>): Promise<UserProgress | undefined>;
+  
+  // Stats methods
+  getUserStats(userId: number): Promise<{
+    totalProblems: number;
+    solvedProblems: number;
+    attemptedProblems: number;
+    easyProblems: { solved: number; total: number };
+    mediumProblems: { solved: number; total: number };
+    hardProblems: { solved: number; total: number };
+  }>;
 }
 
-// In-memory storage implementation
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private currentUserId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.currentUserId = 1;
-  }
-
+// Database storage implementation
+export class DatabaseStorage implements IStorage {
   // User methods
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db.insert(users).values(insertUser).returning();
     return user;
+  }
+  
+  // Problem methods
+  async getProblems(options?: {
+    category?: string;
+    difficulty?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }): Promise<{ problems: Problem[]; total: number }> {
+    const { 
+      category, 
+      difficulty, 
+      search, 
+      page = 1, 
+      limit = 20,
+      sortBy = 'id',
+      sortOrder = 'asc'
+    } = options || {};
+    
+    let query = db.select().from(problems);
+    
+    // Apply filters
+    const filters = [];
+    if (category) {
+      filters.push(eq(problems.category, category as any));
+    }
+    if (difficulty) {
+      filters.push(eq(problems.difficulty, difficulty as any));
+    }
+    if (search) {
+      filters.push(
+        or(
+          ilike(problems.title, `%${search}%`),
+          ilike(problems.description, `%${search}%`)
+        )
+      );
+    }
+    
+    if (filters.length > 0) {
+      query = query.where(and(...filters));
+    }
+    
+    // Count total before pagination
+    const [countResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(problems)
+      .where(filters.length > 0 ? and(...filters) : undefined);
+    
+    const total = countResult?.count || 0;
+    
+    // Apply sorting
+    if (sortBy && sortBy in problems) {
+      const sortColumn = problems[sortBy as keyof typeof problems];
+      if (sortColumn) {
+        query = query.orderBy(
+          sortOrder === 'desc' ? desc(sortColumn) : asc(sortColumn)
+        );
+      }
+    }
+    
+    // Apply pagination
+    query = query.limit(limit).offset((page - 1) * limit);
+    
+    const problemsList = await query;
+    
+    return { problems: problemsList, total };
+  }
+
+  async getProblem(id: number): Promise<Problem | undefined> {
+    const [problem] = await db.select().from(problems).where(eq(problems.id, id));
+    return problem;
+  }
+
+  async createProblem(problem: InsertProblem): Promise<Problem> {
+    const [createdProblem] = await db.insert(problems).values(problem).returning();
+    return createdProblem;
+  }
+  
+  // User Progress methods
+  async getUserProgress(userId: number): Promise<(UserProgress & { problem: Problem })[]> {
+    const result = await db
+      .select()
+      .from(userProgress)
+      .innerJoin(problems, eq(userProgress.problemId, problems.id))
+      .where(eq(userProgress.userId, userId));
+      
+    return result as (UserProgress & { problem: Problem })[];
+  }
+
+  async getUserProgressForProblem(userId: number, problemId: number): Promise<UserProgress | undefined> {
+    const [progress] = await db
+      .select()
+      .from(userProgress)
+      .where(
+        and(
+          eq(userProgress.userId, userId),
+          eq(userProgress.problemId, problemId)
+        )
+      );
+    return progress;
+  }
+
+  async createUserProgress(progress: InsertUserProgress): Promise<UserProgress> {
+    const [createdProgress] = await db
+      .insert(userProgress)
+      .values(progress)
+      .returning();
+    return createdProgress;
+  }
+
+  async updateUserProgress(id: number, progress: Partial<UserProgress>): Promise<UserProgress | undefined> {
+    const [updatedProgress] = await db
+      .update(userProgress)
+      .set(progress)
+      .where(eq(userProgress.id, id))
+      .returning();
+    return updatedProgress;
+  }
+  
+  // Stats methods
+  async getUserStats(userId: number): Promise<{
+    totalProblems: number;
+    solvedProblems: number;
+    attemptedProblems: number;
+    easyProblems: { solved: number; total: number };
+    mediumProblems: { solved: number; total: number };
+    hardProblems: { solved: number; total: number };
+  }> {
+    // Get total problems
+    const [totalResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(problems);
+    const totalProblems = totalResult?.count || 0;
+    
+    // Get solved problems
+    const [solvedResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(userProgress)
+      .where(
+        and(
+          eq(userProgress.userId, userId),
+          eq(userProgress.status, 'Solved')
+        )
+      );
+    const solvedProblems = solvedResult?.count || 0;
+    
+    // Get attempted but not solved problems
+    const [attemptedResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(userProgress)
+      .where(
+        and(
+          eq(userProgress.userId, userId),
+          eq(userProgress.status, 'Attempted')
+        )
+      );
+    const attemptedProblems = attemptedResult?.count || 0;
+    
+    // Get difficulty breakdown
+    const difficultyStats = {
+      easyProblems: { solved: 0, total: 0 },
+      mediumProblems: { solved: 0, total: 0 },
+      hardProblems: { solved: 0, total: 0 }
+    };
+    
+    // Get total by difficulty
+    const totalByDifficulty = await db
+      .select({
+        difficulty: problems.difficulty,
+        count: sql<number>`count(*)`
+      })
+      .from(problems)
+      .groupBy(problems.difficulty);
+    
+    for (const { difficulty, count } of totalByDifficulty) {
+      if (difficulty === 'Easy') difficultyStats.easyProblems.total = count;
+      if (difficulty === 'Medium') difficultyStats.mediumProblems.total = count;
+      if (difficulty === 'Hard') difficultyStats.hardProblems.total = count;
+    }
+    
+    // Get solved by difficulty
+    const solvedByDifficulty = await db
+      .select({
+        difficulty: problems.difficulty,
+        count: sql<number>`count(*)`
+      })
+      .from(userProgress)
+      .innerJoin(problems, eq(userProgress.problemId, problems.id))
+      .where(
+        and(
+          eq(userProgress.userId, userId),
+          eq(userProgress.status, 'Solved')
+        )
+      )
+      .groupBy(problems.difficulty);
+    
+    for (const { difficulty, count } of solvedByDifficulty) {
+      if (difficulty === 'Easy') difficultyStats.easyProblems.solved = count;
+      if (difficulty === 'Medium') difficultyStats.mediumProblems.solved = count;
+      if (difficulty === 'Hard') difficultyStats.hardProblems.solved = count;
+    }
+    
+    return {
+      totalProblems,
+      solvedProblems,
+      attemptedProblems,
+      ...difficultyStats
+    };
   }
 }
 
 // Export instance of storage
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

@@ -6,11 +6,14 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import ComingSoon from "@/pages/coming-soon";
 import Notes from "@/pages/notes";
+import Dashboard from "@/pages/dashboard";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home}/>
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/problems" component={Dashboard} />
       <Route path="/coming-soon" component={ComingSoon} />
       <Route path="/notes" component={Notes} />
       {/* Fallback to 404 */}
