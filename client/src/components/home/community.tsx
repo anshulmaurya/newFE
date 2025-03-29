@@ -30,7 +30,7 @@ export default function Community() {
   };
 
   return (
-    <section className="py-16 md:py-24 relative overflow-hidden bg-[rgb(18,18,20)]">
+    <section className="py-16 md:py-24 relative overflow-hidden bg-[rgb(24,24,26)]">
       {/* Background gradients */}
       <div className="absolute left-1/4 top-1/3 w-64 h-64 bg-[rgb(214,251,65)]/5 rounded-full blur-3xl"></div>
       <div className="absolute right-1/4 bottom-1/3 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl"></div>
@@ -62,7 +62,7 @@ export default function Community() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <div className="glass rounded-lg p-6 bg-[rgb(24,24,26)] border border-[rgb(30,30,32)]/30">
+            <div className="glass rounded-lg p-6 border border-[rgb(30,30,32)]/30">
               <h3 className="text-2xl font-display font-bold mb-6 text-white">
                 Don't hesitate to reach out.
                 <br />We're always here to help.
@@ -183,7 +183,7 @@ export default function Community() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <div className="glass rounded-lg p-6 bg-[rgb(24,24,26)] border border-[rgb(30,30,32)]/30">
+            <div className="glass rounded-lg p-6 border border-[rgb(30,30,32)]/30">
               <h3 className="text-xl font-semibold mb-4 text-white">Message Us</h3>
               <form onSubmit={handleFeedback}>
                 <div className="mb-4">
@@ -219,7 +219,7 @@ export default function Community() {
               </form>
             </div>
 
-            <div className="glass rounded-lg p-6 bg-[rgb(24,24,26)] border border-[rgb(30,30,32)]/30">
+            <div className="glass rounded-lg p-6 border border-[rgb(30,30,32)]/30">
               <h3 className="text-xl font-semibold mb-4 text-white">Subscribe to our newsletter</h3>
               <p className="text-gray-300 mb-4">Stay updated with new features, tips, and embedded systems insights.</p>
               <form onSubmit={handleSubscribe} className="flex gap-2">
