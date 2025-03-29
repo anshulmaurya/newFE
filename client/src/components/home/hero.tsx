@@ -12,10 +12,10 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
       <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-4 max-w-[1400px] mx-auto">
           {/* Left side: Title, Subheading, Buttons */}
           <motion.div 
-            className="lg:w-1/2 text-center lg:text-left mb-8 lg:mb-0"
+            className="lg:w-2/5 text-center lg:text-left mb-8 lg:mb-0"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
@@ -114,7 +114,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
           
           {/* Right side: Code preview */}
           <motion.div 
-            className="lg:w-1/2"
+            className="lg:w-3/5"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -352,8 +352,8 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <div className="py-px"></div>
                         <div className="py-px"><span className="text-purple-400">typedef</span> <span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span>);</div>
                         <div className="py-px"></div>
-                        <div className="py-px bg-[rgb(30,30,32)]"><span className="text-green-500">void</span> <span className="text-blue-400">reverse_Linked_List</span>(<span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span>) {'{'}</div>
-                        <div className="py-px text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// Write your code here</div>
+                        <div className="py-px bg-[rgb(214,251,65)]/5 border-l-2 border-[rgb(214,251,65)] pl-1"><span className="text-green-500">void</span> <span className="text-blue-400">reverse_Linked_List</span>(<span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span>) {'{'}</div>
+                        <div className="py-px text-gray-500 group cursor-text">&nbsp;&nbsp;&nbsp;&nbsp;<span className="group-hover:hidden">// Write your code here</span><span className="hidden group-hover:inline text-white">/* Your solution here */</span></div>
                         <div className="py-px">{'}'}</div>
                         <div className="py-px"></div>
                         <div className="py-px"><span className="text-green-500">int</span> <span className="text-blue-400">main</span>(<span className="text-green-500">int</span> <span className="text-yellow-300">argc</span>, <span className="text-green-500">char</span>* <span className="text-yellow-300">argv</span>[]) {'{'}</div>
@@ -396,18 +396,23 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                       <div className="px-2 py-1 text-gray-400">Test Results</div>
                     </div>
                     
-                    <div className="flex items-center bg-[rgb(20,20,22)] px-2 py-0.5 rounded">
-                      <span>js.run</span>
+                    <div className="flex items-center bg-[rgb(214,251,65)]/10 text-[rgb(214,251,65)] px-3 py-1 rounded cursor-pointer hover:bg-[rgb(214,251,65)]/20 transition-colors">
+                      <span className="mr-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                      </span>
+                      <span>Run</span>
                     </div>
                   </div>
                   
                   <div className="mt-2">
                     <div className="font-medium mb-1">Test Cases</div>
                     <div className="flex space-x-2">
-                      <div className="px-3 py-1 bg-[rgb(20,20,22)] rounded">Case 1</div>
-                      <div className="px-3 py-1 bg-[rgb(20,20,22)] rounded">Case 2</div>
-                      <div className="px-3 py-1 bg-[rgb(20,20,22)] rounded">Case 3</div>
-                      <div className="px-2 py-1 bg-[rgb(60,60,200)] rounded">+</div>
+                      <div className="px-3 py-1 bg-[rgb(214,251,65)]/10 text-[rgb(214,251,65)] rounded cursor-pointer hover:bg-[rgb(214,251,65)]/20 transition-colors">Case 1</div>
+                      <div className="px-3 py-1 bg-[rgb(20,20,22)] rounded cursor-pointer hover:bg-[rgb(214,251,65)]/10 transition-colors">Case 2</div>
+                      <div className="px-3 py-1 bg-[rgb(20,20,22)] rounded cursor-pointer hover:bg-[rgb(214,251,65)]/10 transition-colors">Case 3</div>
+                      <div className="px-2 py-1 bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)] rounded cursor-pointer hover:bg-[rgb(214,251,65)]/30 transition-colors">+</div>
                     </div>
                     
                     <div className="mt-2">
