@@ -8,7 +8,8 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased text-foreground;
+    background-color: rgb(24, 24, 26);
   }
 }
 
@@ -35,7 +36,7 @@
   }
   
   .glass {
-    @apply bg-slate-900/60 backdrop-blur-lg;
+    @apply bg-[rgb(18,18,20)]/60 backdrop-blur-lg;
   }
   
   .animate-typing {

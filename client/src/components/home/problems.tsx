@@ -141,7 +141,7 @@ export default function Problems() {
   const renderProblemCard = (problem: Problem) => (
     <motion.div 
       key={problem.id}
-      className="glass rounded-xl overflow-hidden border border-slate-700/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group"
+      className="glass rounded-xl overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
@@ -159,16 +159,16 @@ export default function Problems() {
         <h3 className="font-display font-semibold text-lg mb-2 group-hover:text-[rgb(214,251,65)] transition-colors">
           {problem.title}
         </h3>
-        <p className="text-slate-300 text-sm mb-4">
+        <p className="text-gray-300 text-sm mb-4">
           {problem.description}
         </p>
-        <div className="flex items-center text-xs text-slate-400 justify-between">
+        <div className="flex items-center text-xs text-gray-400 justify-between">
           <span>Completion rate: {problem.completionRate}</span>
           <span>⭐ {problem.rating}</span>
         </div>
       </div>
-      <div className="px-5 py-3 border-t border-slate-700/30 flex justify-between items-center">
-        <span className="text-sm text-slate-400">Estimated time: {problem.estimatedTime}</span>
+      <div className="px-5 py-3 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
+        <span className="text-sm text-gray-400">Estimated time: {problem.estimatedTime}</span>
         <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-1">
           <span>Solve</span>
           <ChevronRight className="h-5 w-5" />
@@ -180,7 +180,7 @@ export default function Problems() {
   // Function to render the empty state when no problems match the filter
   const renderEmptyState = () => (
     <div className="col-span-3 text-center py-16">
-      <div className="mb-4 text-slate-400">
+      <div className="mb-4 text-gray-400">
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
           width="48" 
@@ -200,7 +200,7 @@ export default function Problems() {
         </svg>
       </div>
       <h3 className="text-xl font-medium mb-2">No problems found</h3>
-      <p className="text-slate-400">We'll be adding more problems to this category soon!</p>
+      <p className="text-gray-400">We'll be adding more problems to this category soon!</p>
     </div>
   );
 
@@ -223,7 +223,7 @@ export default function Problems() {
             <span className="text-white">Practice with</span>
             <span className="text-[rgb(214,251,65)]"> Real Problems</span>
           </h2>
-          <p className="text-slate-300 max-w-2xl mx-auto">
+          <p className="text-gray-300 max-w-2xl mx-auto">
             Tackle challenges that test your knowledge of embedded systems, from basic concepts to advanced topics.
           </p>
         </motion.div>
@@ -250,14 +250,14 @@ export default function Problems() {
                   onClick={() => setActiveCategory(category)}
                   className={activeCategory === category 
                     ? "bg-[rgb(214,251,65)] text-black font-medium" 
-                    : "bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
+                    : "bg-[rgb(18,18,20)] text-gray-300 hover:bg-[rgb(30,30,32)] transition-colors"
                   }
                 >
                   {category} 
                   <span className={`ml-2 px-1.5 py-0.5 text-xs rounded-full ${
                     activeCategory === category 
                       ? "bg-black/20 text-[rgb(214,251,65)]" 
-                      : "bg-slate-700 text-slate-300"
+                      : "bg-[rgb(30,30,32)] text-gray-300"
                   }`}>
                     {count}
                   </span>
@@ -284,7 +284,7 @@ export default function Problems() {
         <div className="text-center mt-10 mb-16">
           <Button 
             variant="outline" 
-            className="px-6 py-3 bg-slate-800 hover:bg-[rgb(214,251,65)] hover:text-black text-slate-300 rounded-lg transition-all inline-flex items-center gap-2"
+            className="px-6 py-3 bg-[rgb(18,18,20)] hover:bg-[rgb(214,251,65)] hover:text-black text-gray-300 rounded-lg transition-all inline-flex items-center gap-2"
           >
             <span>View all problems</span>
             <ChevronRight className="h-4 w-4" />
@@ -293,7 +293,7 @@ export default function Problems() {
         
         {/* Upcoming Hardware Section */}
         <motion.div 
-          className="mt-16 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-8 border border-slate-700/30 relative overflow-hidden"
+          className="mt-16 bg-gradient-to-r from-[rgb(18,18,20)] to-[rgb(24,24,26)] rounded-2xl p-8 border border-[rgb(30,30,32)]/30 relative overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -308,19 +308,19 @@ export default function Problems() {
                 <span className="text-white">Coming Soon: </span>
                 <span className="text-[rgb(214,251,65)]">Real Hardware Deployment</span>
               </h3>
-              <p className="text-slate-300 mb-6">
+              <p className="text-gray-300 mb-6">
                 Soon you'll be able to test your embedded code on actual hardware platforms. Deploy your solutions directly to STM32, Arduino, and other popular platforms right from our interface.
               </p>
               <div className="flex flex-wrap gap-3">
-                <div className="px-4 py-2 bg-slate-800 rounded-full flex items-center text-sm">
+                <div className="px-4 py-2 bg-[rgb(18,18,20)] rounded-full flex items-center text-sm">
                   <div className="w-2 h-2 rounded-full bg-[rgb(214,251,65)] mr-2 animate-pulse"></div>
                   <span>STM32 Support</span>
                 </div>
-                <div className="px-4 py-2 bg-slate-800 rounded-full flex items-center text-sm">
+                <div className="px-4 py-2 bg-[rgb(18,18,20)] rounded-full flex items-center text-sm">
                   <div className="w-2 h-2 rounded-full bg-blue-500 mr-2 animate-pulse"></div>
                   <span>Arduino Integration</span>
                 </div>
-                <div className="px-4 py-2 bg-slate-800 rounded-full flex items-center text-sm">
+                <div className="px-4 py-2 bg-[rgb(18,18,20)] rounded-full flex items-center text-sm">
                   <div className="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></div>
                   <span>Raspberry Pi Deployment</span>
                 </div>
@@ -329,7 +329,7 @@ export default function Problems() {
             <div className="w-full md:w-1/2">
               <div className="relative">
                 <motion.div 
-                  className="bg-slate-900 p-4 rounded-xl border border-slate-700 shadow-lg"
+                  className="bg-[rgb(18,18,20)] p-4 rounded-xl border border-[rgb(30,30,32)] shadow-lg"
                   animate={{ 
                     y: [0, -10, 0],
                     rotate: [0, 2, 0, -2, 0]
@@ -344,9 +344,9 @@ export default function Problems() {
                     <div className="w-3 h-3 rounded-full bg-red-500"></div>
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <div className="text-sm text-slate-400 ml-2">Hardware Deployment Console</div>
+                    <div className="text-sm text-gray-400 ml-2">Hardware Deployment Console</div>
                   </div>
-                  <div className="font-mono text-xs text-green-400 bg-slate-950 p-3 rounded-md h-24 overflow-hidden">
+                  <div className="font-mono text-xs text-[rgb(214,251,65)] bg-[rgb(12,12,14)] p-3 rounded-md h-24 overflow-hidden">
                     <div className="animate-typing">
                       <p>$ connect --device stm32f4</p>
                       <p>&gt; Connecting to STM32F4 Discovery...</p>
@@ -358,7 +358,7 @@ export default function Problems() {
                   </div>
                 </motion.div>
                 <motion.div 
-                  className="absolute -bottom-6 -right-6 w-32 h-32 bg-slate-900 rounded-xl border border-slate-700 p-2 shadow-lg flex items-center justify-center"
+                  className="absolute -bottom-6 -right-6 w-32 h-32 bg-[rgb(18,18,20)] rounded-xl border border-[rgb(30,30,32)] p-2 shadow-lg flex items-center justify-center"
                   animate={{ 
                     y: [0, 10, 0],
                     rotate: [0, -3, 0, 3, 0]
@@ -371,11 +371,11 @@ export default function Problems() {
                   }}
                 >
                   <svg viewBox="0 0 100 100" className="w-20 h-20">
-                    <rect x="10" y="10" width="80" height="80" rx="5" fill="#1e293b" stroke="#3f506e" strokeWidth="2" />
-                    <circle cx="30" cy="30" r="5" fill="#10b981" className="animate-ping" style={{ animationDuration: "3s" }} />
-                    <circle cx="50" cy="50" r="5" fill="#3b82f6" className="animate-ping" style={{ animationDuration: "4s" }} />
-                    <circle cx="70" cy="70" r="5" fill="#8b5cf6" className="animate-ping" style={{ animationDuration: "5s" }} />
-                    <path d="M20,80 L30,60 L40,70 L50,40 L60,50 L70,30 L80,20" stroke="#3b82f6" strokeWidth="2" fill="none" />
+                    <rect x="10" y="10" width="80" height="80" rx="5" fill="#121214" stroke="#30303a" strokeWidth="2" />
+                    <circle cx="30" cy="30" r="5" fill="#d6fb41" className="animate-ping" style={{ animationDuration: "3s" }} />
+                    <circle cx="50" cy="50" r="5" fill="#d6fb41" className="animate-ping" style={{ animationDuration: "4s" }} />
+                    <circle cx="70" cy="70" r="5" fill="#d6fb41" className="animate-ping" style={{ animationDuration: "5s" }} />
+                    <path d="M20,80 L30,60 L40,70 L50,40 L60,50 L70,30 L80,20" stroke="#d6fb41" strokeWidth="2" fill="none" />
                   </svg>
                 </motion.div>
               </div>
