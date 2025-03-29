@@ -112,139 +112,19 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
             </motion.div>
           </motion.div>
           
-          {/* Right side: Code preview */}
+          {/* Right side: VS Code-like Reverse Linked List Problem */}
           <motion.div 
             className="lg:w-1/2"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <div className="code-block rounded-lg p-4 font-mono text-sm sm:text-base shadow-xl border border-gray-700/50 overflow-hidden bg-[rgb(18,18,20)] backdrop-blur-sm">
-              {/* VS Code-like header */}
-              <div className="flex flex-col">
-                {/* Window controls and tabs */}
-                <div className="flex items-center text-xs border-b border-gray-700/50 pb-2">
-                  <div className="flex items-center gap-2 mr-4">
-                    <span className="w-3 h-3 rounded-full bg-red-500"></span>
-                    <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
-                    <span className="w-3 h-3 rounded-full bg-green-500"></span>
-                  </div>
-                  <div className="flex">
-                    <div className="px-3 py-1 bg-[rgb(24,24,26)] rounded-t-md border-b-2 border-[rgb(214,251,65)] text-gray-300 font-medium flex items-center gap-2">
-                      <span className="text-blue-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M16 18l6-6-6-6" />
-                          <path d="M8 6l-6 6 6 6" />
-                        </svg>
-                      </span>
-                      <span>rtos_tasks.c</span>
-                    </div>
-                    <div className="px-3 py-1 text-gray-500 flex items-center">
-                      task_interface.h
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Line numbers and code */}
-                <div className="flex mt-2">
-                  {/* Line numbers */}
-                  <div className="pr-4 text-right text-gray-600 select-none border-r border-gray-700/50 mr-3">
-                    <div>1</div>
-                    <div>2</div>
-                    <div>3</div>
-                    <div>4</div>
-                    <div>5</div>
-                    <div>6</div>
-                    <div>7</div>
-                    <div>8</div>
-                    <div>9</div>
-                    <div>10</div>
-                    <div>11</div>
-                    <div>12</div>
-                    <div>13</div>
-                    <div>14</div>
-                    <div>15</div>
-                    <div>16</div>
-                    <div>17</div>
-                  </div>
-                  
-                  {/* Code */}
-                  <div className="flex-1 overflow-x-auto">
-                    <div><span className="text-pink-500">#include</span> <span className="text-green-400">&lt;FreeRTOS.h&gt;</span></div>
-                    <div><span className="text-pink-500">#include</span> <span className="text-green-400">&lt;task.h&gt;</span></div>
-                    <div><span className="text-pink-500">#include</span> <span className="text-green-400">&lt;semphr.h&gt;</span></div>
-                    <div></div>
-                    <div><span className="text-gray-400">// Mutex for sensor data access</span></div>
-                    <div><span className="text-blue-500">SemaphoreHandle_t</span> <span className="text-orange-400">sensorMutex</span>;</div>
-                    <div><span className="text-blue-500">SensorData_t</span> <span className="text-orange-400">sharedSensorData</span>;</div>
-                    <div></div>
-                    <div><span className="text-purple-500">void</span> <span className="text-blue-400">SensorTask</span>(<span className="text-purple-500">void</span>* <span className="text-orange-400">pvParameters</span>) {'{'}</div>
-                    <div className="pl-4"><span className="text-blue-500">while</span>(1) {'{'}</div>
-                    <div className="pl-8"><span className="text-gray-400">// Acquire new sensor readings</span></div>
-                    <div className="pl-8"><span className="text-blue-500">SensorData_t</span> <span className="text-orange-400">newData</span> = <span className="text-blue-400">ReadSensors</span>();</div>
-                    <div className="pl-8"></div>
-                    <div className="pl-8"><span className="text-gray-400">// Update shared data with mutex protection</span></div>
-                    <div className="pl-8"><span className="text-pink-500">if</span> (<span className="text-blue-400">xSemaphoreTake</span>(<span className="text-orange-400">sensorMutex</span>, <span className="text-orange-400">portMAX_DELAY</span>)) {'{'}</div>
-                    <div className="pl-12"><span className="text-orange-400">sharedSensorData</span> = <span className="text-orange-400">newData</span>;</div>
-                    <div className="pl-12"><span className="text-blue-400">xSemaphoreGive</span>(<span className="text-orange-400">sensorMutex</span>);</div>
-                    <div className="pl-8">{'}'}</div>
-                    <div className="pl-8"><span className="text-blue-400">vTaskDelay</span>(<span className="text-orange-400">pdMS_TO_TICKS</span>(100));</div>
-                    <div className="pl-4">{'}'}</div>
-                    <div>{'}'}</div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Task visualization */}
-              <div className="mt-5 p-3 bg-[rgb(24,24,26)] rounded-md flex flex-col border border-gray-700">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-white font-medium">Task Execution Visualization</span>
-                  <span className="px-2 py-1 bg-[rgb(214,251,65)]/20 rounded text-[rgb(214,251,65)] text-xs">RTOS Scheduler</span>
-                </div>
-                
-                {/* Task scheduling visualization */}
-                <div className="h-16 bg-[rgb(18,18,20)] rounded-md relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-full flex flex-col">
-                    <div className="h-1/3 border-b border-gray-800 flex">
-                      <div className="bg-[rgb(214,251,65)]/40 h-full w-[20%]"></div>
-                      <div className="bg-transparent h-full w-[10%]"></div>
-                      <div className="bg-[rgb(214,251,65)]/40 h-full w-[30%]"></div>
-                      <div className="bg-transparent h-full w-[15%]"></div>
-                      <div className="bg-[rgb(214,251,65)]/40 h-full w-[25%] animate-pulse"></div>
-                    </div>
-                    <div className="h-1/3 border-b border-gray-800 flex">
-                      <div className="bg-transparent h-full w-[15%]"></div>
-                      <div className="bg-blue-500/40 h-full w-[25%]"></div>
-                      <div className="bg-transparent h-full w-[20%]"></div>
-                      <div className="bg-blue-500/40 h-full w-[30%]"></div>
-                      <div className="bg-transparent h-full w-[10%] animate-pulse"></div>
-                    </div>
-                    <div className="h-1/3 flex">
-                      <div className="bg-transparent h-full w-[5%]"></div>
-                      <div className="bg-green-500/40 h-full w-[15%]"></div>
-                      <div className="bg-transparent h-full w-[10%]"></div>
-                      <div className="bg-green-500/40 h-full w-[20%]"></div>
-                      <div className="bg-transparent h-full w-[10%]"></div>
-                      <div className="bg-green-500/40 h-full w-[40%] animate-pulse"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex justify-between text-xs mt-2">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-[rgb(214,251,65)]/60 rounded-sm"></div>
-                    <span className="text-gray-300">Sensor Task</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-blue-500/60 rounded-sm"></div>
-                    <span className="text-gray-300">Processing Task</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-green-500/60 rounded-sm"></div>
-                    <span className="text-gray-300">Output Task</span>
-                  </div>
-                </div>
-              </div>
+            <div className="code-block rounded-lg overflow-hidden shadow-xl border border-gray-700/50 bg-[rgb(18,18,20)] backdrop-blur-sm">
+              <img 
+                src="/attached_assets/image_1743228272928.png" 
+                alt="Reverse Linked List Problem" 
+                className="w-full h-auto object-cover"
+              />
             </div>
           </motion.div>
         </div>
