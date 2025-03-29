@@ -6,6 +6,7 @@ import Features from "@/components/home/features";
 import Problems from "@/components/home/problems";
 import Demo from "@/components/home/demo";
 import Companies from "@/components/home/companies";
+import Community from "@/components/home/community";
 import "@/styles/circuit.css";
 
 export default function Home() {
@@ -52,6 +53,8 @@ export default function Home() {
         <Demo />
         
         <Companies />
+        
+        <Community />
       </main>
       
       <Footer />
