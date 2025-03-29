@@ -3,7 +3,6 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import Hero from "@/components/home/hero";
 import Features from "@/components/home/features";
-import Problems from "@/components/home/problems";
 import Companies from "@/components/home/companies";
 import Community from "@/components/home/community";
 import PlatformFeatures from "@/components/home/platform-features";
@@ -47,10 +46,8 @@ export default function Home() {
         {/* Features section removed as requested */}
         
         <div ref={problemsRef}>
-          <Problems />
+          <PlatformFeatures />
         </div>
-        
-        <PlatformFeatures />
         
         <Companies />
         
