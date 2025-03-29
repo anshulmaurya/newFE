@@ -119,129 +119,304 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <div className="code-block rounded-lg p-4 font-mono text-sm sm:text-base shadow-xl border border-gray-700/50 overflow-hidden bg-[rgb(18,18,20)] backdrop-blur-sm">
-              {/* VS Code-like header */}
-              <div className="flex flex-col">
-                {/* Window controls and tabs */}
-                <div className="flex items-center text-xs border-b border-gray-700/50 pb-2">
-                  <div className="flex items-center gap-2 mr-4">
-                    <span className="w-3 h-3 rounded-full bg-red-500"></span>
-                    <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
-                    <span className="w-3 h-3 rounded-full bg-green-500"></span>
-                  </div>
-                  <div className="flex">
-                    <div className="px-3 py-1 bg-[rgb(24,24,26)] rounded-t-md border-b-2 border-[rgb(214,251,65)] text-gray-300 font-medium flex items-center gap-2">
-                      <span className="text-blue-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M16 18l6-6-6-6" />
-                          <path d="M8 6l-6 6 6 6" />
-                        </svg>
-                      </span>
-                      <span>rtos_tasks.c</span>
-                    </div>
-                    <div className="px-3 py-1 text-gray-500 flex items-center">
-                      task_interface.h
-                    </div>
+            <div className="code-block rounded-lg font-mono text-sm sm:text-base shadow-xl overflow-hidden bg-[rgb(18,18,20)] flex flex-col">
+              {/* VS Code-like layout */}
+              <div className="flex flex-col h-full">
+                {/* Top bar with title */}
+                <div className="bg-[rgb(30,30,32)] text-white py-2 px-4 text-xs flex items-center justify-between border-b border-gray-800">
+                  <div className="flex items-center">
+                    <span className="inline-block mr-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M13.8 9.8L11.7 7.7c-.2-.2-.5-.2-.7 0L8.2 9.8c-.2.2-.2.5 0 .7l2.1 2.1c.2.2.5.2.7 0l2.8-2.1c.2-.2.2-.5 0-.7z" />
+                        <path d="M19.8 15.8l-2.1-2.1c-.2-.2-.5-.2-.7 0l-2.8 2.1c-.2.2-.2.5 0 .7l2.1 2.1c.2.2.5.2.7 0l2.8-2.1c.2-.2.2-.5 0-.7z" />
+                        <path d="M9.8 19.8l-2.1-2.1c-.2-.2-.5-.2-.7 0l-2.8 2.1c-.2.2-.2.5 0 .7l2.1 2.1c.2.2.5.2.7 0l2.8-2.1c.2-.2.2-.5 0-.7z" />
+                        <path d="M5.2 5.2L3.1 3.1c-.2-.2-.5-.2-.7 0L.5 5.2c-.2.2-.2.5 0 .7l2.1 2.1c.2.2.5.2.7 0L5.2 5.9c.2-.2.2-.5 0-.7z" />
+                      </svg>
+                    </span>
+                    <span className="font-semibold tracking-wide">EXPLORER</span>
                   </div>
                 </div>
                 
-                {/* Line numbers and code */}
-                <div className="flex mt-2">
-                  {/* Line numbers */}
-                  <div className="pr-4 text-right text-gray-600 select-none border-r border-gray-700/50 mr-3">
-                    <div>1</div>
-                    <div>2</div>
-                    <div>3</div>
-                    <div>4</div>
-                    <div>5</div>
-                    <div>6</div>
-                    <div>7</div>
-                    <div>8</div>
-                    <div>9</div>
-                    <div>10</div>
-                    <div>11</div>
-                    <div>12</div>
-                    <div>13</div>
-                    <div>14</div>
-                    <div>15</div>
-                    <div>16</div>
-                    <div>17</div>
+                {/* Main content with sidebar and editor */}
+                <div className="flex flex-grow">
+                  {/* Left sidebar */}
+                  <div className="bg-[rgb(24,24,26)] border-r border-gray-800 p-1 w-12 flex flex-col items-center py-3 space-y-4">
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18" height="18" viewBox="0 0 24 24" 
+                      fill="none" stroke="currentColor" 
+                      strokeWidth="2" strokeLinecap="round" 
+                      strokeLinejoin="round"
+                      className="text-gray-400"
+                    >
+                      <path d="M9 21H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-1"/>
+                      <path d="M16 17H8"/>
+                      <path d="M12 11v6"/>
+                      <path d="M12 11H9.5a2.5 2.5 0 0 1 0-5H12"/>
+                    </svg>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18" height="18" viewBox="0 0 24 24" 
+                      fill="none" stroke="currentColor" 
+                      strokeWidth="2" strokeLinecap="round" 
+                      strokeLinejoin="round"
+                      className="text-gray-400"
+                    >
+                      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                      <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18" height="18" viewBox="0 0 24 24" 
+                      fill="none" stroke="currentColor" 
+                      strokeWidth="2" strokeLinecap="round" 
+                      strokeLinejoin="round"
+                      className="text-[rgb(214,251,65)]"
+                    >
+                      <circle cx="12" cy="12" r="10"/>
+                      <circle cx="12" cy="12" r="4"/>
+                      <line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/>
+                      <line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/>
+                      <line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/>
+                      <line x1="14.83" y1="9.17" x2="18.36" y2="5.64"/>
+                      <line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/>
+                    </svg>
                   </div>
                   
-                  {/* Code */}
-                  <div className="flex-1 overflow-x-auto">
-                    <div><span className="text-pink-500">#include</span> <span className="text-green-400">&lt;FreeRTOS.h&gt;</span></div>
-                    <div><span className="text-pink-500">#include</span> <span className="text-green-400">&lt;task.h&gt;</span></div>
-                    <div><span className="text-pink-500">#include</span> <span className="text-green-400">&lt;semphr.h&gt;</span></div>
-                    <div></div>
-                    <div><span className="text-gray-400">// Mutex for sensor data access</span></div>
-                    <div><span className="text-blue-500">SemaphoreHandle_t</span> <span className="text-orange-400">sensorMutex</span>;</div>
-                    <div><span className="text-blue-500">SensorData_t</span> <span className="text-orange-400">sharedSensorData</span>;</div>
-                    <div></div>
-                    <div><span className="text-purple-500">void</span> <span className="text-blue-400">SensorTask</span>(<span className="text-purple-500">void</span>* <span className="text-orange-400">pvParameters</span>) {'{'}</div>
-                    <div className="pl-4"><span className="text-blue-500">while</span>(1) {'{'}</div>
-                    <div className="pl-8"><span className="text-gray-400">// Acquire new sensor readings</span></div>
-                    <div className="pl-8"><span className="text-blue-500">SensorData_t</span> <span className="text-orange-400">newData</span> = <span className="text-blue-400">ReadSensors</span>();</div>
-                    <div className="pl-8"></div>
-                    <div className="pl-8"><span className="text-gray-400">// Update shared data with mutex protection</span></div>
-                    <div className="pl-8"><span className="text-pink-500">if</span> (<span className="text-blue-400">xSemaphoreTake</span>(<span className="text-orange-400">sensorMutex</span>, <span className="text-orange-400">portMAX_DELAY</span>)) {'{'}</div>
-                    <div className="pl-12"><span className="text-orange-400">sharedSensorData</span> = <span className="text-orange-400">newData</span>;</div>
-                    <div className="pl-12"><span className="text-blue-400">xSemaphoreGive</span>(<span className="text-orange-400">sensorMutex</span>);</div>
-                    <div className="pl-8">{'}'}</div>
-                    <div className="pl-8"><span className="text-blue-400">vTaskDelay</span>(<span className="text-orange-400">pdMS_TO_TICKS</span>(100));</div>
-                    <div className="pl-4">{'}'}</div>
-                    <div>{'}'}</div>
+                  {/* File explorer */}
+                  <div className="bg-[rgb(24,24,26)] border-r border-gray-800 w-56 pt-3 text-sm text-gray-300">
+                    <div className="px-3 flex items-center justify-between">
+                      <div className="flex items-center font-semibold">
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12" height="12" viewBox="0 0 24 24" 
+                          fill="none" stroke="currentColor" 
+                          strokeWidth="2" strokeLinecap="round" 
+                          strokeLinejoin="round"
+                          className="text-gray-400 mr-1"
+                        >
+                          <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                        <span>REVERSE_LINKED_LIST_C</span>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-3 text-xs">
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400">
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12" height="12" viewBox="0 0 24 24" 
+                          fill="none" stroke="currentColor" 
+                          strokeWidth="2" strokeLinecap="round" 
+                          strokeLinejoin="round"
+                          className="mr-1"
+                        >
+                          <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                        <span>inc</span>
+                      </div>
+                      
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400">
+                        <span className="w-4"></span>
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12" height="12" viewBox="0 0 24 24" 
+                          fill="none" stroke="currentColor" 
+                          strokeWidth="2" strokeLinecap="round" 
+                          strokeLinejoin="round"
+                          className="mr-1"
+                        >
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span>util.h</span>
+                      </div>
+                      
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400">
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12" height="12" viewBox="0 0 24 24" 
+                          fill="none" stroke="currentColor" 
+                          strokeWidth="2" strokeLinecap="round" 
+                          strokeLinejoin="round"
+                          className="mr-1"
+                        >
+                          <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                        <span>lib</span>
+                      </div>
+                      
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400">
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12" height="12" viewBox="0 0 24 24" 
+                          fill="none" stroke="currentColor" 
+                          strokeWidth="2" strokeLinecap="round" 
+                          strokeLinejoin="round"
+                          className="mr-1 text-red-400"
+                        >
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span>libdspcodera</span>
+                      </div>
+                      
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400">
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12" height="12" viewBox="0 0 24 24" 
+                          fill="none" stroke="currentColor" 
+                          strokeWidth="2" strokeLinecap="round" 
+                          strokeLinejoin="round"
+                          className="mr-1"
+                        >
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span>src</span>
+                      </div>
+                      
+                      <div className="py-1 px-3 flex items-center space-x-1 text-[rgb(214,251,65)]">
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12" height="12" viewBox="0 0 24 24" 
+                          fill="none" stroke="currentColor" 
+                          strokeWidth="2" strokeLinecap="round" 
+                          strokeLinejoin="round"
+                          className="mr-1"
+                        >
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                          <line x1="16" y1="13" x2="8" y2="13"/>
+                          <line x1="16" y1="17" x2="8" y2="17"/>
+                          <line x1="10" y1="9" x2="8" y2="9"/>
+                        </svg>
+                        <span>main.c</span>
+                      </div>
+                      
+                      <div className="py-1 px-3 flex items-center space-x-1 bg-[rgb(30,30,32)]">
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12" height="12" viewBox="0 0 24 24" 
+                          fill="none" stroke="currentColor" 
+                          strokeWidth="2" strokeLinecap="round" 
+                          strokeLinejoin="round"
+                          className="mr-1 text-orange-400"
+                        >
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span>Makefile</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              
-              {/* Task visualization */}
-              <div className="mt-5 p-3 bg-[rgb(24,24,26)] rounded-md flex flex-col border border-gray-700">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-white font-medium">Task Execution Visualization</span>
-                  <span className="px-2 py-1 bg-[rgb(214,251,65)]/20 rounded text-[rgb(214,251,65)] text-xs">RTOS Scheduler</span>
+                  
+                  {/* Code editor */}
+                  <div className="flex-1 bg-[rgb(20,20,22)] p-0">
+                    {/* Editor tabs */}
+                    <div className="flex bg-[rgb(24,24,26)] border-b border-gray-800">
+                      <div className="bg-[rgb(20,20,22)] border-r border-gray-800 px-3 py-1 flex items-center text-xs text-gray-300">
+                        <span>main.c</span>
+                        <span className="ml-2 px-1.5 bg-gray-700 rounded-md">×</span>
+                      </div>
+                    </div>
+                    
+                    {/* Code content */}
+                    <div className="flex">
+                      {/* Line numbers */}
+                      <div className="text-right pr-2 pt-2 select-none text-gray-600 text-xs">
+                        <div className="py-px">1</div>
+                        <div className="py-px">2</div>
+                        <div className="py-px">3</div>
+                        <div className="py-px">4</div>
+                        <div className="py-px bg-[rgb(30,30,32)]">5</div>
+                        <div className="py-px">6</div>
+                        <div className="py-px">7</div>
+                        <div className="py-px">8</div>
+                        <div className="py-px">9</div>
+                        <div className="py-px">10</div>
+                        <div className="py-px">11</div>
+                        <div className="py-px">12</div>
+                        <div className="py-px">13</div>
+                        <div className="py-px">14</div>
+                        <div className="py-px">15</div>
+                        <div className="py-px">16</div>
+                        <div className="py-px">17</div>
+                        <div className="py-px">18</div>
+                        <div className="py-px">19</div>
+                      </div>
+                      
+                      {/* Actual code */}
+                      <div className="flex-1 pl-2 pt-2 text-xs overflow-x-auto text-gray-300">
+                        <div className="py-px"><span className="text-purple-500">#include</span> <span className="text-green-400">&lt;stdio.h&gt;</span></div>
+                        <div className="py-px"></div>
+                        <div className="py-px"><span className="text-purple-400">typedef</span> <span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span>);</div>
+                        <div className="py-px"></div>
+                        <div className="py-px bg-[rgb(30,30,32)]"><span className="text-green-500">void</span> <span className="text-blue-400">reverse_Linked_List</span>(<span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span>) {'{'}</div>
+                        <div className="py-px text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// Write your code here</div>
+                        <div className="py-px">{'}'}</div>
+                        <div className="py-px"></div>
+                        <div className="py-px"><span className="text-green-500">int</span> <span className="text-blue-400">main</span>(<span className="text-green-500">int</span> <span className="text-yellow-300">argc</span>, <span className="text-green-500">char</span>* <span className="text-yellow-300">argv</span>[]) {'{'}</div>
+                        <div className="py-px text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// Setup the linked list</div>
+                        <div className="py-px">&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span> = <span className="text-blue-400">setup_question</span>(<span className="text-yellow-300">argc</span>, <span className="text-yellow-300">argv</span>);</div>
+                        <div className="py-px"></div>
+                        <div className="py-px text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// User function to reverse the linked list</div>
+                        <div className="py-px">&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">reverse_Linked_List</span>(<span className="text-yellow-300">head</span>);</div>
+                        <div className="py-px"></div>
+                        <div className="py-px text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// Print the linked list</div>
+                        <div className="py-px">&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">print_LinkedList</span>(<span className="text-yellow-300">head</span>);</div>
+                        <div className="py-px"></div>
+                        <div className="py-px">&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-500">return</span> 0;</div>
+                        <div className="py-px">{'}'}</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
-                {/* Task scheduling visualization */}
-                <div className="h-16 bg-[rgb(18,18,20)] rounded-md relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-full flex flex-col">
-                    <div className="h-1/3 border-b border-gray-800 flex">
-                      <div className="bg-[rgb(214,251,65)]/40 h-full w-[20%]"></div>
-                      <div className="bg-transparent h-full w-[10%]"></div>
-                      <div className="bg-[rgb(214,251,65)]/40 h-full w-[30%]"></div>
-                      <div className="bg-transparent h-full w-[15%]"></div>
-                      <div className="bg-[rgb(214,251,65)]/40 h-full w-[25%] animate-pulse"></div>
+                {/* Footer - test cases */}
+                <div className="bg-[rgb(30,30,32)] text-white border-t border-gray-800 p-2 text-xs">
+                  <div className="flex justify-between items-center">
+                    <div className="flex space-x-3">
+                      <div className="flex items-center">
+                        <span className="bg-[rgb(20,20,22)] text-[rgb(214,251,65)] px-2 py-1 rounded flex items-center">
+                          <svg 
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="12" height="12" viewBox="0 0 24 24" 
+                            fill="none" stroke="currentColor" 
+                            strokeWidth="2" strokeLinecap="round" 
+                            strokeLinejoin="round"
+                            className="mr-1"
+                          >
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                          </svg>
+                          Test Cases
+                        </span>
+                      </div>
+                      <div className="px-2 py-1 text-gray-400">Test Results</div>
                     </div>
-                    <div className="h-1/3 border-b border-gray-800 flex">
-                      <div className="bg-transparent h-full w-[15%]"></div>
-                      <div className="bg-blue-500/40 h-full w-[25%]"></div>
-                      <div className="bg-transparent h-full w-[20%]"></div>
-                      <div className="bg-blue-500/40 h-full w-[30%]"></div>
-                      <div className="bg-transparent h-full w-[10%] animate-pulse"></div>
-                    </div>
-                    <div className="h-1/3 flex">
-                      <div className="bg-transparent h-full w-[5%]"></div>
-                      <div className="bg-green-500/40 h-full w-[15%]"></div>
-                      <div className="bg-transparent h-full w-[10%]"></div>
-                      <div className="bg-green-500/40 h-full w-[20%]"></div>
-                      <div className="bg-transparent h-full w-[10%]"></div>
-                      <div className="bg-green-500/40 h-full w-[40%] animate-pulse"></div>
+                    
+                    <div className="flex items-center bg-[rgb(20,20,22)] px-2 py-0.5 rounded">
+                      <span>js.run</span>
                     </div>
                   </div>
-                </div>
-                
-                <div className="flex justify-between text-xs mt-2">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-[rgb(214,251,65)]/60 rounded-sm"></div>
-                    <span className="text-gray-300">Sensor Task</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-blue-500/60 rounded-sm"></div>
-                    <span className="text-gray-300">Processing Task</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-green-500/60 rounded-sm"></div>
-                    <span className="text-gray-300">Output Task</span>
+                  
+                  <div className="mt-2">
+                    <div className="font-medium mb-1">Test Cases</div>
+                    <div className="flex space-x-2">
+                      <div className="px-3 py-1 bg-[rgb(20,20,22)] rounded">Case 1</div>
+                      <div className="px-3 py-1 bg-[rgb(20,20,22)] rounded">Case 2</div>
+                      <div className="px-3 py-1 bg-[rgb(20,20,22)] rounded">Case 3</div>
+                      <div className="px-2 py-1 bg-[rgb(60,60,200)] rounded">+</div>
+                    </div>
+                    
+                    <div className="mt-2">
+                      <div className="text-gray-400 mb-1">Input:</div>
+                      <div className="bg-[rgb(20,20,22)] p-2 rounded">
+                        <div>5</div>
+                        <div>1 2 3 4 5</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
