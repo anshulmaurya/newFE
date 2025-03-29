@@ -11,7 +11,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
       <div className="absolute top-1/4 right-0 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-2 relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-4 max-w-[1400px] mx-auto">
           {/* Left side: Title, Subheading, Buttons */}
           <motion.div 
@@ -21,8 +21,8 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
             transition={{ duration: 0.6 }}
           >
             <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight flex flex-col items-start">
-              <span className="gradient-text mb-1">Learning</span>
-              <span className="gradient-text mb-2">Embedded Systems</span>
+              <span className="gradient-text mb-1 block">Learning</span>
+              <span className="gradient-text mb-2 block">Embedded Systems</span>
               <motion.div 
                 className="relative"
                 initial={{ opacity: 0, y: 10 }}

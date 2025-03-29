@@ -12,9 +12,19 @@
     background-color: rgb(24, 24, 26);
     padding-top: 68px; /* Height of the header */
   }
+  
+  .container {
+    @apply px-2 sm:px-3 lg:px-4;
+    max-width: 1600px;
+  }
 }
 
 @layer utilities {
+  .gradient-text {
+    @apply text-[rgb(214,251,65)] font-bold;
+    text-shadow: 0 0 8px rgba(214, 251, 65, 0.3);
+  }
+  
   .nav-indicator {
     @apply block h-0.5 w-0 bg-[rgb(214,251,65)] transition-all duration-300;
   }
