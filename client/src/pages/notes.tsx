@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { ArrowLeft, Book, Terminal, Cpu, MessageSquare, Search, Github, ExternalLink } from "lucide-react";
-import { Link } from "wouter";
+import { useState, useEffect } from "react";
+import { Menu, X, Search, Moon, Sun, ChevronDown } from "lucide-react";
+import { Link, useLocation } from "wouter";
 
 const notesTopics = [
   { id: "getting-started", label: "Getting Started" },
@@ -20,46 +20,211 @@ const notesTopics = [
 export default function Notes() {
   const [selectedTopic, setSelectedTopic] = useState("communication-protocols");
   const [searchQuery, setSearchQuery] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+  const [, setLocation] = useLocation();
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  // Add scroll listener for header background opacity
+  useEffect(() => {
+    const updatePosition = () => {
+      setScrollPosition(window.scrollY);
+    };
+    
+    window.addEventListener("scroll", updatePosition);
+    updatePosition();
+    
+    return () => window.removeEventListener("scroll", updatePosition);
+  }, []);
+
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const handleNavClick = (callback: () => void) => {
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
+    callback();
+  };
+
+  const headerBackground = scrollPosition > 10
+    ? "bg-[rgb(24,24,26)]" 
+    : "bg-[rgb(24,24,26)]/90 backdrop-blur-sm";
+
+  // Determine theme classes
+  const themeClasses = darkMode 
+    ? {
+        bg: "bg-[rgb(24,24,26)]",
+        text: "text-gray-300",
+        textDark: "text-gray-500",
+        sidebarBg: "bg-[rgb(36,36,38)]",
+        borderColor: "border-gray-700",
+        highlight: "bg-[rgb(214,251,65)]/20",
+        codeBlock: "bg-gray-900 text-gray-100",
+        infoBlock: "bg-[rgb(40,50,70)] border-[rgb(60,130,210)]",
+        infoText: "text-blue-300",
+        infoTextDark: "text-blue-400",
+        card: "bg-[rgb(36,36,38)] border-gray-700 hover:bg-[rgb(45,45,47)]"
+      }
+    : {
+        bg: "bg-white",
+        text: "text-gray-700",
+        textDark: "text-gray-500",
+        sidebarBg: "bg-gray-100",
+        borderColor: "border-gray-200",
+        highlight: "bg-[rgb(214,251,65)]/20",
+        codeBlock: "bg-gray-900 text-gray-100",
+        infoBlock: "bg-blue-50 border-blue-400",
+        infoText: "text-blue-700",
+        infoTextDark: "text-blue-800",
+        card: "bg-gray-50 border-gray-200 hover:bg-gray-100"
+      };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      {/* Top navigation bar */}
-      <div className="bg-[rgb(24,24,26)] text-white py-4 px-6 flex items-center justify-between shadow-md">
-        <div className="flex items-center gap-3">
-          <Link to="/">
-            <button className="flex items-center gap-2 text-sm hover:text-[rgb(214,251,65)] transition-colors">
-              <ArrowLeft size={18} />
-              Back to dspcoder
-            </button>
-          </Link>
-          <div className="h-5 border-l border-gray-500 mx-2"></div>
-          <div className="flex items-center gap-1.5">
-            <Cpu size={16} className="text-[rgb(214,251,65)]" />
-            <span className="font-semibold text-sm">Embedded Systems Documentation</span>
+    <div className={`flex flex-col min-h-screen ${themeClasses.bg} ${themeClasses.text} transition-colors duration-200`}>
+      {/* Header */}
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${headerBackground} shadow-md`}>
+        <div className="container mx-auto px-4 py-1.5 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div onClick={() => setLocation('/')} className="cursor-pointer">
+              <div className="flex items-center">
+                <div className="h-7 w-7 flex items-center justify-center">
+                  <svg version="1.1" viewBox="0.0 0.0 100.0 100.0" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" width="28" height="28">
+                    <clipPath id="p.0">
+                      <path d="m0 0l100.0 0l0 100.0l-100.0 0l0 -100.0z" clipRule="nonzero"/>
+                    </clipPath>
+                    <g clipPath="url(#p.0)">
+                      <path fill="#000000" fillOpacity="0.0" d="m0 0l100.0 0l0 100.0l-100.0 0z" fillRule="evenodd"/>
+                      <path fill="#000000" fillOpacity="0.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
+                      <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" strokeDasharray="8.0,3.0,1.0,3.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
+                      <path fill="#000000" fillOpacity="0.0" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
+                      <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
+                    </g>
+                  </svg>
+                </div>
+                <h1 className="font-display font-bold text-base tracking-tight">
+                  <span className="text-white">dsp</span><span className="text-[rgb(214,251,65)]">coder.com</span>
+                </h1>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <a 
-            href="https://github.com/dspcoder/embedded-docs" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-sm flex items-center gap-1.5 hover:text-[rgb(214,251,65)] transition-colors"
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-3">
+            <div onClick={() => setLocation('/')}>
+              <div className="nav-link group px-2 py-1 font-medium text-sm text-gray-300 hover:text-white transition-colors cursor-pointer">
+                Home
+              </div>
+            </div>
+            <div onClick={() => setLocation('/notes')}>
+              <div className="nav-link group px-2 py-1 font-medium text-sm text-[rgb(214,251,65)] transition-colors cursor-pointer">
+                Notes
+              </div>
+            </div>
+            <div onClick={() => setLocation('/#problems')}>
+              <div className="nav-link group px-2 py-1 font-medium text-sm text-gray-300 hover:text-white transition-colors cursor-pointer">
+                Problems
+              </div>
+            </div>
+            
+            {/* Theme toggle */}
+            <button 
+              onClick={toggleTheme}
+              className="ml-2 p-1.5 rounded-md text-gray-300 hover:text-white hover:bg-[rgb(36,36,38)] transition-colors"
+              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+            
+            <a 
+              href="#" 
+              className="ml-2 px-3 py-1 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-xs text-black font-bold transition-all inline-flex items-center gap-1 shadow-[0_0_10px_rgba(214,251,65,0.4)] hover:shadow-[0_0_15px_rgba(214,251,65,0.6)] border border-[rgb(224,255,75)]"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="12" 
+                height="12" 
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              Login
+            </a>
+          </nav>
+          
+          <button 
+            className="md:hidden text-gray-300 focus:outline-none" 
+            onClick={toggleMobileMenu}
+            aria-label="Toggle mobile menu"
           >
-            <Github size={16} />
-            Edit on GitHub
-          </a>
+            {mobileMenuOpen ? <X className="text-xl" /> : <Menu className="text-xl" />}
+          </button>
         </div>
-      </div>
+        
+        {/* Mobile Menu */}
+        <div className={`md:hidden absolute w-full z-20 py-3 px-4 ${mobileMenuOpen ? 'block' : 'hidden'} bg-[rgb(24,24,26)]`}>
+          <nav className="flex flex-col space-y-3">
+            <div onClick={() => { setLocation('/'); setMobileMenuOpen(false); }}>
+              <div className="text-gray-300 hover:text-white py-1.5 border-b border-gray-700/30 text-sm cursor-pointer">
+                Home
+              </div>
+            </div>
+            <div onClick={() => { setLocation('/notes'); setMobileMenuOpen(false); }}>
+              <div className="text-[rgb(214,251,65)] py-1.5 border-b border-gray-700/30 text-sm font-medium cursor-pointer">
+                Notes
+              </div>
+            </div>
+            <div onClick={() => { setLocation('/#problems'); setMobileMenuOpen(false); }}>
+              <div className="text-gray-300 hover:text-white py-1.5 border-b border-gray-700/30 text-sm cursor-pointer">
+                Problems
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between py-1.5 border-b border-gray-700/30">
+              <span className="text-sm text-gray-400">Theme</span>
+              <button 
+                onClick={toggleTheme}
+                className="p-1 rounded-md text-gray-300 hover:text-white hover:bg-[rgb(36,36,38)] transition-colors"
+              >
+                {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+              </button>
+            </div>
+            
+            <a 
+              href="#"
+              className="text-black py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[rgb(214,251,65)] shadow-[0_0_10px_rgba(214,251,65,0.4)] border border-[rgb(224,255,75)] text-sm"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="ml-2"
+              >
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              <span className="ml-1 mr-2">Login with GitHub</span>
+            </a>
+          </nav>
+        </div>
+      </header>
 
-      <div className="flex flex-grow">
+      <div className="flex flex-grow pt-14">
         {/* Sidebar */}
-        <div className="w-64 bg-gray-100 p-4 flex flex-col border-r border-gray-200">
+        <div className={`w-64 ${themeClasses.sidebarBg} p-4 flex flex-col border-r ${themeClasses.borderColor}`}>
           <div className="relative mb-4">
             <Search size={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Search docs..."
-              className="w-full pl-8 pr-3 py-2 rounded-md border border-gray-300 text-sm"
+              className={`w-full pl-8 pr-3 py-2 rounded-md border ${themeClasses.borderColor} text-sm ${darkMode ? 'bg-[rgb(36,36,38)] text-gray-200' : 'bg-white text-gray-800'}`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -67,7 +232,7 @@ export default function Notes() {
 
           <div className="space-y-6">
             <div>
-              <div className="font-medium text-gray-700 mb-2 text-sm">Documentation</div>
+              <div className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2 text-sm`}>Documentation</div>
               <nav className="space-y-1">
                 {notesTopics.map(topic => (
                   <button
@@ -75,8 +240,8 @@ export default function Notes() {
                     onClick={() => setSelectedTopic(topic.id)}
                     className={`block w-full text-left px-3 py-2 rounded text-sm ${
                       selectedTopic === topic.id 
-                        ? "bg-[rgb(214,251,65)]/20 text-gray-800 font-medium border-l-2 border-[rgb(214,251,65)]" 
-                        : "text-gray-600 hover:bg-gray-200"
+                        ? `${themeClasses.highlight} ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-gray-800'} font-medium border-l-2 border-[rgb(214,251,65)]` 
+                        : `${darkMode ? 'text-gray-300 hover:bg-[rgb(40,40,42)]' : 'text-gray-600 hover:bg-gray-200'}`
                     }`}
                   >
                     {topic.label}
@@ -95,11 +260,11 @@ export default function Notes() {
                 <div className="flex items-center mb-2 text-gray-500 text-sm">
                   <span>Docs</span>
                   <span className="mx-2">›</span>
-                  <span className="text-gray-800">Communication Protocols</span>
+                  <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Communication Protocols</span>
                 </div>
-                <h1 className="text-3xl font-bold text-gray-800 mb-6">Communication Protocols</h1>
+                <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-6`}>Communication Protocols</h1>
 
-                <div className="prose prose-slate max-w-none">
+                <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
                   <p className="lead">
                     Communication protocols are standardized methods that allow different devices to exchange data in embedded systems. 
                     Understanding these protocols is essential for building reliable interconnected systems.
@@ -111,8 +276,8 @@ export default function Notes() {
                     It's asynchronous, meaning there's no shared clock signal between devices.
                   </p>
 
-                  <div className="bg-gray-50 p-4 border border-gray-200 rounded-md my-6">
-                    <h3 className="font-semibold text-gray-700 mb-2">Key Characteristics:</h3>
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
+                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Key Characteristics:</h3>
                     <ul className="list-disc pl-5 space-y-1">
                       <li>Asynchronous communication (no clock signal)</li>
                       <li>Full-duplex communication (simultaneous transmission and reception)</li>
@@ -122,16 +287,16 @@ export default function Notes() {
                     </ul>
                   </div>
 
-                  <div className="bg-blue-50 p-5 border-l-4 border-blue-400 rounded-r my-6">
+                  <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
                     <div className="flex">
                       <div className="flex-shrink-0">
-                        <svg className="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <svg className={`h-5 w-5 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
                         </svg>
                       </div>
                       <div className="ml-3">
-                        <h3 className="text-sm font-medium text-blue-800">Note</h3>
-                        <div className="text-sm text-blue-700">
+                        <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>Note</h3>
+                        <div className={`text-sm ${themeClasses.infoText}`}>
                           <p>UART is often used for debugging purposes, connecting to a PC via USB-to-UART converters, and for simple device-to-device communication where speed is not critical.</p>
                         </div>
                       </div>
@@ -139,7 +304,7 @@ export default function Notes() {
                   </div>
 
                   <h3>UART Code Example</h3>
-                  <pre className="bg-gray-900 text-gray-100 p-4 rounded-md overflow-x-auto">
+                  <pre className={`${themeClasses.codeBlock} p-4 rounded-md overflow-x-auto`}>
                     <code className="language-c">
 {`// UART initialization for STM32
 void UART_Init(void) {
@@ -178,8 +343,8 @@ void UART_SendString(const char* str) {
                     SCL (Serial Clock Line) and SDA (Serial Data Line).
                   </p>
 
-                  <div className="bg-gray-50 p-4 border border-gray-200 rounded-md my-6">
-                    <h3 className="font-semibold text-gray-700 mb-2">Key Characteristics:</h3>
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
+                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Key Characteristics:</h3>
                     <ul className="list-disc pl-5 space-y-1">
                       <li>Synchronous communication (uses clock signal)</li>
                       <li>Uses 2 wires: SCL (clock) and SDA (data)</li>
@@ -196,8 +361,8 @@ void UART_SendString(const char* str) {
                     It uses a master-slave architecture with separate lines for data and clock signals.
                   </p>
 
-                  <div className="bg-gray-50 p-4 border border-gray-200 rounded-md my-6">
-                    <h3 className="font-semibold text-gray-700 mb-2">Key Characteristics:</h3>
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
+                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Key Characteristics:</h3>
                     <ul className="list-disc pl-5 space-y-1">
                       <li>Synchronous communication (uses clock signal)</li>
                       <li>Uses 4 wires: SCLK (clock), MOSI (Master Out, Slave In), MISO (Master In, Slave Out), SS/CS (Slave Select/Chip Select)</li>
@@ -215,8 +380,8 @@ void UART_SendString(const char* str) {
                     It's widely used in automotive and industrial applications.
                   </p>
 
-                  <div className="bg-gray-50 p-4 border border-gray-200 rounded-md my-6">
-                    <h3 className="font-semibold text-gray-700 mb-2">Key Characteristics:</h3>
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
+                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Key Characteristics:</h3>
                     <ul className="list-disc pl-5 space-y-1">
                       <li>Multi-master serial bus with message-based protocol</li>
                       <li>Uses two wires: CAN_H and CAN_L</li>
@@ -232,22 +397,26 @@ void UART_SendString(const char* str) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <a 
                       href="#" 
-                      className="flex items-start p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+                      className={`flex items-start p-4 ${themeClasses.card} rounded-lg border transition-colors`}
                     >
-                      <Book className="mr-3 text-[rgb(24,24,26)]" size={20} />
+                      <svg className={`mr-3 ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
                       <div>
-                        <h3 className="font-medium text-gray-900">Serial Communication Guide</h3>
-                        <p className="text-sm text-gray-500">Comprehensive guide on implementing various serial protocols</p>
+                        <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>Serial Communication Guide</h3>
+                        <p className={`text-sm ${themeClasses.textDark}`}>Comprehensive guide on implementing various serial protocols</p>
                       </div>
                     </a>
                     <a 
                       href="#" 
-                      className="flex items-start p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+                      className={`flex items-start p-4 ${themeClasses.card} rounded-lg border transition-colors`}
                     >
-                      <Terminal className="mr-3 text-[rgb(24,24,26)]" size={20} />
+                      <svg className={`mr-3 ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
                       <div>
-                        <h3 className="font-medium text-gray-900">Code Examples Repository</h3>
-                        <p className="text-sm text-gray-500">Collection of protocol implementation examples</p>
+                        <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>Code Examples Repository</h3>
+                        <p className={`text-sm ${themeClasses.textDark}`}>Collection of protocol implementation examples</p>
                       </div>
                     </a>
                   </div>
