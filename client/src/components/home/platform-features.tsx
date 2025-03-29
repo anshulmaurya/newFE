@@ -19,48 +19,159 @@ export default function PlatformFeatures() {
       id: 1,
       icon: <Code className="w-4 h-4" />,
       emoji: "1️⃣",
-      title: "Code Directly in VS Code",
+      title: "VS Code Integration",
       description: "Write, compile, and test your embedded code seamlessly within VS Code. No setup hassles—just code and focus on problem-solving.",
       previewImage: (
-        <div className="h-full w-full bg-[rgb(18,18,20)] rounded-lg shadow-lg border border-[rgb(30,30,32)]">
-          <div className="flex space-x-2 p-3 border-b border-[rgb(30,30,32)]">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
-          </div>
-          <div className="flex h-[350px]">
-            <div className="w-14 bg-[rgb(24,24,26)] flex flex-col items-center py-4 space-y-4 border-r border-[rgb(30,30,32)]">
-              <div className="w-6 h-6 rounded bg-[rgb(30,30,32)]"></div>
-              <div className="w-6 h-6 rounded bg-[rgb(30,30,32)]"></div>
-              <div className="w-6 h-6 rounded bg-[rgb(214,251,65)]/20"></div>
-              <div className="w-6 h-6 rounded bg-[rgb(30,30,32)]"></div>
-              <div className="w-6 h-6 rounded bg-[rgb(30,30,32)]"></div>
+        <div className="h-full w-full bg-[rgb(18,18,20)] rounded-lg shadow-lg border border-[rgb(30,30,32)] overflow-hidden">
+          {/* VS Code inspired header with title bar */}
+          <div className="bg-[#1e1e1e] border-b border-[#2d2d2d] p-1 flex items-center">
+            <div className="flex items-center gap-2 px-2">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
             </div>
-            <div className="flex-1 bg-[rgb(24,24,26)] p-4 text-xs font-mono">
-              <div className="mb-1 text-green-400">#include &lt;stdint.h&gt;</div>
-              <div className="mb-1 text-green-400">#include "FreeRTOS.h"</div>
-              <div className="mb-1 text-green-400">#include "task.h"</div>
-              <div className="mb-1 text-green-400">#include "queue.h"</div>
-              <div className="mb-3"></div>
-              <div className="mb-1"><span className="text-purple-400">static QueueHandle_t</span> <span className="text-blue-400">dataQueue</span>;</div>
-              <div className="mb-1"><span className="text-purple-400">static TaskHandle_t</span> <span className="text-blue-400">sensorTaskHandle</span>;</div>
-              <div className="mb-3"></div>
-              <div className="mb-1"><span className="text-purple-400">void</span> <span className="text-blue-400">sensorTask</span>(<span className="text-purple-400">void*</span> <span className="text-orange-400">pvParameters</span>) {'{'}</div>
-              <div className="mb-1 pl-4"><span className="text-purple-400">sensor_data_t</span> <span className="text-blue-400">data</span>;</div>
-              <div className="mb-1 pl-4"></div>
-              <div className="mb-1 pl-4"><span className="text-purple-400">while</span> (<span className="text-blue-400">1</span>) {'{'}</div>
-              <div className="mb-1 pl-8"><span className="text-gray-400">// Read from sensor and prepare data</span></div>
-              <div className="mb-1 pl-8"><span className="text-blue-400">readSensorData</span>(&<span className="text-blue-400">data</span>);</div>
-              <div className="mb-1 pl-8"></div>
-              <div className="mb-1 pl-8"><span className="text-gray-400">// Send data to processing task</span></div>
-              <div className="mb-1 pl-8"><span className="text-blue-400">xQueueSend</span>(<span className="text-blue-400">dataQueue</span>, &<span className="text-blue-400">data</span>, <span className="text-blue-400">pdMS_TO_TICKS</span>(<span className="text-yellow-400">100</span>));</div>
-              <div className="mb-1 pl-8"></div>
-              <div className="mb-1 pl-8"><span className="text-gray-400">// Wait before next reading</span></div>
-              <div className="mb-1 pl-8"><span className="text-blue-400">vTaskDelay</span>(<span className="text-blue-400">pdMS_TO_TICKS</span>(<span className="text-yellow-400">500</span>));</div>
-              <div className="mb-1 pl-4">{'}'}  <span className="text-gray-400">// end while</span></div>
-              <div className="mb-1">{'}'} <span className="text-gray-400">// end sensorTask</span></div>
-              <div className="relative">
-                <div className="absolute h-5 w-2 bg-[rgb(214,251,65)]/70 animate-pulse"></div>
+            <div className="flex-1 text-center text-sm text-gray-400">DSPCoder - Embedded Problem: Implement a PWM Generator</div>
+          </div>
+          
+          {/* VS Code inspired menu bar */}
+          <div className="bg-[#252526] border-b border-[#2d2d2d] p-1 flex items-center text-xs text-gray-400">
+            <div className="px-3 py-1 hover:bg-[#3c3c3c] cursor-pointer">File</div>
+            <div className="px-3 py-1 hover:bg-[#3c3c3c] cursor-pointer">Edit</div>
+            <div className="px-3 py-1 hover:bg-[#3c3c3c] cursor-pointer">View</div>
+            <div className="px-3 py-1 hover:bg-[#3c3c3c] cursor-pointer">Run</div>
+            <div className="px-3 py-1 hover:bg-[#3c3c3c] cursor-pointer">Terminal</div>
+            <div className="px-3 py-1 hover:bg-[#3c3c3c] cursor-pointer">Help</div>
+            <div className="ml-auto flex items-center gap-3">
+              <button className="px-3 py-1 rounded-md bg-[rgb(24,24,26)] hover:bg-[rgb(18,18,20)] text-gray-300 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>Hint</span>
+              </button>
+              <button className="px-3 py-1 rounded-md bg-[rgb(24,24,26)] hover:bg-[rgb(18,18,20)] text-gray-300 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M23 4v6h-6"></path>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                <span>Reset</span>
+              </button>
+              <button className="px-3 py-1 rounded-md bg-[rgb(214,251,65)] hover:bg-[rgb(214,251,65)]/90 text-[rgb(18,18,20)] font-medium flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span>Run</span>
+              </button>
+            </div>
+          </div>
+          
+          {/* IDE layout */}
+          <div className="flex flex-col md:flex-row">
+            {/* VS Code sidebar with explorer */}
+            <div className="w-12 bg-[#252526] border-r border-[#3d3d3d] flex flex-col items-center py-2 space-y-4">
+              <div className="p-1 border-l-2 border-[rgb(214,251,65)] bg-[#37373d]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-300">
+                  <path d="M3 6h18"></path>
+                  <path d="M6 12h18"></path>
+                  <path d="M9 18h18"></path>
+                </svg>
+              </div>
+              <div className="p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500 hover:text-gray-300">
+                  <path d="M11 18c0 1.1-.9 2-2 2a2 2 0 0 1-2-2c0-1.1.9-2 2-2s2 .9 2 2Z"></path>
+                  <path d="M22 18c0 1.1-.9 2-2 2a2 2 0 0 1-2-2c0-1.1.9-2 2-2s2 .9 2 2Z"></path>
+                  <path d="M6 12V2h12v10"></path>
+                  <path d="M17 12H7"></path>
+                  <path d="M9 18v-6"></path>
+                  <path d="M20 18v-6"></path>
+                </svg>
+              </div>
+              <div className="p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500 hover:text-gray-300">
+                  <path d="m18 16 4-4-4-4"></path>
+                  <path d="m6 8-4 4 4 4"></path>
+                  <path d="m14.5 4-5 16"></path>
+                </svg>
+              </div>
+            </div>
+        
+            {/* Main editor area */}
+            <div className="flex-1 flex flex-col">
+              {/* VS Code file tabs */}
+              <div className="border-b border-[#3d3d3d] flex">
+                <div className="px-4 py-2 border-r border-[#3d3d3d] text-sm flex items-center gap-2 cursor-pointer bg-[#1e1e1e] text-white">
+                  <div className="w-2 h-2 rounded-full bg-[rgb(214,251,65)]"></div>
+                  pwm.c
+                </div>
+                <div className="px-4 py-2 border-r border-[#3d3d3d] text-sm flex items-center gap-2 cursor-pointer bg-[#252526] text-gray-400">
+                  <div className="w-2 h-2 rounded-full bg-slate-500"></div>
+                  timer.h
+                </div>
+                <div className="px-4 py-2 border-r border-[#3d3d3d] text-sm flex items-center gap-2 cursor-pointer bg-[#252526] text-gray-400">
+                  <div className="w-2 h-2 rounded-full bg-slate-500"></div>
+                  gpio.h
+                </div>
+              </div>
+              
+              {/* VS Code editor area with line numbers */}
+              <div className="flex flex-1 overflow-auto">
+                {/* Line numbers */}
+                <div className="px-2 py-4 text-right bg-[#1e1e1e] text-gray-600 font-mono text-xs select-none">
+                  {Array.from({ length: 19 }).map((_, i) => (
+                    <div key={i} className="h-6">{i + 1}</div>
+                  ))}
+                </div>
+                
+                {/* Code content */}
+                <div className="font-mono text-sm flex-1 bg-[#1e1e1e] overflow-y-auto p-4 text-xs">
+                  <div><span className="text-slate-400">// PWM Generator Implementation</span></div>
+                  <div><span className="text-slate-400">// TODO: Complete the code below</span></div>
+                  <div></div>
+                  <div><span className="text-primary">#include</span><span className="text-white"> "timer.h"</span></div>
+                  <div><span className="text-primary">#include</span><span className="text-white"> "gpio.h"</span></div>
+                  <div></div>
+                  <div>
+                    <span className="text-primary">void</span>
+                    <span className="text-blue-400"> pwm_init</span>
+                    <span className="text-white">(uint8_t channel, uint32_t frequency) {'{'}</span>
+                  </div>
+                  <div><span className="text-slate-400 pl-2">// Initialize the timer peripheral</span></div>
+                  <div><span className="text-white pl-2">timer_init(channel, frequency);</span></div>
+                  <div></div>
+                  <div><span className="text-slate-400 pl-2">// Configure GPIO pin as output</span></div>
+                  <div><span className="text-white pl-2">gpio_set_mode(PWM_PORT, PWM_PIN, GPIO_MODE_OUTPUT);</span></div>
+                  <div></div>
+                  <div><span className="text-slate-400 pl-2">// TODO: Configure timer for PWM mode</span></div>
+                  <div></div>
+                  <div><span className="text-white">{'}'}</span></div>
+                  <div></div>
+                  <div>
+                    <span className="text-primary">void</span>
+                    <span className="text-blue-400"> pwm_set_duty_cycle</span>
+                    <span className="text-white">(uint8_t channel, uint8_t duty_cycle) {'{'}</span>
+                  </div>
+                  <div><span className="text-slate-400 pl-2">// TODO: Set the PWM duty cycle (0-100%)</span></div>
+                  <div><span className="text-slate-400 pl-2">// Hint: Calculate the compare value based on the duty cycle</span></div>
+                  <div className="relative">
+                    <div className="absolute h-5 w-2 bg-[rgb(214,251,65)]/70 animate-pulse"></div>
+                  </div>
+                </div>
+                
+                {/* Minimap */}
+                <div className="w-[30px] bg-[#252526] opacity-70" aria-hidden="true"></div>
+              </div>
+              
+              {/* VS Code status bar */}
+              <div className="bg-[#007acc] h-6 flex items-center text-xs text-white px-2 justify-between">
+                <div className="flex items-center gap-3">
+                  <span>PWM Generator</span>
+                  <span>C/C++</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span>Line 18, Col 2</span>
+                  <span>UTF-8</span>
+                </div>
               </div>
             </div>
           </div>
