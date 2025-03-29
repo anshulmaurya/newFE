@@ -2,19 +2,108 @@ import { useState, useEffect } from "react";
 import { Menu, X, Search, Moon, Sun, ChevronDown } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
+// Define topic sections and their subsections
 const notesTopics = [
-  { id: "getting-started", label: "Getting Started" },
-  { id: "communication-protocols", label: "Communication Protocols" },
-  { id: "memory-management", label: "Memory Management" },
-  { id: "rtos-fundamentals", label: "RTOS Fundamentals" },
-  { id: "interrupt-handling", label: "Interrupt Handling" },
-  { id: "driver-development", label: "Driver Development" },
-  { id: "peripherals", label: "Peripherals & Interfaces" },
-  { id: "debugging-techniques", label: "Debugging Techniques" },
-  { id: "optimization", label: "Optimization Strategies" },
-  { id: "firmware-design", label: "Firmware Design Patterns" },
-  { id: "code-examples", label: "Code Examples" },
-  { id: "faq", label: "Frequently Asked Questions" },
+  { 
+    id: "getting-started", 
+    label: "Getting Started",
+    subsections: [
+      { id: "setup-environment", label: "Setup Environment" },
+      { id: "toolchains", label: "Toolchains" },
+      { id: "hello-world", label: "Hello World" }
+    ]
+  },
+  { 
+    id: "communication-protocols", 
+    label: "Communication Protocols",
+    subsections: [
+      { id: "uart", label: "UART" },
+      { id: "i2c", label: "I²C" },
+      { id: "spi", label: "SPI" },
+      { id: "can", label: "CAN" }
+    ]
+  },
+  { 
+    id: "memory-management", 
+    label: "Memory Management",
+    subsections: [
+      { id: "memory-types", label: "Memory Types" },
+      { id: "allocation-techniques", label: "Allocation Techniques" },
+      { id: "fragmentation", label: "Fragmentation" }
+    ]
+  },
+  { 
+    id: "rtos-fundamentals", 
+    label: "RTOS Fundamentals",
+    subsections: [
+      { id: "tasks", label: "Tasks & Scheduling" },
+      { id: "semaphores", label: "Semaphores" },
+      { id: "mutexes", label: "Mutexes" }
+    ]
+  },
+  { 
+    id: "interrupt-handling", 
+    label: "Interrupt Handling",
+    subsections: [
+      { id: "isr", label: "ISR Structure" },
+      { id: "priority", label: "Priority & Nesting" },
+      { id: "latency", label: "Latency & Performance" }
+    ]
+  },
+  { 
+    id: "driver-development", 
+    label: "Driver Development",
+    subsections: [
+      { id: "driver-models", label: "Driver Models" },
+      { id: "hardware-abstraction", label: "Hardware Abstraction" }
+    ]
+  },
+  { 
+    id: "peripherals", 
+    label: "Peripherals & Interfaces",
+    subsections: [
+      { id: "gpio", label: "GPIO" },
+      { id: "adc-dac", label: "ADC/DAC" },
+      { id: "timers", label: "Timers" }
+    ]
+  },
+  { 
+    id: "debugging-techniques", 
+    label: "Debugging Techniques",
+    subsections: [
+      { id: "jtag", label: "JTAG & SWD" },
+      { id: "logging", label: "Logging Strategies" }
+    ]
+  },
+  { 
+    id: "optimization", 
+    label: "Optimization Strategies",
+    subsections: [
+      { id: "code-optimization", label: "Code Optimization" },
+      { id: "power-optimization", label: "Power Optimization" }
+    ]
+  },
+  { 
+    id: "firmware-design", 
+    label: "Firmware Design Patterns",
+    subsections: [
+      { id: "state-machines", label: "State Machines" },
+      { id: "event-driven", label: "Event-Driven Design" }
+    ]
+  },
+  { 
+    id: "code-examples", 
+    label: "Code Examples",
+    subsections: [
+      { id: "c-examples", label: "C Examples" },
+      { id: "cpp-examples", label: "C++ Examples" }
+    ]
+  },
+  { 
+    id: "faq", 
+    label: "Frequently Asked Questions",
+    subsections: []
+  },
 ];
 
 export default function Notes() {
@@ -216,10 +305,10 @@ export default function Notes() {
         </div>
       </header>
 
-      <div className="flex flex-grow pt-14">
+      <div className="flex flex-grow pt-12">
         {/* Sidebar */}
-        <div className={`w-64 ${themeClasses.sidebarBg} p-4 flex flex-col border-r ${themeClasses.borderColor}`}>
-          <div className="relative mb-4">
+        <div className={`w-64 ${themeClasses.sidebarBg} p-4 flex flex-col border-r-0 shadow-lg z-10`}>
+          <div className="relative mb-3">
             <Search size={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
@@ -230,22 +319,45 @@ export default function Notes() {
             />
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-2">
             <div>
-              <div className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2 text-sm`}>Documentation</div>
-              <nav className="space-y-1">
+              <div className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-1.5 text-sm pl-1.5`}>Documentation</div>
+              <nav>
                 {notesTopics.map(topic => (
-                  <button
-                    key={topic.id}
-                    onClick={() => setSelectedTopic(topic.id)}
-                    className={`block w-full text-left px-3 py-2 rounded text-sm ${
-                      selectedTopic === topic.id 
-                        ? `${themeClasses.highlight} ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-gray-800'} font-medium border-l-2 border-[rgb(214,251,65)]` 
-                        : `${darkMode ? 'text-gray-300 hover:bg-[rgb(40,40,42)]' : 'text-gray-600 hover:bg-gray-200'}`
-                    }`}
-                  >
-                    {topic.label}
-                  </button>
+                  <div key={topic.id} className="mb-1">
+                    <button
+                      onClick={() => setSelectedTopic(topic.id)}
+                      className={`flex justify-between items-center w-full text-left px-2.5 py-1.5 rounded text-sm ${
+                        selectedTopic === topic.id 
+                          ? `${themeClasses.highlight} ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-gray-800'} font-medium border-l-2 border-[rgb(214,251,65)]` 
+                          : `${darkMode ? 'text-gray-300 hover:bg-[rgb(40,40,42)]' : 'text-gray-600 hover:bg-gray-200'}`
+                      }`}
+                    >
+                      <span>{topic.label}</span>
+                      {topic.subsections.length > 0 && (
+                        <ChevronDown className={`h-3.5 w-3.5 transform transition-transform ${selectedTopic === topic.id ? 'rotate-180' : ''}`} />
+                      )}
+                    </button>
+                    
+                    {/* Subsections */}
+                    {selectedTopic === topic.id && topic.subsections.length > 0 && (
+                      <div className="pl-4 mt-0.5 mb-1 space-y-0.5 border-l border-dashed border-gray-600 ml-2.5">
+                        {topic.subsections.map(subsection => (
+                          <a 
+                            key={subsection.id}
+                            href={`#${subsection.id}`}
+                            className={`block pl-3 pr-2 py-1 text-xs rounded hover:bg-opacity-20 ${
+                              darkMode 
+                                ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' 
+                                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-200'
+                            }`}
+                          >
+                            {subsection.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </nav>
             </div>
@@ -253,16 +365,16 @@ export default function Notes() {
         </div>
 
         {/* Main content */}
-        <div className="flex-grow p-8 overflow-auto">
+        <div className="flex-grow px-8 py-4 overflow-auto">
           <div className="max-w-4xl mx-auto">
             {selectedTopic === "communication-protocols" && (
               <>
-                <div className="flex items-center mb-2 text-gray-500 text-sm">
+                <div className="flex items-center mb-1 text-gray-500 text-sm">
                   <span>Docs</span>
                   <span className="mx-2">›</span>
                   <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Communication Protocols</span>
                 </div>
-                <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-6`}>Communication Protocols</h1>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Communication Protocols</h1>
 
                 <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
                   <p className="lead">
