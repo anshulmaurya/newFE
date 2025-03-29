@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import Hero from "@/components/home/hero";
@@ -11,6 +11,18 @@ import "@/styles/circuit.css";
 export default function Home() {
   const featuresRef = useRef<HTMLDivElement>(null);
   const problemsRef = useRef<HTMLDivElement>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   
   const scrollToSection = (sectionRef: React.RefObject<HTMLDivElement>) => {
     sectionRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -23,6 +35,7 @@ export default function Home() {
       <Header 
         onNavigateFeatures={() => scrollToSection(featuresRef)}
         onNavigateProblems={() => scrollToSection(problemsRef)}
+        isScrolled={isScrolled}
       />
       
       <main className="flex-grow">

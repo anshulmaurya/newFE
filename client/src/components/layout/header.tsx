@@ -1,15 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface HeaderProps {
   onNavigateFeatures: () => void;
   onNavigateProblems: () => void;
+  isScrolled?: boolean;
 }
 
-export default function Header({ onNavigateFeatures, onNavigateProblems }: HeaderProps) {
+export default function Header({ onNavigateFeatures, onNavigateProblems, isScrolled = false }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Interview");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [, setLocation] = useLocation();
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  // Add scroll listener for header background opacity if not provided via props
+  useEffect(() => {
+    const updatePosition = () => {
+      setScrollPosition(window.scrollY);
+    };
+    
+    window.addEventListener("scroll", updatePosition);
+    updatePosition();
+    
+    return () => window.removeEventListener("scroll", updatePosition);
+  }, []);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -22,6 +38,11 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
     setDropdownOpen(false);
+    
+    // Navigate to coming-soon page if Project is selected
+    if (option === "Project") {
+      setLocation("/coming-soon");
+    }
   };
 
   const handleNavClick = (callback: () => void) => {
@@ -31,8 +52,12 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
     callback();
   };
 
+  const headerBackground = scrollPosition > 10 || isScrolled 
+    ? "bg-[rgb(24,24,26)]" 
+    : "bg-[rgb(24,24,26)]/90 backdrop-blur-sm";
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[rgb(24,24,26)]">
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${headerBackground}`}>
       <div className="container mx-auto px-4 py-2 flex justify-between items-center">
         <div className="flex items-center">
           <div className="h-8 w-8 flex items-center justify-center">
@@ -92,7 +117,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
             <span className="nav-indicator group-hover:w-full"></span>
           </button>
           <button onClick={() => handleNavClick(onNavigateFeatures)} className="nav-link group flex flex-col">
-            <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Features</span>
+            <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Notes</span>
             <span className="nav-indicator group-hover:w-full"></span>
           </button>
           <button onClick={() => handleNavClick(onNavigateProblems)} className="nav-link group flex flex-col">
@@ -127,7 +152,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
       </div>
       
       {/* Mobile Menu */}
-      <div className={`md:hidden glass absolute w-full z-20 py-4 px-4 ${mobileMenuOpen ? 'block' : 'hidden'}`}>
+      <div className={`md:hidden glass absolute w-full z-20 py-4 px-4 ${mobileMenuOpen ? 'block' : 'hidden'} bg-[rgb(24,24,26)]`}>
         <nav className="flex flex-col space-y-4">
           <div className="flex flex-col space-y-2 mb-2">
             <p className="text-xs text-gray-500">Mode:</p>
@@ -156,7 +181,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
             onClick={() => handleNavClick(onNavigateFeatures)} 
             className="text-gray-300 hover:text-white py-2 border-b border-gray-700/30"
           >
-            Features
+            Notes
           </button>
           <button 
             onClick={() => handleNavClick(onNavigateProblems)} 
