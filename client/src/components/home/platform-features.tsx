@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Code, Newspaper, BookOpen, Building, Calendar, Users, ChevronRight } from "lucide-react";
+import { getCategoryProblems, ProblemCard } from "@/data/problem-cards";
 
 interface Feature {
   id: number;
@@ -13,6 +14,7 @@ interface Feature {
 
 export default function PlatformFeatures() {
   const [activeFeature, setActiveFeature] = useState<number>(1);
+  const [activeCategory, setActiveCategory] = useState<string>("Memory Management");
 
   const features: Feature[] = [
     {
@@ -189,25 +191,74 @@ export default function PlatformFeatures() {
           {/* Category tabs */}
           <div className="mb-4">
             <div className="flex flex-wrap gap-2 text-center justify-center">
-              <div className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(214,251,65)] text-black cursor-pointer">
+              <div 
+                className={`px-3 py-1 text-xs font-medium rounded-full cursor-pointer ${
+                  activeCategory === "Memory Management" 
+                    ? "bg-[rgb(214,251,65)] text-black" 
+                    : "bg-[rgb(18,18,20)] text-gray-300 hover:bg-[rgb(30,30,32)]"
+                }`}
+                onClick={() => setActiveCategory("Memory Management")}
+              >
                 Memory Management
               </div>
-              <div className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(18,18,20)] text-gray-300 cursor-pointer hover:bg-[rgb(30,30,32)]">
+              <div 
+                className={`px-3 py-1 text-xs font-medium rounded-full cursor-pointer ${
+                  activeCategory === "Multithreading" 
+                    ? "bg-[rgb(214,251,65)] text-black" 
+                    : "bg-[rgb(18,18,20)] text-gray-300 hover:bg-[rgb(30,30,32)]"
+                }`}
+                onClick={() => setActiveCategory("Multithreading")}
+              >
                 Multithreading
               </div>
-              <div className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(18,18,20)] text-gray-300 cursor-pointer hover:bg-[rgb(30,30,32)]">
+              <div 
+                className={`px-3 py-1 text-xs font-medium rounded-full cursor-pointer ${
+                  activeCategory === "Data Structures" 
+                    ? "bg-[rgb(214,251,65)] text-black" 
+                    : "bg-[rgb(18,18,20)] text-gray-300 hover:bg-[rgb(30,30,32)]"
+                }`}
+                onClick={() => setActiveCategory("Data Structures")}
+              >
                 Data Structures
               </div>
-              <div className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(18,18,20)] text-gray-300 cursor-pointer hover:bg-[rgb(30,30,32)]">
+              <div 
+                className={`px-3 py-1 text-xs font-medium rounded-full cursor-pointer ${
+                  activeCategory === "C/C++ APIs" 
+                    ? "bg-[rgb(214,251,65)] text-black" 
+                    : "bg-[rgb(18,18,20)] text-gray-300 hover:bg-[rgb(30,30,32)]"
+                }`}
+                onClick={() => setActiveCategory("C/C++ APIs")}
+              >
                 C/C++ APIs
               </div>
-              <div className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(18,18,20)] text-gray-300 cursor-pointer hover:bg-[rgb(30,30,32)]">
+              <div 
+                className={`px-3 py-1 text-xs font-medium rounded-full cursor-pointer ${
+                  activeCategory === "Linux APIs" 
+                    ? "bg-[rgb(214,251,65)] text-black" 
+                    : "bg-[rgb(18,18,20)] text-gray-300 hover:bg-[rgb(30,30,32)]"
+                }`}
+                onClick={() => setActiveCategory("Linux APIs")}
+              >
                 Linux APIs
               </div>
-              <div className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(18,18,20)] text-gray-300 cursor-pointer hover:bg-[rgb(30,30,32)]">
+              <div 
+                className={`px-3 py-1 text-xs font-medium rounded-full cursor-pointer ${
+                  activeCategory === "RTOS" 
+                    ? "bg-[rgb(214,251,65)] text-black" 
+                    : "bg-[rgb(18,18,20)] text-gray-300 hover:bg-[rgb(30,30,32)]"
+                }`}
+                onClick={() => setActiveCategory("RTOS")}
+              >
                 RTOS
               </div>
-              <div className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(18,18,20)] text-gray-300 cursor-pointer hover:bg-[rgb(30,30,32)]">
+              <div 
+                className={`px-3 py-1 text-xs font-medium rounded-full cursor-pointer ${
+                  activeCategory === "Power Management" 
+                    ? "bg-[rgb(214,251,65)] text-black" 
+                    : "bg-[rgb(18,18,20)] text-gray-300 hover:bg-[rgb(30,30,32)]"
+                }`}
+                onClick={() => setActiveCategory("Power Management")}
+              >
                 Power Management
               </div>
             </div>
@@ -215,502 +266,43 @@ export default function PlatformFeatures() {
           
           {/* Problem cards grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {/* Problem Card 1 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-[rgb(214,251,65)] font-medium text-[10px]">
-                    Easy
-                  </span>
+            {getCategoryProblems(activeCategory).slice(0, 16).map((problem) => (
+              <div key={problem.id} className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
+                <div className="p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
+                      {activeCategory.split(' ')[0]}
+                    </span>
+                    <span className={`font-medium text-[10px] ${
+                      problem.difficulty === 'Easy' 
+                        ? 'text-[rgb(214,251,65)]' 
+                        : problem.difficulty === 'Medium'
+                          ? 'text-pink-500'
+                          : 'text-purple-500'
+                    }`}>
+                      {problem.difficulty}
+                    </span>
+                  </div>
+                  <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
+                    {problem.title}
+                  </h3>
+                  <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
+                    {problem.description}
+                  </p>
+                  <div className="flex items-center text-[9px] text-gray-400 justify-between">
+                    <span>Completion: {problem.completionRate}</span>
+                    <span>⭐ {problem.rating}</span>
+                  </div>
                 </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Custom Memory Allocator
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Design a static memory allocation system optimized for embedded systems with limited heap space.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 82%</span>
-                  <span>⭐ 4.3</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 30 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 2 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-pink-500 font-medium text-[10px]">
-                    Medium
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Memory Pool Implementation
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Create a fixed-size memory pool allocator that minimizes fragmentation for real-time applications.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 65%</span>
-                  <span>⭐ 4.5</span>
+                <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
+                  <span className="text-[9px] text-gray-400">Est: {problem.estimatedTime}</span>
+                  <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
+                    <span>Solve</span>
+                    <ChevronRight className="h-3 w-3" />
+                  </button>
                 </div>
               </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 40 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 3 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-purple-500 font-medium text-[10px]">
-                    Hard
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Heap Defragmentation
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Implement a real-time heap defragmentation algorithm for long-running embedded systems.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 42%</span>
-                  <span>⭐ 4.9</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 55 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 4 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-pink-500 font-medium text-[10px]">
-                    Medium
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Stack Overflow Protection
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Create a stack overflow detection and protection mechanism for resource-constrained MCUs.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 58%</span>
-                  <span>⭐ 4.4</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 35 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 5 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-[rgb(214,251,65)] font-medium text-[10px]">
-                    Easy
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Memory Leakage Detector
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Build a simple memory leak detection tool for C programs running on embedded systems.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 75%</span>
-                  <span>⭐ 4.1</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 25 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 6 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-purple-500 font-medium text-[10px]">
-                    Hard
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Garbage Collection
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Implement a mark-and-sweep garbage collector for a custom memory allocation system.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 38%</span>
-                  <span>⭐ 4.8</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 60 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 7 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-pink-500 font-medium text-[10px]">
-                    Medium
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  DMA Controller
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Design a direct memory access controller interface for efficient high-speed data transfers.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 52%</span>
-                  <span>⭐ 4.6</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 45 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 8 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-[rgb(214,251,65)] font-medium text-[10px]">
-                    Easy
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Cache-Friendly Data Structures
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Implement data structures optimized for embedded CPU cache patterns and memory access.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 79%</span>
-                  <span>⭐ 4.2</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 35 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 9 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-purple-500 font-medium text-[10px]">
-                    Hard
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Memory Virtualization
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Design a simple memory virtualization layer for MCUs without MMU support.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 36%</span>
-                  <span>⭐ 4.9</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 70 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 10 - 16: Add more cards to complete a 4x4 grid */}
-            {/* Problem Card 10 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-pink-500 font-medium text-[10px]">
-                    Medium
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Memory-Mapped I/O
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Implement a memory-mapped I/O system with proper interrupt handling for an embedded platform.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 61%</span>
-                  <span>⭐ 4.5</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 50 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 11 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-pink-500 font-medium text-[10px]">
-                    Medium
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Flash Memory Wear Leveling
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Design a wear leveling algorithm for flash memory to extend the lifespan of EEPROM storage.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 59%</span>
-                  <span>⭐ 4.6</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 55 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 12 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-[rgb(214,251,65)] font-medium text-[10px]">
-                    Easy
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Buffer Overflow Detection
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Implement a buffer overflow detection system for C string operations in an embedded context.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 74%</span>
-                  <span>⭐ 4.2</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 30 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 13 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-pink-500 font-medium text-[10px]">
-                    Medium
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Paging System
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Implement a simple paging system to manage memory in a resource-constrained embedded device.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 48%</span>
-                  <span>⭐ 4.7</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 45 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 14 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-pink-500 font-medium text-[10px]">
-                    Medium
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Memory Protection Unit
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Implement a memory protection unit (MPU) configuration system for Cortex-M MCUs.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 53%</span>
-                  <span>⭐ 4.7</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 50 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 15 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-purple-500 font-medium text-[10px]">
-                    Hard
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Memory-Safe String Library
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Create a memory-safe string handling library for C with bounds checking and overflow protection.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 41%</span>
-                  <span>⭐ 4.8</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 60 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Problem Card 16 */}
-            <div className="glass rounded-lg overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
-              <div className="p-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
-                    Memory Mgmt
-                  </span>
-                  <span className="text-[rgb(214,251,65)] font-medium text-[10px]">
-                    Easy
-                  </span>
-                </div>
-                <h3 className="font-display font-semibold text-sm mb-1 group-hover:text-[rgb(214,251,65)] transition-colors line-clamp-1">
-                  Memory Usage Monitor
-                </h3>
-                <p className="text-gray-300 text-[10px] mb-2 line-clamp-2">
-                  Create a memory usage monitoring tool for embedded systems that tracks stack and heap allocation.
-                </p>
-                <div className="flex items-center text-[9px] text-gray-400 justify-between">
-                  <span>Completion: 77%</span>
-                  <span>⭐ 4.2</span>
-                </div>
-              </div>
-              <div className="px-3 py-1 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
-                <span className="text-[9px] text-gray-400">Est: 30 min</span>
-                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-0.5 text-[10px]">
-                  <span>Solve</span>
-                  <ChevronRight className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
+            ))}
           </div>
           
           {/* View all button */}
