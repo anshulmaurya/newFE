@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Code, Newspaper, BookOpen, Building, Calendar, Users } from "lucide-react";
+import { Code, Newspaper, BookOpen, Building, Calendar, Users, ChevronRight } from "lucide-react";
 
 interface Feature {
   id: number;
@@ -185,60 +185,102 @@ export default function PlatformFeatures() {
       title: "200+ Expert-Reviewed Coding Questions",
       description: "Practice real-world embedded systems problems, curated and reviewed by industry experts, ensuring you're always prepared for tough interviews.",
       previewImage: (
-        <div className="h-full w-full bg-[rgb(18,18,20)] rounded-lg shadow-lg border border-[rgb(30,30,32)] overflow-hidden">
-          <div className="p-4 border-b border-[rgb(30,30,32)]">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)] px-2 py-1 rounded-full text-xs">Memory Management</div>
-                <div className="text-pink-500 text-xs font-medium px-2 py-1 bg-pink-500/10 rounded-full">Medium</div>
+        <div className="h-full w-full">
+          {/* Category tabs */}
+          <div className="mb-4">
+            <div className="flex flex-wrap gap-2">
+              <div className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(214,251,65)] text-black">
+                All Categories 
+                <span className="ml-2 px-1.5 py-0.5 text-xs rounded-full bg-black/20 text-[rgb(214,251,65)]">
+                  9
+                </span>
               </div>
-              <div className="text-xs text-gray-400 bg-[rgb(30,30,32)] px-2 py-1 rounded-full">Q.34</div>
+              <div className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(18,18,20)] text-gray-300">
+                Memory Management 
+                <span className="ml-2 px-1.5 py-0.5 text-xs rounded-full bg-[rgb(30,30,32)] text-gray-300">
+                  2
+                </span>
+              </div>
+              <div className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(18,18,20)] text-gray-300">
+                Multithreading 
+                <span className="ml-2 px-1.5 py-0.5 text-xs rounded-full bg-[rgb(30,30,32)] text-gray-300">
+                  2
+                </span>
+              </div>
             </div>
-            <h3 className="text-lg font-semibold mb-1">Memory-Efficient Ring Buffer</h3>
-            <p className="text-sm text-gray-300 mb-1">Implement a memory-efficient ring buffer for embedded systems with overflow handling and thread safety.</p>
           </div>
           
-          <div className="bg-[rgb(24,24,26)] p-4 h-[275px] overflow-auto">
-            <div className="mb-4">
-              <div className="text-sm font-semibold mb-2 text-white">Function Signatures:</div>
-              <div className="bg-[rgb(18,18,20)] p-3 rounded border border-[rgb(30,30,32)] mb-4">
-                <div className="text-xs font-mono text-[rgb(214,251,65)]">
-                  <div className="mb-1">typedef struct {'{'}</div>
-                  <div className="mb-1 pl-4">uint8_t* buffer;</div>
-                  <div className="mb-1 pl-4">uint32_t size;</div>
-                  <div className="mb-1 pl-4">uint32_t head;</div>
-                  <div className="mb-1 pl-4">uint32_t tail;</div>
-                  <div className="mb-1 pl-4">SemaphoreHandle_t mutex;</div>
-                  <div className="mb-1">{'}'} RingBuffer_t;</div>
-                  <div className="mb-1"></div>
-                  <div className="mb-1">RingBuffer_t* createBuffer(uint32_t size);</div>
-                  <div className="mb-1">bool writeBuffer(RingBuffer_t* rb, uint8_t* data, uint32_t len);</div>
-                  <div className="mb-1">bool readBuffer(RingBuffer_t* rb, uint8_t* data, uint32_t len);</div>
+          {/* Problem cards grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Problem Card 1 */}
+            <div className="glass rounded-xl overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
+                    Multithreading
+                  </span>
+                  <span className="text-pink-500 font-medium text-xs">
+                    Medium
+                  </span>
+                </div>
+                <h3 className="font-display font-semibold text-base mb-2 group-hover:text-[rgb(214,251,65)] transition-colors">
+                  Thread-Safe Ring Buffer
+                </h3>
+                <p className="text-gray-300 text-xs mb-3">
+                  Implement a thread-safe ring buffer data structure for inter-thread communication in a resource-constrained environment.
+                </p>
+                <div className="flex items-center text-[10px] text-gray-400 justify-between">
+                  <span>Completion rate: 68%</span>
+                  <span>⭐ 4.7/5</span>
                 </div>
               </div>
-            </div>
-            
-            <div className="mb-4">
-              <div className="text-sm font-semibold mb-2 text-white">Requirements:</div>
-              <ul className="text-xs text-gray-300 list-disc pl-5 space-y-1">
-                <li>Thread-safe implementation for multi-threaded environments</li>
-                <li>Efficient memory usage with no dynamic allocation during operations</li>
-                <li>Handle buffer overflow conditions gracefully</li>
-                <li>Implement proper mutex locking for concurrent access</li>
-                <li>Optimize for speed in embedded applications</li>
-              </ul>
-            </div>
-            
-            <div className="flex justify-between items-center mt-6 pt-3 border-t border-[rgb(30,30,32)]">
-              <div className="flex space-x-4 text-xs">
-                <span className="text-gray-400">Completion: <span className="text-[rgb(214,251,65)]">68%</span></span>
-                <span className="text-gray-400">⭐ <span className="text-[rgb(214,251,65)]">4.7/5</span></span>
-                <span className="text-gray-400">Avg. Time: <span className="text-[rgb(214,251,65)]">35 min</span></span>
+              <div className="px-4 py-2 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
+                <span className="text-xs text-gray-400">Estimated time: 45 min</span>
+                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-1 text-xs">
+                  <span>Solve</span>
+                  <ChevronRight className="h-4 w-4" />
+                </button>
               </div>
-              <button className="text-[rgb(214,251,65)] text-sm font-medium flex items-center bg-[rgb(214,251,65)]/10 px-3 py-1 rounded-full hover:bg-[rgb(214,251,65)]/20 transition-colors">
-                Solve Now <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
-              </button>
             </div>
+            
+            {/* Problem Card 2 */}
+            <div className="glass rounded-xl overflow-hidden border border-[rgb(30,30,32)]/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group">
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
+                    Memory Management
+                  </span>
+                  <span className="text-[rgb(214,251,65)] font-medium text-xs">
+                    Easy
+                  </span>
+                </div>
+                <h3 className="font-display font-semibold text-base mb-2 group-hover:text-[rgb(214,251,65)] transition-colors">
+                  Custom Memory Allocator
+                </h3>
+                <p className="text-gray-300 text-xs mb-3">
+                  Design a static memory allocation system optimized for embedded systems with limited heap space and fragmentation prevention.
+                </p>
+                <div className="flex items-center text-[10px] text-gray-400 justify-between">
+                  <span>Completion rate: 82%</span>
+                  <span>⭐ 4.3/5</span>
+                </div>
+              </div>
+              <div className="px-4 py-2 border-t border-[rgb(30,30,32)]/30 flex justify-between items-center">
+                <span className="text-xs text-gray-400">Estimated time: 30 min</span>
+                <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-1 text-xs">
+                  <span>Solve</span>
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {/* View all button */}
+          <div className="text-center mt-4">
+            <button className="px-4 py-2 bg-[rgb(18,18,20)] hover:bg-[rgb(214,251,65)] hover:text-black text-gray-300 rounded-lg transition-all inline-flex items-center gap-1 text-sm">
+              <span>View all problems</span>
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
       )
