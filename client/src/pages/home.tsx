@@ -49,9 +49,9 @@ export default function Home() {
           <PlatformFeatures />
         </div>
         
-        <Companies />
-        
         <Community />
+        
+        <Companies />
       </main>
       
       <Footer />
