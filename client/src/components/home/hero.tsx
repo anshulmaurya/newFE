@@ -18,42 +18,62 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
   const fileContents = {
     'main.c': {
       code: [
-        { line: 1, content: <><span className="text-purple-500">#include</span> <span className="text-green-400">&lt;stdio.h&gt;</span></> },
-        { line: 2, content: <><span className="text-purple-500">#include</span> <span className="text-green-400">"FreeRTOS.h"</span></> },
-        { line: 3, content: <><span className="text-purple-500">#include</span> <span className="text-green-400">"task.h"</span></> },
-        { line: 4, content: <><span className="text-purple-500">#include</span> <span className="text-green-400">"queue.h"</span></> },
+        { line: 1, content: <><span className="text-green-400">#include</span> <span className="text-orange-300">&lt;stdio.h&gt;</span></> },
+        { line: 2, content: <><span className="text-green-400">#include</span> <span className="text-orange-300">"FreeRTOS.h"</span></> },
+        { line: 3, content: <><span className="text-green-400">#include</span> <span className="text-orange-300">"task.h"</span></> },
+        { line: 4, content: <><span className="text-green-400">#include</span> <span className="text-orange-300">"queue.h"</span></> },
         { line: 5, content: <></> },
         { line: 6, content: <><span className="text-gray-500">// Task handles</span></> },
-        { line: 7, content: <><span className="text-blue-400">static</span> <span className="text-yellow-300">TaskHandle_t</span> <span className="text-orange-400">xTask1Handle</span> = <span className="text-purple-500">NULL</span>;</> },
-        { line: 8, content: <><span className="text-blue-400">static</span> <span className="text-yellow-300">TaskHandle_t</span> <span className="text-orange-400">xTask2Handle</span> = <span className="text-purple-500">NULL</span>;</> },
+        { line: 7, content: <><span className="text-blue-400">static</span> TaskHandle_t xTask1Handle = <span className="text-purple-400">NULL</span>;</> },
+        { line: 8, content: <><span className="text-blue-400">static</span> TaskHandle_t xTask2Handle = <span className="text-purple-400">NULL</span>;</> },
         { line: 9, content: <></> },
         { line: 10, content: <><span className="text-gray-500">// Queue handle</span></> },
-        { line: 11, content: <><span className="text-blue-400">static</span> <span className="text-yellow-300">QueueHandle_t</span> <span className="text-orange-400">xQueue</span> = <span className="text-purple-500">NULL</span>;</> },
+        { line: 11, content: <><span className="text-blue-400">static</span> QueueHandle_t xQueue = <span className="text-purple-400">NULL</span>;</> },
         { line: 12, content: <></> },
-        { line: 13, content: <><span className="text-green-500">void</span> <span className="text-blue-400">vTask1</span>(<span className="text-green-500">void</span>* <span className="text-yellow-300">pvParameters</span>) {'{}'}</> },
-        { line: 14, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-yellow-300">uint32_t</span> <span className="text-orange-400">ulValueToSend</span> = 0;</> },
-        { line: 15, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-500">for</span>(;;) {'{}'}</> },
-        { line: 16, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-gray-500">// Send value to queue</span></> },
-        { line: 17, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">xQueueSend</span>(<span className="text-orange-400">xQueue</span>, {'&'}<span className="text-orange-400">ulValueToSend</span>, 0);</> },
-        { line: 18, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-orange-400">ulValueToSend</span>++;</> },
-        { line: 19, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">vTaskDelay</span>(<span className="text-purple-500">pdMS_TO_TICKS</span>(1000));</> },
+        { line: 13, content: <><span className="text-blue-400">void</span> <span className="text-green-400">vTask1</span>(<span className="text-blue-400">void</span>* pvParameters) {'{'}</> },
+        { line: 14, content: <>&nbsp;&nbsp;uint32_t ulValueToSend = <span className="text-purple-400">0</span>;</> },
+        { line: 15, content: <>&nbsp;&nbsp;<span className="text-blue-400">for</span> (;;) {'{'}</> },
+        { line: 16, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-gray-500">// Send value to queue</span></> },
+        { line: 17, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">if</span> (xQueueSend(xQueue, &ulValueToSend, portMAX_DELAY) == pdPASS) {'{'}</> },
+        { line: 18, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(<span className="text-orange-300">"Task1: Sent %lu to queue\n"</span>, ulValueToSend);</> },
+        { line: 19, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ulValueToSend++;</> },
         { line: 20, content: <>&nbsp;&nbsp;&nbsp;&nbsp;{'}'}</> },
-        { line: 21, content: <>{'}'}</> },
-        { line: 22, content: <></> },
-        { line: 23, content: <><span className="text-green-500">int</span> <span className="text-blue-400">main</span>(<span className="text-green-500">void</span>) {'{}'}</> },
-        { line: 24, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-gray-500">// Create queue</span></> },
-        { line: 25, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-orange-400">xQueue</span> = <span className="text-blue-400">xQueueCreate</span>(10, <span className="text-purple-500">sizeof</span>(<span className="text-yellow-300">uint32_t</span>));</> },
-        { line: 26, content: <></> },
-        { line: 27, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-gray-500">// Create tasks</span></> },
-        { line: 28, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">xTaskCreate</span>(<span className="text-orange-400">vTask1</span>, <span className="text-green-400">"Task1"</span>, <span className="text-purple-500">configMINIMAL_STACK_SIZE</span>, <span className="text-purple-500">NULL</span>, 1, {'&'}<span className="text-orange-400">xTask1Handle</span>);</> },
-        { line: 29, content: <></> },
-        { line: 30, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-gray-500">// Start scheduler</span></> },
-        { line: 31, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">vTaskStartScheduler</span>();</> },
-        { line: 32, content: <></> },
-        { line: 33, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-500">return</span> 0;</> },
-        { line: 34, content: <>{'}'}</> },
+        { line: 21, content: <>&nbsp;&nbsp;&nbsp;&nbsp;vTaskDelay(pdMS_TO_TICKS(<span className="text-purple-400">1000</span>));</> },
+        { line: 22, content: <>&nbsp;&nbsp;{'}'}</> },
+        { line: 23, content: <>{'}'}</> },
+        { line: 24, content: <></> },
+        { line: 25, content: <><span className="text-blue-400">void</span> <span className="text-green-400">vTask2</span>(<span className="text-blue-400">void</span>* pvParameters) {'{'}</> },
+        { line: 26, content: <>&nbsp;&nbsp;uint32_t ulReceivedValue;</> },
+        { line: 27, content: <>&nbsp;&nbsp;<span className="text-blue-400">for</span> (;;) {'{'}</> },
+        { line: 28, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-gray-500">// Receive value from queue</span></> },
+        { line: 29, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">if</span> (xQueueReceive(xQueue, &ulReceivedValue, portMAX_DELAY) == pdPASS) {'{'}</> },
+        { line: 30, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(<span className="text-orange-300">"Task2: Received %lu from queue\n"</span>, ulReceivedValue);</> },
+        { line: 31, content: <>&nbsp;&nbsp;&nbsp;&nbsp;{'}'}</> },
+        { line: 32, content: <>&nbsp;&nbsp;{'}'}</> },
+        { line: 33, content: <>{'}'}</> },
+        { line: 34, content: <></> },
+        { line: 35, content: <><span className="text-blue-400">int</span> <span className="text-green-400">main</span>(<span className="text-blue-400">void</span>) {'{'}</> },
+        { line: 36, content: <>&nbsp;&nbsp;<span className="text-gray-500">// Create queue</span></> },
+        { line: 37, content: <>&nbsp;&nbsp;xQueue = xQueueCreate(<span className="text-purple-400">10</span>, <span className="text-blue-400">sizeof</span>(uint32_t));</> },
+        { line: 38, content: <>&nbsp;&nbsp;<span className="text-blue-400">if</span> (xQueue == <span className="text-purple-400">NULL</span>) {'{'}</> },
+        { line: 39, content: <>&nbsp;&nbsp;&nbsp;&nbsp;printf(<span className="text-orange-300">"Failed to create queue\n"</span>);</> },
+        { line: 40, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">return</span> -<span className="text-purple-400">1</span>;</> },
+        { line: 41, content: <>&nbsp;&nbsp;{'}'}</> },
+        { line: 42, content: <></> },
+        { line: 43, content: <>&nbsp;&nbsp;<span className="text-gray-500">// Create tasks</span></> },
+        { line: 44, content: <>&nbsp;&nbsp;xTaskCreate(vTask1, <span className="text-orange-300">"Task1"</span>, configMINIMAL_STACK_SIZE, <span className="text-purple-400">NULL</span>, <span className="text-purple-400">1</span>, &xTask1Handle);</> },
+        { line: 45, content: <>&nbsp;&nbsp;xTaskCreate(vTask2, <span className="text-orange-300">"Task2"</span>, configMINIMAL_STACK_SIZE, <span className="text-purple-400">NULL</span>, <span className="text-purple-400">1</span>, &xTask2Handle);</> },
+        { line: 46, content: <></> },
+        { line: 47, content: <>&nbsp;&nbsp;<span className="text-gray-500">// Start scheduler</span></> },
+        { line: 48, content: <>&nbsp;&nbsp;vTaskStartScheduler();</> },
+        { line: 49, content: <></> },
+        { line: 50, content: <>&nbsp;&nbsp;<span className="text-gray-500">// Should never reach here</span></> },
+        { line: 51, content: <>&nbsp;&nbsp;<span className="text-blue-400">for</span> (;;) {'{}'}</> },
+        { line: 52, content: <></> },
+        { line: 53, content: <>&nbsp;&nbsp;<span className="text-blue-400">return</span> <span className="text-purple-400">0</span>;</> },
+        { line: 54, content: <>{'}'}</> },
       ],
-      highlightedLine: 13,
+      highlightedLine: 17,
     },
     'FreeRTOS.h': {
       code: [
@@ -141,8 +161,8 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
       <div className="absolute top-1/4 right-0 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       
-      <div className="w-full relative z-10 px-2 sm:px-3 md:px-4">
-        <div className="flex flex-col xl:flex-row items-center justify-between gap-8 xl:gap-6 max-w-[1600px] mx-auto">
+      <div className="w-full relative z-10 px-4 sm:px-6 md:px-8 lg:px-12">
+        <div className="flex flex-col xl:flex-row items-center justify-between gap-8 xl:gap-12 max-w-[1600px] mx-auto">
           {/* Left side: Title, Subheading, Buttons */}
           <motion.div 
             className="w-full xl:w-2/5 text-center xl:text-left mb-8 xl:mb-0 max-w-2xl xl:max-w-none mx-auto"
@@ -332,6 +352,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                     </div>
                     
                     <div className="mt-3 text-xs">
+                      {/* inc folder */}
                       <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer pl-6">
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
@@ -346,6 +367,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <span>inc</span>
                       </div>
                       
+                      {/* FreeRTOS.h file */}
                       <div 
                         className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'FreeRTOS.h' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} cursor-pointer hover:bg-[rgb(30,30,32)] pl-10`}
                         onClick={() => handleFileClick('FreeRTOS.h')}
@@ -364,7 +386,8 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <span>FreeRTOS.h</span>
                       </div>
                       
-                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer">
+                      {/* lib folder */}
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer pl-6">
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -373,11 +396,12 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                           strokeLinejoin="round"
                           className="mr-1"
                         >
-                          <polyline points="6 9 12 15 18 9"/>
+                          <polyline points="9 18 15 12 9 6"/>
                         </svg>
                         <span>lib</span>
                       </div>
                       
+                      {/* libdspcoder.a file */}
                       <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer pl-10">
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
@@ -393,6 +417,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <span>libdspcoder.a</span>
                       </div>
                       
+                      {/* src folder */}
                       <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer pl-6">
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
@@ -402,13 +427,14 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                           strokeLinejoin="round"
                           className="mr-1"
                         >
-                          <polyline points="6 9 12 15 18 9"/>
+                          <polyline points="9 18 15 12 9 6"/>
                         </svg>
                         <span>src</span>
                       </div>
                       
+                      {/* main.c file */}
                       <div 
-                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'main.c' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} hover:bg-[rgb(30,30,32)] cursor-pointer pl-10`}
+                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'main.c' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} cursor-pointer hover:bg-[rgb(30,30,32)] pl-10`}
                         onClick={() => handleFileClick('main.c')}
                       >
                         <svg 
@@ -421,15 +447,13 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         >
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                           <polyline points="14 2 14 8 20 8"/>
-                          <line x1="16" y1="13" x2="8" y2="13"/>
-                          <line x1="16" y1="17" x2="8" y2="17"/>
-                          <line x1="10" y1="9" x2="8" y2="9"/>
                         </svg>
                         <span>main.c</span>
                       </div>
                       
+                      {/* Makefile */}
                       <div 
-                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'Makefile' ? 'text-[rgb(214,251,65)] bg-[rgb(30,30,32)]' : 'text-gray-400 hover:bg-[rgb(30,30,32)]'} cursor-pointer pl-6`}
+                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'Makefile' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} cursor-pointer hover:bg-[rgb(30,30,32)] pl-6`}
                         onClick={() => handleFileClick('Makefile')}
                       >
                         <svg 
@@ -438,13 +462,14 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                           fill="none" stroke="currentColor" 
                           strokeWidth="2" strokeLinecap="round" 
                           strokeLinejoin="round"
-                          className="mr-1 text-orange-400"
+                          className="mr-1"
                         >
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                           <polyline points="14 2 14 8 20 8"/>
                         </svg>
                         <span>Makefile</span>
                       </div>
+
                     </div>
                   </div>
                   
