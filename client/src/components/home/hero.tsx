@@ -691,11 +691,12 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
       <div className="absolute top-1/4 right-0 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
 
-      <div className="w-full relative z-10 px-6 sm:px-8 md:px-12 lg:px-16">
+      {/* Container with adjusted padding - shifted left by 10px from original */}
+      <div className="w-full relative z-10 px-4 sm:px-6 md:px-10 lg:px-14">
         <div className="flex flex-col items-center gap-8 max-w-[1600px] mx-auto">
-          {/* Top: Title, Subheading, Buttons */}
+          {/* Top: Title, Subheading, Buttons - Manually shifted left by 10px (2023-03-29) */}
           <motion.div
-            className="w-full max-w-2xl text-left mb-8 pl-0 lg:pl-4 pr-10 lg:pr-1"
+            className="w-full max-w-2xl text-left mb-8 pl-0 lg:pl-0 pr-10 lg:pr-1 -ml-2.5"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
