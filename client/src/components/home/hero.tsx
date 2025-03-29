@@ -165,7 +165,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
         <div className="flex flex-col items-start gap-8 max-w-[1600px] mx-auto">
           {/* Top: Title, Subheading, Buttons */}
           <motion.div 
-            className="w-full max-w-3xl text-left mb-8"
+            className="w-full max-w-2xl text-left mb-8 pl-0 md:pl-4"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
@@ -182,7 +182,8 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                 }}
               >
                 <span className="gradient-text relative inline-block">
-                  Cracking Embedded Systems
+                  Cracking Embedded 
+                  Systems
                   <motion.span 
                     className="absolute -bottom-2 left-0 w-full h-1 bg-primary"
                     initial={{ width: 0 }}
@@ -196,7 +197,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                 </span>
               </motion.div>
               <motion.div
-                className="relative -ml-4 mt-1"
+                className="relative mt-1"
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ 
