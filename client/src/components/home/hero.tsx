@@ -294,12 +294,12 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         >
                           <polyline points="9 18 15 12 9 6"/>
                         </svg>
-                        <span>REVERSE_LINKED_LIST_C</span>
+                        <span>LINKED_LIST</span>
                       </div>
                     </div>
                     
                     <div className="mt-3 text-xs">
-                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer">
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer pl-6">
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -314,10 +314,9 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                       </div>
                       
                       <div 
-                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'util.h' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} cursor-pointer hover:bg-[rgb(30,30,32)]`}
+                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'util.h' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} cursor-pointer hover:bg-[rgb(30,30,32)] pl-10`}
                         onClick={() => handleFileClick('util.h')}
                       >
-                        <span className="w-4"></span>
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -346,8 +345,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <span>lib</span>
                       </div>
                       
-                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer">
-                        <span className="w-4"></span>
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer pl-10">
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -362,7 +360,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <span>libdspcoder.a</span>
                       </div>
                       
-                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer">
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer pl-6">
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -377,10 +375,9 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                       </div>
                       
                       <div 
-                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'main.c' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} hover:bg-[rgb(30,30,32)] cursor-pointer`}
+                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'main.c' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} hover:bg-[rgb(30,30,32)] cursor-pointer pl-10`}
                         onClick={() => handleFileClick('main.c')}
                       >
-                        <span className="w-4"></span>
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -399,7 +396,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                       </div>
                       
                       <div 
-                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'Makefile' ? 'text-[rgb(214,251,65)] bg-[rgb(30,30,32)]' : 'text-gray-400 hover:bg-[rgb(30,30,32)]'} cursor-pointer`}
+                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'Makefile' ? 'text-[rgb(214,251,65)] bg-[rgb(30,30,32)]' : 'text-gray-400 hover:bg-[rgb(30,30,32)]'} cursor-pointer pl-6`}
                         onClick={() => handleFileClick('Makefile')}
                       >
                         <svg 
@@ -431,7 +428,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                     {/* Code content */}
                     <div className="flex h-64 overflow-hidden">
                       {/* Line numbers */}
-                      <div className="text-right pr-2 pt-2 select-none text-gray-600 text-xs overflow-y-auto">
+                      <div className="text-right pr-2 pt-2 select-none text-gray-600 text-xs overflow-y-auto code-editor-scrollbar">
                         {fileContents[activeFile].code.map((line) => (
                           <div 
                             key={line.line} 
@@ -443,7 +440,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                       </div>
                       
                       {/* Actual code */}
-                      <div className="flex-1 pl-2 pt-2 text-xs overflow-y-auto overflow-x-auto text-gray-300">
+                      <div className="flex-1 pl-2 pt-2 text-xs overflow-y-auto overflow-x-auto text-gray-300 code-editor-scrollbar">
                         {fileContents[activeFile].code.map((line) => (
                           <div 
                             key={line.line} 
@@ -483,8 +480,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                     </div>
                     
                     <div 
-                      onClick={onScrollToFeatures}
-                      className="flex items-center bg-[rgb(214,251,65)]/10 text-[rgb(214,251,65)] px-3 py-1 rounded cursor-pointer hover:bg-[rgb(214,251,65)]/20 transition-colors transform hover:scale-105 transition-all"
+                      className="flex items-center bg-[rgb(214,251,65)]/10 text-[rgb(214,251,65)] px-3 py-1 rounded"
                     >
                       <span className="mr-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
