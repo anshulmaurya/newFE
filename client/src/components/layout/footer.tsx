@@ -2,7 +2,7 @@ import { Twitter, Linkedin, Github, MessageSquare } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="py-10 border-t border-gray-700/30 relative bg-[rgb(24,24,26)]">
+    <footer className="py-10 relative bg-[rgb(24,24,26)]">
       <div className="circuit-lines absolute inset-0 z-0 pointer-events-none"></div>
       
       <div className="container mx-auto px-4 relative z-10">

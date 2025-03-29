@@ -21,7 +21,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
   };
 
   return (
-    <header className="relative z-10 border-b border-gray-700/30 bg-[rgb(24,24,26)]">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[rgb(24,24,26)]">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <div className="h-10 w-10 rounded-lg bg-[rgb(214,251,65)] flex items-center justify-center text-black font-bold font-display text-xl">
