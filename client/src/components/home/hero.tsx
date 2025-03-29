@@ -11,8 +11,8 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
       <div className="absolute top-1/4 right-0 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-4 max-w-[1400px] mx-auto">
+      <div className="w-full relative z-10 px-2 sm:px-3 md:px-4">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-6 max-w-[1600px] mx-auto">
           {/* Left side: Title, Subheading, Buttons */}
           <motion.div 
             className="lg:w-2/5 text-center lg:text-left mb-8 lg:mb-0"
@@ -184,7 +184,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                   </div>
                   
                   {/* File explorer */}
-                  <div className="bg-[rgb(24,24,26)] border-r border-gray-800 w-56 pt-3 text-sm text-gray-300">
+                  <div className="bg-[rgb(24,24,26)] border-r border-gray-800 w-44 pt-3 text-sm text-gray-300">
                     <div className="px-3 flex items-center justify-between">
                       <div className="flex items-center font-semibold">
                         <svg 
