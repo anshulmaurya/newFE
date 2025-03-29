@@ -43,9 +43,7 @@ export default function Home() {
           onScrollToFeatures={() => scrollToSection(featuresRef)}
         />
         
-        <div ref={featuresRef}>
-          <Features />
-        </div>
+        {/* Features section removed as requested */}
         
         <div ref={problemsRef}>
           <Problems />

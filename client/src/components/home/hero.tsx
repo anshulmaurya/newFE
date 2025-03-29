@@ -750,7 +750,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
 
             <div className="flex flex-col sm:flex-row items-center sm:items-start justify-center xl:justify-start gap-4 mb-6">
               <a
-                href="https://discord.gg/embeddeddev"
+                href="https://discord.gg/HxAqXd8Xwt"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-3 bg-[#5865F2] hover:bg-[#4a57e0] text-white font-bold rounded-lg transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-[#5865F2]/20 w-full sm:w-auto inline-flex items-center justify-center gap-2"
