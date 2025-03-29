@@ -5,7 +5,7 @@ interface HeroProps {
   onScrollToFeatures: () => void;
 }
 
-type FileType = 'main.c' | 'util.h' | 'Makefile';
+type FileType = 'main.c' | 'FreeRTOS.h' | 'Makefile';
 type TestCaseType = 'Case 1' | 'Case 2' | 'Case 3';
 
 export default function Hero({ onScrollToFeatures }: HeroProps) {
@@ -14,83 +14,116 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
   const [activeTestCase, setActiveTestCase] = useState<TestCaseType>('Case 1');
   const [isTyping, setIsTyping] = useState(false);
   
-  // File content mapping
+  // File content mapping for FreeRTOS codebase
   const fileContents = {
     'main.c': {
       code: [
         { line: 1, content: <><span className="text-purple-500">#include</span> <span className="text-green-400">&lt;stdio.h&gt;</span></> },
-        { line: 2, content: <></> },
-        { line: 3, content: <><span className="text-purple-400">typedef</span> <span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span>);</> },
-        { line: 4, content: <></> },
-        { line: 5, content: <><span className="text-green-500">void</span> <span className="text-blue-400">reverse_Linked_List</span>(<span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span>) {'{}'}</> },
-        { line: 6, content: <><span className="text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// Write your code here</span></> },
-        { line: 7, content: <>{'}' }</> },
-        { line: 8, content: <></> },
-        { line: 9, content: <><span className="text-green-500">int</span> <span className="text-blue-400">main</span>(<span className="text-green-500">int</span> <span className="text-yellow-300">argc</span>, <span className="text-green-500">char</span>* <span className="text-yellow-300">argv</span>[]) {'{}'}</> },
-        { line: 10, content: <><span className="text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// Setup the linked list</span></> },
-        { line: 11, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span> = <span className="text-blue-400">setup_question</span>(<span className="text-yellow-300">argc</span>, <span className="text-yellow-300">argv</span>);</> },
-        { line: 12, content: <></> },
-        { line: 13, content: <><span className="text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// User function to reverse the linked list</span></> },
-        { line: 14, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">reverse_Linked_List</span>(<span className="text-yellow-300">head</span>);</> },
-        { line: 15, content: <></> },
-        { line: 16, content: <><span className="text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// Print the linked list</span></> },
-        { line: 17, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">print_LinkedList</span>(<span className="text-yellow-300">head</span>);</> },
-        { line: 18, content: <></> },
-        { line: 19, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-500">return</span> 0;</> },
-        { line: 20, content: <>{'}'}</> },
-      ],
-      highlightedLine: 5,
-    },
-    'util.h': {
-      code: [
-        { line: 1, content: <><span className="text-purple-500">#ifndef</span> <span className="text-blue-400">UTIL_H</span></> },
-        { line: 2, content: <><span className="text-purple-500">#define</span> <span className="text-blue-400">UTIL_H</span></> },
-        { line: 3, content: <></> },
-        { line: 4, content: <><span className="text-gray-500">// Linked list node structure</span></> },
-        { line: 5, content: <><span className="text-purple-400">typedef</span> <span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span> {'{'}</> },
-        { line: 6, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-green-500">int</span> <span className="text-orange-400">val</span>;</> },
-        { line: 7, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-orange-400">next</span>;</> },
-        { line: 8, content: <>{'}'} <span className="text-yellow-300">LinkedList</span>;</> },
+        { line: 2, content: <><span className="text-purple-500">#include</span> <span className="text-green-400">"FreeRTOS.h"</span></> },
+        { line: 3, content: <><span className="text-purple-500">#include</span> <span className="text-green-400">"task.h"</span></> },
+        { line: 4, content: <><span className="text-purple-500">#include</span> <span className="text-green-400">"queue.h"</span></> },
+        { line: 5, content: <></> },
+        { line: 6, content: <><span className="text-gray-500">// Task handles</span></> },
+        { line: 7, content: <><span className="text-blue-400">static</span> <span className="text-yellow-300">TaskHandle_t</span> <span className="text-orange-400">xTask1Handle</span> = <span className="text-purple-500">NULL</span>;</> },
+        { line: 8, content: <><span className="text-blue-400">static</span> <span className="text-yellow-300">TaskHandle_t</span> <span className="text-orange-400">xTask2Handle</span> = <span className="text-purple-500">NULL</span>;</> },
         { line: 9, content: <></> },
-        { line: 10, content: <><span className="text-gray-500">// Helper functions</span></> },
-        { line: 11, content: <><span className="text-yellow-300">LinkedList</span>* <span className="text-blue-400">setup_question</span>(<span className="text-green-500">int</span> <span className="text-orange-400">argc</span>, <span className="text-green-500">char</span>* <span className="text-orange-400">argv</span>[]);</> },
-        { line: 12, content: <><span className="text-green-500">void</span> <span className="text-blue-400">print_LinkedList</span>(<span className="text-yellow-300">LinkedList</span>* <span className="text-orange-400">head</span>);</> },
-        { line: 13, content: <></> },
-        { line: 14, content: <><span className="text-purple-500">#endif</span> <span className="text-gray-500">/* UTIL_H */</span></> },
+        { line: 10, content: <><span className="text-gray-500">// Queue handle</span></> },
+        { line: 11, content: <><span className="text-blue-400">static</span> <span className="text-yellow-300">QueueHandle_t</span> <span className="text-orange-400">xQueue</span> = <span className="text-purple-500">NULL</span>;</> },
+        { line: 12, content: <></> },
+        { line: 13, content: <><span className="text-green-500">void</span> <span className="text-blue-400">vTask1</span>(<span className="text-green-500">void</span>* <span className="text-yellow-300">pvParameters</span>) {'{}'}</> },
+        { line: 14, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-yellow-300">uint32_t</span> <span className="text-orange-400">ulValueToSend</span> = 0;</> },
+        { line: 15, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-500">for</span>(;;) {'{}'}</> },
+        { line: 16, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-gray-500">// Send value to queue</span></> },
+        { line: 17, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">xQueueSend</span>(<span className="text-orange-400">xQueue</span>, {'&'}<span className="text-orange-400">ulValueToSend</span>, 0);</> },
+        { line: 18, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-orange-400">ulValueToSend</span>++;</> },
+        { line: 19, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">vTaskDelay</span>(<span className="text-purple-500">pdMS_TO_TICKS</span>(1000));</> },
+        { line: 20, content: <>&nbsp;&nbsp;&nbsp;&nbsp;{'}'}</> },
+        { line: 21, content: <>{'}'}</> },
+        { line: 22, content: <></> },
+        { line: 23, content: <><span className="text-green-500">int</span> <span className="text-blue-400">main</span>(<span className="text-green-500">void</span>) {'{}'}</> },
+        { line: 24, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-gray-500">// Create queue</span></> },
+        { line: 25, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-orange-400">xQueue</span> = <span className="text-blue-400">xQueueCreate</span>(10, <span className="text-purple-500">sizeof</span>(<span className="text-yellow-300">uint32_t</span>));</> },
+        { line: 26, content: <></> },
+        { line: 27, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-gray-500">// Create tasks</span></> },
+        { line: 28, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">xTaskCreate</span>(<span className="text-orange-400">vTask1</span>, <span className="text-green-400">"Task1"</span>, <span className="text-purple-500">configMINIMAL_STACK_SIZE</span>, <span className="text-purple-500">NULL</span>, 1, {'&'}<span className="text-orange-400">xTask1Handle</span>);</> },
+        { line: 29, content: <></> },
+        { line: 30, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-gray-500">// Start scheduler</span></> },
+        { line: 31, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">vTaskStartScheduler</span>();</> },
+        { line: 32, content: <></> },
+        { line: 33, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-500">return</span> 0;</> },
+        { line: 34, content: <>{'}'}</> },
       ],
-      highlightedLine: 5,
+      highlightedLine: 13,
+    },
+    'FreeRTOS.h': {
+      code: [
+        { line: 1, content: <><span className="text-purple-500">#ifndef</span> <span className="text-blue-400">FREERTOS_H</span></> },
+        { line: 2, content: <><span className="text-purple-500">#define</span> <span className="text-blue-400">FREERTOS_H</span></> },
+        { line: 3, content: <></> },
+        { line: 4, content: <><span className="text-purple-500">#include</span> <span className="text-green-400">"FreeRTOSConfig.h"</span></> },
+        { line: 5, content: <><span className="text-purple-500">#include</span> <span className="text-green-400">&lt;stddef.h&gt;</span></> },
+        { line: 6, content: <><span className="text-purple-500">#include</span> <span className="text-green-400">&lt;stdint.h&gt;</span></> },
+        { line: 7, content: <></> },
+        { line: 8, content: <><span className="text-gray-500">// Basic FreeRTOS definitions</span></> },
+        { line: 9, content: <><span className="text-purple-500">#define</span> <span className="text-blue-400">pdFALSE</span>                  ((BaseType_t)0)</> },
+        { line: 10, content: <><span className="text-purple-500">#define</span> <span className="text-blue-400">pdTRUE</span>                   ((BaseType_t)1)</> },
+        { line: 11, content: <></> },
+        { line: 12, content: <><span className="text-purple-500">#define</span> <span className="text-blue-400">pdPASS</span>                   (pdTRUE)</> },
+        { line: 13, content: <><span className="text-purple-500">#define</span> <span className="text-blue-400">pdFAIL</span>                   (pdFALSE)</> },
+        { line: 14, content: <></> },
+        { line: 15, content: <><span className="text-gray-500">// Type definitions</span></> },
+        { line: 16, content: <><span className="text-purple-500">typedef</span> <span className="text-green-500">void</span>* <span className="text-yellow-300">TaskHandle_t</span>;</> },
+        { line: 17, content: <><span className="text-purple-500">typedef</span> <span className="text-green-500">void</span>* <span className="text-yellow-300">QueueHandle_t</span>;</> },
+        { line: 18, content: <><span className="text-purple-500">typedef</span> <span className="text-green-500">long</span> <span className="text-yellow-300">BaseType_t</span>;</> },
+        { line: 19, content: <><span className="text-purple-500">typedef</span> <span className="text-green-500">unsigned long</span> <span className="text-yellow-300">UBaseType_t</span>;</> },
+        { line: 20, content: <></> },
+        { line: 21, content: <><span className="text-purple-500">#endif</span> <span className="text-gray-500">/* FREERTOS_H */</span></> },
+      ],
+      highlightedLine: 16,
     },
     'Makefile': {
       code: [
-        { line: 1, content: <><span className="text-red-400">CC</span> = gcc</> },
-        { line: 2, content: <><span className="text-red-400">CFLAGS</span> = -Wall -Wextra -g</> },
+        { line: 1, content: <><span className="text-red-400">CC</span> = {'arm-none-eabi-gcc'}</> },
+        { line: 2, content: <><span className="text-red-400">CFLAGS</span> = {'-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Wall -g'}</> },
         { line: 3, content: <></> },
-        { line: 4, content: <><span className="text-red-400">all:</span> main</> },
-        { line: 5, content: <></> },
-        { line: 6, content: <><span className="text-red-400">main:</span> main.c</> },
-        { line: 7, content: <>&nbsp;&nbsp;&nbsp;&nbsp;$(CC) $(CFLAGS) -o main main.c</> },
-        { line: 8, content: <></> },
-        { line: 9, content: <><span className="text-red-400">clean:</span></> },
-        { line: 10, content: <>&nbsp;&nbsp;&nbsp;&nbsp;rm -f main</> },
-        { line: 11, content: <>&nbsp;&nbsp;&nbsp;&nbsp;rm -f *.o</> },
+        { line: 4, content: <><span className="text-red-400">FREERTOS_SRC</span> = {'./FreeRTOS/Source'}</> },
+        { line: 5, content: <><span className="text-red-400">INC</span> = {'-I./inc -I$(FREERTOS_SRC)/include -I./config'}</> },
+        { line: 6, content: <></> },
+        { line: 7, content: <><span className="text-red-400">SRCS</span> = {'main.c \\'}</> },
+        { line: 8, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{'$(FREERTOS_SRC)/tasks.c'} \</> },
+        { line: 9, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{'$(FREERTOS_SRC)/queue.c'} \</> },
+        { line: 10, content: <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{'$(FREERTOS_SRC)/list.c'}</> },
+        { line: 11, content: <></> },
+        { line: 12, content: <><span className="text-red-400">OBJS</span> = {'$(SRCS:.c=.o)'}</> },
+        { line: 13, content: <></> },
+        { line: 14, content: <><span className="text-red-400">all:</span> {'rtos_demo.elf'}</> },
+        { line: 15, content: <></> },
+        { line: 16, content: <><span className="text-red-400">rtos_demo.elf:</span> {'$(OBJS)'}</> },
+        { line: 17, content: <>&nbsp;&nbsp;&nbsp;&nbsp;{'$(CC) $(CFLAGS) $(INC) $^ -o $@'}</> },
+        { line: 18, content: <></> },
+        { line: 19, content: <><span className="text-red-400">%.o:</span> {'%.c'}</> },
+        { line: 20, content: <>&nbsp;&nbsp;&nbsp;&nbsp;{'$(CC) $(CFLAGS) $(INC) -c $< -o $@'}</> },
+        { line: 21, content: <></> },
+        { line: 22, content: <><span className="text-red-400">clean:</span></> },
+        { line: 23, content: <>&nbsp;&nbsp;&nbsp;&nbsp;{'rm -f *.o *.elf'}</> },
       ],
-      highlightedLine: 6,
+      highlightedLine: 14,
     },
   };
   
   // Test case data
   const testCases = {
     'Case 1': {
-      input: ["5", "1 2 3 4 5"],
-      output: ["5 4 3 2 1"]
+      input: ["Task Creation", "Create two tasks with different priorities"],
+      output: ["Task 1 running at priority 1", "Task 2 running at priority 2"]
     },
     'Case 2': {
-      input: ["3", "7 8 9"],
-      output: ["9 8 7"]
+      input: ["Queue Operations", "Send and receive data between tasks"],
+      output: ["Sent: 42", "Received: 42"]
     },
     'Case 3': {
-      input: ["1", "42"],
-      output: ["42"]
+      input: ["Semaphore", "Use binary semaphore for synchronization"],
+      output: ["Task waiting for semaphore", "Semaphore given", "Task unblocked"]
     }
   };
   
@@ -294,7 +327,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         >
                           <polyline points="9 18 15 12 9 6"/>
                         </svg>
-                        <span>LINKED_LIST</span>
+                        <span>FREERTOS</span>
                       </div>
                     </div>
                     
@@ -314,8 +347,8 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                       </div>
                       
                       <div 
-                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'util.h' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} cursor-pointer hover:bg-[rgb(30,30,32)] pl-10`}
-                        onClick={() => handleFileClick('util.h')}
+                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'FreeRTOS.h' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} cursor-pointer hover:bg-[rgb(30,30,32)] pl-10`}
+                        onClick={() => handleFileClick('FreeRTOS.h')}
                       >
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
@@ -328,7 +361,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                           <polyline points="14 2 14 8 20 8"/>
                         </svg>
-                        <span>util.h</span>
+                        <span>FreeRTOS.h</span>
                       </div>
                       
                       <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer">
