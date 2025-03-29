@@ -58,8 +58,8 @@ const item = {
 
 export default function Features() {
   return (
-    <section id="features" className="py-16 md:py-24 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-primary-900 via-slate-800/50 to-primary-900 pointer-events-none"></div>
+    <section id="features" className="py-16 md:py-24 relative bg-[rgb(24,24,26)]">
+      <div className="absolute inset-0 bg-gradient-to-b from-[rgb(24,24,26)] via-[rgb(24,24,26)] to-[rgb(24,24,26)] pointer-events-none"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 
@@ -73,7 +73,7 @@ export default function Features() {
             <span className="text-white">Advanced</span>
             <span className="text-primary"> Features</span>
           </h2>
-          <p className="text-slate-300 max-w-2xl mx-auto">
+          <p className="text-gray-300 max-w-2xl mx-auto">
             Our platform is designed to help you master embedded systems through hands-on practice and real-world challenges.
           </p>
         </motion.div>
@@ -88,14 +88,14 @@ export default function Features() {
           {features.map((feature, index) => (
             <motion.div 
               key={index}
-              className="glass rounded-xl p-6 border border-slate-700/30 hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/5 group"
+              className="glass rounded-xl p-6 border border-gray-700/30 hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/5 group"
               variants={item}
             >
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-all">
                 {feature.icon}
               </div>
               <h3 className="font-display font-semibold text-xl mb-3">{feature.title}</h3>
-              <p className="text-slate-300">
+              <p className="text-gray-300">
                 {feature.description}
               </p>
             </motion.div>

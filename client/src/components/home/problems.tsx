@@ -205,7 +205,7 @@ export default function Problems() {
   );
 
   return (
-    <section id="problems" className="py-16 md:py-24 relative overflow-hidden">
+    <section id="problems" className="py-16 md:py-24 relative overflow-hidden bg-[rgb(24,24,26)]">
       {/* Background gradients */}
       <div className="absolute right-0 top-1/4 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl"></div>
       <div className="absolute left-0 bottom-1/4 w-64 h-64 bg-[rgb(214,251,65)]/10 rounded-full blur-3xl"></div>

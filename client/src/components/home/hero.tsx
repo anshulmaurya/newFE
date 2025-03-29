@@ -6,7 +6,7 @@ interface HeroProps {
 
 export default function Hero({ onScrollToFeatures }: HeroProps) {
   return (
-    <section className="relative overflow-hidden pt-16 md:pt-24 pb-16">
+    <section className="relative overflow-hidden pt-16 md:pt-24 pb-16 bg-[rgb(24,24,26)]">
       {/* Circuit board decorative elements */}
       <div className="absolute top-1/4 right-0 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-pink-500/5 blur-3xl"></div>
@@ -49,7 +49,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
               </motion.div>
             </h1>
             
-            <p className="text-slate-300 text-lg mb-8 max-w-xl">
+            <p className="text-gray-300 text-lg mb-8 max-w-xl">
               Master embedded programming with our interactive platform. Practice real problems, get instant feedback, and land your dream job.
             </p>
             
@@ -80,7 +80,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
             </div>
             
             <motion.div 
-              className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-slate-400 mt-4"
+              className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-gray-400 mt-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
@@ -119,18 +119,18 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <div className="code-block rounded-lg p-4 font-mono text-sm sm:text-base shadow-xl border border-slate-700/50 overflow-hidden bg-slate-950/50 backdrop-blur-sm">
+            <div className="code-block rounded-lg p-4 font-mono text-sm sm:text-base shadow-xl border border-gray-700/50 overflow-hidden bg-[rgb(18,18,20)] backdrop-blur-sm">
               {/* VS Code-like header */}
               <div className="flex flex-col">
                 {/* Window controls and tabs */}
-                <div className="flex items-center text-xs border-b border-slate-700/50 pb-2">
+                <div className="flex items-center text-xs border-b border-gray-700/50 pb-2">
                   <div className="flex items-center gap-2 mr-4">
                     <span className="w-3 h-3 rounded-full bg-red-500"></span>
                     <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
                     <span className="w-3 h-3 rounded-full bg-green-500"></span>
                   </div>
                   <div className="flex">
-                    <div className="px-3 py-1 bg-slate-800 rounded-t-md border-b-2 border-[rgb(214,251,65)] text-slate-300 font-medium flex items-center gap-2">
+                    <div className="px-3 py-1 bg-[rgb(24,24,26)] rounded-t-md border-b-2 border-[rgb(214,251,65)] text-gray-300 font-medium flex items-center gap-2">
                       <span className="text-blue-500">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M16 18l6-6-6-6" />
@@ -139,7 +139,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                       </span>
                       <span>rtos_tasks.c</span>
                     </div>
-                    <div className="px-3 py-1 text-slate-500 flex items-center">
+                    <div className="px-3 py-1 text-gray-500 flex items-center">
                       task_interface.h
                     </div>
                   </div>
@@ -148,7 +148,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                 {/* Line numbers and code */}
                 <div className="flex mt-2">
                   {/* Line numbers */}
-                  <div className="pr-4 text-right text-slate-600 select-none border-r border-slate-700/50 mr-3">
+                  <div className="pr-4 text-right text-gray-600 select-none border-r border-gray-700/50 mr-3">
                     <div>1</div>
                     <div>2</div>
                     <div>3</div>
@@ -174,16 +174,16 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                     <div><span className="text-pink-500">#include</span> <span className="text-green-400">&lt;task.h&gt;</span></div>
                     <div><span className="text-pink-500">#include</span> <span className="text-green-400">&lt;semphr.h&gt;</span></div>
                     <div></div>
-                    <div><span className="text-slate-400">// Mutex for sensor data access</span></div>
+                    <div><span className="text-gray-400">// Mutex for sensor data access</span></div>
                     <div><span className="text-blue-500">SemaphoreHandle_t</span> <span className="text-orange-400">sensorMutex</span>;</div>
                     <div><span className="text-blue-500">SensorData_t</span> <span className="text-orange-400">sharedSensorData</span>;</div>
                     <div></div>
                     <div><span className="text-purple-500">void</span> <span className="text-blue-400">SensorTask</span>(<span className="text-purple-500">void</span>* <span className="text-orange-400">pvParameters</span>) {'{'}</div>
                     <div className="pl-4"><span className="text-blue-500">while</span>(1) {'{'}</div>
-                    <div className="pl-8"><span className="text-slate-400">// Acquire new sensor readings</span></div>
+                    <div className="pl-8"><span className="text-gray-400">// Acquire new sensor readings</span></div>
                     <div className="pl-8"><span className="text-blue-500">SensorData_t</span> <span className="text-orange-400">newData</span> = <span className="text-blue-400">ReadSensors</span>();</div>
                     <div className="pl-8"></div>
-                    <div className="pl-8"><span className="text-slate-400">// Update shared data with mutex protection</span></div>
+                    <div className="pl-8"><span className="text-gray-400">// Update shared data with mutex protection</span></div>
                     <div className="pl-8"><span className="text-pink-500">if</span> (<span className="text-blue-400">xSemaphoreTake</span>(<span className="text-orange-400">sensorMutex</span>, <span className="text-orange-400">portMAX_DELAY</span>)) {'{'}</div>
                     <div className="pl-12"><span className="text-orange-400">sharedSensorData</span> = <span className="text-orange-400">newData</span>;</div>
                     <div className="pl-12"><span className="text-blue-400">xSemaphoreGive</span>(<span className="text-orange-400">sensorMutex</span>);</div>
@@ -196,23 +196,23 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
               </div>
               
               {/* Task visualization */}
-              <div className="mt-5 p-3 bg-slate-800 rounded-md flex flex-col border border-slate-700">
+              <div className="mt-5 p-3 bg-[rgb(24,24,26)] rounded-md flex flex-col border border-gray-700">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-white font-medium">Task Execution Visualization</span>
                   <span className="px-2 py-1 bg-[rgb(214,251,65)]/20 rounded text-[rgb(214,251,65)] text-xs">RTOS Scheduler</span>
                 </div>
                 
                 {/* Task scheduling visualization */}
-                <div className="h-16 bg-slate-900 rounded-md relative overflow-hidden">
+                <div className="h-16 bg-[rgb(18,18,20)] rounded-md relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-full flex flex-col">
-                    <div className="h-1/3 border-b border-slate-800 flex">
+                    <div className="h-1/3 border-b border-gray-800 flex">
                       <div className="bg-[rgb(214,251,65)]/40 h-full w-[20%]"></div>
                       <div className="bg-transparent h-full w-[10%]"></div>
                       <div className="bg-[rgb(214,251,65)]/40 h-full w-[30%]"></div>
                       <div className="bg-transparent h-full w-[15%]"></div>
                       <div className="bg-[rgb(214,251,65)]/40 h-full w-[25%] animate-pulse"></div>
                     </div>
-                    <div className="h-1/3 border-b border-slate-800 flex">
+                    <div className="h-1/3 border-b border-gray-800 flex">
                       <div className="bg-transparent h-full w-[15%]"></div>
                       <div className="bg-blue-500/40 h-full w-[25%]"></div>
                       <div className="bg-transparent h-full w-[20%]"></div>
@@ -233,15 +233,15 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                 <div className="flex justify-between text-xs mt-2">
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-[rgb(214,251,65)]/60 rounded-sm"></div>
-                    <span className="text-slate-300">Sensor Task</span>
+                    <span className="text-gray-300">Sensor Task</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-blue-500/60 rounded-sm"></div>
-                    <span className="text-slate-300">Processing Task</span>
+                    <span className="text-gray-300">Processing Task</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-green-500/60 rounded-sm"></div>
-                    <span className="text-slate-300">Output Task</span>
+                    <span className="text-gray-300">Output Task</span>
                   </div>
                 </div>
               </div>

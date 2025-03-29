@@ -21,7 +21,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
   };
 
   return (
-    <header className="relative z-10 border-b border-slate-700/30">
+    <header className="relative z-10 border-b border-gray-700/30 bg-[rgb(24,24,26)]">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <div className="h-10 w-10 rounded-lg bg-[rgb(214,251,65)] flex items-center justify-center text-black font-bold font-display text-xl">
@@ -35,15 +35,15 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
           <button onClick={() => handleNavClick(() => window.scrollTo(0, 0))} className="nav-link group flex flex-col">
-            <span className="font-medium text-slate-300 hover:text-white transition-colors">Home</span>
+            <span className="font-medium text-gray-300 hover:text-white transition-colors">Home</span>
             <span className="nav-indicator group-hover:w-full"></span>
           </button>
           <button onClick={() => handleNavClick(onNavigateFeatures)} className="nav-link group flex flex-col">
-            <span className="font-medium text-slate-300 hover:text-white transition-colors">Features</span>
+            <span className="font-medium text-gray-300 hover:text-white transition-colors">Features</span>
             <span className="nav-indicator group-hover:w-full"></span>
           </button>
           <button onClick={() => handleNavClick(onNavigateProblems)} className="nav-link group flex flex-col">
-            <span className="font-medium text-slate-300 hover:text-white transition-colors">Problems</span>
+            <span className="font-medium text-gray-300 hover:text-white transition-colors">Problems</span>
             <span className="nav-indicator group-hover:w-full"></span>
           </button>
           <a 
@@ -65,7 +65,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
         </nav>
         
         <button 
-          className="md:hidden text-slate-300 focus:outline-none" 
+          className="md:hidden text-gray-300 focus:outline-none" 
           onClick={toggleMobileMenu}
           aria-label="Toggle mobile menu"
         >
@@ -78,19 +78,19 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
         <nav className="flex flex-col space-y-4">
           <button 
             onClick={() => handleNavClick(() => window.scrollTo(0, 0))} 
-            className="text-slate-300 hover:text-white py-2 border-b border-slate-700/30"
+            className="text-gray-300 hover:text-white py-2 border-b border-gray-700/30"
           >
             Home
           </button>
           <button 
             onClick={() => handleNavClick(onNavigateFeatures)} 
-            className="text-slate-300 hover:text-white py-2 border-b border-slate-700/30"
+            className="text-gray-300 hover:text-white py-2 border-b border-gray-700/30"
           >
             Features
           </button>
           <button 
             onClick={() => handleNavClick(onNavigateProblems)} 
-            className="text-slate-300 hover:text-white py-2 border-b border-slate-700/30"
+            className="text-gray-300 hover:text-white py-2 border-b border-gray-700/30"
           >
             Problems
           </button>

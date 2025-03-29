@@ -17,7 +17,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-primary-900 text-slate-200 font-sans min-h-screen flex flex-col relative overflow-x-hidden">
+    <div className="bg-[rgb(24,24,26)] text-slate-200 font-sans min-h-screen flex flex-col relative overflow-x-hidden">
       <div className="circuit-lines absolute inset-0 z-0 pointer-events-none"></div>
       
       <Header 
