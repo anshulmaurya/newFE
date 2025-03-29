@@ -17,7 +17,7 @@ export default function PlatformFeatures() {
   const features: Feature[] = [
     {
       id: 1,
-      icon: <Code className="w-5 h-5" />,
+      icon: <Code className="w-4 h-4" />,
       emoji: "1️⃣",
       title: "Code Directly in VS Code",
       description: "Write, compile, and test your embedded code seamlessly within VS Code. No setup hassles—just code and focus on problem-solving.",
@@ -69,7 +69,7 @@ export default function PlatformFeatures() {
     },
     {
       id: 2,
-      icon: <BookOpen className="w-5 h-5" />,
+      icon: <BookOpen className="w-4 h-4" />,
       emoji: "2️⃣",
       title: "200+ Expert-Reviewed Coding Questions",
       description: "Practice real-world embedded systems problems, curated and reviewed by industry experts, ensuring you're always prepared for tough interviews.",
@@ -134,7 +134,7 @@ export default function PlatformFeatures() {
     },
     {
       id: 3,
-      icon: <Newspaper className="w-5 h-5" />,
+      icon: <Newspaper className="w-4 h-4" />,
       emoji: "3️⃣",
       title: "Quick Revision with Short Notes",
       description: "Short, precise notes to help you understand key concepts fast. Perfect for last-minute revisions before interviews.",
@@ -215,7 +215,7 @@ IN AL, 0x3F8    ; Read from port into AL`}
     },
     {
       id: 4,
-      icon: <Building className="w-5 h-5" />,
+      icon: <Building className="w-4 h-4" />,
       emoji: "4️⃣",
       title: "Company-Specific Target Study Material",
       description: "Get curated resources tailored to top companies like Qualcomm, NVIDIA, and Tesla—study smart, not hard.",
@@ -331,7 +331,7 @@ IN AL, 0x3F8    ; Read from port into AL`}
     },
     {
       id: 5,
-      icon: <Calendar className="w-5 h-5" />,
+      icon: <Calendar className="w-4 h-4" />,
       emoji: "5️⃣",
       title: "Personalized Study Plan Based on Job Description",
       description: "Upload a JD, and we'll craft a personalized study plan to maximize your chances of landing the job.",
@@ -429,7 +429,7 @@ IN AL, 0x3F8    ; Read from port into AL`}
     },
     {
       id: 6,
-      icon: <Users className="w-5 h-5" />,
+      icon: <Users className="w-4 h-4" />,
       emoji: "6️⃣",
       title: "Active Community of Embedded Experts",
       description: "Join a network of experienced embedded engineers—share insights, exchange interview experiences, and discover job opportunities.",
@@ -570,34 +570,26 @@ IN AL, 0x3F8    ; Read from port into AL`}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Feature tabs - left side on desktop, top on mobile */}
           <motion.div 
-            className="lg:col-span-4 order-2 lg:order-1"
+            className="lg:col-span-3 order-2 lg:order-1"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <div className="space-y-3">
+            <div className="space-y-0.5">
               {features.map((feature) => (
                 <div 
                   key={feature.id}
-                  className={`rounded-xl p-4 cursor-pointer transition-all hover:shadow-lg ${activeFeature === feature.id ? 'bg-[rgb(18,18,20)] border-[rgb(214,251,65)]/30 shadow-[0_4px_20px_rgba(214,251,65,0.15)]' : 'bg-[rgb(18,18,20)] hover:bg-[rgb(22,22,24)] border-[rgb(30,30,32)]/30'} border`}
+                  className={`py-2 px-3 cursor-pointer transition-all hover:bg-[rgb(22,22,24)] border-l-2 ${activeFeature === feature.id ? 'border-l-[rgb(214,251,65)] bg-[rgb(22,22,24)]' : 'border-l-transparent'}`}
                   onClick={() => setActiveFeature(feature.id)}
                 >
-                  <div className="flex items-start">
-                    <div className={`rounded-full p-3 mr-3 ${activeFeature === feature.id ? 'bg-[rgb(214,251,65)]/10' : 'bg-[rgb(30,30,32)]'}`}>
-                      <div className={activeFeature === feature.id ? 'text-[rgb(214,251,65)]' : 'text-gray-400'}>
-                        {feature.icon}
-                      </div>
+                  <div className="flex items-center">
+                    <div className={`mr-3 ${activeFeature === feature.id ? 'text-[rgb(214,251,65)]' : 'text-gray-400'}`}>
+                      {feature.icon}
                     </div>
-                    <div>
-                      <div className="flex items-center">
-                        <span className="mr-2">{feature.emoji}</span>
-                        <h3 className={`font-semibold ${activeFeature === feature.id ? 'text-[rgb(214,251,65)]' : 'text-gray-300'}`}>{feature.title}</h3>
-                      </div>
-                      <p className={`text-sm mt-1 ${activeFeature === feature.id ? 'text-gray-200' : 'text-gray-400'}`}>
-                        {feature.description}
-                      </p>
-                    </div>
+                    <h3 className={`text-sm font-medium ${activeFeature === feature.id ? 'text-[rgb(214,251,65)]' : 'text-gray-300'}`}>
+                      {feature.title.replace(/Code Directly in VS Code/, 'VS Code Integration')}
+                    </h3>
                   </div>
                 </div>
               ))}
@@ -606,7 +598,7 @@ IN AL, 0x3F8    ; Read from port into AL`}
 
           {/* Feature preview - right side on desktop, bottom on mobile */}
           <motion.div 
-            className="lg:col-span-8 order-1 lg:order-2"
+            className="lg:col-span-9 order-1 lg:order-2"
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
