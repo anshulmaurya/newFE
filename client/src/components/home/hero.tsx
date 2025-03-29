@@ -1,10 +1,107 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 interface HeroProps {
   onScrollToFeatures: () => void;
 }
 
+type FileType = 'main.c' | 'util.h' | 'Makefile';
+type TestCaseType = 'Case 1' | 'Case 2' | 'Case 3';
+
 export default function Hero({ onScrollToFeatures }: HeroProps) {
+  // Interactive state for code editor
+  const [activeFile, setActiveFile] = useState<FileType>('main.c');
+  const [activeTestCase, setActiveTestCase] = useState<TestCaseType>('Case 1');
+  const [isTyping, setIsTyping] = useState(false);
+  
+  // File content mapping
+  const fileContents = {
+    'main.c': {
+      code: [
+        { line: 1, content: <><span className="text-purple-500">#include</span> <span className="text-green-400">&lt;stdio.h&gt;</span></> },
+        { line: 2, content: <></> },
+        { line: 3, content: <><span className="text-purple-400">typedef</span> <span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span>);</> },
+        { line: 4, content: <></> },
+        { line: 5, content: <><span className="text-green-500">void</span> <span className="text-blue-400">reverse_Linked_List</span>(<span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span>) {'{}'}</> },
+        { line: 6, content: <><span className="text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// Write your code here</span></> },
+        { line: 7, content: <>{'}' }</> },
+        { line: 8, content: <></> },
+        { line: 9, content: <><span className="text-green-500">int</span> <span className="text-blue-400">main</span>(<span className="text-green-500">int</span> <span className="text-yellow-300">argc</span>, <span className="text-green-500">char</span>* <span className="text-yellow-300">argv</span>[]) {'{}'}</> },
+        { line: 10, content: <><span className="text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// Setup the linked list</span></> },
+        { line: 11, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span> = <span className="text-blue-400">setup_question</span>(<span className="text-yellow-300">argc</span>, <span className="text-yellow-300">argv</span>);</> },
+        { line: 12, content: <></> },
+        { line: 13, content: <><span className="text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// User function to reverse the linked list</span></> },
+        { line: 14, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">reverse_Linked_List</span>(<span className="text-yellow-300">head</span>);</> },
+        { line: 15, content: <></> },
+        { line: 16, content: <><span className="text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// Print the linked list</span></> },
+        { line: 17, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">print_LinkedList</span>(<span className="text-yellow-300">head</span>);</> },
+        { line: 18, content: <></> },
+        { line: 19, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-500">return</span> 0;</> },
+        { line: 20, content: <>{'}'}</> },
+      ],
+      highlightedLine: 5,
+    },
+    'util.h': {
+      code: [
+        { line: 1, content: <><span className="text-purple-500">#ifndef</span> <span className="text-blue-400">UTIL_H</span></> },
+        { line: 2, content: <><span className="text-purple-500">#define</span> <span className="text-blue-400">UTIL_H</span></> },
+        { line: 3, content: <></> },
+        { line: 4, content: <><span className="text-gray-500">// Linked list node structure</span></> },
+        { line: 5, content: <><span className="text-purple-400">typedef</span> <span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span> {'{'}</> },
+        { line: 6, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-green-500">int</span> <span className="text-orange-400">val</span>;</> },
+        { line: 7, content: <>&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-orange-400">next</span>;</> },
+        { line: 8, content: <>{'}'} <span className="text-yellow-300">LinkedList</span>;</> },
+        { line: 9, content: <></> },
+        { line: 10, content: <><span className="text-gray-500">// Helper functions</span></> },
+        { line: 11, content: <><span className="text-yellow-300">LinkedList</span>* <span className="text-blue-400">setup_question</span>(<span className="text-green-500">int</span> <span className="text-orange-400">argc</span>, <span className="text-green-500">char</span>* <span className="text-orange-400">argv</span>[]);</> },
+        { line: 12, content: <><span className="text-green-500">void</span> <span className="text-blue-400">print_LinkedList</span>(<span className="text-yellow-300">LinkedList</span>* <span className="text-orange-400">head</span>);</> },
+        { line: 13, content: <></> },
+        { line: 14, content: <><span className="text-purple-500">#endif</span> <span className="text-gray-500">/* UTIL_H */</span></> },
+      ],
+      highlightedLine: 5,
+    },
+    'Makefile': {
+      code: [
+        { line: 1, content: <><span className="text-red-400">CC</span> = gcc</> },
+        { line: 2, content: <><span className="text-red-400">CFLAGS</span> = -Wall -Wextra -g</> },
+        { line: 3, content: <></> },
+        { line: 4, content: <><span className="text-red-400">all:</span> main</> },
+        { line: 5, content: <></> },
+        { line: 6, content: <><span className="text-red-400">main:</span> main.c</> },
+        { line: 7, content: <>&nbsp;&nbsp;&nbsp;&nbsp;$(CC) $(CFLAGS) -o main main.c</> },
+        { line: 8, content: <></> },
+        { line: 9, content: <><span className="text-red-400">clean:</span></> },
+        { line: 10, content: <>&nbsp;&nbsp;&nbsp;&nbsp;rm -f main</> },
+        { line: 11, content: <>&nbsp;&nbsp;&nbsp;&nbsp;rm -f *.o</> },
+      ],
+      highlightedLine: 6,
+    },
+  };
+  
+  // Test case data
+  const testCases = {
+    'Case 1': {
+      input: ["5", "1 2 3 4 5"],
+      output: ["5 4 3 2 1"]
+    },
+    'Case 2': {
+      input: ["3", "7 8 9"],
+      output: ["9 8 7"]
+    },
+    'Case 3': {
+      input: ["1", "42"],
+      output: ["42"]
+    }
+  };
+  
+  const handleFileClick = (file: FileType) => {
+    setActiveFile(file);
+  };
+  
+  const handleTestCaseClick = (testCase: TestCaseType) => {
+    setActiveTestCase(testCase);
+  };
+  
   return (
     <section className="relative overflow-hidden pt-16 md:pt-24 pb-16 bg-[rgb(24,24,26)]">
       {/* Circuit board decorative elements */}
@@ -202,7 +299,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                     </div>
                     
                     <div className="mt-3 text-xs">
-                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400">
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer">
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -216,7 +313,10 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <span>inc</span>
                       </div>
                       
-                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400">
+                      <div 
+                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'util.h' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} cursor-pointer hover:bg-[rgb(30,30,32)]`}
+                        onClick={() => handleFileClick('util.h')}
+                      >
                         <span className="w-4"></span>
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
@@ -232,7 +332,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <span>util.h</span>
                       </div>
                       
-                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400">
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer">
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -246,7 +346,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <span>lib</span>
                       </div>
                       
-                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400">
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer">
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -261,7 +361,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <span>libdspcodera</span>
                       </div>
                       
-                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400">
+                      <div className="py-1 px-3 flex items-center space-x-1 text-gray-400 hover:bg-[rgb(30,30,32)] cursor-pointer">
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -276,7 +376,10 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <span>src</span>
                       </div>
                       
-                      <div className="py-1 px-3 flex items-center space-x-1 text-[rgb(214,251,65)]">
+                      <div 
+                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'main.c' ? 'text-[rgb(214,251,65)]' : 'text-gray-400'} hover:bg-[rgb(30,30,32)] cursor-pointer`}
+                        onClick={() => handleFileClick('main.c')}
+                      >
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -294,7 +397,10 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                         <span>main.c</span>
                       </div>
                       
-                      <div className="py-1 px-3 flex items-center space-x-1 bg-[rgb(30,30,32)]">
+                      <div 
+                        className={`py-1 px-3 flex items-center space-x-1 ${activeFile === 'Makefile' ? 'text-[rgb(214,251,65)] bg-[rgb(30,30,32)]' : 'text-gray-400 hover:bg-[rgb(30,30,32)]'} cursor-pointer`}
+                        onClick={() => handleFileClick('Makefile')}
+                      >
                         <svg 
                           xmlns="http://www.w3.org/2000/svg"
                           width="12" height="12" viewBox="0 0 24 24" 
@@ -316,8 +422,8 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                     {/* Editor tabs */}
                     <div className="flex bg-[rgb(24,24,26)] border-b border-gray-800">
                       <div className="bg-[rgb(20,20,22)] border-r border-gray-800 px-3 py-1 flex items-center text-xs text-gray-300">
-                        <span>main.c</span>
-                        <span className="ml-2 px-1.5 bg-gray-700 rounded-md">×</span>
+                        <span>{activeFile}</span>
+                        <span className="ml-2 px-1.5 bg-gray-700 rounded-md hover:bg-gray-600 cursor-pointer">×</span>
                       </div>
                     </div>
                     
@@ -325,49 +431,28 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                     <div className="flex">
                       {/* Line numbers */}
                       <div className="text-right pr-2 pt-2 select-none text-gray-600 text-xs">
-                        <div className="py-px">1</div>
-                        <div className="py-px">2</div>
-                        <div className="py-px">3</div>
-                        <div className="py-px">4</div>
-                        <div className="py-px bg-[rgb(30,30,32)]">5</div>
-                        <div className="py-px">6</div>
-                        <div className="py-px">7</div>
-                        <div className="py-px">8</div>
-                        <div className="py-px">9</div>
-                        <div className="py-px">10</div>
-                        <div className="py-px">11</div>
-                        <div className="py-px">12</div>
-                        <div className="py-px">13</div>
-                        <div className="py-px">14</div>
-                        <div className="py-px">15</div>
-                        <div className="py-px">16</div>
-                        <div className="py-px">17</div>
-                        <div className="py-px">18</div>
-                        <div className="py-px">19</div>
+                        {fileContents[activeFile].code.map((line) => (
+                          <div 
+                            key={line.line} 
+                            className={`py-px ${line.line === fileContents[activeFile].highlightedLine ? 'bg-[rgb(30,30,32)]' : ''}`}
+                          >
+                            {line.line}
+                          </div>
+                        ))}
                       </div>
                       
                       {/* Actual code */}
                       <div className="flex-1 pl-2 pt-2 text-xs overflow-x-auto text-gray-300">
-                        <div className="py-px"><span className="text-purple-500">#include</span> <span className="text-green-400">&lt;stdio.h&gt;</span></div>
-                        <div className="py-px"></div>
-                        <div className="py-px"><span className="text-purple-400">typedef</span> <span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span>);</div>
-                        <div className="py-px"></div>
-                        <div className="py-px bg-[rgb(214,251,65)]/5 border-l-2 border-[rgb(214,251,65)] pl-1"><span className="text-green-500">void</span> <span className="text-blue-400">reverse_Linked_List</span>(<span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span>) {'{'}</div>
-                        <div className="py-px text-gray-500 group cursor-text">&nbsp;&nbsp;&nbsp;&nbsp;<span className="group-hover:hidden">// Write your code here</span><span className="hidden group-hover:inline text-white">/* Your solution here */</span></div>
-                        <div className="py-px">{'}'}</div>
-                        <div className="py-px"></div>
-                        <div className="py-px"><span className="text-green-500">int</span> <span className="text-blue-400">main</span>(<span className="text-green-500">int</span> <span className="text-yellow-300">argc</span>, <span className="text-green-500">char</span>* <span className="text-yellow-300">argv</span>[]) {'{'}</div>
-                        <div className="py-px text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// Setup the linked list</div>
-                        <div className="py-px">&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">struct</span> <span className="text-yellow-300">Linked_List</span>* <span className="text-yellow-300">head</span> = <span className="text-blue-400">setup_question</span>(<span className="text-yellow-300">argc</span>, <span className="text-yellow-300">argv</span>);</div>
-                        <div className="py-px"></div>
-                        <div className="py-px text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// User function to reverse the linked list</div>
-                        <div className="py-px">&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">reverse_Linked_List</span>(<span className="text-yellow-300">head</span>);</div>
-                        <div className="py-px"></div>
-                        <div className="py-px text-gray-500">&nbsp;&nbsp;&nbsp;&nbsp;// Print the linked list</div>
-                        <div className="py-px">&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">print_LinkedList</span>(<span className="text-yellow-300">head</span>);</div>
-                        <div className="py-px"></div>
-                        <div className="py-px">&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-500">return</span> 0;</div>
-                        <div className="py-px">{'}'}</div>
+                        {fileContents[activeFile].code.map((line) => (
+                          <div 
+                            key={line.line} 
+                            className={`py-px ${line.line === fileContents[activeFile].highlightedLine ? 
+                              'bg-[rgb(214,251,65)]/5 border-l-2 border-[rgb(214,251,65)] pl-1' : ''} 
+                              ${line.line === 6 && activeFile === 'main.c' ? 'group cursor-text' : ''}`}
+                          >
+                            {line.content}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -396,7 +481,10 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                       <div className="px-2 py-1 text-gray-400">Test Results</div>
                     </div>
                     
-                    <div className="flex items-center bg-[rgb(214,251,65)]/10 text-[rgb(214,251,65)] px-3 py-1 rounded cursor-pointer hover:bg-[rgb(214,251,65)]/20 transition-colors">
+                    <div 
+                      onClick={onScrollToFeatures}
+                      className="flex items-center bg-[rgb(214,251,65)]/10 text-[rgb(214,251,65)] px-3 py-1 rounded cursor-pointer hover:bg-[rgb(214,251,65)]/20 transition-colors transform hover:scale-105 transition-all"
+                    >
                       <span className="mr-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <polygon points="5 3 19 12 5 21 5 3"></polygon>
@@ -409,17 +497,36 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                   <div className="mt-2">
                     <div className="font-medium mb-1">Test Cases</div>
                     <div className="flex space-x-2">
-                      <div className="px-3 py-1 bg-[rgb(214,251,65)]/10 text-[rgb(214,251,65)] rounded cursor-pointer hover:bg-[rgb(214,251,65)]/20 transition-colors">Case 1</div>
-                      <div className="px-3 py-1 bg-[rgb(20,20,22)] rounded cursor-pointer hover:bg-[rgb(214,251,65)]/10 transition-colors">Case 2</div>
-                      <div className="px-3 py-1 bg-[rgb(20,20,22)] rounded cursor-pointer hover:bg-[rgb(214,251,65)]/10 transition-colors">Case 3</div>
+                      {(Object.keys(testCases) as TestCaseType[]).map((testCase) => (
+                        <div 
+                          key={testCase}
+                          onClick={() => handleTestCaseClick(testCase)}
+                          className={`px-3 py-1 ${activeTestCase === testCase ? 
+                            'bg-[rgb(214,251,65)]/10 text-[rgb(214,251,65)]' : 
+                            'bg-[rgb(20,20,22)] text-gray-300'} 
+                            rounded cursor-pointer hover:bg-[rgb(214,251,65)]/10 hover:text-[rgb(214,251,65)] transition-colors`}
+                        >
+                          {testCase}
+                        </div>
+                      ))}
                       <div className="px-2 py-1 bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)] rounded cursor-pointer hover:bg-[rgb(214,251,65)]/30 transition-colors">+</div>
                     </div>
                     
                     <div className="mt-2">
                       <div className="text-gray-400 mb-1">Input:</div>
                       <div className="bg-[rgb(20,20,22)] p-2 rounded">
-                        <div>5</div>
-                        <div>1 2 3 4 5</div>
+                        {testCases[activeTestCase].input.map((line, index) => (
+                          <div key={index}>{line}</div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="mt-2">
+                      <div className="text-gray-400 mb-1">Expected Output:</div>
+                      <div className="bg-[rgb(20,20,22)] p-2 rounded">
+                        {testCases[activeTestCase].output.map((line, index) => (
+                          <div key={index}>{line}</div>
+                        ))}
                       </div>
                     </div>
                   </div>
