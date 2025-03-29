@@ -162,40 +162,51 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
       <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       
       <div className="w-full relative z-10 px-4 sm:px-6 md:px-8 lg:px-12">
-        <div className="flex flex-col xl:flex-row items-center justify-between gap-8 xl:gap-12 max-w-[1600px] mx-auto">
-          {/* Left side: Title, Subheading, Buttons */}
+        <div className="flex flex-col items-start gap-8 max-w-[1600px] mx-auto">
+          {/* Top: Title, Subheading, Buttons */}
           <motion.div 
-            className="w-full xl:w-2/5 text-center xl:text-left mb-8 xl:mb-0 max-w-2xl xl:max-w-none mx-auto"
+            className="w-full max-w-3xl text-left mb-8"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight flex flex-col items-start">
-              <span className="gradient-text mb-1">Learning</span>
-              <span className="gradient-text mb-2">Embedded Systems</span>
+            <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight text-left">
               <motion.div 
                 className="relative"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ 
                   duration: 1.5, 
-                  delay: 1.2,
+                  delay: 0.5,
                   ease: [0.22, 1, 0.36, 1] 
                 }}
               >
-                <span className="gradient-text relative">
-                  Redefined . .
+                <span className="gradient-text relative inline-block">
+                  Cracking Embedded Systems 
                   <motion.span 
                     className="absolute -bottom-2 left-0 w-full h-1 bg-primary"
                     initial={{ width: 0 }}
                     animate={{ width: "100%" }}
                     transition={{ 
                       duration: 2, 
-                      delay: 2.5,
+                      delay: 1.5,
                       ease: [0.22, 1, 0.36, 1]
                     }}
                   />
                 </span>
+              </motion.div>
+              <br />
+              <motion.div
+                className="relative"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ 
+                  duration: 1.2, 
+                  delay: 1.0,
+                  ease: [0.22, 1, 0.36, 1] 
+                }}
+              >
+                <span className="gradient-text">Interviews, Simplified.</span>
               </motion.div>
             </h1>
             
@@ -262,12 +273,12 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
             </motion.div>
           </motion.div>
           
-          {/* Right side: Code preview */}
+          {/* Bottom: Code editor */}
           <motion.div 
-            className="w-full xl:w-[58%] max-w-[calc(4xl-10px)] xl:max-w-none mx-auto"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            className="w-full max-w-[1400px]"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
           >
             <div className="code-block rounded-lg font-mono text-sm sm:text-base shadow-xl overflow-hidden bg-[rgb(18,18,20)] flex flex-col">
               {/* VS Code-like layout */}
