@@ -24,11 +24,11 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
     <header className="relative z-10 border-b border-slate-700/30">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center text-primary-900 font-bold font-display text-xl">
+          <div className="h-10 w-10 rounded-lg bg-[rgb(214,251,65)] flex items-center justify-center text-black font-bold font-display text-xl">
             ES
           </div>
           <h1 className="font-display font-bold text-xl sm:text-2xl tracking-tight">
-            <span className="text-white">Embedded</span><span className="text-primary">Systems</span>
+            <span className="text-white">Embedded</span><span className="text-[rgb(214,251,65)]">Systems</span>
           </h1>
         </div>
         
@@ -48,7 +48,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
           </button>
           <a 
             href="#" 
-            className="ml-2 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 rounded-lg text-sm text-slate-900 font-bold transition-all inline-flex items-center gap-2 shadow-[0_0_15px_rgba(250,204,21,0.5)] hover:shadow-[0_0_20px_rgba(250,204,21,0.7)] border border-yellow-300"
+            className="ml-2 px-4 py-2 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-lg text-sm text-black font-bold transition-all inline-flex items-center gap-2 shadow-[0_0_15px_rgba(214,251,65,0.5)] hover:shadow-[0_0_20px_rgba(214,251,65,0.7)] border border-[rgb(224,255,75)]"
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
@@ -96,7 +96,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems }: Heade
           </button>
           <a 
             href="#"
-            className="text-slate-900 py-2 font-bold flex items-center gap-2 mt-2 rounded-lg bg-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.5)] border border-yellow-300"
+            className="text-black py-2 font-bold flex items-center gap-2 mt-2 rounded-lg bg-[rgb(214,251,65)] shadow-[0_0_15px_rgba(214,251,65,0.5)] border border-[rgb(224,255,75)]"
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 

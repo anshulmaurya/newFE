@@ -3,6 +3,19 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 
+// Define problem interface
+interface Problem {
+  id: number;
+  category: string;
+  difficulty: string;
+  title: string;
+  description: string;
+  completionRate: string;
+  rating: string;
+  estimatedTime: string;
+  difficultyColor: string;
+}
+
 // Category definitions
 const categories = [
   "All Categories",
@@ -14,7 +27,7 @@ const categories = [
 ];
 
 // Problem data
-const problems = [
+const problems: Problem[] = [
   {
     id: 1,
     category: "Multithreading",
@@ -35,7 +48,7 @@ const problems = [
     completionRate: "82%",
     rating: "4.3/5",
     estimatedTime: "30 min",
-    difficultyColor: "text-primary"
+    difficultyColor: "text-[rgb(214,251,65)]"
   },
   {
     id: 3,
@@ -68,7 +81,7 @@ const problems = [
     completionRate: "79%",
     rating: "4.2/5",
     estimatedTime: "25 min",
-    difficultyColor: "text-primary"
+    difficultyColor: "text-[rgb(214,251,65)]"
   },
   {
     id: 6,
@@ -125,10 +138,10 @@ export default function Problems() {
   );
 
   // Function to render a problem card
-  const renderProblemCard = (problem) => (
+  const renderProblemCard = (problem: Problem) => (
     <motion.div 
       key={problem.id}
-      className="glass rounded-xl overflow-hidden border border-slate-700/30 hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/10 group"
+      className="glass rounded-xl overflow-hidden border border-slate-700/30 hover:border-[rgb(214,251,65)]/30 transition-all hover:shadow-lg hover:shadow-[rgb(214,251,65)]/10 group"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
@@ -136,14 +149,14 @@ export default function Problems() {
     >
       <div className="p-5">
         <div className="flex items-center justify-between mb-3">
-          <span className="px-3 py-1 text-xs font-medium rounded-full bg-primary/20 text-primary">
+          <span className="px-3 py-1 text-xs font-medium rounded-full bg-[rgb(214,251,65)]/20 text-[rgb(214,251,65)]">
             {problem.category}
           </span>
           <span className={`${problem.difficultyColor} font-medium`}>
             {problem.difficulty}
           </span>
         </div>
-        <h3 className="font-display font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
+        <h3 className="font-display font-semibold text-lg mb-2 group-hover:text-[rgb(214,251,65)] transition-colors">
           {problem.title}
         </h3>
         <p className="text-slate-300 text-sm mb-4">
@@ -156,7 +169,7 @@ export default function Problems() {
       </div>
       <div className="px-5 py-3 border-t border-slate-700/30 flex justify-between items-center">
         <span className="text-sm text-slate-400">Estimated time: {problem.estimatedTime}</span>
-        <button className="text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
+        <button className="text-[rgb(214,251,65)] hover:text-[rgb(214,251,65)]/80 transition-colors flex items-center gap-1">
           <span>Solve</span>
           <ChevronRight className="h-5 w-5" />
         </button>
@@ -195,7 +208,7 @@ export default function Problems() {
     <section id="problems" className="py-16 md:py-24 relative overflow-hidden">
       {/* Background gradients */}
       <div className="absolute right-0 top-1/4 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute left-0 bottom-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+      <div className="absolute left-0 bottom-1/4 w-64 h-64 bg-[rgb(214,251,65)]/10 rounded-full blur-3xl"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         {/* Section header */}
@@ -208,7 +221,7 @@ export default function Problems() {
         >
           <h2 className="font-display font-bold text-3xl md:text-4xl mb-4">
             <span className="text-white">Practice with</span>
-            <span className="text-primary"> Real Problems</span>
+            <span className="text-[rgb(214,251,65)]"> Real Problems</span>
           </h2>
           <p className="text-slate-300 max-w-2xl mx-auto">
             Tackle challenges that test your knowledge of embedded systems, from basic concepts to advanced topics.
@@ -236,14 +249,14 @@ export default function Problems() {
                   variant={activeCategory === category ? "default" : "outline"}
                   onClick={() => setActiveCategory(category)}
                   className={activeCategory === category 
-                    ? "bg-primary text-primary-900 font-medium" 
+                    ? "bg-[rgb(214,251,65)] text-black font-medium" 
                     : "bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
                   }
                 >
                   {category} 
                   <span className={`ml-2 px-1.5 py-0.5 text-xs rounded-full ${
                     activeCategory === category 
-                      ? "bg-primary-900/20 text-primary-50" 
+                      ? "bg-black/20 text-[rgb(214,251,65)]" 
                       : "bg-slate-700 text-slate-300"
                   }`}>
                     {count}
@@ -271,7 +284,7 @@ export default function Problems() {
         <div className="text-center mt-10 mb-16">
           <Button 
             variant="outline" 
-            className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-all inline-flex items-center gap-2"
+            className="px-6 py-3 bg-slate-800 hover:bg-[rgb(214,251,65)] hover:text-black text-slate-300 rounded-lg transition-all inline-flex items-center gap-2"
           >
             <span>View all problems</span>
             <ChevronRight className="h-4 w-4" />
@@ -286,21 +299,21 @@ export default function Problems() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+          <div className="absolute -right-20 -top-20 w-64 h-64 bg-[rgb(214,251,65)]/10 rounded-full blur-3xl"></div>
           <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
           
           <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center">
             <div className="w-full md:w-1/2">
               <h3 className="font-display font-bold text-2xl md:text-3xl mb-4">
                 <span className="text-white">Coming Soon: </span>
-                <span className="text-primary">Real Hardware Deployment</span>
+                <span className="text-[rgb(214,251,65)]">Real Hardware Deployment</span>
               </h3>
               <p className="text-slate-300 mb-6">
                 Soon you'll be able to test your embedded code on actual hardware platforms. Deploy your solutions directly to STM32, Arduino, and other popular platforms right from our interface.
               </p>
               <div className="flex flex-wrap gap-3">
                 <div className="px-4 py-2 bg-slate-800 rounded-full flex items-center text-sm">
-                  <div className="w-2 h-2 rounded-full bg-primary mr-2 animate-pulse"></div>
+                  <div className="w-2 h-2 rounded-full bg-[rgb(214,251,65)] mr-2 animate-pulse"></div>
                   <span>STM32 Support</span>
                 </div>
                 <div className="px-4 py-2 bg-slate-800 rounded-full flex items-center text-sm">

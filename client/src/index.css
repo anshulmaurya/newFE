@@ -14,7 +14,7 @@
 
 @layer utilities {
   .nav-indicator {
-    @apply block h-0.5 w-0 bg-primary transition-all duration-300;
+    @apply block h-0.5 w-0 bg-[rgb(214,251,65)] transition-all duration-300;
   }
   
   .code-block::-webkit-scrollbar {
