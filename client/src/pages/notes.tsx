@@ -178,12 +178,12 @@ export default function Notes() {
     <div className={`flex flex-col min-h-screen ${themeClasses.bg} ${themeClasses.text} transition-colors duration-200`}>
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${headerBackground} shadow-md`}>
-        <div className="container mx-auto px-4 py-1.5 flex justify-between items-center">
-          <div className="flex items-center gap-3">
+        <div className="max-w-[1400px] mx-auto px-6 py-2 flex justify-between items-center">
+          <div className="flex items-center">
             <div onClick={() => setLocation('/')} className="cursor-pointer">
               <div className="flex items-center">
-                <div className="h-7 w-7 flex items-center justify-center">
-                  <svg version="1.1" viewBox="0.0 0.0 100.0 100.0" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" width="28" height="28">
+                <div className="h-8 w-8 flex items-center justify-center">
+                  <svg version="1.1" viewBox="0.0 0.0 100.0 100.0" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" width="32" height="32">
                     <clipPath id="p.0">
                       <path d="m0 0l100.0 0l0 100.0l-100.0 0l0 -100.0z" clipRule="nonzero"/>
                     </clipPath>
@@ -196,7 +196,7 @@ export default function Notes() {
                     </g>
                   </svg>
                 </div>
-                <h1 className="font-display font-bold text-base tracking-tight">
+                <h1 className="font-display font-bold text-lg tracking-tight ml-1">
                   <span className="text-white">dsp</span><span className="text-[rgb(214,251,65)]">coder.com</span>
                 </h1>
               </div>
@@ -204,19 +204,19 @@ export default function Notes() {
           </div>
           
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-3">
+          <nav className="hidden md:flex items-center space-x-4">
             <div onClick={() => setLocation('/')}>
-              <div className="nav-link group px-2 py-1 font-medium text-sm text-gray-300 hover:text-white transition-colors cursor-pointer">
+              <div className="nav-link group px-3 py-1.5 font-medium text-sm text-gray-300 hover:text-white transition-colors cursor-pointer">
                 Home
               </div>
             </div>
             <div onClick={() => setLocation('/notes')}>
-              <div className="nav-link group px-2 py-1 font-medium text-sm text-[rgb(214,251,65)] transition-colors cursor-pointer">
+              <div className="nav-link group px-3 py-1.5 font-medium text-sm text-[rgb(214,251,65)] transition-colors cursor-pointer">
                 Notes
               </div>
             </div>
             <div onClick={() => setLocation('/#problems')}>
-              <div className="nav-link group px-2 py-1 font-medium text-sm text-gray-300 hover:text-white transition-colors cursor-pointer">
+              <div className="nav-link group px-3 py-1.5 font-medium text-sm text-gray-300 hover:text-white transition-colors cursor-pointer">
                 Problems
               </div>
             </div>
@@ -232,12 +232,12 @@ export default function Notes() {
             
             <a 
               href="#" 
-              className="ml-2 px-3 py-1 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-xs text-black font-bold transition-all inline-flex items-center gap-1 shadow-[0_0_10px_rgba(214,251,65,0.4)] hover:shadow-[0_0_15px_rgba(214,251,65,0.6)] border border-[rgb(224,255,75)]"
+              className="ml-3 px-4 py-1.5 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-xs text-black font-bold transition-all inline-flex items-center gap-1.5 shadow-[0_0_10px_rgba(214,251,65,0.4)] hover:shadow-[0_0_15px_rgba(214,251,65,0.6)] border border-[rgb(224,255,75)]"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
-                width="12" 
-                height="12" 
+                width="13" 
+                height="13" 
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
@@ -305,9 +305,9 @@ export default function Notes() {
         </div>
       </header>
 
-      <div className="flex flex-grow pt-12">
+      <div className="flex flex-grow pt-[52px]">
         {/* Sidebar */}
-        <div className={`w-64 ${themeClasses.sidebarBg} p-4 flex flex-col border-r-0 shadow-lg z-10`}>
+        <div className={`w-64 ${themeClasses.sidebarBg} p-4 flex flex-col border-r-0 shadow-md z-10`}>
           <div className="relative mb-3">
             <Search size={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -529,6 +529,211 @@ void UART_SendString(const char* str) {
                       <div>
                         <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>Code Examples Repository</h3>
                         <p className={`text-sm ${themeClasses.textDark}`}>Collection of protocol implementation examples</p>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </>
+            )}
+            
+            {selectedTopic === "memory-management" && (
+              <>
+                <div className="flex items-center mb-1 text-gray-500 text-sm">
+                  <span>Docs</span>
+                  <span className="mx-2">›</span>
+                  <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Memory Management</span>
+                </div>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Memory Management</h1>
+
+                <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
+                  <p className="lead">
+                    Effective memory management is crucial in embedded systems where resources are constrained. 
+                    Understanding different memory types and allocation strategies helps in building robust and efficient embedded applications.
+                  </p>
+
+                  <h2 id="memory-types">Memory Types in Embedded Systems</h2>
+                  <p>
+                    Embedded systems employ various types of memory, each with distinct characteristics suited for specific purposes.
+                    Understanding these differences is essential for optimal system design.
+                  </p>
+
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
+                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Common Memory Types:</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li><strong>Flash Memory</strong> - Non-volatile storage for program code and constant data</li>
+                      <li><strong>SRAM (Static RAM)</strong> - Fast, volatile memory for variables and runtime data</li>
+                      <li><strong>EEPROM/FRAM</strong> - Non-volatile memory for configuration settings and calibration data</li>
+                      <li><strong>SDRAM/DDR</strong> - Higher capacity external RAM for more complex applications</li>
+                      <li><strong>ROM/OTP</strong> - Read-only memory for bootloaders and critical firmware elements</li>
+                    </ul>
+                  </div>
+
+                  <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <svg className={`h-5 w-5 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>Memory Map Considerations</h3>
+                        <div className={`text-sm ${themeClasses.infoText}`}>
+                          <p>When designing memory layouts for embedded systems, always consider alignment requirements, memory protection units (MPUs), and cache behavior to avoid hard-to-debug issues.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h2 id="allocation-techniques">Memory Allocation Techniques</h2>
+                  <p>
+                    In resource-constrained embedded systems, efficient memory allocation is critical. Different techniques offer various 
+                    trade-offs between performance, fragmentation, and predictability.
+                  </p>
+                  
+                  <h3>Static Allocation</h3>
+                  <p>
+                    Static allocation assigns memory at compile time, providing deterministic behavior but sacrificing flexibility.
+                  </p>
+                  
+                  <pre className={`${themeClasses.codeBlock} p-4 rounded-md overflow-x-auto`}>
+                    <code className="language-c">
+{`// Static allocation example
+uint8_t buffer[MAX_BUFFER_SIZE];   // Fixed size buffer allocated at compile time
+struct SensorData readings[MAX_SENSORS];  // Array of structs with fixed size
+
+void processSensorData(void) {
+    // Using statically allocated memory
+    for (int i = 0; i < sensorCount; i++) {
+        readings[i].temperature = readTemperature(i);
+        readings[i].humidity = readHumidity(i);
+    }
+}`}
+                    </code>
+                  </pre>
+
+                  <h3>Dynamic Allocation</h3>
+                  <p>
+                    Dynamic allocation provides flexibility but introduces unpredictability and potential fragmentation.
+                    In many embedded systems, especially safety-critical ones, dynamic allocation is avoided or strictly controlled.
+                  </p>
+                  
+                  <pre className={`${themeClasses.codeBlock} p-4 rounded-md overflow-x-auto`}>
+                    <code className="language-c">
+{`// Dynamic allocation example
+struct SensorData* readings;
+
+void processSensorData(int sensorCount) {
+    // Dynamically allocate based on runtime requirements
+    readings = (struct SensorData*)malloc(sizeof(struct SensorData) * sensorCount);
+    
+    if (readings != NULL) {
+        for (int i = 0; i < sensorCount; i++) {
+            readings[i].temperature = readTemperature(i);
+            readings[i].humidity = readHumidity(i);
+        }
+        
+        // Process data...
+        
+        // Free memory when done
+        free(readings);
+        readings = NULL;
+    } else {
+        // Handle allocation failure
+        reportError(ERROR_MEMORY_ALLOCATION);
+    }
+}`}
+                    </code>
+                  </pre>
+
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6 border-yellow-500/50`}>
+                    <h3 className={`font-semibold text-yellow-500 mb-2`}>Warning:</h3>
+                    <p className="text-sm">
+                      Dynamic memory allocation in embedded systems can lead to memory fragmentation, unpredictable timing, and allocation failures. 
+                      Consider using static allocation, memory pools, or stack allocation when possible.
+                    </p>
+                  </div>
+                  
+                  <h2 id="fragmentation">Memory Fragmentation</h2>
+                  <p>
+                    Fragmentation occurs when free memory becomes divided into small, non-contiguous blocks that cannot be used efficiently.
+                    This is a common issue in long-running embedded systems that use dynamic memory allocation.
+                  </p>
+                  
+                  <h3>Memory Pool Allocation</h3>
+                  <p>
+                    Memory pools offer a compromise between static and dynamic allocation by pre-allocating fixed-size blocks,
+                    reducing fragmentation while allowing some runtime flexibility.
+                  </p>
+                  
+                  <pre className={`${themeClasses.codeBlock} p-4 rounded-md overflow-x-auto`}>
+                    <code className="language-c">
+{`// Simple memory pool implementation
+
+#define BLOCK_SIZE  64      // Size of each memory block
+#define POOL_SIZE   32      // Number of blocks in the pool
+
+typedef struct {
+    uint8_t data[BLOCK_SIZE];
+    bool used;
+} MemoryBlock;
+
+// The memory pool
+static MemoryBlock memPool[POOL_SIZE];
+
+// Initialize the memory pool
+void memPoolInit(void) {
+    for (int i = 0; i < POOL_SIZE; i++) {
+        memPool[i].used = false;
+    }
+}
+
+// Allocate a block from the pool
+void* memPoolAlloc(void) {
+    for (int i = 0; i < POOL_SIZE; i++) {
+        if (!memPool[i].used) {
+            memPool[i].used = true;
+            return memPool[i].data;
+        }
+    }
+    return NULL;  // No free blocks available
+}
+
+// Free a block back to the pool
+void memPoolFree(void* ptr) {
+    for (int i = 0; i < POOL_SIZE; i++) {
+        if (memPool[i].data == ptr) {
+            memPool[i].used = false;
+            return;
+        }
+    }
+}`}
+                    </code>
+                  </pre>
+                  
+                  <h2 id="resources">Additional Resources</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <a 
+                      href="#" 
+                      className={`flex items-start p-4 ${themeClasses.card} rounded-lg border transition-colors`}
+                    >
+                      <svg className={`mr-3 ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <div>
+                        <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>Memory Management Guide</h3>
+                        <p className={`text-sm ${themeClasses.textDark}`}>Comprehensive guide on memory management for embedded systems</p>
+                      </div>
+                    </a>
+                    <a 
+                      href="#" 
+                      className={`flex items-start p-4 ${themeClasses.card} rounded-lg border transition-colors`}
+                    >
+                      <svg className={`mr-3 ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <div>
+                        <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>Memory Optimization Techniques</h3>
+                        <p className={`text-sm ${themeClasses.textDark}`}>Advanced strategies for optimizing memory usage in constrained environments</p>
                       </div>
                     </a>
                   </div>
