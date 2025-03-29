@@ -7,6 +7,7 @@ import Problems from "@/components/home/problems";
 import Demo from "@/components/home/demo";
 import Companies from "@/components/home/companies";
 import Community from "@/components/home/community";
+import PlatformFeatures from "@/components/home/platform-features";
 import "@/styles/circuit.css";
 
 export default function Home() {
@@ -51,6 +52,8 @@ export default function Home() {
         </div>
         
         <Demo />
+        
+        <PlatformFeatures />
         
         <Companies />
         
