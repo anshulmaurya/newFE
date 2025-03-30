@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import Calendar from 'react-github-contribution-calendar';
 
 // Interface for yearly activity data
 interface YearlyActivityData {
@@ -39,13 +38,10 @@ export default function ActivityHeatmap() {
   const currentYear = new Date().getFullYear();
   const availableYears = [currentYear, currentYear - 1, currentYear - 2];
   
-  // Calculate the end date (today or last day of selected year)
-  const today = new Date();
-  const endDate = selectedYear === currentYear 
-    ? today
-    : new Date(selectedYear, 11, 31); // December 31st of selected year
-  
   // Generate mock data for all years (in a real app, this would be fetched from an API)
+  // Define today here for global use
+  const today = new Date();
+  
   const allYearsData = useMemo(() => {
     // List of sample question titles
     const questionTitles = [
@@ -126,23 +122,8 @@ export default function ActivityHeatmap() {
     return Object.values(allYearsData[selectedYear]).reduce((sum, day) => sum + day.count, 0);
   }, [allYearsData, selectedYear]);
   
-  // Format data for the selected year for the calendar component
-  const formattedData = useMemo(() => {
-    if (!allYearsData[selectedYear]) return {};
-    
-    const formatted: {[key: string]: number} = {};
-    Object.entries(allYearsData[selectedYear]).forEach(([date, data]) => {
-      formatted[date] = data.count;
-    });
-    return formatted;
-  }, [allYearsData, selectedYear]);
-  
-  // Define color scale based on number of problems solved
-  // Light green for 1-4, medium green for 5-9, dark green for 10+
-  const colorScale = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
-  
   // For loading state
-  if (Object.keys(formattedData).length === 0) {
+  if (Object.keys(allYearsData).length === 0) {
     return (
       <div className="rounded-lg bg-[rgb(24,24,27)] p-4 mb-4">
         <Skeleton className="h-6 w-48 mb-4 bg-[rgb(35,35,40)]" />
@@ -150,10 +131,144 @@ export default function ActivityHeatmap() {
       </div>
     );
   }
+
+  // Get all dates in the year for the calendar
+  const getDatesInYear = (year: number) => {
+    const dates = [];
+    const today = new Date();
+    const endDate = year === currentYear ? today : new Date(year, 11, 31);
+    
+    for (let month = 0; month < 12; month++) {
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        if (date <= endDate) {
+          dates.push(date);
+        }
+      }
+    }
+    return dates;
+  };
+  
+  // Function to get color based on count
+  const getColorForCount = (count: number) => {
+    if (count === 0) return '#161b22';
+    if (count >= 1 && count <= 4) return '#0e4429';
+    if (count >= 5 && count <= 9) return '#26a641';
+    return '#39d353'; // 10+
+  };
+  
+  // Create calendar grid
+  const renderCalendar = () => {
+    const dates = getDatesInYear(selectedYear);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    // Group dates by week
+    const weeks: Date[][] = [];
+    let currentWeek: Date[] = [];
+    
+    // Start with the first date's day of week
+    const firstDate = dates[0];
+    const firstDay = firstDate.getDay(); // 0 = Sunday, 1 = Monday, ...
+    
+    // Add empty slots for days before the first date
+    for (let i = 0; i < firstDay; i++) {
+      currentWeek.push(null as any);
+    }
+    
+    dates.forEach(date => {
+      const day = date.getDay(); // 0 = Sunday, 1 = Monday, ...
+      
+      // If we reach a Sunday and we already have dates in the current week, push the week and start a new one
+      if (day === 0 && currentWeek.length > 0) {
+        weeks.push([...currentWeek]);
+        currentWeek = [];
+      }
+      
+      currentWeek.push(date);
+      
+      // If we're at the last date, push the remaining week
+      if (date.getTime() === dates[dates.length - 1].getTime()) {
+        weeks.push([...currentWeek]);
+      }
+    });
+    
+    return (
+      <div className="mt-4">
+        {/* Month labels */}
+        <div className="flex text-xs text-gray-400 mb-1 pl-12">
+          {months.map((month, i) => (
+            <div key={month} className="flex-1 text-center">{month}</div>
+          ))}
+        </div>
+        
+        <div className="flex">
+          {/* Weekday labels */}
+          <div className="flex flex-col mr-3 text-xs text-gray-400 w-14">
+            <div className="h-3"></div> {/* Empty space for alignment */}
+            <div className="h-3 flex items-center justify-start">Mon</div>
+            <div className="h-3"></div>
+            <div className="h-3 flex items-center justify-start">Wed</div>
+            <div className="h-3"></div>
+            <div className="h-3 flex items-center justify-start">Fri</div>
+            <div className="h-3"></div>
+          </div>
+          
+          {/* Calendar cells */}
+          <div className="flex-1 grid" style={{ gridTemplateColumns: 'repeat(52, minmax(0, 1fr))' , gap: '2px' }}>
+            {weeks.map((week, weekIndex) => (
+              <div key={weekIndex} className="flex flex-col gap-1">
+                {week.map((date, dateIndex) => {
+                  if (!date) return <div key={`empty-${dateIndex}`} className="w-3 h-3"></div>;
+                  
+                  const dateKey = date.toISOString().split('T')[0];
+                  const dayData = allYearsData[selectedYear]?.[dateKey];
+                  const count = dayData?.count || 0;
+                  const questions = dayData?.questions || [];
+                  
+                  return (
+                    <div
+                      key={dateKey}
+                      className="w-3 h-3 rounded-sm cursor-pointer relative group"
+                      style={{ backgroundColor: getColorForCount(count) }}
+                      title={`${dateKey}: ${count} problems solved`}
+                    >
+                      {count > 0 && (
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-[rgb(35,35,40)] p-2 rounded-md text-xs shadow-lg text-white z-10 w-48 hidden group-hover:block pointer-events-none">
+                          <p className="font-semibold">{dateKey}: {count} problems</p>
+                          <ul className="mt-1 list-disc pl-4">
+                            {questions.map((q, i) => (
+                              <li key={i} className="truncate">{q}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Legend */}
+        <div className="flex items-center justify-end mt-2 text-xs text-gray-400">
+          <span>Less</span>
+          <div className="flex items-center mx-2">
+            <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: '#161b22' }}></div>
+            <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: '#0e4429' }}></div>
+            <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: '#26a641' }}></div>
+            <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: '#39d353' }}></div>
+          </div>
+          <span>More</span>
+        </div>
+      </div>
+    );
+  };
   
   return (
     <div className="rounded-lg bg-[rgb(24,24,27)] p-4 mb-4">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between">
         <h2 className="text-white font-medium">{totalSolved} problems solved in {selectedYear}</h2>
         
         {/* Year selector */}
@@ -174,27 +289,8 @@ export default function ActivityHeatmap() {
       </div>
       
       <div className="overflow-x-auto">
-        <div className="min-w-[750px]">
-          <div className="relative pl-20"> {/* Increased padding from 12px to 20px to show weekday labels */}
-            <Calendar 
-              values={formattedData}
-              until={endDate.toISOString().split('T')[0]}
-              panelColors={colorScale}
-              weekNames={['', 'Mon', '', 'Wed', '', 'Fri', '']}
-              monthNames={['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
-            />
-          </div>
-          
-          <div className="flex items-center justify-end mt-2 text-xs text-gray-400">
-            <span>Less</span>
-            <div className="flex items-center mx-2">
-              <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: colorScale[0] }}></div>
-              <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: colorScale[1] }}></div>
-              <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: colorScale[2] }}></div>
-              <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: colorScale[3] }}></div>
-            </div>
-            <span>More</span>
-          </div>
+        <div className="min-w-[800px]">
+          {renderCalendar()}
         </div>
       </div>
     </div>
