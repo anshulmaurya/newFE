@@ -72,19 +72,6 @@ export default function ProgressStats() {
     <Card>
       <CardContent className="pt-6">
         <div className="space-y-6">
-          {/* Overall Progress */}
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-500" />
-                <span className="text-sm font-medium">Overall Progress</span>
-              </div>
-              <span className="text-sm font-medium">
-                {userStats.totalSolved} / {totalProblems}
-              </span>
-            </div>
-            <Progress value={percentageSolved} className="h-2" />
-          </div>
 
           {/* Easy Problems */}
           <div>
