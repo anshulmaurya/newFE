@@ -155,8 +155,8 @@ export default function Dashboard() {
       <div className="mt-6 px-4 lg:px-0 lg:ml-56 lg:mr-64">
         <div className="flex flex-col gap-4">
           {/* Left column - navigation (hide on mobile) */}
-          <div className="hidden lg:block w-56 bg-[rgb(18,18,20)] min-h-screen fixed left-0 top-0 pt-20">
-            <div className="px-4 py-2">
+          <div className="hidden lg:block w-56 bg-[rgb(14,14,16)] fixed left-0 top-0 pt-20 h-screen flex flex-col">
+            <div className="px-4 py-2 flex flex-col h-full">
               <a href="/dashboard" className="block text-white text-sm font-medium py-2 px-3 bg-[rgb(24,24,27)] rounded-md mb-1">
                 Dashboard
               </a>
@@ -210,18 +210,27 @@ export default function Dashboard() {
                   <span><ChevronDown className="h-4 w-4" /></span>
                 </button>
               </div>
-            </div>
             
-            <div className="mt-auto px-4 pt-4 pb-8">
-              <div className="bg-[rgb(24,24,27)] rounded-md p-3 mb-2">
-                <div className="text-xs text-gray-500 mb-1">Sponsored</div>
-                <a href="https://discord.gg/HxAqXd8Xwt" target="_blank" rel="noopener noreferrer" className="text-sm text-white hover:text-[rgb(214,251,65)]">
-                  Join our Discord Community
-                  <span className="inline-block ml-1">→</span>
-                </a>
+              {/* Sponsored divider */}
+              <div className="mt-auto mb-3">
+                <div className="flex items-center">
+                  <div className="flex-grow h-px bg-[rgb(35,35,40)]"></div>
+                  <div className="mx-2 text-xs text-gray-500">Sponsored</div>
+                  <div className="flex-grow h-px bg-[rgb(35,35,40)]"></div>
+                </div>
+              </div>
+            
+              {/* Discord community section */}
+              <div className="mb-2">
+                <div className="rounded-md p-3">
+                  <a href="https://discord.gg/HxAqXd8Xwt" target="_blank" rel="noopener noreferrer" className="text-sm text-white hover:text-[rgb(214,251,65)]">
+                    Join our Discord Community
+                    <span className="inline-block ml-1">→</span>
+                  </a>
+                </div>
               </div>
               
-              <div className="flex justify-between pt-4">
+              <div className="flex justify-between mb-3">
                 <a href="https://discord.gg/HxAqXd8Xwt" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z"/>
@@ -243,39 +252,7 @@ export default function Dashboard() {
           
           {/* Main content */}
           <div className="flex-grow">
-            {/* Featured banner */}
-            <div className="bg-gradient-to-r from-[rgb(33,33,45)] to-[rgb(22,22,35)] rounded-xl p-5 mb-5 border border-[rgb(48,48,65)]">
-              <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-                <div>
-                  <h1 className="text-xl font-bold mb-2">
-                    <span className="text-[rgb(214,251,65)]">Embedded Systems</span> Interview Prep
-                  </h1>
-                  <p className="text-gray-300 mb-3 text-sm">
-                    Master embedded systems interview questions with our curated problem sets.
-                    Focus on memory management, RTOS, drivers, and hardware interfaces.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-blue-900/30 text-blue-200 border border-blue-800 hover:bg-blue-800/50 text-xs">
-                      RTOS
-                    </Badge>
-                    <Badge className="bg-green-900/30 text-green-200 border border-green-800 hover:bg-green-800/50 text-xs">
-                      Device Drivers
-                    </Badge>
-                    <Badge className="bg-purple-900/30 text-purple-200 border border-purple-800 hover:bg-purple-800/50 text-xs">
-                      Memory Management
-                    </Badge>
-                    <Badge className="bg-yellow-900/30 text-yellow-200 border border-yellow-800 hover:bg-yellow-800/50 text-xs">
-                      Interrupts
-                    </Badge>
-                  </div>
-                </div>
-                <div>
-                  <Button className="bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] text-black font-bold text-sm shadow-[0_0_10px_rgba(214,251,65,0.3)]">
-                    Start Learning
-                  </Button>
-                </div>
-              </div>
-            </div>
+
             
             {/* Filters */}
             <div className="flex flex-wrap md:flex-nowrap gap-2 mb-4 items-center">
@@ -471,7 +448,7 @@ export default function Dashboard() {
           
           
           {/* Right sidebar - stats (hide on mobile) */}
-          <div className="hidden lg:block w-64 min-h-screen fixed right-0 top-0 pt-20 bg-[rgb(18,18,20)]">
+          <div className="hidden lg:block w-64 min-h-screen fixed right-0 top-0 pt-20 bg-[rgb(14,14,16)]">
             <div className="px-4 py-2">
               <div className="mb-6">
                 <h3 className="text-sm font-bold mb-3">Top Companies</h3>
