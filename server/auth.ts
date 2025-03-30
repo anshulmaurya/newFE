@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Strategy as GithubStrategy } from "passport-github2";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Express, Request } from "express";
+import { Express, Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
@@ -55,10 +55,8 @@ export function setupAuth(app: Express) {
     }
   };
   
-  // Calculate and log the callback URL for debugging
-  const callbackURL = process.env.APP_URL 
-    ? `${process.env.APP_URL}/api/auth/github/callback` 
-    : `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co/api/auth/github/callback`;
+  // Use the exact callback URL configured in GitHub OAuth settings
+  const callbackURL = "https://97332a4d-a72c-4bed-9d97-03b0350ae447-00-2lw03c0sn2pc2.kirk.replit.dev/api/auth/github/callback";
   
   console.log("GitHub Auth Callback URL:", callbackURL);
 
@@ -73,9 +71,7 @@ export function setupAuth(app: Express) {
       {
         clientID: process.env.GITHUB_CLIENT_ID!,
         clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-        callbackURL: process.env.APP_URL 
-          ? `${process.env.APP_URL}/api/auth/github/callback` 
-          : `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co/api/auth/github/callback`,
+        callbackURL: callbackURL,
       },
       async function(
         accessToken: string, 
