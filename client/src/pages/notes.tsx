@@ -177,8 +177,8 @@ export default function Notes() {
   return (
     <div className={`flex flex-col min-h-screen ${themeClasses.bg} ${themeClasses.text} transition-colors duration-200`}>
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${headerBackground} shadow-md`}>
-        <div className="max-w-[1400px] mx-auto px-6 py-2 flex justify-between items-center">
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${headerBackground} border-b border-gray-800/50`}>
+        <div className="max-w-[1400px] mx-auto px-6 py-3 flex justify-between items-center">
           <div className="flex items-center">
             <div onClick={() => setLocation('/')} className="cursor-pointer">
               <div className="flex items-center">
@@ -197,7 +197,7 @@ export default function Notes() {
                   </svg>
                 </div>
                 <h1 className="font-display font-bold text-lg tracking-tight ml-1">
-                  <span className="text-white">dsp</span><span className="text-[rgb(214,251,65)]">coder.com</span>
+                  <span className="text-white">dsp</span><span className="text-[#56B2FF]">coder.com</span>
                 </h1>
               </div>
             </div>
@@ -205,13 +205,8 @@ export default function Notes() {
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-4">
-            <div onClick={() => setLocation('/')}>
-              <div className="nav-link group px-3 py-1.5 font-medium text-sm text-gray-300 hover:text-white transition-colors cursor-pointer">
-                Home
-              </div>
-            </div>
             <div onClick={() => setLocation('/notes')}>
-              <div className="nav-link group px-3 py-1.5 font-medium text-sm text-[rgb(214,251,65)] transition-colors cursor-pointer">
+              <div className="nav-link group px-3 py-1.5 font-medium text-sm text-[#56B2FF] transition-colors cursor-pointer">
                 Notes
               </div>
             </div>
@@ -232,7 +227,7 @@ export default function Notes() {
             
             <a 
               href="#" 
-              className="ml-3 px-4 py-1.5 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-xs text-black font-bold transition-all inline-flex items-center gap-1.5 shadow-[0_0_10px_rgba(214,251,65,0.4)] hover:shadow-[0_0_15px_rgba(214,251,65,0.6)] border border-[rgb(224,255,75)]"
+              className="ml-3 px-4 py-1.5 bg-[#56B2FF] hover:bg-[#3D9DF5] rounded-md text-xs text-white font-bold transition-all inline-flex items-center gap-1.5 shadow-[0_0_10px_rgba(86,178,255,0.3)] hover:shadow-[0_0_15px_rgba(86,178,255,0.5)] border border-[#78C1FF]"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -259,13 +254,9 @@ export default function Notes() {
         {/* Mobile Menu */}
         <div className={`md:hidden absolute w-full z-20 py-3 px-4 ${mobileMenuOpen ? 'block' : 'hidden'} bg-[rgb(24,24,26)]`}>
           <nav className="flex flex-col space-y-3">
-            <div onClick={() => { setLocation('/'); setMobileMenuOpen(false); }}>
-              <div className="text-gray-300 hover:text-white py-1.5 border-b border-gray-700/30 text-sm cursor-pointer">
-                Home
-              </div>
-            </div>
+  
             <div onClick={() => { setLocation('/notes'); setMobileMenuOpen(false); }}>
-              <div className="text-[rgb(214,251,65)] py-1.5 border-b border-gray-700/30 text-sm font-medium cursor-pointer">
+              <div className="text-[#56B2FF] py-1.5 border-b border-gray-700/30 text-sm font-medium cursor-pointer">
                 Notes
               </div>
             </div>
@@ -287,7 +278,7 @@ export default function Notes() {
             
             <a 
               href="#"
-              className="text-black py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[rgb(214,251,65)] shadow-[0_0_10px_rgba(214,251,65,0.4)] border border-[rgb(224,255,75)] text-sm"
+              className="text-white py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[#56B2FF] shadow-[0_0_10px_rgba(86,178,255,0.3)] border border-[#78C1FF] text-sm"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -305,7 +296,7 @@ export default function Notes() {
         </div>
       </header>
 
-      <div className="flex flex-grow pt-[52px]">
+      <div className="flex flex-grow pt-[62px]">
         {/* Sidebar */}
         <div className={`w-64 ${themeClasses.sidebarBg} p-4 flex flex-col border-r-0 shadow-md z-10`}>
           <div className="relative mb-3">
@@ -329,7 +320,7 @@ export default function Notes() {
                       onClick={() => setSelectedTopic(topic.id)}
                       className={`flex justify-between items-center w-full text-left px-2.5 py-1.5 rounded text-sm ${
                         selectedTopic === topic.id 
-                          ? `${themeClasses.highlight} ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-gray-800'} font-medium border-l-2 border-[rgb(214,251,65)]` 
+                          ? `${themeClasses.highlight} ${darkMode ? 'text-[#56B2FF]' : 'text-gray-800'} font-medium border-l-2 border-[#56B2FF]` 
                           : `${darkMode ? 'text-gray-300 hover:bg-[rgb(40,40,42)]' : 'text-gray-600 hover:bg-gray-200'}`
                       }`}
                     >
@@ -511,7 +502,7 @@ void UART_SendString(const char* str) {
                       href="#" 
                       className={`flex items-start p-4 ${themeClasses.card} rounded-lg border transition-colors`}
                     >
-                      <svg className={`mr-3 ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`mr-3 ${darkMode ? 'text-[#56B2FF]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                       </svg>
                       <div>
@@ -523,7 +514,7 @@ void UART_SendString(const char* str) {
                       href="#" 
                       className={`flex items-start p-4 ${themeClasses.card} rounded-lg border transition-colors`}
                     >
-                      <svg className={`mr-3 ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`mr-3 ${darkMode ? 'text-[#56B2FF]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       <div>
@@ -716,7 +707,7 @@ void memPoolFree(void* ptr) {
                       href="#" 
                       className={`flex items-start p-4 ${themeClasses.card} rounded-lg border transition-colors`}
                     >
-                      <svg className={`mr-3 ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`mr-3 ${darkMode ? 'text-[#56B2FF]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                       <div>
@@ -728,7 +719,7 @@ void memPoolFree(void* ptr) {
                       href="#" 
                       className={`flex items-start p-4 ${themeClasses.card} rounded-lg border transition-colors`}
                     >
-                      <svg className={`mr-3 ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`mr-3 ${darkMode ? 'text-[#56B2FF]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       <div>
