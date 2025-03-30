@@ -335,6 +335,7 @@ export default function Dashboard() {
                     <th className="px-2 py-2 text-center w-12 text-xs">Status</th>
                     <th className="px-3 py-2 text-left text-xs">Title</th>
                     <th className="px-2 py-2 text-center w-28 hidden md:table-cell text-xs">Companies</th>
+                    <th className="px-2 py-2 text-center w-24 hidden md:table-cell text-xs">Tags</th>
                     <th className="px-2 py-2 text-center w-20 text-xs">Difficulty</th>
                     <th className="px-2 py-2 text-center w-24 hidden lg:table-cell text-xs">Acceptance</th>
                     <th className="px-2 py-2 text-center w-20 hidden lg:table-cell text-xs">Importance</th>
@@ -343,7 +344,7 @@ export default function Dashboard() {
                 <tbody>
                   {isLoadingExternal ? (
                     <tr className="bg-[rgb(20,20,22)] border-b border-[rgb(35,35,40)]">
-                      <td colSpan={6} className="px-4 py-12 text-center">
+                      <td colSpan={7} className="px-4 py-12 text-center">
                         <div className="flex flex-col items-center">
                           <Loader2 className="h-6 w-6 animate-spin text-[rgb(214,251,65)]" />
                           <p className="mt-2 text-gray-400 text-xs">Loading problems...</p>
@@ -376,43 +377,7 @@ export default function Dashboard() {
                                   {problem.title || `Problem ${idx + 1}`}
                                 </a>
                                 
-                                {/* Tags below title */}
-                                <div className="mt-1 flex flex-wrap gap-1">
-                                  {problem.tags && problem.tags.length > 0 ? (
-                                    <>
-                                      {/* Show up to 2 tags */}
-                                      {problem.tags.slice(0, 2).map((tag, tagIdx) => (
-                                        <span key={tagIdx} className="text-xs text-gray-400 bg-gray-800/50 rounded px-1.5 py-0.5">
-                                          {tag}
-                                        </span>
-                                      ))}
-                                      
-                                      {/* If there are more than 2 tags, show +n */}
-                                      {problem.tags.length > 2 && (
-                                        <div className="group relative inline-block">
-                                          <span className="text-xs text-gray-400 bg-gray-800/50 rounded px-1.5 py-0.5 cursor-default">
-                                            +{problem.tags.length - 2}
-                                          </span>
-                                          
-                                          {/* Tooltip for additional tags */}
-                                          <div className="absolute z-10 left-0 top-full mt-1 hidden group-hover:block bg-gray-800 text-xs text-gray-300 p-2 rounded shadow-lg w-max max-w-xs">
-                                            <div className="flex flex-col gap-1">
-                                              {problem.tags.slice(2).map((tag, i) => (
-                                                <span key={i} className="px-1.5 py-0.5">
-                                                  {tag}
-                                                </span>
-                                              ))}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      )}
-                                    </>
-                                  ) : (
-                                    <span className="text-xs text-gray-400 bg-gray-800/50 rounded px-1.5 py-0.5">
-                                      {problem.type || "dsa"}
-                                    </span>
-                                  )}
-                                </div>
+                                {/* No tags here anymore since we moved them to a separate column */}
                               </div>
                             </div>
                           </td>
@@ -435,7 +400,7 @@ export default function Dashboard() {
                                       {/* Tooltip for additional companies */}
                                       <div className="absolute z-10 left-0 top-full mt-1 hidden group-hover:block bg-gray-800 text-xs text-gray-300 p-2 rounded shadow-lg w-max max-w-xs">
                                         <div className="flex flex-col gap-1">
-                                          {problem.companies.slice(1).map((company, i) => (
+                                          {problem.companies.slice(1).map((company: string, i: number) => (
                                             <span key={i} className="px-1.5 py-0.5">
                                               {company}
                                             </span>
@@ -448,6 +413,50 @@ export default function Dashboard() {
                               ) : (
                                 <Badge className="bg-blue-900/30 text-blue-200 border border-blue-800 px-1.5 py-0 text-[10px]">
                                   {idx % 3 === 0 ? "Intel" : idx % 3 === 1 ? "Qualcomm" : "Microsoft"}
+                                </Badge>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-2 py-2 hidden md:table-cell text-center">
+                            <div className="flex justify-center flex-wrap">
+                              {problem.tags && problem.tags.length > 0 ? (
+                                <div className="group relative inline-block">
+                                  {/* Show up to 2 tags */}
+                                  <Badge className="bg-green-900/30 text-green-200 border border-green-800 px-1.5 py-0 text-[10px]">
+                                    {problem.tags[0]}
+                                  </Badge>
+                                  
+                                  {/* If there are more than 1 tag, show the second or +n */}
+                                  {problem.tags.length > 1 && (
+                                    <>
+                                      {problem.tags.length === 2 ? (
+                                        <Badge className="bg-green-900/30 text-green-200 border border-green-800 px-1.5 py-0 text-[10px] ml-1">
+                                          {problem.tags[1]}
+                                        </Badge>
+                                      ) : (
+                                        <Badge className="bg-gray-800 text-gray-300 px-1 py-0 text-[10px] ml-1 cursor-default">
+                                          +{problem.tags.length - 1}
+                                        </Badge>
+                                      )}
+                                      
+                                      {/* Tooltip for additional tags when more than 2 */}
+                                      {problem.tags.length > 2 && (
+                                        <div className="absolute z-10 left-0 top-full mt-1 hidden group-hover:block bg-gray-800 text-xs text-gray-300 p-2 rounded shadow-lg w-max max-w-xs">
+                                          <div className="flex flex-col gap-1">
+                                            {problem.tags.slice(1).map((tag: string, i: number) => (
+                                              <span key={i} className="px-1.5 py-0.5">
+                                                {tag}
+                                              </span>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
+                              ) : (
+                                <Badge className="bg-green-900/30 text-green-200 border border-green-800 px-1.5 py-0 text-[10px]">
+                                  {problem.type || "dsa"}
                                 </Badge>
                               )}
                             </div>
@@ -473,7 +482,7 @@ export default function Dashboard() {
                     })
                   ) : (
                     <tr className="bg-[rgb(20,20,22)] border-b border-[rgb(35,35,40)]">
-                      <td colSpan={6} className="px-4 py-12 text-center text-gray-400 text-xs">
+                      <td colSpan={7} className="px-4 py-12 text-center text-gray-400 text-xs">
                         No problems found matching your criteria.
                       </td>
                     </tr>
