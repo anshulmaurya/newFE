@@ -32,6 +32,14 @@ import {
   User,
   CalendarDays,
   ChevronDown,
+  Terminal,
+  Building,
+  Microchip,
+  Sparkles,
+  Code2,
+  Gauge,
+  Check,
+  X,
 } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import { cn } from '@/lib/utils';
@@ -68,6 +76,8 @@ export default function Dashboard() {
   const [status, setStatus] = useState<string>('all');
   const [search, setSearch] = useState<string>('');
   const [showTags, setShowTags] = useState(true);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [selectedBundle, setSelectedBundle] = useState<string | null>(null);
 
   // Fetch problems from external API via our server proxy
   const { data: externalProblems, isLoading: isLoadingExternal } = useQuery({
@@ -100,6 +110,74 @@ export default function Dashboard() {
     { name: 'Qualcomm', count: 8 },
     { name: 'Apple', count: 5 }
   ];
+  
+  // Bundle data
+  const bundles = {
+    'blind-75': {
+      title: 'Embedded Blind 75',
+      description: 'A carefully curated list of 75 most important embedded systems questions that cover all the essential topics for technical interviews.',
+      icon: <Code className="h-5 w-5 text-yellow-400" />,
+      count: 75,
+      estimatedTime: '15 hours',
+      difficulty: 'Mixed'
+    },
+    'linux-basics': {
+      title: 'Linux Basics',
+      description: 'Essential Linux kernel and system programming concepts for embedded developers. Covers syscalls, drivers, and memory management.',
+      icon: <Terminal className="h-5 w-5 text-green-400" />,
+      count: 25,
+      estimatedTime: '8 hours',
+      difficulty: 'Easy to Medium'
+    },
+    'embedded-essentials': {
+      title: 'Embedded Essentials',
+      description: 'Core embedded systems concepts including real-time programming, interrupts, DMA, and peripheral interfaces.',
+      icon: <Cpu className="h-5 w-5 text-blue-400" />,
+      count: 40,
+      estimatedTime: '12 hours',
+      difficulty: 'Medium'
+    },
+    'arm': {
+      title: 'ARM Interview Bundle',
+      description: 'Targeted problems frequently asked in ARM interviews, covering architecture specifics and optimization techniques.',
+      icon: <Microchip className="h-5 w-5 text-red-400" />,
+      count: 30,
+      estimatedTime: '10 hours',
+      difficulty: 'Medium to Hard'
+    },
+    'amd': {
+      title: 'AMD Interview Bundle',
+      description: 'Problems focused on AMD architecture, GPU programming, and system optimization.',
+      icon: <Microchip className="h-5 w-5 text-red-400" />,
+      count: 25,
+      estimatedTime: '9 hours',
+      difficulty: 'Medium to Hard'
+    },
+    'nvidia': {
+      title: 'NVIDIA Interview Bundle',
+      description: 'CUDA programming, GPU architecture, and parallel computing problems often encountered in NVIDIA interviews.',
+      icon: <Microchip className="h-5 w-5 text-green-500" />,
+      count: 28,
+      estimatedTime: '10 hours',
+      difficulty: 'Hard'
+    },
+    'c-cpp-asm': {
+      title: 'C/C++/ASM Trilogy',
+      description: 'Deep dive into low-level programming with C, C++, and Assembly language challenges.',
+      icon: <Code2 className="h-5 w-5 text-purple-400" />,
+      count: 45,
+      estimatedTime: '14 hours',
+      difficulty: 'Hard'
+    },
+    'hard-algorithms': {
+      title: 'Hard Algorithms',
+      description: 'Advanced algorithm challenges specifically tailored for embedded systems, focusing on optimization and efficiency.',
+      icon: <Gauge className="h-5 w-5 text-orange-400" />,
+      count: 35,
+      estimatedTime: '12 hours',
+      difficulty: 'Very Hard'
+    }
+  };
 
   // Function to handle navigation to different sections
   const handleNavigateFeatures = () => {
@@ -143,6 +221,12 @@ export default function Dashboard() {
         return <Circle className="h-5 w-5 text-gray-500 opacity-50" />;
     }
   };
+  
+  // Handle bundle selection
+  const handleBundleSelect = (bundleId: string) => {
+    setSelectedBundle(bundleId);
+    // Could add additional logic here to filter problems by bundle
+  };
 
   return (
     <div className="bg-[rgb(14,14,16)] text-white pt-16 h-screen overflow-hidden">
@@ -157,58 +241,126 @@ export default function Dashboard() {
         {/* Left sidebar - fixed */}
         <div className="hidden lg:block w-56 bg-[rgb(14,14,16)] fixed left-0 top-16 bottom-0 overflow-y-auto border-r border-[rgb(35,35,40)]">
           <div className="px-4 py-4 flex flex-col h-full">
-            <a href="/dashboard" className="block text-white text-sm font-medium py-2 px-3 bg-[rgb(24,24,27)] rounded-md mb-1">
+            <a href="/dashboard" className="block text-white text-sm font-medium py-2 px-3 bg-[rgb(24,24,27)] rounded-md mb-3">
               Dashboard
             </a>
             
+            {/* Quick Prep Bundles */}
             <div className="mb-4">
-              <button className="flex justify-between items-center w-full text-gray-400 hover:text-white text-sm py-2 px-3 rounded-md transition-colors">
-                <span>Practice questions</span>
-                <span><ChevronDown className="h-4 w-4" /></span>
-              </button>
-            </div>
-            
-            <div className="mb-4">
-              <button className="flex justify-between items-center w-full text-gray-400 hover:text-white text-sm py-2 px-3 rounded-md transition-colors">
-                <span>Recommended strategy</span>
-                <span><ChevronDown className="h-4 w-4" /></span>
+              <button 
+                className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
+                onClick={() => setExpandedSection(expandedSection === 'quick-prep' ? null : 'quick-prep')}
+              >
+                <span className="flex items-center">
+                  <Zap className="h-4 w-4 mr-2 text-yellow-400" />
+                  <span>Quick Prep Bundles</span>
+                </span>
+                <span><ChevronDown className={`h-4 w-4 transition-transform ${expandedSection === 'quick-prep' ? 'rotate-180' : ''}`} /></span>
               </button>
               
-              <div className="mt-1 pl-3">
-                <a href="#" className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md">
-                  <Codepen className="h-4 w-4 text-gray-500" />
-                  <span>Top Interview 150</span>
-                </a>
-                
-                <a href="#" className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md">
-                  <Database className="h-4 w-4 text-gray-500" />
-                  <span>Embedded Systems 50</span>
-                </a>
-                
-                <a href="#" className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md">
-                  <Share2 className="h-4 w-4 text-gray-500" />
-                  <span>Company-wise</span>
-                </a>
-                
-                <a href="#" className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md">
-                  <Clock className="h-4 w-4 text-gray-500" />
-                  <span>Time-wise</span>
-                </a>
-              </div>
+              {expandedSection === 'quick-prep' && (
+                <div className="mt-1 pl-3">
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('blind-75')}
+                  >
+                    <Code className="h-4 w-4 text-gray-500" />
+                    <span>Blind 75</span>
+                  </button>
+                  
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('linux-basics')}
+                  >
+                    <Terminal className="h-4 w-4 text-gray-500" />
+                    <span>Linux Basics</span>
+                  </button>
+                  
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('embedded-essentials')}
+                  >
+                    <Cpu className="h-4 w-4 text-gray-500" />
+                    <span>Embedded Essentials</span>
+                  </button>
+                </div>
+              )}
             </div>
             
+            {/* Target Companies */}
             <div className="mb-4">
-              <button className="flex justify-between items-center w-full text-gray-400 hover:text-white text-sm py-2 px-3 rounded-md transition-colors">
-                <span>Time-savers</span>
-                <span><ChevronDown className="h-4 w-4" /></span>
+              <button 
+                className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
+                onClick={() => setExpandedSection(expandedSection === 'target-companies' ? null : 'target-companies')}
+              >
+                <span className="flex items-center">
+                  <Building className="h-4 w-4 mr-2 text-blue-400" />
+                  <span>Target Companies</span>
+                </span>
+                <span><ChevronDown className={`h-4 w-4 transition-transform ${expandedSection === 'target-companies' ? 'rotate-180' : ''}`} /></span>
               </button>
+              
+              {expandedSection === 'target-companies' && (
+                <div className="mt-1 pl-3">
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('arm')}
+                  >
+                    <Microchip className="h-4 w-4 text-gray-500" />
+                    <span>ARM</span>
+                  </button>
+                  
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('amd')}
+                  >
+                    <Microchip className="h-4 w-4 text-gray-500" />
+                    <span>AMD</span>
+                  </button>
+                  
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('nvidia')}
+                  >
+                    <Microchip className="h-4 w-4 text-gray-500" />
+                    <span>NVIDIA</span>
+                  </button>
+                </div>
+              )}
             </div>
             
+            {/* Feeling Lucky */}
             <div className="mb-4">
-              <button className="flex justify-between items-center w-full text-gray-400 hover:text-white text-sm py-2 px-3 rounded-md transition-colors">
-                <span>Guides</span>
-                <span><ChevronDown className="h-4 w-4" /></span>
+              <button 
+                className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
+                onClick={() => setExpandedSection(expandedSection === 'feeling-lucky' ? null : 'feeling-lucky')}
+              >
+                <span className="flex items-center">
+                  <Sparkles className="h-4 w-4 mr-2 text-purple-400" />
+                  <span>Feeling Lucky</span>
+                </span>
+                <span><ChevronDown className={`h-4 w-4 transition-transform ${expandedSection === 'feeling-lucky' ? 'rotate-180' : ''}`} /></span>
               </button>
+              
+              {expandedSection === 'feeling-lucky' && (
+                <div className="mt-1 pl-3">
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('c-cpp-asm')}
+                  >
+                    <Code2 className="h-4 w-4 text-gray-500" />
+                    <span>C/Cpp/ASM Trilogy</span>
+                  </button>
+                  
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('hard-algorithms')}
+                  >
+                    <Gauge className="h-4 w-4 text-gray-500" />
+                    <span>Hit Hard Algorithms</span>
+                  </button>
+                </div>
+              )}
             </div>
           
             {/* Sponsored divider */}
@@ -255,6 +407,44 @@ export default function Dashboard() {
           {/* Main content area */}
           <div className="flex-grow py-2 px-2 space-y-4">
 
+            {/* Selected Bundle Details */}
+            {selectedBundle && bundles[selectedBundle as keyof typeof bundles] && (
+              <div className="bg-[rgb(20,20,22)] rounded-lg p-4 border border-[rgb(35,35,40)] mb-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0">
+                      {bundles[selectedBundle as keyof typeof bundles].icon}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white">
+                        {bundles[selectedBundle as keyof typeof bundles].title}
+                      </h3>
+                      <p className="text-sm text-gray-400 mt-1">
+                        {bundles[selectedBundle as keyof typeof bundles].count} Problems • 
+                        {bundles[selectedBundle as keyof typeof bundles].estimatedTime} • 
+                        {bundles[selectedBundle as keyof typeof bundles].difficulty}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button 
+                      className="bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] text-black text-xs py-1 px-3 h-8 rounded-md"
+                    >
+                      Start Now
+                    </Button>
+                    <button 
+                      className="text-gray-400 hover:text-white"
+                      onClick={() => setSelectedBundle(null)}
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-300 mt-3">
+                  {bundles[selectedBundle as keyof typeof bundles].description}
+                </p>
+              </div>
+            )}
             
             {/* Filters */}
             <div className="flex flex-wrap md:flex-nowrap gap-2 mb-4 items-center sticky top-0 z-10 bg-[rgb(14,14,16)] py-2 -mx-2 px-2 shadow-md">
