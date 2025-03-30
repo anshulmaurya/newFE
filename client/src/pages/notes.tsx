@@ -296,7 +296,7 @@ export default function Notes() {
         </div>
       </header>
 
-      <div className="flex flex-grow pt-[52px]">
+      <div className="flex flex-grow pt-[44px]">
         {/* Sidebar */}
         <div className={`w-64 ${themeClasses.sidebarBg} p-4 flex flex-col border-r-0 shadow-md z-10`}>
           <div className="relative mb-3">
@@ -356,7 +356,7 @@ export default function Notes() {
         </div>
 
         {/* Main content */}
-        <div className="flex-grow px-8 py-4 overflow-auto">
+        <div className="flex-grow px-8 pt-4 overflow-auto">
           <div className="max-w-4xl mx-auto">
             {selectedTopic === "communication-protocols" && (
               <>
