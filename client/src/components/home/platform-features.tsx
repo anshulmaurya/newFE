@@ -753,24 +753,28 @@ IN AL, 0x3F8    ; Read from port into AL`}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Feature tabs - left side on desktop, top on mobile */}
           <motion.div 
-            className="lg:col-span-3 order-2 lg:order-1"
+            className="lg:col-span-3 order-1 lg:order-1"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <div className="space-y-0.5">
+            <div className="space-y-0.5 flex lg:flex-col flex-row overflow-x-auto pb-4 lg:pb-0 hide-scrollbar">
               {features.map((feature) => (
                 <div 
                   key={feature.id}
-                  className={`py-2 px-3 cursor-pointer transition-all hover:bg-[rgb(22,22,24)] border-l-2 ${activeFeature === feature.id ? 'border-l-[rgb(214,251,65)] bg-[rgb(22,22,24)]' : 'border-l-transparent'}`}
+                  className={`py-2 px-3 cursor-pointer transition-all hover:bg-[rgb(22,22,24)] lg:border-l-2 lg:border-b-0 border-b-2 flex-shrink-0 ${
+                    activeFeature === feature.id 
+                      ? 'lg:border-l-[rgb(86,182,255)] border-b-[rgb(86,182,255)] bg-[rgb(22,22,24)]' 
+                      : 'lg:border-l-transparent border-b-transparent'
+                  }`}
                   onClick={() => setActiveFeature(feature.id)}
                 >
                   <div className="flex items-center">
-                    <div className={`mr-3 ${activeFeature === feature.id ? 'text-[rgb(214,251,65)]' : 'text-gray-400'}`}>
+                    <div className={`mr-3 ${activeFeature === feature.id ? 'text-[rgb(86,182,255)]' : 'text-gray-400'}`}>
                       {feature.icon}
                     </div>
-                    <h3 className={`text-sm font-medium ${activeFeature === feature.id ? 'text-[rgb(214,251,65)]' : 'text-gray-300'}`}>
+                    <h3 className={`text-sm font-medium ${activeFeature === feature.id ? 'text-[rgb(86,182,255)]' : 'text-gray-300'}`}>
                       {feature.title.replace(/Code Directly in VS Code/, 'VS Code Integration')}
                     </h3>
                   </div>
@@ -781,7 +785,7 @@ IN AL, 0x3F8    ; Read from port into AL`}
 
           {/* Feature preview - right side on desktop, bottom on mobile */}
           <motion.div 
-            className="lg:col-span-9 order-1 lg:order-2"
+            className="lg:col-span-9 order-2 lg:order-2"
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}

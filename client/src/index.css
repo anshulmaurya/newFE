@@ -67,7 +67,7 @@
 
 @layer utilities {
   .nav-indicator {
-    @apply block h-0.5 w-0 bg-[rgb(214,251,65)] transition-all duration-300;
+    @apply block h-0.5 w-0 bg-[rgb(86,182,255)] transition-all duration-300;
   }
   
   .code-block::-webkit-scrollbar {
@@ -89,6 +89,15 @@
   
   .glass {
     @apply bg-[rgb(24,24,26)]/60 backdrop-blur-lg;
+  }
+  
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
   }
   
   .animate-typing {

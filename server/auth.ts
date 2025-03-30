@@ -11,18 +11,18 @@ import { User as UserType } from "@shared/schema";
 // Create type declaration for Express User
 declare global {
   namespace Express {
-    // Define User interface to avoid recursive reference
+    // Define User interface to match the database schema
     interface User {
       id: number;
       username: string;
-      password?: string;
-      githubId?: string;
-      displayName?: string;
-      profileUrl?: string;
-      avatarUrl?: string;
-      email?: string;
-      accessToken?: string;
-      createdAt?: Date;
+      password?: string | null;
+      githubId?: string | null;
+      displayName?: string | null;
+      profileUrl?: string | null;
+      avatarUrl?: string | null;
+      email?: string | null;
+      accessToken?: string | null;
+      createdAt?: Date | null;
     }
   }
 }
@@ -35,8 +35,12 @@ async function hashPassword(password: string) {
   return `${buf.toString("hex")}.${salt}`;
 }
 
-async function comparePasswords(supplied: string, stored: string) {
+async function comparePasswords(supplied: string, stored: string | null | undefined): Promise<boolean> {
+  if (!stored) return false;
+  
   const [hashed, salt] = stored.split(".");
+  if (!hashed || !salt) return false;
+  
   const hashedBuf = Buffer.from(hashed, "hex");
   const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
   return timingSafeEqual(hashedBuf, suppliedBuf);
@@ -131,7 +135,7 @@ export function setupAuth(app: Express) {
       try {
         const user = await storage.getUserByUsername(username);
         
-        if (!user || !(await comparePasswords(password, user.password))) {
+        if (!user || !user.password || !(await comparePasswords(password, user.password))) {
           return done(null, false, { message: "Invalid username or password" });
         }
         
