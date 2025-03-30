@@ -176,6 +176,54 @@ export default function Dashboard() {
       count: 35,
       estimatedTime: '12 hours',
       difficulty: 'Very Hard'
+    },
+    'one-week': {
+      title: '1-Week Crash Course',
+      description: 'An intensive crash course covering essential embedded systems topics. Perfect for last-minute interview preparation.',
+      icon: <CalendarDays className="h-5 w-5 text-orange-400" />,
+      count: 20,
+      estimatedTime: '7 days',
+      difficulty: 'Mixed'
+    },
+    'two-weeks': {
+      title: '2-Week Preparation',
+      description: 'A balanced preparation plan over two weeks, covering core embedded systems concepts with sufficient practice time.',
+      icon: <CalendarDays className="h-5 w-5 text-orange-400" />,
+      count: 40,
+      estimatedTime: '14 days',
+      difficulty: 'Mixed'
+    },
+    'one-month': {
+      title: '1-Month Complete Prep',
+      description: 'A comprehensive preparation plan covering all embedded concepts with ample time for practice and revision.',
+      icon: <CalendarDays className="h-5 w-5 text-orange-400" />,
+      count: 80,
+      estimatedTime: '30 days',
+      difficulty: 'Mixed'
+    },
+    'entry-level': {
+      title: 'Entry Level (0-2 YOE)',
+      description: 'Problems tailored for entry-level embedded engineers with 0-2 years of experience, focusing on fundamentals.',
+      icon: <User className="h-5 w-5 text-green-400" />,
+      count: 50,
+      estimatedTime: '15 hours',
+      difficulty: 'Easy to Medium'
+    },
+    'mid-level': {
+      title: 'Mid Level (3-5 YOE)',
+      description: 'Problems for mid-level engineers with 3-5 years of experience, focusing on advanced concepts and system design.',
+      icon: <User className="h-5 w-5 text-green-400" />,
+      count: 60,
+      estimatedTime: '18 hours',
+      difficulty: 'Medium to Hard'
+    },
+    'senior-level': {
+      title: 'Senior Level (5+ YOE)',
+      description: 'Challenging problems for senior engineers with 5+ years of experience, focusing on architecture, optimization, and complex system design.',
+      icon: <User className="h-5 w-5 text-green-400" />,
+      count: 40,
+      estimatedTime: '16 hours',
+      difficulty: 'Hard'
     }
   };
 
@@ -227,6 +275,16 @@ export default function Dashboard() {
     setSelectedBundle(bundleId);
     // Could add additional logic here to filter problems by bundle
   };
+  
+  // Toggle section expansion
+  const toggleSection = (section: string) => {
+    setExpandedSection(prev => {
+      if (prev === section) {
+        return null;
+      }
+      return section;
+    });
+  };
 
   return (
     <div className="bg-[rgb(14,14,16)] text-white pt-16 h-screen overflow-hidden">
@@ -249,7 +307,7 @@ export default function Dashboard() {
             <div className="mb-4">
               <button 
                 className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
-                onClick={() => setExpandedSection(expandedSection === 'quick-prep' ? null : 'quick-prep')}
+                onClick={() => toggleSection('quick-prep')}
               >
                 <span className="flex items-center">
                   <Zap className="h-4 w-4 mr-2 text-yellow-400" />
@@ -291,7 +349,7 @@ export default function Dashboard() {
             <div className="mb-4">
               <button 
                 className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
-                onClick={() => setExpandedSection(expandedSection === 'target-companies' ? null : 'target-companies')}
+                onClick={() => toggleSection('target-companies')}
               >
                 <span className="flex items-center">
                   <Building className="h-4 w-4 mr-2 text-blue-400" />
@@ -333,7 +391,7 @@ export default function Dashboard() {
             <div className="mb-4">
               <button 
                 className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
-                onClick={() => setExpandedSection(expandedSection === 'feeling-lucky' ? null : 'feeling-lucky')}
+                onClick={() => toggleSection('feeling-lucky')}
               >
                 <span className="flex items-center">
                   <Sparkles className="h-4 w-4 mr-2 text-purple-400" />
@@ -362,12 +420,94 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
+            
+            {/* Time-Based Prep */}
+            <div className="mb-4">
+              <button 
+                className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
+                onClick={() => toggleSection('time-based')}
+              >
+                <span className="flex items-center">
+                  <Clock className="h-4 w-4 mr-2 text-orange-400" />
+                  <span>Time-Based Prep</span>
+                </span>
+                <span><ChevronDown className={`h-4 w-4 transition-transform ${expandedSection === 'time-based' ? 'rotate-180' : ''}`} /></span>
+              </button>
+              
+              {expandedSection === 'time-based' && (
+                <div className="mt-1 pl-3">
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('one-week')}
+                  >
+                    <CalendarDays className="h-4 w-4 text-gray-500" />
+                    <span>1-Week Crash Course</span>
+                  </button>
+                  
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('two-weeks')}
+                  >
+                    <CalendarDays className="h-4 w-4 text-gray-500" />
+                    <span>2-Week Prep</span>
+                  </button>
+                  
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('one-month')}
+                  >
+                    <CalendarDays className="h-4 w-4 text-gray-500" />
+                    <span>1-Month Complete Prep</span>
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            {/* Experience Level */}
+            <div className="mb-4">
+              <button 
+                className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
+                onClick={() => toggleSection('experience-level')}
+              >
+                <span className="flex items-center">
+                  <User className="h-4 w-4 mr-2 text-green-400" />
+                  <span>Experience Level</span>
+                </span>
+                <span><ChevronDown className={`h-4 w-4 transition-transform ${expandedSection === 'experience-level' ? 'rotate-180' : ''}`} /></span>
+              </button>
+              
+              {expandedSection === 'experience-level' && (
+                <div className="mt-1 pl-3">
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('entry-level')}
+                  >
+                    <Cpu className="h-4 w-4 text-gray-500" />
+                    <span>Entry Level (0-2 YOE)</span>
+                  </button>
+                  
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('mid-level')}
+                  >
+                    <Cpu className="h-4 w-4 text-gray-500" />
+                    <span>Mid Level (3-5 YOE)</span>
+                  </button>
+                  
+                  <button 
+                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    onClick={() => handleBundleSelect('senior-level')}
+                  >
+                    <Cpu className="h-4 w-4 text-gray-500" />
+                    <span>Senior (5+ YOE)</span>
+                  </button>
+                </div>
+              )}
+            </div>
           
-            {/* Sponsored divider */}
+            {/* Simple divider */}
             <div className="mt-auto mb-3">
               <div className="flex items-center">
-                <div className="flex-grow h-px bg-[rgb(35,35,40)]"></div>
-                <div className="mx-2 text-xs text-gray-500">Sponsored</div>
                 <div className="flex-grow h-px bg-[rgb(35,35,40)]"></div>
               </div>
             </div>
@@ -528,13 +668,12 @@ export default function Dashboard() {
                     <th className="px-2 py-3 text-center w-24 hidden md:table-cell text-xs font-medium">Tags</th>
                     <th className="px-2 py-3 text-center w-20 text-xs font-medium">Difficulty</th>
                     <th className="px-2 py-3 text-center w-24 hidden lg:table-cell text-xs font-medium">Acceptance</th>
-                    <th className="px-2 py-3 text-center w-20 hidden lg:table-cell text-xs font-medium">Importance</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[rgb(35,35,40)]">
                   {isLoadingExternal ? (
                     <tr className="bg-[rgb(20,20,22)]">
-                      <td colSpan={7} className="px-4 py-12 text-center">
+                      <td colSpan={6} className="px-4 py-12 text-center">
                         <div className="flex flex-col items-center">
                           <Loader2 className="h-6 w-6 animate-spin text-[rgb(214,251,65)]" />
                           <p className="mt-2 text-gray-400 text-xs">Loading problems...</p>
@@ -659,20 +798,12 @@ export default function Dashboard() {
                               {problem.acceptance_rate ? `${problem.acceptance_rate}%` : 'N/A'}
                             </span>
                           </td>
-                          <td className="px-2 py-3 hidden lg:table-cell text-center">
-                            <span className={`text-xs ${
-                              problem.importance === 'High' ? 'text-red-500' : 
-                              problem.importance === 'Medium' ? 'text-yellow-500' : 'text-blue-500'
-                            }`}>
-                              {problem.importance || 'Medium'}
-                            </span>
-                          </td>
                         </tr>
                       );
                     })
                   ) : (
                     <tr className="bg-[rgb(20,20,22)] border-b border-[rgb(35,35,40)]">
-                      <td colSpan={7} className="px-4 py-12 text-center text-gray-400 text-xs">
+                      <td colSpan={6} className="px-4 py-12 text-center text-gray-400 text-xs">
                         No problems found matching your criteria.
                       </td>
                     </tr>
