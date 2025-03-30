@@ -12,6 +12,11 @@ export default function AuthPage() {
   const { user, isLoading } = useAuth();
   const [location, setLocation] = useLocation();
   const [error, setError] = useState<string | null>(null);
+  const [darkMode, setDarkMode] = useState(true);
+  
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+  };
   
   // Check for error in URL query parameters
   useEffect(() => {
@@ -45,21 +50,23 @@ export default function AuthPage() {
   };
   
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className={`flex flex-col min-h-screen ${darkMode ? 'bg-[rgb(24,24,26)] text-white' : 'bg-gray-100 text-gray-900'} transition-colors duration-200`}>
       <Header 
         onNavigateFeatures={navigateToFeatures} 
         onNavigateProblems={navigateToProblems}
         isScrolled={true}
+        darkMode={darkMode}
+        toggleDarkMode={toggleTheme}
       />
       
       <div className="flex flex-1 pt-16">
         {/* Left side - Auth Form */}
         <div className="flex flex-col justify-center items-center w-full lg:w-1/2 p-6 md:p-10">
           <div className="w-full max-w-md">
-            <Card>
+            <Card className={darkMode ? "border-gray-800 bg-[rgb(30,30,32)]" : ""}>
               <CardHeader className="space-y-2">
-                <CardTitle className="text-2xl font-bold">Welcome to DSPCoder</CardTitle>
-                <CardDescription>
+                <CardTitle className={`text-2xl font-bold ${darkMode ? "text-white" : ""}`}>Welcome to DSPCoder</CardTitle>
+                <CardDescription className={darkMode ? "text-gray-400" : ""}>
                   Sign in to access your dashboard, track progress, and practice embedded system interview questions.
                 </CardDescription>
               </CardHeader>
@@ -78,7 +85,7 @@ export default function AuthPage() {
                   <span>Continue with GitHub</span>
                 </Button>
               </CardContent>
-              <CardFooter className="flex justify-center text-sm text-gray-500">
+              <CardFooter className={`flex justify-center text-sm ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
                 By signing in, you agree to our Terms and Privacy Policy.
               </CardFooter>
             </Card>

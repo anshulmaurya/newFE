@@ -189,6 +189,8 @@ export default function Notes() {
         onNavigateFeatures={navigateToFeatures} 
         onNavigateProblems={navigateToProblems}
         isScrolled={scrollPosition > 10}
+        darkMode={darkMode}
+        toggleDarkMode={toggleTheme}
       />
 
       <div className="flex flex-grow pt-0">
