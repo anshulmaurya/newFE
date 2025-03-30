@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, LogOut, Moon, Sun } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, Moon, Sun, User, Settings, Bell, Clock } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -168,34 +168,66 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-[rgb(36,36,38)] border-[rgb(46,46,48)] text-white">
-                <div className="flex items-center justify-start gap-2 p-2">
-                  <div className="flex flex-col space-y-0.5">
-                    <p className="text-sm font-medium">{user.username}</p>
-                    <p className="text-xs text-gray-400 truncate">{user.email || "GitHub User"}</p>
+              <DropdownMenuContent align="end" className="w-64 bg-[rgb(20,22,30)] border-[rgb(30,32,40)] text-white">
+                <div className="flex flex-col items-center justify-center py-6 px-4 border-b border-[rgb(30,32,40)]">
+                  <Avatar className="h-16 w-16 border-2 border-[rgb(214,251,65)] mb-3">
+                    <AvatarImage 
+                      src={user.avatarUrl || "https://github.com/identicons/app/oauth_app/1234"} 
+                      alt={user.username || "User"}
+                    />
+                    <AvatarFallback className="bg-[rgb(36,36,38)] text-[rgb(214,251,65)]">
+                      {user.username ? user.username.substring(0, 2).toUpperCase() : "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <p className="text-base font-medium text-white">
+                    {user.displayName || user.username || "User"}
+                  </p>
+                  <p className="text-sm text-gray-400 truncate">
+                    {user.email || "admin@dspcoder.com"}
+                  </p>
+                </div>
+
+                <div className="p-1">
+                  <DropdownMenuItem className="cursor-not-allowed flex items-center justify-between py-3 px-3 focus:bg-[rgb(30,32,40)] text-gray-300">
+                    <div className="flex items-center">
+                      <User className="mr-3 h-5 w-5 text-gray-500" />
+                      <span>Profile</span>
+                    </div>
+                    <Clock className="h-4 w-4 text-gray-500" />
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem className="cursor-not-allowed flex items-center justify-between py-3 px-3 focus:bg-[rgb(30,32,40)] text-gray-300">
+                    <div className="flex items-center">
+                      <Settings className="mr-3 h-5 w-5 text-gray-500" />
+                      <span>Settings</span>
+                    </div>
+                    <Clock className="h-4 w-4 text-gray-500" />
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem className="cursor-not-allowed flex items-center justify-between py-3 px-3 focus:bg-[rgb(30,32,40)] text-gray-300">
+                    <div className="flex items-center">
+                      <Bell className="mr-3 h-5 w-5 text-gray-500" />
+                      <span>Notifications</span>
+                    </div>
+                    <Clock className="h-4 w-4 text-gray-500" />
+                  </DropdownMenuItem>
+                  
+                  <div className="my-2 p-3 border border-[rgb(30,35,45)] rounded-md bg-[rgb(18,20,28)] text-center text-sm text-gray-400">
+                    Additional features are currently in development and will be available soon.
                   </div>
                 </div>
-                <DropdownMenuSeparator className="bg-[rgb(46,46,48)]" />
-                <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-[rgb(46,46,48)] focus:text-[rgb(214,251,65)]"
-                  onClick={() => setLocation("/dashboard")}
-                >
-                  Dashboard
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-[rgb(46,46,48)] focus:text-[rgb(214,251,65)]"
-                  onClick={() => setLocation("/notes")}
-                >
-                  My Notes
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-[rgb(46,46,48)]" />
-                <DropdownMenuItem 
-                  className="cursor-pointer text-red-400 focus:bg-[rgb(46,46,48)] focus:text-red-400"
-                  onClick={() => logoutMutation.mutate()}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
+                
+                <DropdownMenuSeparator className="bg-[rgb(30,32,40)]" />
+                
+                <div className="p-1">
+                  <DropdownMenuItem 
+                    className="cursor-pointer text-red-400 flex items-center py-3 px-3 focus:bg-[rgb(30,32,40)]"
+                    onClick={() => logoutMutation.mutate()}
+                  >
+                    <LogOut className="mr-3 h-5 w-5" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
