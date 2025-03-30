@@ -163,20 +163,38 @@ export default function ActivityHeatmap() {
     const dates = getDatesInYear(selectedYear);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     
-    // Group dates by week, starting each column on the same day of week
+    // Group dates by week
     const weeks: Date[][] = [];
+    let currentWeek: Date[] = [];
     
-    // Initialize an array of 7 weeks (columns)
-    for (let i = 0; i < 7; i++) {
-      weeks.push([]);
+    // Calculate dates for each week
+    // First determine the first Sunday of the year to start the grid
+    let startIndex = 0;
+    const firstSunday = new Date(selectedYear, 0, 1); // Start with Jan 1
+    while (firstSunday.getDay() !== 0) {
+      firstSunday.setDate(firstSunday.getDate() + 1);
     }
     
-    // Distribute dates into the appropriate day column
-    // This ensures consistent vertical alignment regardless of year
-    dates.forEach(date => {
-      const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, ...
-      weeks[dayOfWeek].push(date);
-    });
+    // Now build the weeks properly
+    for (let i = 0; i < dates.length; i++) {
+      const date = dates[i];
+      
+      // Check if this is a Sunday (start of a new week)
+      if (date.getDay() === 0 && currentWeek.length > 0) {
+        weeks.push([...currentWeek]);
+        currentWeek = [];
+      }
+      
+      // Add the date if it's on or after the first Sunday
+      if (date >= firstSunday) {
+        currentWeek.push(date);
+      }
+      
+      // Push the last week if we're at the end
+      if (i === dates.length - 1 && currentWeek.length > 0) {
+        weeks.push([...currentWeek]);
+      }
+    }
     
     return (
       <div className="mt-4">
@@ -189,7 +207,7 @@ export default function ActivityHeatmap() {
         
         <div className="flex">
           {/* Calendar cells */}
-          <div className="flex-1 grid" style={{ gridTemplateColumns: 'repeat(52, minmax(0, 1fr))' , gap: '2px' }}>
+          <div className="flex-1 grid" style={{ gridTemplateColumns: 'repeat(53, minmax(0, 1fr))' , gap: '2px' }}>
             {weeks.map((week, weekIndex) => (
               <div key={weekIndex} className="flex flex-col gap-1">
                 {week.map((date, dateIndex) => {
