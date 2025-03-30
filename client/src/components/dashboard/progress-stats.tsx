@@ -70,10 +70,7 @@ export default function ProgressStats() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Progress Statistics</CardTitle>
-      </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <div className="space-y-6">
           {/* Overall Progress */}
           <div>

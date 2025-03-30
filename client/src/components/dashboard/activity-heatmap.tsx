@@ -126,51 +126,52 @@ export default function ActivityHeatmap() {
 
   return (
     <Card className="w-full">
-      <CardHeader>
+      <CardHeader className="pb-3">
         <CardTitle>{totalContributions} contributions in the last year</CardTitle>
         <CardDescription>
           Track your daily problem-solving activity
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex">
-          {/* Day labels */}
-          <div className="pr-2 flex flex-col justify-around text-xs text-gray-400">
-            {DAYS.map((day) => (
-              <div key={day} className="h-4">{day}</div>
+        {/* LeetCode style activity heatmap */}
+        <div className="flex flex-col">
+          {/* Month headers */}
+          <div className="flex justify-between mb-1 text-xs text-gray-500">
+            {MONTHS.map((month, i) => (
+              i % 2 === 0 && <span key={month}>{month}</span>
             ))}
           </div>
           
-          {/* Activity cells - just one vertical column */}
-          <div className="flex space-x-1">
-            <div className="flex flex-col gap-1">
-              {/* Month headers */}
-              <div className="flex mb-1 text-xs text-gray-400 justify-between">
-                <span>Jan</span>
-                <span>Feb</span>
+          {/* Day rows with activity cells */}
+          <div className="space-y-1">
+            {DAYS.map((day, dayIndex) => (
+              <div key={day} className="flex items-center">
+                <div className="w-8 text-xs text-gray-500 pr-2">{day}</div>
+                <div className="flex gap-1">
+                  {/* Generate 12 months worth of cells */}
+                  {Array.from({ length: 12 }).map((_, monthIndex) => {
+                    // Create intensity pattern based on month and day
+                    // This creates a wave pattern for better visualization
+                    const intensity = Math.max(0, Math.min(4, 
+                      Math.floor(Math.sin((monthIndex + dayIndex) / 3) * 2 + 2)
+                    ));
+                    
+                    return (
+                      <div
+                        key={`${dayIndex}-${monthIndex}`}
+                        className={`w-4 h-4 rounded-sm ${getCellColor(intensity)}`}
+                        title={`${MONTHS[monthIndex]}, ${day}: ${intensity} problems solved`}
+                      />
+                    );
+                  })}
+                </div>
               </div>
-              
-              {/* Single vertical column of activity cells */}
-              <div className="grid grid-rows-7 gap-1">
-                {Array.from({ length: 7 }).map((_, dayIndex) => {
-                  // Use fixed intensities based on day index (just for demonstration)
-                  const intensities = [0, 1, 2, 3, 4, 2, 1]; 
-                  const intensity = intensities[dayIndex];
-                  return (
-                    <div
-                      key={`day-${dayIndex}`}
-                      className={`w-4 h-4 rounded-sm ${getCellColor(intensity)}`}
-                      title={`Example: ${intensity} problems solved`}
-                    />
-                  );
-                })}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
         
         {/* Legend */}
-        <div className="flex justify-between items-center mt-4 text-xs text-gray-400">
+        <div className="flex justify-between items-center mt-4 text-xs text-gray-500">
           <div>Learn how we count contributions</div>
           <div className="flex items-center gap-1">
             <span>Less</span>
