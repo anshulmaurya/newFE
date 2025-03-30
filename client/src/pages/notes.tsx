@@ -298,7 +298,7 @@ export default function Notes() {
 
       <div className="flex flex-grow pt-0">
         {/* Sidebar */}
-        <div className={`w-64 ${themeClasses.sidebarBg} p-4 pt-2 flex flex-col border-r-0 shadow-md z-10`}>
+        <div className={`w-64 ${themeClasses.sidebarBg} p-4 pt-0 -mt-3 flex flex-col border-r-0 shadow-md z-10`}>
           <div className="relative mb-3">
             <Search size={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -356,7 +356,7 @@ export default function Notes() {
         </div>
 
         {/* Main content */}
-        <div className="flex-grow px-8 pb-10 -mt-3 overflow-auto">
+        <div className="flex-grow px-8 pb-10 -mt-5 overflow-auto">
           <div className="max-w-4xl mx-auto">
             {selectedTopic === "communication-protocols" && (
               <>
