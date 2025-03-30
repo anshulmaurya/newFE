@@ -205,11 +205,6 @@ export default function Notes() {
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-4">
-            <div onClick={() => setLocation('/')}>
-              <div className="nav-link group px-3 py-1.5 font-medium text-sm text-gray-300 hover:text-white transition-colors cursor-pointer">
-                Home
-              </div>
-            </div>
             <div onClick={() => setLocation('/notes')}>
               <div className="nav-link group px-3 py-1.5 font-medium text-sm text-[rgb(214,251,65)] transition-colors cursor-pointer">
                 Notes
@@ -259,11 +254,7 @@ export default function Notes() {
         {/* Mobile Menu */}
         <div className={`md:hidden absolute w-full z-20 py-3 px-4 ${mobileMenuOpen ? 'block' : 'hidden'} bg-[rgb(24,24,26)]`}>
           <nav className="flex flex-col space-y-3">
-            <div onClick={() => { setLocation('/'); setMobileMenuOpen(false); }}>
-              <div className="text-gray-300 hover:text-white py-1.5 border-b border-gray-700/30 text-sm cursor-pointer">
-                Home
-              </div>
-            </div>
+
             <div onClick={() => { setLocation('/notes'); setMobileMenuOpen(false); }}>
               <div className="text-[rgb(214,251,65)] py-1.5 border-b border-gray-700/30 text-sm font-medium cursor-pointer">
                 Notes
