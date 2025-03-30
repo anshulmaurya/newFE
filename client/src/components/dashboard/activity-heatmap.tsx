@@ -175,7 +175,7 @@ export default function ActivityHeatmap() {
       
       <div className="overflow-x-auto">
         <div className="min-w-[750px]">
-          <div className="relative pl-12">
+          <div className="relative pl-20"> {/* Increased padding from 12px to 20px to show weekday labels */}
             <Calendar 
               values={formattedData}
               until={endDate.toISOString().split('T')[0]}
