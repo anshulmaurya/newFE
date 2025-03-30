@@ -31,6 +31,7 @@ import {
   Code,
   User,
   CalendarDays,
+  ChevronDown,
 } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import { cn } from '@/lib/utils';
@@ -143,7 +144,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="bg-[rgb(17,17,17)] min-h-screen text-white pt-16">
+    <div className="bg-[rgb(14,14,16)] min-h-screen text-white pt-16">
       {/* Header */}
       <Header 
         onNavigateFeatures={handleNavigateFeatures}
@@ -151,91 +152,92 @@ export default function Dashboard() {
         isScrolled={true}
       />
       
-      <div className="max-w-screen-xl mx-auto px-4 mt-6">
-        <div className="flex flex-col lg:flex-row gap-4">
+      <div className="mt-6 px-4 lg:px-0 lg:ml-56 lg:mr-64">
+        <div className="flex flex-col gap-4">
           {/* Left column - navigation (hide on mobile) */}
-          <div className="hidden lg:block w-56 bg-[rgb(22,22,22)] border border-[rgb(48,48,50)] rounded-lg p-4 h-fit">
-            <h3 className="text-base font-bold mb-3">Navigation</h3>
-            
-            <div className="mb-5">
-              <div className="text-xs font-semibold uppercase text-gray-500 mb-2">PREP BUNDLES</div>
-              <div className="space-y-1">
-                <div className="bg-[rgb(33,33,33)] rounded-lg p-2 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                  <div className="flex items-center pl-1">
-                    <div className="w-5 h-5 bg-blue-600 rounded-md flex items-center justify-center mr-2">
-                      <Building2 className="w-3 h-3" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-xs">Company-wise</h3>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-[rgb(33,33,33)] rounded-lg p-2 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
-                  <div className="flex items-center pl-1">
-                    <div className="w-5 h-5 bg-purple-600 rounded-md flex items-center justify-center mr-2">
-                      <Clock className="w-3 h-3" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-xs">Time-wise</h3>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-[rgb(33,33,33)] rounded-lg p-2 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
-                  <div className="flex items-center pl-1">
-                    <div className="w-5 h-5 bg-green-600 rounded-md flex items-center justify-center mr-2">
-                      <Code className="w-3 h-3" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-xs">Language-wise</h3>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mb-5">
-              <div className="text-xs font-semibold uppercase text-gray-500 mb-2">STUDY PLANS</div>
-              <div className="space-y-1">
-                <div className="bg-[rgb(33,33,33)] rounded-lg p-2 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                  <div className="flex items-center pl-1">
-                    <div className="w-5 h-5 bg-blue-600 rounded-md flex items-center justify-center mr-2">
-                      <Codepen className="w-3 h-3" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-xs">Top Interview 150</h3>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-[rgb(33,33,33)] rounded-lg p-2 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-yellow-500"></div>
-                  <div className="flex items-center pl-1">
-                    <div className="w-5 h-5 bg-yellow-600 rounded-md flex items-center justify-center mr-2">
-                      <Share2 className="w-3 h-3" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-xs">Embedded Systems 50</h3>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-5">
-              <a 
-                href="https://discord.gg/HxAqXd8Xwt" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="block p-2 bg-[rgb(88,101,242)] hover:bg-[rgb(71,82,196)] rounded-lg transition-colors text-center text-xs"
-              >
-                Join Discord Community
+          <div className="hidden lg:block w-56 bg-[rgb(18,18,20)] min-h-screen fixed left-0 top-0 pt-20">
+            <div className="px-4 py-2">
+              <a href="/dashboard" className="block text-white text-sm font-medium py-2 px-3 bg-[rgb(24,24,27)] rounded-md mb-1">
+                Dashboard
               </a>
+              
+              <div className="mb-4">
+                <button className="flex justify-between items-center w-full text-gray-400 hover:text-white text-sm py-2 px-3 rounded-md transition-colors">
+                  <span>Practice questions</span>
+                  <span><ChevronDown className="h-4 w-4" /></span>
+                </button>
+              </div>
+              
+              <div className="mb-4">
+                <button className="flex justify-between items-center w-full text-gray-400 hover:text-white text-sm py-2 px-3 rounded-md transition-colors">
+                  <span>Recommended strategy</span>
+                  <span><ChevronDown className="h-4 w-4" /></span>
+                </button>
+                
+                <div className="mt-1 pl-3">
+                  <a href="#" className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md">
+                    <Codepen className="h-4 w-4 text-gray-500" />
+                    <span>Top Interview 150</span>
+                  </a>
+                  
+                  <a href="#" className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md">
+                    <Database className="h-4 w-4 text-gray-500" />
+                    <span>Embedded Systems 50</span>
+                  </a>
+                  
+                  <a href="#" className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md">
+                    <Share2 className="h-4 w-4 text-gray-500" />
+                    <span>Company-wise</span>
+                  </a>
+                  
+                  <a href="#" className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md">
+                    <Clock className="h-4 w-4 text-gray-500" />
+                    <span>Time-wise</span>
+                  </a>
+                </div>
+              </div>
+              
+              <div className="mb-4">
+                <button className="flex justify-between items-center w-full text-gray-400 hover:text-white text-sm py-2 px-3 rounded-md transition-colors">
+                  <span>Time-savers</span>
+                  <span><ChevronDown className="h-4 w-4" /></span>
+                </button>
+              </div>
+              
+              <div className="mb-4">
+                <button className="flex justify-between items-center w-full text-gray-400 hover:text-white text-sm py-2 px-3 rounded-md transition-colors">
+                  <span>Guides</span>
+                  <span><ChevronDown className="h-4 w-4" /></span>
+                </button>
+              </div>
+            </div>
+            
+            <div className="mt-auto px-4 pt-4 pb-8">
+              <div className="bg-[rgb(24,24,27)] rounded-md p-3 mb-2">
+                <div className="text-xs text-gray-500 mb-1">Sponsored</div>
+                <a href="https://discord.gg/HxAqXd8Xwt" target="_blank" rel="noopener noreferrer" className="text-sm text-white hover:text-[rgb(214,251,65)]">
+                  Join our Discord Community
+                  <span className="inline-block ml-1">→</span>
+                </a>
+              </div>
+              
+              <div className="flex justify-between pt-4">
+                <a href="https://discord.gg/HxAqXd8Xwt" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z"/>
+                  </svg>
+                </a>
+                <a href="#github" className="text-gray-500 hover:text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                  </svg>
+                </a>
+                <a href="#linkedin" className="text-gray-500 hover:text-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/>
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
           
@@ -347,10 +349,10 @@ export default function Dashboard() {
             </div>
             
             {/* Problem list */}
-            <div className="bg-[rgb(22,22,22)] border border-[rgb(48,48,50)] rounded-lg overflow-hidden">
+            <div className="bg-[rgb(20,20,22)] border border-[rgb(45,45,50)] rounded-lg overflow-hidden">
               <table className="w-full border-collapse table-fixed">
                 <thead>
-                  <tr className="bg-[rgb(33,33,33)] border-b border-[rgb(48,48,50)]">
+                  <tr className="bg-[rgb(27,27,30)] border-b border-[rgb(45,45,50)]">
                     <th className="px-2 py-2 text-center w-12 text-xs">Status</th>
                     <th className="px-3 py-2 text-left text-xs">Title</th>
                     <th className="px-2 py-2 text-center w-16 hidden md:table-cell text-xs">Solution</th>
@@ -361,7 +363,7 @@ export default function Dashboard() {
                 </thead>
                 <tbody>
                   {isLoadingExternal ? (
-                    <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
+                    <tr className="bg-[rgb(20,20,22)] border-b border-[rgb(35,35,40)]">
                       <td colSpan={6} className="px-4 py-12 text-center">
                         <div className="flex flex-col items-center">
                           <Loader2 className="h-6 w-6 animate-spin text-[rgb(214,251,65)]" />
@@ -380,8 +382,8 @@ export default function Dashboard() {
                         <tr 
                           key={problem.id}
                           className={cn(
-                            "border-b border-[rgb(48,48,50)] hover:bg-[rgb(33,33,33)]",
-                            idx % 2 === 0 ? "bg-[rgb(18,18,18)]" : "bg-[rgb(22,22,22)]"
+                            "border-b border-[rgb(35,35,40)] hover:bg-[rgb(28,28,32)]",
+                            idx % 2 === 0 ? "bg-[rgb(20,20,22)]" : "bg-[rgb(22,22,25)]"
                           )}
                         >
                           <td className="px-2 py-2 text-center">
@@ -456,7 +458,7 @@ export default function Dashboard() {
                       );
                     })
                   ) : (
-                    <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
+                    <tr className="bg-[rgb(20,20,22)] border-b border-[rgb(35,35,40)]">
                       <td colSpan={6} className="px-4 py-12 text-center text-gray-400 text-xs">
                         No problems found matching your criteria.
                       </td>
@@ -467,62 +469,88 @@ export default function Dashboard() {
             </div>
           </div>
           
+          
           {/* Right sidebar - stats (hide on mobile) */}
-          <div className="hidden lg:block w-56 bg-[rgb(22,22,22)] border border-[rgb(48,48,50)] rounded-lg p-4 h-fit">
-            <h3 className="text-base font-bold mb-3">Top Companies</h3>
-            
-            <div className="space-y-2 mb-6">
-              {companyTrends.map((company, idx) => (
-                <div key={idx} className="flex justify-between items-center">
-                  <div className="flex items-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5"></div>
-                    <div className="text-xs">{company.name}</div>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-14 h-1 bg-[rgb(48,48,50)] rounded-full mr-2">
-                      <div 
-                        className={`h-full rounded-full ${
-                          idx === 0 ? "bg-blue-500" :
-                          idx === 1 ? "bg-purple-500" :
-                          idx === 2 ? "bg-green-500" :
+          <div className="hidden lg:block w-64 min-h-screen fixed right-0 top-0 pt-20 bg-[rgb(18,18,20)]">
+            <div className="px-4 py-2">
+              <div className="mb-6">
+                <h3 className="text-sm font-bold mb-3">Top Companies</h3>
+                
+                <div className="space-y-2">
+                  {companyTrends.map((company, idx) => (
+                    <div key={idx} className="flex items-center">
+                      <div className="text-xs text-gray-400 mr-2 w-3.5 h-3.5 flex items-center justify-center">
+                        <div className={`w-2 h-2 rounded-full ${
+                          idx === 0 ? "bg-blue-500" : 
+                          idx === 1 ? "bg-purple-500" : 
+                          idx === 2 ? "bg-green-500" : 
                           idx === 3 ? "bg-yellow-500" : "bg-red-500"
-                        }`}
-                        style={{ width: `${(company.count / companyTrends[0].count) * 100}%` }}
-                      ></div>
+                        }`}></div>
+                      </div>
+                      <div className="text-xs text-gray-300 w-20">{company.name}</div>
+                      <div className="flex-grow h-1 bg-[rgb(24,24,27)] rounded-full mx-2">
+                        <div 
+                          className={`h-full rounded-full ${
+                            idx === 0 ? "bg-blue-500" :
+                            idx === 1 ? "bg-purple-500" :
+                            idx === 2 ? "bg-green-500" :
+                            idx === 3 ? "bg-yellow-500" : "bg-red-500"
+                          }`}
+                          style={{ width: `${(company.count / companyTrends[0].count) * 100}%` }}
+                        ></div>
+                      </div>
+                      <div className="text-xs text-gray-400 w-5 text-right">{company.count}</div>
                     </div>
-                    <span className="text-xs">{company.count}</span>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Study Recommendations */}
+              <div className="mb-6">
+                <h3 className="text-sm font-bold mb-3">Recommended</h3>
+                <div className="bg-[rgb(24,24,27)] rounded-md p-3">
+                  <div className="text-xs font-medium text-gray-400 mb-2">Topics to focus on</div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <div className="text-xs text-gray-300">Memory Management</div>
+                      <div className="text-xs text-green-500">85% mastered</div>
+                    </div>
+                    <div className="w-full h-1 bg-[rgb(32,32,35)] rounded-full">
+                      <div className="h-full bg-green-500 rounded-full" style={{ width: "85%" }}></div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="text-xs text-gray-300">Multithreading</div>
+                      <div className="text-xs text-yellow-500">45% mastered</div>
+                    </div>
+                    <div className="w-full h-1 bg-[rgb(32,32,35)] rounded-full">
+                      <div className="h-full bg-yellow-500 rounded-full" style={{ width: "45%" }}></div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="text-xs text-gray-300">RTOS</div>
+                      <div className="text-xs text-red-500">25% mastered</div>
+                    </div>
+                    <div className="w-full h-1 bg-[rgb(32,32,35)] rounded-full">
+                      <div className="h-full bg-red-500 rounded-full" style={{ width: "25%" }}></div>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-            
-            {/* Study Recommendations */}
-            <h3 className="text-base font-bold mb-3">Recommended</h3>
-            <div className="bg-[rgb(33,33,33)] rounded-lg p-3 border border-[rgb(48,48,50)]">
-              <h4 className="text-xs font-medium mb-2">Topics to focus on</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <div className="text-xs">Memory Management</div>
-                  <div className="text-xs text-green-500">85% mastered</div>
-                </div>
-                <div className="w-full h-1 bg-[rgb(48,48,50)] rounded-full">
-                  <div className="h-full bg-green-500 rounded-full" style={{ width: "85%" }}></div>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <div className="text-xs">Multithreading</div>
-                  <div className="text-xs text-yellow-500">45% mastered</div>
-                </div>
-                <div className="w-full h-1 bg-[rgb(48,48,50)] rounded-full">
-                  <div className="h-full bg-yellow-500 rounded-full" style={{ width: "45%" }}></div>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <div className="text-xs">RTOS</div>
-                  <div className="text-xs text-red-500">25% mastered</div>
-                </div>
-                <div className="w-full h-1 bg-[rgb(48,48,50)] rounded-full">
-                  <div className="h-full bg-red-500 rounded-full" style={{ width: "25%" }}></div>
+              </div>
+              
+              {/* Additional resources section */}
+              <div className="mb-6">
+                <h3 className="text-sm font-bold mb-3">Resources</h3>
+                <div className="space-y-2">
+                  <a href="#" className="block text-xs text-gray-400 hover:text-white py-2 px-3 rounded-md hover:bg-[rgb(24,24,27)] transition-colors">
+                    Embedded Systems Interview Guide
+                  </a>
+                  <a href="#" className="block text-xs text-gray-400 hover:text-white py-2 px-3 rounded-md hover:bg-[rgb(24,24,27)] transition-colors">
+                    RTOS Fundamentals
+                  </a>
+                  <a href="#" className="block text-xs text-gray-400 hover:text-white py-2 px-3 rounded-md hover:bg-[rgb(24,24,27)] transition-colors">
+                    Memory Management Patterns
+                  </a>
                 </div>
               </div>
             </div>
