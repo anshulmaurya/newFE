@@ -319,6 +319,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!stats) {
         stats = await storage.createUserStats({
           userId: req.userId,
+          lastActiveDate: new Date(),
           totalSolved: 0,
           easySolved: 0,
           mediumSolved: 0,
@@ -350,6 +351,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!currentStats) {
         currentStats = await storage.createUserStats({
           userId: req.userId,
+          lastActiveDate: new Date(),
           ...req.body
         });
         return res.status(201).json(currentStats);
