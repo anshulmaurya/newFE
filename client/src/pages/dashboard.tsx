@@ -155,7 +155,7 @@ export default function Dashboard() {
       
       <div className="flex h-[calc(100vh-64px)]">
         {/* Left sidebar - fixed */}
-        <div className="hidden lg:block w-56 bg-[rgb(14,14,16)] fixed left-0 top-16 bottom-0 overflow-y-auto">
+        <div className="hidden lg:block w-56 bg-[rgb(14,14,16)] fixed left-0 top-16 bottom-0 overflow-y-auto border-r border-[rgb(35,35,40)]">
           <div className="px-4 py-4 flex flex-col h-full">
             <a href="/dashboard" className="block text-white text-sm font-medium py-2 px-3 bg-[rgb(24,24,27)] rounded-md mb-1">
               Dashboard
@@ -328,22 +328,22 @@ export default function Dashboard() {
             </div>
             
             {/* Problem list */}
-            <div className="bg-[rgb(20,20,22)] border border-[rgb(45,45,50)] rounded-lg overflow-hidden">
+            <div className="bg-[rgb(16,16,18)] border border-[rgb(45,45,50)] rounded-lg overflow-hidden shadow-lg">
               <table className="w-full border-collapse table-fixed">
                 <thead>
-                  <tr className="bg-[rgb(27,27,30)] border-b border-[rgb(45,45,50)]">
-                    <th className="px-2 py-2 text-center w-12 text-xs">Status</th>
-                    <th className="px-3 py-2 text-left text-xs">Title</th>
-                    <th className="px-2 py-2 text-center w-28 hidden md:table-cell text-xs">Companies</th>
-                    <th className="px-2 py-2 text-center w-24 hidden md:table-cell text-xs">Tags</th>
-                    <th className="px-2 py-2 text-center w-20 text-xs">Difficulty</th>
-                    <th className="px-2 py-2 text-center w-24 hidden lg:table-cell text-xs">Acceptance</th>
-                    <th className="px-2 py-2 text-center w-20 hidden lg:table-cell text-xs">Importance</th>
+                  <tr className="bg-gradient-to-r from-[rgb(21,21,24)] to-[rgb(25,25,28)] text-gray-300 border-b border-[rgb(45,45,50)]">
+                    <th className="px-2 py-3 text-center w-12 text-xs font-medium">Status</th>
+                    <th className="px-3 py-3 text-left text-xs font-medium">Title</th>
+                    <th className="px-2 py-3 text-center w-28 hidden md:table-cell text-xs font-medium">Companies</th>
+                    <th className="px-2 py-3 text-center w-24 hidden md:table-cell text-xs font-medium">Tags</th>
+                    <th className="px-2 py-3 text-center w-20 text-xs font-medium">Difficulty</th>
+                    <th className="px-2 py-3 text-center w-24 hidden lg:table-cell text-xs font-medium">Acceptance</th>
+                    <th className="px-2 py-3 text-center w-20 hidden lg:table-cell text-xs font-medium">Importance</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-[rgb(35,35,40)]">
                   {isLoadingExternal ? (
-                    <tr className="bg-[rgb(20,20,22)] border-b border-[rgb(35,35,40)]">
+                    <tr className="bg-[rgb(20,20,22)]">
                       <td colSpan={7} className="px-4 py-12 text-center">
                         <div className="flex flex-col items-center">
                           <Loader2 className="h-6 w-6 animate-spin text-[rgb(214,251,65)]" />
@@ -362,18 +362,18 @@ export default function Dashboard() {
                         <tr 
                           key={problem.id}
                           className={cn(
-                            "border-b border-[rgb(35,35,40)] hover:bg-[rgb(28,28,32)]",
-                            idx % 2 === 0 ? "bg-[rgb(20,20,22)]" : "bg-[rgb(22,22,25)]"
+                            "hover:bg-[rgb(26,26,32)] transition-colors duration-150",
+                            idx % 2 === 0 ? "bg-[rgb(18,18,20)]" : "bg-[rgb(20,20,24)]"
                           )}
                         >
-                          <td className="px-2 py-2 text-center">
+                          <td className="px-2 py-3 text-center">
                             {statusIcon}
                           </td>
-                          <td className="px-3 py-2">
+                          <td className="px-3 py-3">
                             <div className="flex items-center">
-                              <span className="text-xs font-medium mr-1.5 text-gray-500">{idx + 1}.</span>
+                              <span className="text-xs font-medium mr-2 text-gray-500 w-5 text-right">{idx + 1}.</span>
                               <div className="flex flex-col">
-                                <a href="#" className="text-xs hover:text-[rgb(214,251,65)] whitespace-nowrap overflow-hidden text-ellipsis">
+                                <a href="#" className="text-xs font-medium hover:text-[#56B2FF] whitespace-nowrap overflow-hidden text-ellipsis transition-colors">
                                   {problem.title || `Problem ${idx + 1}`}
                                 </a>
                                 
@@ -381,7 +381,7 @@ export default function Dashboard() {
                               </div>
                             </div>
                           </td>
-                          <td className="px-2 py-2 hidden md:table-cell text-center">
+                          <td className="px-2 py-3 hidden md:table-cell text-center">
                             <div className="flex justify-center flex-wrap">
                               {problem.companies && problem.companies.length > 0 ? (
                                 <div className="group relative inline-block">
@@ -417,7 +417,7 @@ export default function Dashboard() {
                               )}
                             </div>
                           </td>
-                          <td className="px-2 py-2 hidden md:table-cell text-center">
+                          <td className="px-2 py-3 hidden md:table-cell text-center">
                             <div className="flex justify-center flex-wrap">
                               {problem.tags && problem.tags.length > 0 ? (
                                 <div className="group relative inline-block">
@@ -461,15 +461,15 @@ export default function Dashboard() {
                               )}
                             </div>
                           </td>
-                          <td className={`px-2 py-2 text-center text-xs font-medium ${getDifficultyColor(problem.difficulty || 'Easy')}`}>
+                          <td className={`px-2 py-3 text-center text-xs font-medium ${getDifficultyColor(problem.difficulty || 'Easy')}`}>
                             {problem.difficulty || 'Easy'}
                           </td>
-                          <td className="px-2 py-2 hidden lg:table-cell text-center">
+                          <td className="px-2 py-3 hidden lg:table-cell text-center">
                             <span className="text-xs text-green-500">
                               {problem.acceptance_rate ? `${problem.acceptance_rate}%` : 'N/A'}
                             </span>
                           </td>
-                          <td className="px-2 py-2 hidden lg:table-cell text-center">
+                          <td className="px-2 py-3 hidden lg:table-cell text-center">
                             <span className={`text-xs ${
                               problem.importance === 'High' ? 'text-red-500' : 
                               problem.importance === 'Medium' ? 'text-yellow-500' : 'text-blue-500'
@@ -494,7 +494,7 @@ export default function Dashboard() {
           
           
           {/* Right sidebar - stats (hide on mobile) */}
-          <div className="hidden lg:block w-64 fixed right-0 top-16 bottom-0 overflow-y-auto bg-[rgb(14,14,16)]">
+          <div className="hidden lg:block w-64 fixed right-0 top-16 bottom-0 overflow-y-auto bg-[rgb(14,14,16)] border-l border-[rgb(35,35,40)]">
             <div className="px-4 py-2 h-full">
               <div className="mb-6">
                 <div className="bg-[rgb(24,24,27)] rounded-lg p-3">
