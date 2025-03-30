@@ -7,6 +7,7 @@ import {
   insertUserProgressSchema,
 } from "@shared/schema";
 import { z } from "zod";
+import { connectToMongoDB, getProblemsCollection, getAllProblems, getProblemById } from "./mongodb";
 
 // Add userId to Request type
 declare global {
@@ -95,32 +96,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
         category, 
         difficulty, 
         search, 
-        page, 
-        limit,
-        sortBy,
-        sortOrder
+        page = '1', 
+        limit = '10',
+        sortBy = 'title',
+        sortOrder = 'asc'
       } = req.query;
       
-      const problemsData = await storage.getProblems({
-        category: category as string,
-        difficulty: difficulty as string,
-        search: search as string,
-        page: page ? parseInt(page as string) : undefined,
-        limit: limit ? parseInt(limit as string) : undefined,
-        sortBy: sortBy as string,
-        sortOrder: (sortOrder as 'asc' | 'desc') || 'asc'
-      });
+      // Get MongoDB collection
+      const collection = await getProblemsCollection();
       
-      return res.json(problemsData);
+      // Build filter for MongoDB query
+      const filter: Record<string, any> = {};
+      
+      if (category && category !== 'all') {
+        filter.type = category as string;
+      }
+      
+      if (difficulty && difficulty !== 'all') {
+        filter.difficulty = difficulty as string;
+      }
+      
+      if (search && (search as string).trim() !== '') {
+        filter.title = { $regex: search as string, $options: 'i' };
+      }
+      
+      // Get total count for pagination
+      const total = await collection.countDocuments(filter);
+      
+      // Parse pagination parameters
+      const pageNum = parseInt(page as string);
+      const limitNum = parseInt(limit as string);
+      const skip = (pageNum - 1) * limitNum;
+      
+      // Create sort object for MongoDB
+      const sort: Record<string, 1 | -1> = {};
+      sort[sortBy as string] = (sortOrder as string) === 'asc' ? 1 : -1;
+      
+      // Execute query with pagination and sorting
+      const problems = await collection
+        .find(filter)
+        .sort(sort)
+        .skip(skip)
+        .limit(limitNum)
+        .toArray();
+      
+      return res.json({ 
+        problems, 
+        total 
+      });
     } catch (error) {
-      console.error("Error fetching problems:", error);
-      return res.status(500).json({ error: "Server error" });
+      console.error("Error fetching problems from MongoDB:", error);
+      
+      // Fallback to SQL storage if MongoDB fails
+      try {
+        const { 
+          category, 
+          difficulty, 
+          search, 
+          page, 
+          limit,
+          sortBy,
+          sortOrder
+        } = req.query;
+        
+        const problemsData = await storage.getProblems({
+          category: category as string,
+          difficulty: difficulty as string,
+          search: search as string,
+          page: page ? parseInt(page as string) : undefined,
+          limit: limit ? parseInt(limit as string) : undefined,
+          sortBy: sortBy as string,
+          sortOrder: (sortOrder as 'asc' | 'desc') || 'asc'
+        });
+        
+        return res.json(problemsData);
+      } catch (fallbackError) {
+        console.error("Fallback to SQL storage also failed:", fallbackError);
+        return res.status(500).json({ error: "Server error" });
+      }
     }
   });
   
   apiRouter.get("/problems/:id", async (req: Request, res: Response) => {
     try {
-      const id = parseInt(req.params.id);
+      const problemId = req.params.id;
+      
+      // Try to get problem from MongoDB first
+      try {
+        const problem = await getProblemById(problemId);
+        
+        if (problem) {
+          return res.json(problem);
+        }
+      } catch (mongoError) {
+        console.error("MongoDB error fetching problem:", mongoError);
+        // Continue to fallback if MongoDB fails
+      }
+      
+      // Fallback to SQL storage
+      const id = parseInt(problemId);
       if (isNaN(id)) {
         return res.status(400).json({ error: "Invalid problem ID" });
       }

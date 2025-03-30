@@ -30,7 +30,10 @@ import {
   Circle,
   Clock3,
   Filter as FilterIcon,
-  CalendarDays
+  CalendarDays,
+  BarChart2,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import { cn } from '@/lib/utils';
@@ -211,6 +214,15 @@ export default function Dashboard() {
     };
   });
 
+  // Company trends data
+  const companyTrends = [
+    { name: 'Intel', count: 15 },
+    { name: 'Microsoft', count: 12 },
+    { name: 'Amazon', count: 10 },
+    { name: 'Qualcomm', count: 8 },
+    { name: 'Apple', count: 5 }
+  ];
+
   return (
     <div className="bg-[rgb(17,17,17)] min-h-screen text-white">
       {/* Top study plan section */}
@@ -317,283 +329,281 @@ export default function Dashboard() {
         </div>
       </div>
       
-      {/* Main content area */}
+      {/* Main content area with layout */}
       <div className="container mx-auto px-4 mt-6">
-        {/* Filters */}
-        <div className="flex flex-wrap md:flex-nowrap gap-2 mb-6 items-center">
-          <div className="w-full md:w-auto">
-            <div className="p-1 bg-[rgb(33,33,33)] rounded-md flex items-center">
-              <Button 
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "text-xs px-2 py-1 h-auto",
-                  showTags ? "bg-[rgb(44,44,44)]" : "hover:bg-[rgb(44,44,44)]"
-                )}
-                onClick={() => setShowTags(!showTags)}
-              >
-                All Topics
-              </Button>
-              <Button 
-                variant="ghost"
-                size="sm"
-                className="text-xs px-2 py-1 h-auto hover:bg-[rgb(44,44,44)]"
-                onClick={() => setShowTags(!showTags)}
-              >
-                Algorithms
-              </Button>
-              <Button 
-                variant="ghost"
-                size="sm"
-                className="text-xs px-2 py-1 h-auto hover:bg-[rgb(44,44,44)]"
-                onClick={() => setShowTags(!showTags)}
-              >
-                Database
-              </Button>
-            </div>
-          </div>
-          
-          <div className="w-full md:w-auto flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="text-xs bg-[rgb(33,33,33)] border-[rgb(48,48,50)] hover:bg-[rgb(44,44,44)]"
-            >
-              <FilterIcon className="h-3 w-3 mr-1" />
-              Lists
-            </Button>
-            
-            <Button 
-              variant="outline"
-              size="sm"
-              className="text-xs bg-[rgb(33,33,33)] border-[rgb(48,48,50)] hover:bg-[rgb(44,44,44)]"
-            >
-              <FilterIcon className="h-3 w-3 mr-1" />
-              Difficulty
-            </Button>
-            
-            <Button 
-              variant="outline"
-              size="sm"
-              className="text-xs bg-[rgb(33,33,33)] border-[rgb(48,48,50)] hover:bg-[rgb(44,44,44)]"
-            >
-              <FilterIcon className="h-3 w-3 mr-1" />
-              Status
-            </Button>
-            
-            <Button 
-              variant="outline"
-              size="sm"
-              className="text-xs bg-[rgb(33,33,33)] border-[rgb(48,48,50)] hover:bg-[rgb(44,44,44)]"
-            >
-              <FilterIcon className="h-3 w-3 mr-1" />
-              Tags
-            </Button>
-          </div>
-          
-          <div className="flex-grow relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search questions"
-              className="pl-9 bg-[rgb(33,33,33)] border-[rgb(48,48,50)] focus-visible:ring-[rgb(214,251,65)] text-sm"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          
-          <div>
-            <Button 
-              variant="ghost"
-              size="sm"
-              className="bg-[rgb(214,251,65)] text-black hover:bg-[rgb(194,231,45)]"
-            >
-              Pick One
-            </Button>
-          </div>
-        </div>
-        
-        {/* Problems table */}
-        <div className="relative overflow-x-auto rounded-lg border border-[rgb(48,48,50)]">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-gray-400 uppercase bg-[rgb(33,33,33)]">
-              <tr>
-                <th scope="col" className="px-2 py-3 w-12 text-center">Status</th>
-                <th scope="col" className="px-6 py-3">Title</th>
-                <th scope="col" className="px-6 py-3 hidden md:table-cell text-center">Solution</th>
-                <th scope="col" className="px-6 py-3 hidden md:table-cell text-center">Acceptance</th>
-                <th scope="col" className="px-6 py-3 text-center">Difficulty</th>
-                <th scope="col" className="px-6 py-3 hidden lg:table-cell text-center">Frequency</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoadingProblems ? (
-                <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
-                  <td colSpan={6} className="px-6 py-16 text-center">
-                    <div className="flex flex-col items-center">
-                      <Loader2 className="h-8 w-8 animate-spin text-[rgb(214,251,65)]" />
-                      <p className="mt-2 text-gray-400">Loading problems...</p>
-                    </div>
-                  </td>
-                </tr>
-              ) : getFilteredProblems().length === 0 ? (
-                <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
-                  <td colSpan={6} className="px-6 py-16 text-center text-gray-400">
-                    No problems found matching your criteria.
-                  </td>
-                </tr>
-              ) : (
-                getFilteredProblems().map((problem, idx) => {
-                  const status = getProblemStatus(problem.id);
-                  const statusIcon = getStatusIcon(status);
-                  
-                  return (
-                    <tr 
-                      key={problem.id} 
-                      className={cn(
-                        "border-b border-[rgb(48,48,50)] hover:bg-[rgb(33,33,33)]",
-                        idx % 2 === 0 ? "bg-[rgb(18,18,18)]" : "bg-[rgb(22,22,22)]"
-                      )}
-                    >
-                      <td className="px-2 py-3 text-center">
-                        {statusIcon}
-                      </td>
-                      <td className="px-6 py-3 font-medium">
-                        <div className="flex items-center">
-                          <span className="text-sm font-medium mr-2">{problem.id}.</span>
-                          <a href="#" className="text-sm hover:text-[rgb(214,251,65)]">
-                            {problem.title}
-                          </a>
-                        </div>
-                        
-                        {/* Tags */}
-                        {showTags && (
-                          <div className="mt-1.5 flex flex-wrap gap-1">
-                            <Badge className="bg-[rgb(44,44,44)] hover:bg-[rgb(55,55,55)] text-gray-300 text-xs px-1.5 py-0.5">
-                              {problem.category}
-                            </Badge>
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-3 hidden md:table-cell text-center">
-                        {Math.random() > 0.5 ? (
-                          <a href="#" className="text-blue-500 hover:text-blue-400">
-                            <Settings className="h-4 w-4 inline" />
-                          </a>
-                        ) : (
-                          <Lock className="h-4 w-4 inline text-gray-500" />
-                        )}
-                      </td>
-                      <td className="px-6 py-3 hidden md:table-cell text-center">
-                        {problem.acceptanceRate}%
-                      </td>
-                      <td className={`px-6 py-3 text-center font-medium ${getDifficultyColor(problem.difficulty)}`}>
-                        {problem.difficulty}
-                      </td>
-                      <td className="px-6 py-3 hidden lg:table-cell text-center">
-                        {formatFrequency(problem.frequency)}
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-        
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-6">
-            <nav className="flex items-center space-x-1">
-              <Button 
-                variant="outline"
-                size="sm"
-                className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)]"
-                disabled={page === 1}
-                onClick={() => setPage(page - 1)}
-              >
-                Previous
-              </Button>
-              
-              {[...Array(Math.min(totalPages, 10))].map((_, idx) => {
-                const pageNumber = idx + 1;
-                return (
-                  <Button
-                    key={idx}
-                    variant={pageNumber === page ? "default" : "outline"}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Main content */}
+          <div className="flex-grow">
+            {/* Filters */}
+            <div className="flex flex-wrap md:flex-nowrap gap-2 mb-6 items-center">
+              <div className="w-full md:w-auto">
+                <div className="p-1 bg-[rgb(33,33,33)] rounded-md flex items-center">
+                  <Button 
+                    variant="ghost"
                     size="sm"
                     className={cn(
-                      pageNumber === page 
-                        ? "bg-[rgb(214,251,65)] text-black" 
-                        : "bg-[rgb(33,33,33)] border-[rgb(48,48,50)]"
+                      "text-xs px-2 py-1 h-auto",
+                      showTags ? "bg-[rgb(44,44,44)]" : "hover:bg-[rgb(44,44,44)]"
                     )}
-                    onClick={() => setPage(pageNumber)}
+                    onClick={() => setShowTags(!showTags)}
                   >
-                    {pageNumber}
+                    All Topics
                   </Button>
-                );
-              })}
-              
-              <Button 
-                variant="outline"
-                size="sm"
-                className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)]"
-                disabled={page === totalPages}
-                onClick={() => setPage(page + 1)}
-              >
-                Next
-              </Button>
-            </nav>
-          </div>
-        )}
-      </div>
-      
-      {/* Company trends sidebar - only shown on larger screens */}
-      <div className="hidden lg:block fixed right-0 top-[80px] w-64 bg-[rgb(33,33,33)] border-l border-[rgb(48,48,50)] h-[calc(100vh-80px)] overflow-y-auto p-4">
-        <h3 className="text-lg font-bold mb-2">Trending Companies</h3>
-        
-        <div className="space-y-4">
-          {/* Company list */}
-          <div className="space-y-2">
-            {[
-              { name: 'Amazon', count: 1325 },
-              { name: 'Google', count: 1557 },
-              { name: 'Uber', count: 500 },
-              { name: 'Meta', count: 1050 },
-              { name: 'Apple', count: 688 },
-              { name: 'Bloomberg', count: 372 },
-              { name: 'TikTok', count: 440 },
-              { name: 'Microsoft', count: 1115 },
-            ].map((company, idx) => (
-              <div key={idx} className="flex justify-between items-center">
-                <div className="text-sm">{company.name}</div>
-                <Badge className="bg-[rgb(48,48,50)] hover:bg-[rgb(55,55,55)]">
-                  {company.count}
-                </Badge>
+                  <Button 
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs px-2 py-1 h-auto hover:bg-[rgb(44,44,44)]"
+                    onClick={() => setShowTags(!showTags)}
+                  >
+                    Algorithms
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs px-2 py-1 h-auto hover:bg-[rgb(44,44,44)]"
+                    onClick={() => setShowTags(!showTags)}
+                  >
+                    Database
+                  </Button>
+                </div>
               </div>
-            ))}
+              
+              <div className="w-full md:w-auto flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="text-xs bg-[rgb(33,33,33)] border-[rgb(48,48,50)] hover:bg-[rgb(44,44,44)]"
+                >
+                  <FilterIcon className="h-3 w-3 mr-1" />
+                  Lists
+                </Button>
+                
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="text-xs bg-[rgb(33,33,33)] border-[rgb(48,48,50)] hover:bg-[rgb(44,44,44)]"
+                >
+                  <FilterIcon className="h-3 w-3 mr-1" />
+                  Difficulty
+                </Button>
+                
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="text-xs bg-[rgb(33,33,33)] border-[rgb(48,48,50)] hover:bg-[rgb(44,44,44)]"
+                >
+                  <FilterIcon className="h-3 w-3 mr-1" />
+                  Status
+                </Button>
+                
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="text-xs bg-[rgb(33,33,33)] border-[rgb(48,48,50)] hover:bg-[rgb(44,44,44)]"
+                >
+                  <FilterIcon className="h-3 w-3 mr-1" />
+                  Tags
+                </Button>
+              </div>
+              
+              <div className="flex-grow relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search questions"
+                  className="pl-9 bg-[rgb(33,33,33)] border-[rgb(48,48,50)] focus-visible:ring-[rgb(214,251,65)] text-sm"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+              
+              <div>
+                <Button 
+                  variant="ghost"
+                  size="sm"
+                  className="bg-[rgb(214,251,65)] text-black hover:bg-[rgb(194,231,45)]"
+                >
+                  Pick One
+                </Button>
+              </div>
+            </div>
+            
+            {/* Problems table */}
+            <div className="relative overflow-x-auto rounded-lg border border-[rgb(48,48,50)]">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-gray-400 uppercase bg-[rgb(33,33,33)]">
+                  <tr>
+                    <th scope="col" className="px-2 py-3 w-12 text-center">Status</th>
+                    <th scope="col" className="px-6 py-3">Title</th>
+                    <th scope="col" className="px-6 py-3 hidden md:table-cell text-center">Solution</th>
+                    <th scope="col" className="px-6 py-3 hidden md:table-cell text-center">Acceptance</th>
+                    <th scope="col" className="px-6 py-3 text-center">Difficulty</th>
+                    <th scope="col" className="px-6 py-3 hidden lg:table-cell text-center">Frequency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoadingProblems ? (
+                    <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
+                      <td colSpan={6} className="px-6 py-16 text-center">
+                        <div className="flex flex-col items-center">
+                          <Loader2 className="h-8 w-8 animate-spin text-[rgb(214,251,65)]" />
+                          <p className="mt-2 text-gray-400">Loading problems...</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : getFilteredProblems().length === 0 ? (
+                    <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
+                      <td colSpan={6} className="px-6 py-16 text-center text-gray-400">
+                        No problems found matching your criteria.
+                      </td>
+                    </tr>
+                  ) : (
+                    getFilteredProblems().map((problem, idx) => {
+                      const status = getProblemStatus(problem.id);
+                      const statusIcon = getStatusIcon(status);
+                      
+                      return (
+                        <tr 
+                          key={problem.id} 
+                          className={cn(
+                            "border-b border-[rgb(48,48,50)] hover:bg-[rgb(33,33,33)]",
+                            idx % 2 === 0 ? "bg-[rgb(18,18,18)]" : "bg-[rgb(22,22,22)]"
+                          )}
+                        >
+                          <td className="px-2 py-3 text-center">
+                            {statusIcon}
+                          </td>
+                          <td className="px-6 py-3 font-medium">
+                            <div className="flex items-center">
+                              <span className="text-sm font-medium mr-2">{problem.id}.</span>
+                              <a href="#" className="text-sm hover:text-[rgb(214,251,65)]">
+                                {problem.title}
+                              </a>
+                            </div>
+                            
+                            {/* Tags */}
+                            {showTags && (
+                              <div className="mt-1.5 flex flex-wrap gap-1">
+                                <Badge className="bg-[rgb(44,44,44)] hover:bg-[rgb(55,55,55)] text-gray-300 text-xs px-1.5 py-0.5">
+                                  {problem.category}
+                                </Badge>
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-6 py-3 hidden md:table-cell text-center">
+                            {Math.random() > 0.5 ? (
+                              <a href="#" className="text-blue-500 hover:text-blue-400">
+                                <Settings className="h-4 w-4 inline" />
+                              </a>
+                            ) : (
+                              <Lock className="h-4 w-4 inline text-gray-500" />
+                            )}
+                          </td>
+                          <td className="px-6 py-3 hidden md:table-cell text-center">
+                            {problem.acceptanceRate}%
+                          </td>
+                          <td className={`px-6 py-3 text-center font-medium ${getDifficultyColor(problem.difficulty)}`}>
+                            {problem.difficulty}
+                          </td>
+                          <td className="px-6 py-3 hidden lg:table-cell text-center">
+                            {formatFrequency(problem.frequency)}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-6">
+                <nav className="flex items-center space-x-1">
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)]"
+                    disabled={page === 1}
+                    onClick={() => setPage(page - 1)}
+                  >
+                    Previous
+                  </Button>
+                  
+                  {[...Array(Math.min(totalPages, 10))].map((_, idx) => {
+                    const pageNumber = idx + 1;
+                    return (
+                      <Button
+                        key={idx}
+                        variant={pageNumber === page ? "default" : "outline"}
+                        size="sm"
+                        className={cn(
+                          pageNumber === page 
+                            ? "bg-[rgb(214,251,65)] text-black" 
+                            : "bg-[rgb(33,33,33)] border-[rgb(48,48,50)]"
+                        )}
+                        onClick={() => setPage(pageNumber)}
+                      >
+                        {pageNumber}
+                      </Button>
+                    );
+                  })}
+                  
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)]"
+                    disabled={page === totalPages}
+                    onClick={() => setPage(page + 1)}
+                  >
+                    Next
+                  </Button>
+                </nav>
+              </div>
+            )}
           </div>
           
-          {/* Session counter */}
-          <div className="mt-8 border-t border-[rgb(48,48,50)] pt-4">
-            <h3 className="text-sm font-bold mb-2">Session</h3>
-            <div className="bg-[rgb(22,22,22)] rounded-md p-3 mb-3">
-              <div className="flex justify-between items-center mb-2">
-                <div className="text-2xl font-bold">322</div>
-                <div className="text-xs text-gray-400">Solved / 1501</div>
-              </div>
+          {/* Company trends sidebar - for large screens only */}
+          <div className="hidden lg:block w-64 bg-[rgb(33,33,33)] border-l border-[rgb(48,48,50)] h-fit rounded-lg overflow-hidden">
+            <div className="p-4">
+              <h3 className="text-lg font-bold mb-4">Company Trends</h3>
               
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <div className="text-xs text-green-500">Easy</div>
-                  <div className="text-xs"><span className="text-green-500">101</span>/369</div>
+              <div className="space-y-4">
+                {/* Company list */}
+                <div className="space-y-2">
+                  {companyTrends.map((company, idx) => (
+                    <div key={idx} className="flex justify-between items-center">
+                      <div className="text-sm">{company.name}</div>
+                      <Badge className="bg-[rgb(48,48,50)] hover:bg-[rgb(55,55,55)]">
+                        {company.count}
+                      </Badge>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex justify-between items-center">
-                  <div className="text-xs text-yellow-500">Medium</div>
-                  <div className="text-xs"><span className="text-yellow-500">208</span>/818</div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="text-xs text-red-500">Hard</div>
-                  <div className="text-xs"><span className="text-red-500">13</span>/314</div>
+                
+                {/* Session counter */}
+                <div className="mt-8 border-t border-[rgb(48,48,50)] pt-4">
+                  <h3 className="text-sm font-bold mb-2">Your Progress</h3>
+                  <div className="bg-[rgb(22,22,22)] rounded-md p-3 mb-3">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="text-2xl font-bold">{stats.total}</div>
+                      <div className="text-xs text-gray-400">Solved</div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <div className="text-xs text-green-500">Easy</div>
+                        <div className="text-xs"><span className="text-green-500">{stats.easy}</span></div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div className="text-xs text-yellow-500">Medium</div>
+                        <div className="text-xs"><span className="text-yellow-500">{stats.medium}</span></div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div className="text-xs text-red-500">Hard</div>
+                        <div className="text-xs"><span className="text-red-500">{stats.hard}</span></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
