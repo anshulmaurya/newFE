@@ -88,14 +88,14 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                 <g clipPath="url(#p.0)">
                   <path fill="#000000" fillOpacity="0.0" d="m0 0l100.0 0l0 100.0l-100.0 0z" fillRule="evenodd"/>
                   <path fill="#000000" fillOpacity="0.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
-                  <path stroke="#56B2FF" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" strokeDasharray="8.0,3.0,1.0,3.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
+                  <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" strokeDasharray="8.0,3.0,1.0,3.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
                   <path fill="#000000" fillOpacity="0.0" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
-                  <path stroke="#56B2FF" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
+                  <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
                 </g>
               </svg>
             </div>
             <h1 className="font-display font-bold text-xl tracking-tight">
-              <span className="text-white">dsp</span><span className="text-[#56B2FF]">coder.com</span>
+              <span className="text-white">dsp</span><span className="text-[rgb(214,251,65)]">coder.com</span>
             </h1>
           </button>
           
@@ -189,7 +189,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           ) : (
             <a 
               href="/api/auth/github" 
-              className="ml-2 px-3 py-1 bg-[#56B2FF] hover:bg-[#3D9DF5] rounded-md text-xs text-white font-bold transition-all inline-flex items-center gap-1 shadow-[0_0_10px_rgba(86,178,255,0.3)] hover:shadow-[0_0_15px_rgba(86,178,255,0.5)] border border-[#78C1FF]"
+              className="ml-2 px-3 py-1 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-xs text-black font-bold transition-all inline-flex items-center gap-1 shadow-[0_0_10px_rgba(214,251,65,0.3)] hover:shadow-[0_0_15px_rgba(214,251,65,0.5)] border border-[rgb(234,255,85)]"
             >
               <SiGithub className="h-3 w-3" />
               Login with GitHub
@@ -272,7 +272,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           ) : (
             <a 
               href="/api/auth/github"
-              className="text-white py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[#56B2FF] shadow-[0_0_10px_rgba(86,178,255,0.3)] border border-[#78C1FF] text-sm"
+              className="text-black py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[rgb(214,251,65)] shadow-[0_0_10px_rgba(214,251,65,0.3)] border border-[rgb(234,255,85)] text-sm"
             >
               <SiGithub className="h-4 w-4 ml-2" />
               <span className="ml-1 mr-2">Login with GitHub</span>
