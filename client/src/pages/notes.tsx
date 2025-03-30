@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Search, Moon, Sun, ChevronDown } from "lucide-react";
+import { 
+  Menu, X, Search, Moon, Sun, ChevronDown, 
+  Clock, Star, BookOpen, Code, FileCode, 
+  Clock3, Calendar, Users, Info, Zap, 
+  Shield, Cpu, Terminal, Activity
+} from "lucide-react";
 import { Link, useLocation } from "wouter";
 
 // Define topic sections and their subsections
@@ -7,6 +12,10 @@ const notesTopics = [
   { 
     id: "getting-started", 
     label: "Getting Started",
+    icon: <Zap size={16} />,
+    description: "Learn how to set up your environment and create your first embedded project",
+    difficulty: "Beginner",
+    estimatedTime: "30 min",
     subsections: [
       { id: "setup-environment", label: "Setup Environment" },
       { id: "toolchains", label: "Toolchains" },
@@ -16,6 +25,10 @@ const notesTopics = [
   { 
     id: "communication-protocols", 
     label: "Communication Protocols",
+    icon: <Code size={16} />,
+    description: "Understand how embedded devices communicate with each other and the outside world",
+    difficulty: "Intermediate",
+    estimatedTime: "45 min",
     subsections: [
       { id: "uart", label: "UART" },
       { id: "i2c", label: "I²C" },
@@ -26,6 +39,10 @@ const notesTopics = [
   { 
     id: "memory-management", 
     label: "Memory Management",
+    icon: <FileCode size={16} />,
+    description: "Master efficient memory usage in resource-constrained embedded systems",
+    difficulty: "Advanced",
+    estimatedTime: "60 min",
     subsections: [
       { id: "memory-types", label: "Memory Types" },
       { id: "allocation-techniques", label: "Allocation Techniques" },
@@ -35,6 +52,10 @@ const notesTopics = [
   { 
     id: "rtos-fundamentals", 
     label: "RTOS Fundamentals",
+    icon: <Clock size={16} />,
+    description: "Learn the basics of real-time operating systems for embedded applications",
+    difficulty: "Advanced",
+    estimatedTime: "75 min",
     subsections: [
       { id: "tasks", label: "Tasks & Scheduling" },
       { id: "semaphores", label: "Semaphores" },
@@ -44,6 +65,10 @@ const notesTopics = [
   { 
     id: "interrupt-handling", 
     label: "Interrupt Handling",
+    icon: <Activity size={16} />,
+    description: "Understand how to efficiently handle hardware interrupts in embedded systems",
+    difficulty: "Intermediate",
+    estimatedTime: "50 min",
     subsections: [
       { id: "isr", label: "ISR Structure" },
       { id: "priority", label: "Priority & Nesting" },
@@ -53,6 +78,10 @@ const notesTopics = [
   { 
     id: "driver-development", 
     label: "Driver Development",
+    icon: <Cpu size={16} />,
+    description: "Learn how to write efficient device drivers for embedded hardware",
+    difficulty: "Advanced",
+    estimatedTime: "65 min",
     subsections: [
       { id: "driver-models", label: "Driver Models" },
       { id: "hardware-abstraction", label: "Hardware Abstraction" }
@@ -61,6 +90,10 @@ const notesTopics = [
   { 
     id: "peripherals", 
     label: "Peripherals & Interfaces",
+    icon: <Terminal size={16} />,
+    description: "Master the integration and control of various peripheral devices",
+    difficulty: "Intermediate",
+    estimatedTime: "45 min",
     subsections: [
       { id: "gpio", label: "GPIO" },
       { id: "adc-dac", label: "ADC/DAC" },
@@ -70,6 +103,10 @@ const notesTopics = [
   { 
     id: "debugging-techniques", 
     label: "Debugging Techniques",
+    icon: <BookOpen size={16} />,
+    description: "Learn advanced debugging strategies for embedded systems",
+    difficulty: "Intermediate",
+    estimatedTime: "40 min",
     subsections: [
       { id: "jtag", label: "JTAG & SWD" },
       { id: "logging", label: "Logging Strategies" }
@@ -78,6 +115,10 @@ const notesTopics = [
   { 
     id: "optimization", 
     label: "Optimization Strategies",
+    icon: <Clock3 size={16} />,
+    description: "Techniques to optimize code size, performance, and power consumption",
+    difficulty: "Advanced",
+    estimatedTime: "55 min",
     subsections: [
       { id: "code-optimization", label: "Code Optimization" },
       { id: "power-optimization", label: "Power Optimization" }
@@ -86,6 +127,10 @@ const notesTopics = [
   { 
     id: "firmware-design", 
     label: "Firmware Design Patterns",
+    icon: <Shield size={16} />,
+    description: "Learn architectural patterns for robust embedded firmware",
+    difficulty: "Advanced",
+    estimatedTime: "60 min",
     subsections: [
       { id: "state-machines", label: "State Machines" },
       { id: "event-driven", label: "Event-Driven Design" }
@@ -94,6 +139,10 @@ const notesTopics = [
   { 
     id: "code-examples", 
     label: "Code Examples",
+    icon: <Terminal size={16} />,
+    description: "Real-world embedded code examples with detailed explanations",
+    difficulty: "Mixed",
+    estimatedTime: "Varies",
     subsections: [
       { id: "c-examples", label: "C Examples" },
       { id: "cpp-examples", label: "C++ Examples" }
@@ -102,6 +151,10 @@ const notesTopics = [
   { 
     id: "faq", 
     label: "Frequently Asked Questions",
+    icon: <Info size={16} />,
+    description: "Common questions and answers about embedded systems development",
+    difficulty: "Beginner",
+    estimatedTime: "20 min",
     subsections: []
   },
 ];
@@ -173,6 +226,9 @@ export default function Notes() {
         infoTextDark: "text-blue-800",
         card: "bg-gray-50 border-gray-200 hover:bg-gray-100"
       };
+
+  // Find the current topic
+  const currentTopic = notesTopics.find(topic => topic.id === selectedTopic) || notesTopics[0];
 
   return (
     <div className={`flex flex-col min-h-screen ${themeClasses.bg} ${themeClasses.text} transition-colors duration-200`}>
@@ -296,68 +352,75 @@ export default function Notes() {
         </div>
       </header>
 
-      <div className="flex flex-grow pt-0">
-        {/* Sidebar */}
-        <div className={`w-64 ${themeClasses.sidebarBg} p-4 pt-2 mt-1 flex flex-col border-r-0 shadow-md z-10`}>
-          <div className="relative mb-3">
-            <Search size={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search docs..."
-              className={`w-full pl-8 pr-3 py-2 rounded-md border ${themeClasses.borderColor} text-sm ${darkMode ? 'bg-[rgb(36,36,38)] text-gray-200' : 'bg-white text-gray-800'}`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+      <div className="flex flex-col lg:flex-row flex-1 mt-16">
+        {/* Left Sidebar - Navigation */}
+        <div className={`w-64 ${themeClasses.sidebarBg} p-4 flex-shrink-0 border-r ${themeClasses.borderColor} h-[calc(100vh-4rem)] overflow-y-auto`}>
+          <div className="sticky top-4">
+            <div className="relative mb-3">
+              <Search size={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search docs..."
+                className={`w-full pl-8 pr-3 py-2 rounded-md border ${themeClasses.borderColor} text-sm ${darkMode ? 'bg-[rgb(36,36,38)] text-gray-200' : 'bg-white text-gray-800'}`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
 
-          <div className="space-y-2">
-            <div>
-              <div className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-1.5 text-sm pl-1.5`}>Documentation</div>
-              <nav>
-                {notesTopics.map(topic => (
-                  <div key={topic.id} className="mb-1">
-                    <button
-                      onClick={() => setSelectedTopic(topic.id)}
-                      className={`flex justify-between items-center w-full text-left px-2.5 py-1.5 rounded text-sm ${
-                        selectedTopic === topic.id 
-                          ? `${themeClasses.highlight} ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-gray-800'} font-medium border-l-2 border-[rgb(214,251,65)]` 
-                          : `${darkMode ? 'text-gray-300 hover:bg-[rgb(40,40,42)]' : 'text-gray-600 hover:bg-gray-200'}`
-                      }`}
-                    >
-                      <span>{topic.label}</span>
-                      {topic.subsections.length > 0 && (
-                        <ChevronDown className={`h-3.5 w-3.5 transform transition-transform ${selectedTopic === topic.id ? 'rotate-180' : ''}`} />
+            <div className="space-y-2">
+              <div>
+                <div className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2 text-sm pl-1.5`}>Documentation</div>
+                <nav>
+                  {notesTopics.map(topic => (
+                    <div key={topic.id} className="mb-2">
+                      <button
+                        onClick={() => setSelectedTopic(topic.id)}
+                        className={`flex justify-between items-center w-full text-left px-2.5 py-1.5 rounded text-sm ${
+                          selectedTopic === topic.id 
+                            ? `${themeClasses.highlight} ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-gray-800'} font-medium border-l-2 border-[rgb(214,251,65)]` 
+                            : `${darkMode ? 'text-gray-300 hover:bg-[rgb(40,40,42)]' : 'text-gray-600 hover:bg-gray-200'}`
+                        }`}
+                      >
+                        <div className="flex items-center">
+                          <span className="mr-2">
+                            {topic.icon}
+                          </span>
+                          <span>{topic.label}</span>
+                        </div>
+                        {topic.subsections.length > 0 && (
+                          <ChevronDown className={`h-3.5 w-3.5 transform transition-transform ${selectedTopic === topic.id ? 'rotate-180' : ''}`} />
+                        )}
+                      </button>
+                      
+                      {/* Subsections */}
+                      {selectedTopic === topic.id && topic.subsections.length > 0 && (
+                        <div className="pl-4 mt-0.5 mb-1 space-y-0.5 border-l border-dashed border-gray-600 ml-2.5">
+                          {topic.subsections.map(subsection => (
+                            <a 
+                              key={subsection.id}
+                              href={`#${subsection.id}`}
+                              className={`block pl-3 pr-2 py-1 text-xs rounded hover:bg-opacity-20 ${
+                                darkMode 
+                                  ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' 
+                                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-200'
+                              }`}
+                            >
+                              {subsection.label}
+                            </a>
+                          ))}
+                        </div>
                       )}
-                    </button>
-                    
-                    {/* Subsections */}
-                    {selectedTopic === topic.id && topic.subsections.length > 0 && (
-                      <div className="pl-4 mt-0.5 mb-1 space-y-0.5 border-l border-dashed border-gray-600 ml-2.5">
-                        {topic.subsections.map(subsection => (
-                          <a 
-                            key={subsection.id}
-                            href={`#${subsection.id}`}
-                            className={`block pl-3 pr-2 py-1 text-xs rounded hover:bg-opacity-20 ${
-                              darkMode 
-                                ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' 
-                                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-200'
-                            }`}
-                          >
-                            {subsection.label}
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </nav>
+                    </div>
+                  ))}
+                </nav>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Main content */}
-        <div className="flex-grow px-8 pb-10 mt-2 overflow-auto">
-          <div className="max-w-4xl mx-auto">
+        <div className="flex-grow px-6 py-6 overflow-auto">
+          <div className="max-w-3xl mx-auto">
             {selectedTopic === "communication-protocols" && (
               <>
                 <div className="flex items-center mb-1 text-gray-500 text-sm">
@@ -365,7 +428,7 @@ export default function Notes() {
                   <span className="mx-2">›</span>
                   <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Communication Protocols</span>
                 </div>
-                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Communication Protocols</h1>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-5`}>Communication Protocols</h1>
 
                 <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
                   <p className="lead">
@@ -463,66 +526,6 @@ void UART_SendString(const char* str) {
                     SPI is a synchronous serial communication protocol used for short-distance communication, primarily in embedded systems.
                     It uses a master-slave architecture with separate lines for data and clock signals.
                   </p>
-
-                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
-                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Key Characteristics:</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Synchronous communication (uses clock signal)</li>
-                      <li>Uses 4 wires: SCLK (clock), MOSI (Master Out, Slave In), MISO (Master In, Slave Out), SS/CS (Slave Select/Chip Select)</li>
-                      <li>Full-duplex communication (simultaneous transmission and reception)</li>
-                      <li>One master can communicate with multiple slaves using individual SS/CS lines</li>
-                      <li>No acknowledgment mechanism</li>
-                      <li>No built-in flow control</li>
-                      <li>No addressing scheme like I²C, uses dedicated slave select lines instead</li>
-                    </ul>
-                  </div>
-
-                  <h2 id="can">CAN (Controller Area Network)</h2>
-                  <p>
-                    CAN is a robust vehicle bus standard designed for microcontrollers and devices to communicate with each other without a host computer.
-                    It's widely used in automotive and industrial applications.
-                  </p>
-
-                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
-                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Key Characteristics:</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Multi-master serial bus with message-based protocol</li>
-                      <li>Uses two wires: CAN_H and CAN_L</li>
-                      <li>Message-based rather than address-based</li>
-                      <li>Built-in prioritization of messages</li>
-                      <li>Robust error detection and handling</li>
-                      <li>Data rates up to 1 Mbps</li>
-                      <li>Excellent noise immunity</li>
-                    </ul>
-                  </div>
-
-                  <h2 id="resources">Additional Resources</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <a 
-                      href="#" 
-                      className={`flex items-start p-4 ${themeClasses.card} rounded-lg border transition-colors`}
-                    >
-                      <svg className={`mr-3 ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                      </svg>
-                      <div>
-                        <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>Serial Communication Guide</h3>
-                        <p className={`text-sm ${themeClasses.textDark}`}>Comprehensive guide on implementing various serial protocols</p>
-                      </div>
-                    </a>
-                    <a 
-                      href="#" 
-                      className={`flex items-start p-4 ${themeClasses.card} rounded-lg border transition-colors`}
-                    >
-                      <svg className={`mr-3 ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <div>
-                        <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>Code Examples Repository</h3>
-                        <p className={`text-sm ${themeClasses.textDark}`}>Collection of protocol implementation examples</p>
-                      </div>
-                    </a>
-                  </div>
                 </div>
               </>
             )}
@@ -534,7 +537,7 @@ void UART_SendString(const char* str) {
                   <span className="mx-2">›</span>
                   <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Memory Management</span>
                 </div>
-                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Memory Management</h1>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-5`}>Memory Management</h1>
 
                 <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
                   <p className="lead">
@@ -547,190 +550,91 @@ void UART_SendString(const char* str) {
                     Embedded systems employ various types of memory, each with distinct characteristics suited for specific purposes.
                     Understanding these differences is essential for optimal system design.
                   </p>
-
-                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
-                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Common Memory Types:</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li><strong>Flash Memory</strong> - Non-volatile storage for program code and constant data</li>
-                      <li><strong>SRAM (Static RAM)</strong> - Fast, volatile memory for variables and runtime data</li>
-                      <li><strong>EEPROM/FRAM</strong> - Non-volatile memory for configuration settings and calibration data</li>
-                      <li><strong>SDRAM/DDR</strong> - Higher capacity external RAM for more complex applications</li>
-                      <li><strong>ROM/OTP</strong> - Read-only memory for bootloaders and critical firmware elements</li>
-                    </ul>
-                  </div>
-
-                  <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
-                    <div className="flex">
-                      <div className="flex-shrink-0">
-                        <svg className={`h-5 w-5 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>Memory Map Considerations</h3>
-                        <div className={`text-sm ${themeClasses.infoText}`}>
-                          <p>When designing memory layouts for embedded systems, always consider alignment requirements, memory protection units (MPUs), and cache behavior to avoid hard-to-debug issues.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <h2 id="allocation-techniques">Memory Allocation Techniques</h2>
-                  <p>
-                    In resource-constrained embedded systems, efficient memory allocation is critical. Different techniques offer various 
-                    trade-offs between performance, fragmentation, and predictability.
-                  </p>
-                  
-                  <h3>Static Allocation</h3>
-                  <p>
-                    Static allocation assigns memory at compile time, providing deterministic behavior but sacrificing flexibility.
-                  </p>
-                  
-                  <pre className={`${themeClasses.codeBlock} p-4 rounded-md overflow-x-auto`}>
-                    <code className="language-c">
-{`// Static allocation example
-uint8_t buffer[MAX_BUFFER_SIZE];   // Fixed size buffer allocated at compile time
-struct SensorData readings[MAX_SENSORS];  // Array of structs with fixed size
-
-void processSensorData(void) {
-    // Using statically allocated memory
-    for (int i = 0; i < sensorCount; i++) {
-        readings[i].temperature = readTemperature(i);
-        readings[i].humidity = readHumidity(i);
-    }
-}`}
-                    </code>
-                  </pre>
-
-                  <h3>Dynamic Allocation</h3>
-                  <p>
-                    Dynamic allocation provides flexibility but introduces unpredictability and potential fragmentation.
-                    In many embedded systems, especially safety-critical ones, dynamic allocation is avoided or strictly controlled.
-                  </p>
-                  
-                  <pre className={`${themeClasses.codeBlock} p-4 rounded-md overflow-x-auto`}>
-                    <code className="language-c">
-{`// Dynamic allocation example
-struct SensorData* readings;
-
-void processSensorData(int sensorCount) {
-    // Dynamically allocate based on runtime requirements
-    readings = (struct SensorData*)malloc(sizeof(struct SensorData) * sensorCount);
-    
-    if (readings != NULL) {
-        for (int i = 0; i < sensorCount; i++) {
-            readings[i].temperature = readTemperature(i);
-            readings[i].humidity = readHumidity(i);
-        }
-        
-        // Process data...
-        
-        // Free memory when done
-        free(readings);
-        readings = NULL;
-    } else {
-        // Handle allocation failure
-        reportError(ERROR_MEMORY_ALLOCATION);
-    }
-}`}
-                    </code>
-                  </pre>
-
-                  <div className={`${themeClasses.card} p-4 border rounded-md my-6 border-yellow-500/50`}>
-                    <h3 className={`font-semibold text-yellow-500 mb-2`}>Warning:</h3>
-                    <p className="text-sm">
-                      Dynamic memory allocation in embedded systems can lead to memory fragmentation, unpredictable timing, and allocation failures. 
-                      Consider using static allocation, memory pools, or stack allocation when possible.
-                    </p>
-                  </div>
-                  
-                  <h2 id="fragmentation">Memory Fragmentation</h2>
-                  <p>
-                    Fragmentation occurs when free memory becomes divided into small, non-contiguous blocks that cannot be used efficiently.
-                    This is a common issue in long-running embedded systems that use dynamic memory allocation.
-                  </p>
-                  
-                  <h3>Memory Pool Allocation</h3>
-                  <p>
-                    Memory pools offer a compromise between static and dynamic allocation by pre-allocating fixed-size blocks,
-                    reducing fragmentation while allowing some runtime flexibility.
-                  </p>
-                  
-                  <pre className={`${themeClasses.codeBlock} p-4 rounded-md overflow-x-auto`}>
-                    <code className="language-c">
-{`// Simple memory pool implementation
-
-#define BLOCK_SIZE  64      // Size of each memory block
-#define POOL_SIZE   32      // Number of blocks in the pool
-
-typedef struct {
-    uint8_t data[BLOCK_SIZE];
-    bool used;
-} MemoryBlock;
-
-// The memory pool
-static MemoryBlock memPool[POOL_SIZE];
-
-// Initialize the memory pool
-void memPoolInit(void) {
-    for (int i = 0; i < POOL_SIZE; i++) {
-        memPool[i].used = false;
-    }
-}
-
-// Allocate a block from the pool
-void* memPoolAlloc(void) {
-    for (int i = 0; i < POOL_SIZE; i++) {
-        if (!memPool[i].used) {
-            memPool[i].used = true;
-            return memPool[i].data;
-        }
-    }
-    return NULL;  // No free blocks available
-}
-
-// Free a block back to the pool
-void memPoolFree(void* ptr) {
-    for (int i = 0; i < POOL_SIZE; i++) {
-        if (memPool[i].data == ptr) {
-            memPool[i].used = false;
-            return;
-        }
-    }
-}`}
-                    </code>
-                  </pre>
-                  
-                  <h2 id="resources">Additional Resources</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <a 
-                      href="#" 
-                      className={`flex items-start p-4 ${themeClasses.card} rounded-lg border transition-colors`}
-                    >
-                      <svg className={`mr-3 ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <div>
-                        <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>Memory Management Guide</h3>
-                        <p className={`text-sm ${themeClasses.textDark}`}>Comprehensive guide on memory management for embedded systems</p>
-                      </div>
-                    </a>
-                    <a 
-                      href="#" 
-                      className={`flex items-start p-4 ${themeClasses.card} rounded-lg border transition-colors`}
-                    >
-                      <svg className={`mr-3 ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-[rgb(24,24,26)]'} h-6 w-6`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <div>
-                        <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>Memory Optimization Techniques</h3>
-                        <p className={`text-sm ${themeClasses.textDark}`}>Advanced strategies for optimizing memory usage in constrained environments</p>
-                      </div>
-                    </a>
-                  </div>
                 </div>
               </>
             )}
+          </div>
+        </div>
+
+        {/* Right sidebar - Topic information */}
+        <div className={`w-72 ${themeClasses.sidebarBg} p-4 border-l ${themeClasses.borderColor} h-[calc(100vh-4rem)] overflow-y-auto hidden lg:block`}>
+          <div className="sticky top-4">
+            <h3 className="text-lg font-semibold mb-4">About this topic</h3>
+            
+            <div className="space-y-5">
+              <div className={`${themeClasses.card} p-4 rounded-md border ${themeClasses.borderColor}`}>
+                <h4 className="font-medium mb-3">Topic Information</h4>
+                <div className="space-y-3">
+                  <div className="flex items-start">
+                    <div className="mt-0.5 mr-3 text-[rgb(214,251,65)]">
+                      <Info size={16} />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Description</p>
+                      <p className="text-sm">{currentTopic.description}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start">
+                    <div className="mt-0.5 mr-3 text-[rgb(214,251,65)]">
+                      <Star size={16} />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Difficulty</p>
+                      <p className="text-sm">{currentTopic.difficulty}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start">
+                    <div className="mt-0.5 mr-3 text-[rgb(214,251,65)]">
+                      <Clock size={16} />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Estimated Time</p>
+                      <p className="text-sm">{currentTopic.estimatedTime}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="font-medium mb-3">Contents</h4>
+                <ul className="space-y-1.5">
+                  {currentTopic.subsections.map((subsection) => (
+                    <li key={subsection.id}>
+                      <a 
+                        href={`#${subsection.id}`}
+                        className="text-sm hover:text-[rgb(214,251,65)] flex items-center"
+                      >
+                        <div className="w-1 h-1 rounded-full bg-gray-500 mr-2"></div>
+                        {subsection.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className={`${themeClasses.card} p-4 rounded-md border ${themeClasses.borderColor}`}>
+                <h4 className="font-medium mb-3">Related Topics</h4>
+                {notesTopics.filter(topic => topic.id !== selectedTopic).slice(0, 3).map(topic => (
+                  <button 
+                    key={topic.id}
+                    onClick={() => setSelectedTopic(topic.id)}
+                    className="block w-full text-left mb-2.5 group"
+                  >
+                    <div className="flex items-center">
+                      <div className="mr-2 text-gray-400 group-hover:text-[rgb(214,251,65)]">
+                        {topic.icon}
+                      </div>
+                      <div>
+                        <p className="text-sm group-hover:text-[rgb(214,251,65)]">{topic.label}</p>
+                        <p className="text-xs text-gray-500">{topic.difficulty}</p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
