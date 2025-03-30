@@ -40,6 +40,7 @@ import {
   Gauge,
   Check,
   X,
+  FileText,
 } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import { cn } from '@/lib/utils';
@@ -78,6 +79,8 @@ export default function Dashboard() {
   const [showTags, setShowTags] = useState(true);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [selectedBundle, setSelectedBundle] = useState<string | null>(null);
+  const [jobDescription, setJobDescription] = useState<string>('');
+  const [jdSubmitted, setJdSubmitted] = useState<boolean>(false);
 
   // Fetch problems from external API via our server proxy
   const { data: externalProblems, isLoading: isLoadingExternal } = useQuery({
@@ -113,6 +116,14 @@ export default function Dashboard() {
   
   // Bundle data
   const bundles = {
+    'jd-questions': {
+      title: 'JD Based Questions',
+      description: 'Tailored questions based on your job description analysis. These questions are specifically selected to match the skills and requirements in your target job.',
+      icon: <FileText className="h-5 w-5 text-blue-400" />,
+      count: 20,
+      estimatedTime: '8 hours',
+      difficulty: 'Tailored'
+    },
     'blind-75': {
       title: 'Embedded Blind 75',
       description: 'A carefully curated list of 75 most important embedded systems questions that cover all the essential topics for technical interviews.',
@@ -375,31 +386,68 @@ export default function Dashboard() {
               )}
             </div>
             
-            {/* Feeling Lucky */}
+            {/* JD Based */}
             <div className="mb-4">
               <button 
                 className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
-                onClick={() => toggleSection('feeling-lucky')}
+                onClick={() => toggleSection('jd-based')}
               >
-                <span>Feeling Lucky</span>
-                <span><ChevronDown className={`h-4 w-4 transition-transform ${expandedSection === 'feeling-lucky' ? 'rotate-180' : ''}`} /></span>
+                <span>JD Based</span>
+                <span><ChevronDown className={`h-4 w-4 transition-transform ${expandedSection === 'jd-based' ? 'rotate-180' : ''}`} /></span>
               </button>
               
-              {expandedSection === 'feeling-lucky' && (
+              {expandedSection === 'jd-based' && (
                 <div className="mt-1 pl-3">
-                  <button 
-                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
-                    onClick={() => handleBundleSelect('c-cpp-asm')}
-                  >
-                    C/Cpp/ASM Trilogy
-                  </button>
-                  
-                  <button 
-                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
-                    onClick={() => handleBundleSelect('hard-algorithms')}
-                  >
-                    Hit Hard Algorithms
-                  </button>
+                  {!jdSubmitted ? (
+                    <div className="space-y-2">
+                      <div className="text-gray-400 py-2 px-3 text-xs rounded-md w-full">
+                        Paste job description and get tailored questions
+                      </div>
+                      <textarea 
+                        className="w-full bg-[rgb(24,24,27)] border border-[rgb(45,45,50)] rounded-md p-2 text-xs text-white h-24"
+                        placeholder="Paste job description here..."
+                        value={jobDescription}
+                        onChange={(e) => setJobDescription(e.target.value)}
+                      />
+                      <button 
+                        className="bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] text-black text-xs py-1 px-3 rounded-md w-full"
+                        onClick={() => {
+                          if (jobDescription.trim().length > 0) {
+                            setJdSubmitted(true);
+                          }
+                        }}
+                      >
+                        Analyze JD
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="text-green-500 py-2 px-3 text-xs rounded-md w-full">
+                        Analysis complete! 
+                      </div>
+                      <button 
+                        className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                        onClick={() => handleBundleSelect('jd-questions')}
+                      >
+                        View Recommended Questions
+                      </button>
+                      <button 
+                        className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                        onClick={() => window.location.href = '/notes'}
+                      >
+                        View Study Notes
+                      </button>
+                      <button 
+                        className="text-yellow-500 hover:text-yellow-400 py-2 px-3 text-xs rounded-md w-full text-left"
+                        onClick={() => {
+                          setJobDescription('');
+                          setJdSubmitted(false);
+                        }}
+                      >
+                        Reset JD Analysis
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
