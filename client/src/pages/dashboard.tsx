@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import ProgressStats from '@/components/dashboard/progress-stats';
-import ActivityHeatmap from '@/components/dashboard/activity-heatmap';
 import { 
   CheckCircle,
   Circle, 
@@ -845,11 +844,6 @@ export default function Dashboard() {
               {/* Progress Stats */}
               <div className="mb-6">
                 <ProgressStats />
-              </div>
-              
-              {/* Activity Heatmap */}
-              <div className="mb-6">
-                <ActivityHeatmap />
               </div>
               
               {/* Resources section */}
