@@ -20,10 +20,13 @@ export const categoryEnum = pgEnum('category', [
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  password: text("password"),
   githubId: text("github_id").unique(),
+  displayName: text("display_name"),
+  profileUrl: text("profile_url"),
   avatarUrl: text("avatar_url"),
   email: text("email"),
+  accessToken: text("access_token"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -78,8 +81,11 @@ export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
   githubId: true,
+  displayName: true,
+  profileUrl: true,
   avatarUrl: true,
   email: true,
+  accessToken: true,
 });
 
 export const insertProblemSchema = createInsertSchema(problems).pick({
@@ -111,3 +117,16 @@ export type Problem = typeof problems.$inferSelect;
 
 export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
 export type UserProgress = typeof userProgress.$inferSelect;
+
+// Add GitHub user profile fields to the users table
+export const githubUserSchema = createInsertSchema(users).extend({
+  githubId: z.string(),
+  displayName: z.string().optional(),
+  username: z.string(),
+  profileUrl: z.string().optional(),
+  avatarUrl: z.string().optional(),
+  email: z.string().optional(),
+  accessToken: z.string(),
+});
+
+export type GithubUser = z.infer<typeof githubUserSchema>;

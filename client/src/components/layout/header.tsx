@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut } from "lucide-react";
 import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { SiGithub } from "react-icons/si";
 
 interface HeaderProps {
   onNavigateFeatures: () => void;
@@ -14,6 +24,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [, setLocation] = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
+  const { user, logoutMutation } = useAuth();
 
   // Add scroll listener for header background opacity if not provided via props
   useEffect(() => {
@@ -126,21 +137,61 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
             <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Problems</span>
           </button>
           {/* Discord button removed as requested */}
-          <a 
-            href="/api/auth/github" 
-            className="ml-2 px-3 py-1 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-xs text-black font-bold transition-all inline-flex items-center gap-1 shadow-[0_0_10px_rgba(214,251,65,0.4)] hover:shadow-[0_0_15px_rgba(214,251,65,0.6)] border border-[rgb(224,255,75)]"
-          >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              width="12" 
-              height="12" 
-              viewBox="0 0 24 24"
-              fill="currentColor"
+          
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="ml-2 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-[rgb(214,251,65)] focus:ring-offset-2 focus:ring-offset-background">
+                  <Avatar className="h-8 w-8 border-2 border-[rgb(214,251,65)]">
+                    <AvatarImage 
+                      src={user.avatarUrl || "https://github.com/identicons/app/oauth_app/1234"} 
+                      alt={user.username || "User"}
+                    />
+                    <AvatarFallback className="bg-[rgb(36,36,38)] text-[rgb(214,251,65)]">
+                      {user.username ? user.username.substring(0, 2).toUpperCase() : "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-[rgb(36,36,38)] border-[rgb(46,46,48)] text-white">
+                <div className="flex items-center justify-start gap-2 p-2">
+                  <div className="flex flex-col space-y-0.5">
+                    <p className="text-sm font-medium">{user.username}</p>
+                    <p className="text-xs text-gray-400 truncate">{user.email || "GitHub User"}</p>
+                  </div>
+                </div>
+                <DropdownMenuSeparator className="bg-[rgb(46,46,48)]" />
+                <DropdownMenuItem 
+                  className="cursor-pointer focus:bg-[rgb(46,46,48)] focus:text-[rgb(214,251,65)]"
+                  onClick={() => setLocation("/dashboard")}
+                >
+                  Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="cursor-pointer focus:bg-[rgb(46,46,48)] focus:text-[rgb(214,251,65)]"
+                  onClick={() => setLocation("/notes")}
+                >
+                  My Notes
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-[rgb(46,46,48)]" />
+                <DropdownMenuItem 
+                  className="cursor-pointer text-red-400 focus:bg-[rgb(46,46,48)] focus:text-red-400"
+                  onClick={() => logoutMutation.mutate()}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <a 
+              href="/api/auth/github" 
+              className="ml-2 px-3 py-1 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-xs text-black font-bold transition-all inline-flex items-center gap-1 shadow-[0_0_10px_rgba(214,251,65,0.4)] hover:shadow-[0_0_15px_rgba(214,251,65,0.6)] border border-[rgb(224,255,75)]"
             >
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-            Login with GitHub
-          </a>
+              <SiGithub className="h-3 w-3" />
+              Login with GitHub
+            </a>
+          )}
 
         </nav>
         
@@ -191,23 +242,44 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           >
             Problems
           </button>
-          {/* Discord button removed from mobile menu as requested */}
-          <a 
-            href="/api/auth/github"
-            className="text-black py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[rgb(214,251,65)] shadow-[0_0_10px_rgba(214,251,65,0.4)] border border-[rgb(224,255,75)] text-sm"
-          >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              width="16" 
-              height="16" 
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="ml-2"
+          {/* User profile or login button */}
+          {user ? (
+            <>
+              <div className="flex items-center gap-3 py-1.5 border-b border-gray-700/30">
+                <Avatar className="h-8 w-8 border-2 border-[rgb(214,251,65)]">
+                  <AvatarImage 
+                    src={user.avatarUrl || "https://github.com/identicons/app/oauth_app/1234"} 
+                    alt={user.username || "User"}
+                  />
+                  <AvatarFallback className="bg-[rgb(36,36,38)] text-[rgb(214,251,65)]">
+                    {user.username ? user.username.substring(0, 2).toUpperCase() : "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium text-white">{user.username}</span>
+                  <span className="text-xs text-gray-400 truncate">{user.email || "GitHub User"}</span>
+                </div>
+              </div>
+              <button 
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  logoutMutation.mutate();
+                }}
+                className="text-red-400 py-1.5 font-medium flex items-center gap-2 text-sm"
+              >
+                <LogOut className="ml-2 h-4 w-4" />
+                <span>Log out</span>
+              </button>
+            </>
+          ) : (
+            <a 
+              href="/api/auth/github"
+              className="text-black py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[rgb(214,251,65)] shadow-[0_0_10px_rgba(214,251,65,0.4)] border border-[rgb(224,255,75)] text-sm"
             >
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-            <span className="ml-1 mr-2">Login with GitHub</span>
-          </a>
+              <SiGithub className="h-4 w-4 ml-2" />
+              <span className="ml-1 mr-2">Login with GitHub</span>
+            </a>
+          )}
         </nav>
       </div>
     </header>

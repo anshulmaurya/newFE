@@ -7,13 +7,17 @@ import Home from "@/pages/home";
 import ComingSoon from "@/pages/coming-soon";
 import Notes from "@/pages/notes";
 import Dashboard from "@/pages/dashboard";
+import AuthPage from "@/pages/auth-page";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "./lib/protected-route";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home}/>
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/problems" component={Dashboard} />
+      <ProtectedRoute path="/dashboard" component={Dashboard} />
+      <ProtectedRoute path="/problems" component={Dashboard} />
+      <Route path="/auth" component={AuthPage} />
       <Route path="/coming-soon" component={ComingSoon} />
       <Route path="/notes" component={Notes} />
       {/* Fallback to 404 */}
@@ -25,8 +29,10 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
+      <AuthProvider>
+        <Router />
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

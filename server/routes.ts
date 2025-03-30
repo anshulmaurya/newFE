@@ -7,6 +7,7 @@ import {
   insertUserProgressSchema,
 } from "@shared/schema";
 import { z } from "zod";
+import { setupAuth } from "./auth";
 
 // Add userId to Request type
 declare global {
@@ -17,16 +18,19 @@ declare global {
   }
 }
 
-// Middleware to parse user ID from session/token
-// For now this is a stub that returns a dummy user ID for testing
-const getUserId = (req: Request, _res: Response, next: NextFunction) => {
-  // In a real app, this would come from authentication
-  // For now we'll use a dummy user ID for demonstration
-  req.userId = 1;
+// Middleware to parse user ID from session
+const getUserId = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  req.userId = req.user?.id;
   next();
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication
+  setupAuth(app);
+  
   // Create API routes
   const apiRouter = express.Router();
   app.use("/api", apiRouter);
@@ -55,33 +59,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // GitHub Authentication routes
-  apiRouter.get("/auth/github", async (_req: Request, res: Response) => {
-    // In a real implementation, we would initialize GitHub OAuth flow here
-    // For now, we'll redirect to GitHub's OAuth page directly for demonstration
-    const clientId = process.env.GITHUB_CLIENT_ID || "your_github_client_id";
-    const redirectUri = encodeURIComponent(`${process.env.APP_URL || 'http://localhost:5000'}/api/auth/github/callback`);
-    const scope = encodeURIComponent("user:email");
-    
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
-    res.redirect(githubAuthUrl);
-  });
-
-  // GitHub OAuth callback
-  apiRouter.get("/auth/github/callback", async (req: Request, res: Response) => {
-    // In a real implementation, we would:
-    // 1. Exchange the code for an access token
-    // 2. Fetch user data from GitHub API
-    // 3. Create or update user in our database
-    // 4. Create a session or JWT for the user
-    // 5. Redirect to the frontend with the token
-    
-    // For now, we'll just simulate a successful login
-    console.log("GitHub OAuth callback received with code:", req.query.code);
-    
-    // Redirect back to the main app
-    res.redirect("/");
-  });
+  // GitHub Authentication routes are now handled by setupAuth
   
   // User routes
   apiRouter.get("/user", getUserId, async (req: Request, res: Response) => {
