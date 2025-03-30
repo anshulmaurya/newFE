@@ -3,14 +3,22 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
 
+// Define the data structure for a single day's activity
+interface DayActivity {
+  count: number;
+  questions: string[];
+}
+
+// Interface for year data with a mix of day activities and the total count
+interface YearData {
+  // This is a record that can store DayActivity objects for date keys
+  // or a number for the "total" key
+  [key: string]: DayActivity | number;
+}
+
 // Interface for yearly activity data
 interface YearlyActivityData {
-  [year: string]: {
-    [date: string]: {
-      count: number;
-      questions: string[];
-    }
-  };
+  [year: string]: YearData;
 }
 
 /**
@@ -57,13 +65,16 @@ export default function ActivityHeatmap() {
         // For testing, use this hardcoded data that matches what the API provides
         const testData: YearlyActivityData = {
           "2023": {
+            "total": 5, // Total problems solved in 2023
             "2023-01-01": { "count": 2, "questions": ["Memory Buffer Management", "Thread Synchronization"] },
             "2023-01-15": { "count": 3, "questions": ["Pointer Arithmetic", "Stack Implementation", "Queue with Arrays"] }
           },
           "2024": {
+            "total": 1, // Total problems solved in 2024
             "2024-03-10": { "count": 1, "questions": ["RTOS Task Creation"] }
           },
           "2025": {
+            "total": 1, // Total problems solved in 2025
             "2025-03-10": { "count": 1, "questions": ["Linked List Implementation"] }
           }
         };
@@ -109,7 +120,24 @@ export default function ActivityHeatmap() {
     const yearKey = selectedYear.toString();
     if (!allYearsData[yearKey]) return 0;
     
-    return Object.values(allYearsData[yearKey]).reduce((sum, day) => sum + day.count, 0);
+    // First check if we have a 'total' field directly from the API
+    const yearData = allYearsData[yearKey];
+    if (yearData && 'total' in yearData) {
+      const total = yearData['total'];
+      return typeof total === 'number' ? total : 0;
+    }
+    
+    // If not, calculate it by summing up all the daily counts
+    // Skip the 'total' key during calculation to avoid double counting
+    return Object.entries(allYearsData[yearKey])
+      .filter(([key]) => key !== 'total')
+      .reduce((sum, [_, day]) => {
+        // Check if day is the expected object format with count property
+        if (typeof day === 'object' && day && 'count' in day) {
+          return sum + day.count;
+        }
+        return sum;
+      }, 0);
   }, [allYearsData, selectedYear]);
   
   // For loading state
@@ -209,9 +237,18 @@ export default function ActivityHeatmap() {
                   const yearStr = date.getFullYear().toString();
                   const dateKey = `${yearStr}-${monthStr}-${dayStr}`;
                   const yearKey = selectedYear.toString();
+                  
+                  // Get activity data for this specific date
                   const dayData = allYearsData[yearKey]?.[dateKey];
-                  const count = dayData?.count || 0;
-                  const questions = dayData?.questions || [];
+                  
+                  // Handle the count and questions properly based on the data type
+                  let count = 0;
+                  let questions: string[] = [];
+                  
+                  if (dayData && typeof dayData === 'object' && 'count' in dayData) {
+                    count = dayData.count;
+                    questions = dayData.questions || [];
+                  }
                   
                   // Format date for hover: Weekday, MM/DD/YYYY
                   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
