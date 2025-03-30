@@ -180,10 +180,10 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                     </AvatarFallback>
                   </Avatar>
                   <p className="text-base font-medium text-white">
-                    {user.username || "User"}
+                    {user.displayName || user.username || "User"}
                   </p>
                   <p className="text-sm text-gray-400 truncate">
-                    {user.email || ""}
+                    {user.email && !user.email.includes("@example.com") ? user.email : ""}
                   </p>
                 </div>
 
@@ -311,8 +311,8 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium text-white">{user.username}</span>
-                  <span className="text-xs text-gray-400 truncate">{user.email || ""}</span>
+                  <span className="text-sm font-medium text-white">{user.displayName || user.username}</span>
+                  <span className="text-xs text-gray-400 truncate">{user.email && !user.email.includes("@example.com") ? user.email : ""}</span>
                 </div>
               </div>
               <button 

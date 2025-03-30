@@ -76,6 +76,7 @@ export function setupAuth(app: Express) {
         clientID: process.env.GITHUB_CLIENT_ID!,
         clientSecret: process.env.GITHUB_CLIENT_SECRET!,
         callbackURL: callbackURL,
+        scope: ["user:email", "read:user"],
       },
       async function(
         accessToken: string, 
@@ -109,6 +110,7 @@ export function setupAuth(app: Express) {
               user = await storage.createUser({
                 username: profile.username || `github_${profile.id}`,
                 githubId: profile.id,
+                displayName: profile.displayName || profile.username,
                 avatarUrl: profile.photos?.[0]?.value,
                 email: profile.emails?.[0]?.value || `github_${profile.id}@example.com`, // Provide fallback email
                 password: await hashPassword(randomBytes(16).toString("hex")), // Random password for GitHub users
@@ -130,6 +132,30 @@ export function setupAuth(app: Express) {
             } catch (createError) {
               console.error("Error creating user:", createError);
               return done(createError as Error);
+            }
+          } else {
+            // Update user's displayName and avatar if they've changed
+            if (profile.displayName && (!user.displayName || user.displayName !== profile.displayName)) {
+              try {
+                await storage.updateUser(user.id, { 
+                  displayName: profile.displayName
+                });
+                user.displayName = profile.displayName;
+              } catch (updateError) {
+                console.error("Error updating user displayName:", updateError);
+              }
+            }
+            
+            // Update avatar if available
+            if (profile.photos?.[0]?.value && profile.photos[0].value !== user.avatarUrl) {
+              try {
+                await storage.updateUser(user.id, { 
+                  avatarUrl: profile.photos[0].value
+                });
+                user.avatarUrl = profile.photos[0].value;
+              } catch (updateError) {
+                console.error("Error updating user avatar:", updateError);
+              }
             }
           }
           
@@ -174,7 +200,7 @@ export function setupAuth(app: Express) {
   });
 
   // Auth routes
-  app.get("/api/auth/github", passport.authenticate("github", { scope: ["user:email"] }));
+  app.get("/api/auth/github", passport.authenticate("github", { scope: ["user:email", "read:user"] }));
   
   app.get(
     "/api/auth/github/callback",
