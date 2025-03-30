@@ -578,7 +578,7 @@ export default function Dashboard() {
         </div>
             
         {/* Main content - scrollable */}
-        <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto px-4 lg:px-0 pt-0">
+        <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto px-4 lg:px-0 pt-4">
           {/* Main content area */}
           <div className="flex-grow pt-0 pb-2 px-2 space-y-4">
 
@@ -622,7 +622,7 @@ export default function Dashboard() {
             )}
             
             {/* Filters */}
-            <div className="flex flex-wrap md:flex-nowrap gap-2 mb-0 items-center sticky top-0 z-10 bg-[rgb(14,14,16)] pt-0 pb-2 -mx-2 px-2 shadow-md">
+            <div className="flex flex-wrap md:flex-nowrap gap-2 mb-2 items-center sticky top-0 z-10 bg-[rgb(14,14,16)] pt-0 pb-2 -mx-2 px-2 shadow-md">
               <div className="w-full md:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3.5 w-3.5" />
