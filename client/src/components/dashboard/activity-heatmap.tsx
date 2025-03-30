@@ -163,32 +163,19 @@ export default function ActivityHeatmap() {
     const dates = getDatesInYear(selectedYear);
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     
-    // Group dates by week
+    // Group dates by week, starting each column on the same day of week
     const weeks: Date[][] = [];
-    let currentWeek: Date[] = [];
     
-    // Start with the first date's day of week
-    const firstDate = dates[0];
-    const firstDay = firstDate.getDay(); // 0 = Sunday, 1 = Monday, ...
+    // Initialize an array of 7 weeks (columns)
+    for (let i = 0; i < 7; i++) {
+      weeks.push([]);
+    }
     
-    // We're skipping the empty slots at the beginning of the year
-    // to ensure a consistent calendar view without extra blank spaces
-    
+    // Distribute dates into the appropriate day column
+    // This ensures consistent vertical alignment regardless of year
     dates.forEach(date => {
-      const day = date.getDay(); // 0 = Sunday, 1 = Monday, ...
-      
-      // If we reach a Sunday and we already have dates in the current week, push the week and start a new one
-      if (day === 0 && currentWeek.length > 0) {
-        weeks.push([...currentWeek]);
-        currentWeek = [];
-      }
-      
-      currentWeek.push(date);
-      
-      // If we're at the last date, push the remaining week
-      if (date.getTime() === dates[dates.length - 1].getTime()) {
-        weeks.push([...currentWeek]);
-      }
+      const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, ...
+      weeks[dayOfWeek].push(date);
     });
     
     return (
@@ -213,16 +200,25 @@ export default function ActivityHeatmap() {
                   const count = dayData?.count || 0;
                   const questions = dayData?.questions || [];
                   
+                  // Format date for hover: Weekday, MM/DD/YYYY
+                  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                  const weekday = weekdays[date.getDay()];
+                  const month = date.getMonth() + 1; // getMonth() is 0-based
+                  const day = date.getDate();
+                  const year = date.getFullYear();
+                  const formattedDate = `${weekday} : ${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
+                  
                   return (
                     <div
                       key={dateKey}
                       className="w-3 h-3 rounded-sm cursor-pointer relative group"
                       style={{ backgroundColor: getColorForCount(count) }}
-                      title={`${dateKey}: ${count} problems solved`}
+                      title={`${formattedDate}: ${count} questions solved`}
                     >
                       {count > 0 && (
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-[rgb(35,35,40)] p-2 rounded-md text-xs shadow-lg text-white z-10 w-48 hidden group-hover:block pointer-events-none">
-                          <p className="font-semibold">{dateKey}: {count} problems</p>
+                          <p className="font-semibold">{formattedDate}</p>
+                          <p>{count} questions solved</p>
                           <ul className="mt-1 list-disc pl-4">
                             {questions.map((q, i) => (
                               <li key={i} className="truncate">{q}</li>
