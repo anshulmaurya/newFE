@@ -11,12 +11,20 @@ import AuthPage from "@/pages/auth-page";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 
+// Import components directly
+import Blind75Page from '@/pages/quick-prep/blind-75';
+import LinuxBasicsPage from '@/pages/quick-prep/linux-basics';
+import JDBasedPage from '@/pages/jd-based';
+
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home}/>
       <ProtectedRoute path="/dashboard" component={Dashboard} />
       <ProtectedRoute path="/problems" component={Dashboard} />
+      <ProtectedRoute path="/jd-based" component={JDBasedPage} />
+      <ProtectedRoute path="/quick-prep/blind-75" component={Blind75Page} />
+      <ProtectedRoute path="/quick-prep/linux-basics" component={LinuxBasicsPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/coming-soon" component={ComingSoon} />
       <Route path="/notes" component={Notes} />
