@@ -60,7 +60,7 @@
 
   body {
     @apply font-sans antialiased text-foreground;
-    background-color: rgb(14, 14, 16);
+    background-color: rgb(24, 24, 26);
     padding-top: 44px; /* Height of the header */
   }
 }
@@ -88,7 +88,7 @@
   }
   
   .glass {
-    @apply bg-[rgb(14,14,16)]/60 backdrop-blur-lg;
+    @apply bg-[rgb(24,24,26)]/60 backdrop-blur-lg;
   }
   
   .animate-typing {

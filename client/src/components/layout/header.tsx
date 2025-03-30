@@ -68,8 +68,8 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
   };
 
   const headerBackground = scrollPosition > 10 || isScrolled 
-    ? "bg-[rgb(14,14,16)]" 
-    : "bg-[rgb(14,14,16)]/90 backdrop-blur-sm";
+    ? "bg-[rgb(24,24,26)]" 
+    : "bg-[rgb(24,24,26)]/90 backdrop-blur-sm";
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${headerBackground} shadow-md`}>
@@ -205,7 +205,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
       </div>
       
       {/* Mobile Menu */}
-      <div className={`md:hidden glass absolute w-full z-20 py-3 px-4 ${mobileMenuOpen ? 'block' : 'hidden'} bg-[rgb(14,14,16)]`}>
+      <div className={`md:hidden glass absolute w-full z-20 py-3 px-4 ${mobileMenuOpen ? 'block' : 'hidden'} bg-[rgb(24,24,26)]`}>
         <nav className="flex flex-col space-y-3">
           <div className="flex flex-col space-y-1.5 mb-2">
             <p className="text-xs text-gray-500">Mode:</p>

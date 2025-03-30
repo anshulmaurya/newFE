@@ -686,7 +686,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
   };
 
   return (
-    <section className="relative overflow-hidden pt-10 md:pt-12 pb-16 bg-[rgb(14,14,16)] mt-0">
+    <section className="relative overflow-hidden pt-10 md:pt-12 pb-16 bg-[rgb(24,24,26)] mt-0">
       {/* Circuit board decorative elements */}
       <div className="absolute top-1/4 right-0 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
@@ -880,7 +880,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                 {/* Main content with sidebar and editor */}
                 <div className="flex flex-grow">
                   {/* Left sidebar */}
-                  <div className="bg-[rgb(24,24,26)] border-r border-gray-800 p-1 w-12 flex flex-col items-center py-3 space-y-4">
+                  <div className="bg-[rgb(30,30,32)] border-r border-gray-800 p-1 w-12 flex flex-col items-center py-3 space-y-4">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="18"
@@ -936,7 +936,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                   </div>
 
                   {/* File explorer */}
-                  <div className="bg-[rgb(24,24,26)] border-r border-gray-800 w-44 pt-3 text-sm text-gray-300">
+                  <div className="bg-[rgb(30,30,32)] border-r border-gray-800 w-44 pt-3 text-sm text-gray-300">
                     <div className="px-3 flex items-center justify-between">
                       <div className="flex items-center font-semibold">
                         <svg
@@ -1109,7 +1109,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                   {/* Code editor */}
                   <div className="flex-1 bg-[rgb(20,20,22)] p-0">
                     {/* Editor tabs */}
-                    <div className="flex bg-[rgb(24,24,26)] border-b border-gray-800">
+                    <div className="flex bg-[rgb(30,30,32)] border-b border-gray-800">
                       <div className="bg-[rgb(20,20,22)] border-r border-gray-800 px-3 py-1 flex items-center text-xs text-gray-300">
                         <span>{activeFile}</span>
                         <span className="ml-2 px-1.5 bg-gray-700 rounded-md hover:bg-gray-600 cursor-pointer">
