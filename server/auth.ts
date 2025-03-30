@@ -42,6 +42,13 @@ export function setupAuth(app: Express) {
       secure: process.env.NODE_ENV === "production",
     }
   };
+  
+  // Calculate and log the callback URL for debugging
+  const callbackURL = process.env.APP_URL 
+    ? `${process.env.APP_URL}/api/auth/github/callback` 
+    : `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co/api/auth/github/callback`;
+  
+  console.log("GitHub Auth Callback URL:", callbackURL);
 
   app.set("trust proxy", 1);
   app.use(session(sessionSettings));
@@ -54,7 +61,9 @@ export function setupAuth(app: Express) {
       {
         clientID: process.env.GITHUB_CLIENT_ID!,
         clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-        callbackURL: `${process.env.APP_URL || "http://localhost:3000"}/api/auth/github/callback`,
+        callbackURL: process.env.APP_URL 
+          ? `${process.env.APP_URL}/api/auth/github/callback` 
+          : `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co/api/auth/github/callback`,
       },
       async function(accessToken, _refreshToken, profile, done) {
         try {
