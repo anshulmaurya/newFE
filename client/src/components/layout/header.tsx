@@ -180,10 +180,10 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                     </AvatarFallback>
                   </Avatar>
                   <p className="text-base font-medium text-white">
-                    {user.displayName || user.username || "User"}
+                    {user.username || "User"}
                   </p>
                   <p className="text-sm text-gray-400 truncate">
-                    {user.email || "admin@dspcoder.com"}
+                    {user.email || ""}
                   </p>
                 </div>
 
@@ -312,7 +312,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                 </Avatar>
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-white">{user.username}</span>
-                  <span className="text-xs text-gray-400 truncate">{user.email || "GitHub User"}</span>
+                  <span className="text-xs text-gray-400 truncate">{user.email || ""}</span>
                 </div>
               </div>
               <button 
