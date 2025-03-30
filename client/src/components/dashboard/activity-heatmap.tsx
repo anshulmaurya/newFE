@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/use-auth';
 
 // Interface for yearly activity data
 interface YearlyActivityData {
-  [year: number]: {
+  [year: string]: {
     [date: string]: {
       count: number;
       questions: string[];
@@ -13,7 +14,7 @@ interface YearlyActivityData {
 }
 
 /**
- * Expected API response format for user activity data (all years at once):
+ * API response format for user activity data (all years at once):
  * {
  *   "2023": {
  *     "2023-01-01": {
@@ -29,97 +30,65 @@ interface YearlyActivityData {
  *     // dates for 2025...
  *   }
  * }
+ * API endpoint: https://dspcoder-backend-prod.azurewebsites.net/api/get_user_contribution_heatmap
+ * Parameter: username (string)
  */
 
 export default function ActivityHeatmap() {
+  const { user } = useAuth();
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [allYearsData, setAllYearsData] = useState<YearlyActivityData>({});
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   
   // Calculate available years (current year and 2 previous years)
   const currentYear = new Date().getFullYear();
   const availableYears = [currentYear, currentYear - 1, currentYear - 2];
   
-  // Generate mock data for all years (in a real app, this would be fetched from an API)
-  // Define today here for global use
-  const today = new Date();
-  
-  const allYearsData = useMemo(() => {
-    // List of sample question titles
-    const questionTitles = [
-      "Memory Buffer Management", 
-      "Thread Synchronization", 
-      "Pointer Arithmetic", 
-      "Stack Implementation", 
-      "Queue with Arrays", 
-      "RTOS Task Creation", 
-      "Linux Semaphores",
-      "C++ Smart Pointers",
-      "Mutex Implementation",
-      "Signal Handling",
-      "Device Driver Basics",
-      "Interrupt Handling",
-      "Power Management States",
-      "Memory Leak Detection",
-      "Task Scheduling Algorithm"
-    ];
-    
-    const yearlyData: YearlyActivityData = {};
-    
-    // Generate data for each available year
-    availableYears.forEach(year => {
-      yearlyData[year] = {};
+  // Fetch real activity data from the API
+  useEffect(() => {
+    const fetchUserActivity = async () => {
+      if (!user?.username) return;
       
-      // Start and end dates for this year
-      const yearStart = new Date(year, 0, 1);
-      const yearEnd = year === currentYear ? new Date() : new Date(year, 11, 31);
+      setIsLoading(true);
+      setError(null);
       
-      // Add active days
-      const daysToGenerate = year === currentYear ? 100 : 150;
-      
-      for (let i = 0; i < daysToGenerate; i++) {
-        // Create a random date within the year
-        const randomDay = new Date(yearStart);
-        const daysInYear = (year === currentYear) 
-          ? Math.floor((today.getTime() - yearStart.getTime()) / (1000 * 60 * 60 * 24))
-          : 364;
+      try {
+        const response = await fetch(
+          `https://dspcoder-backend-prod.azurewebsites.net/api/get_user_contribution_heatmap?username=${encodeURIComponent(user.username)}`
+        );
         
-        randomDay.setDate(randomDay.getDate() + Math.floor(Math.random() * daysInYear));
-        
-        // Make sure date is within bounds
-        if (randomDay > yearEnd) continue;
-        
-        const dateKey = randomDay.toISOString().split('T')[0];
-        
-        // If we already have data for this date, skip
-        if (yearlyData[year][dateKey]) continue;
-        
-        // Random number of problems solved (1-12)
-        const count = Math.floor(Math.random() * 12) + 1;
-        
-        // Select random questions
-        const questions = [];
-        const questionCount = Math.min(count, questionTitles.length);
-        
-        // Shuffle and pick questions
-        const shuffled = [...questionTitles].sort(() => 0.5 - Math.random());
-        for (let j = 0; j < questionCount; j++) {
-          questions.push(shuffled[j]);
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
         }
         
-        yearlyData[year][dateKey] = {
-          count,
-          questions
-        };
+        const data = await response.json();
+        setAllYearsData(data);
+      } catch (err) {
+        console.error('Error fetching user activity data:', err);
+        setError('Failed to load activity data. Please try again later.');
+        
+        // Initialize with empty data for years
+        const emptyData: YearlyActivityData = {};
+        availableYears.forEach(year => {
+          emptyData[year.toString()] = {};
+        });
+        setAllYearsData(emptyData);
+      } finally {
+        setIsLoading(false);
       }
-    });
+    };
     
-    return yearlyData;
-  }, [availableYears, currentYear, today]);
+    fetchUserActivity();
+  }, [user?.username, availableYears]);
   
   // Calculate the total problems solved for the selected year
   const totalSolved = useMemo(() => {
-    if (!allYearsData[selectedYear]) return 0;
+    // Convert selectedYear to string since our API data uses string keys
+    const yearKey = selectedYear.toString();
+    if (!allYearsData[yearKey]) return 0;
     
-    return Object.values(allYearsData[selectedYear]).reduce((sum, day) => sum + day.count, 0);
+    return Object.values(allYearsData[yearKey]).reduce((sum, day) => sum + day.count, 0);
   }, [allYearsData, selectedYear]);
   
   // For loading state
@@ -214,7 +183,8 @@ export default function ActivityHeatmap() {
                   if (!date) return <div key={`empty-${dateIndex}`} className="w-3 h-3"></div>;
                   
                   const dateKey = date.toISOString().split('T')[0];
-                  const dayData = allYearsData[selectedYear]?.[dateKey];
+                  const yearKey = selectedYear.toString();
+                  const dayData = allYearsData[yearKey]?.[dateKey];
                   const count = dayData?.count || 0;
                   const questions = dayData?.questions || [];
                   
