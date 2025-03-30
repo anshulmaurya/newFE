@@ -6,7 +6,7 @@ import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
-import { User as UserType } from "@shared/schema";
+import { User as UserType, insertUserStatsSchema } from "@shared/schema";
 
 // Create type declaration for Express User
 declare global {
@@ -114,6 +114,18 @@ export function setupAuth(app: Express) {
                 password: await hashPassword(randomBytes(16).toString("hex")), // Random password for GitHub users
               });
               console.log("New user created:", user);
+              
+              // Initialize user stats
+              await storage.createUserStats({
+                userId: user.id,
+                totalSolved: 0,
+                easySolved: 0,
+                mediumSolved: 0,
+                hardSolved: 0,
+                totalAttempted: 0,
+                currentStreak: 0,
+                longestStreak: 0
+              });
             } catch (createError) {
               console.error("Error creating user:", createError);
               return done(createError as Error);
@@ -191,6 +203,50 @@ export function setupAuth(app: Express) {
       if (err) return next(err);
       res.sendStatus(200);
     });
+  });
+
+  // Local registration endpoint
+  app.post("/api/register", async (req, res, next) => {
+    try {
+      const { username, password } = req.body;
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+      
+      // Create new user
+      const hashedPassword = await hashPassword(password);
+      const user = await storage.createUser({
+        username,
+        password: hashedPassword
+      });
+      
+      // Initialize user stats
+      await storage.createUserStats({
+        userId: user.id,
+        totalSolved: 0,
+        easySolved: 0,
+        mediumSolved: 0,
+        hardSolved: 0,
+        totalAttempted: 0,
+        currentStreak: 0,
+        longestStreak: 0
+      });
+      
+      // Log user in
+      req.login(user, (err) => {
+        if (err) return next(err);
+        
+        // Return user without password
+        const { password, ...userData } = user;
+        return res.status(201).json(userData);
+      });
+    } catch (error) {
+      console.error("Registration error:", error);
+      return res.status(500).json({ message: "Registration failed" });
+    }
   });
 
   app.get("/api/user", (req, res) => {

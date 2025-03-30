@@ -1,4 +1,5 @@
-import { pgTable, text, serial, integer, boolean, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, pgEnum, date } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -57,9 +58,36 @@ export const userProgress = pgTable("user_progress", {
   notes: text("notes"),
 });
 
+// User stats table to track overall progress
+export const userStats = pgTable("user_stats", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull().unique(),
+  totalSolved: integer("total_solved").default(0),
+  easySolved: integer("easy_solved").default(0),
+  mediumSolved: integer("medium_solved").default(0),
+  hardSolved: integer("hard_solved").default(0),
+  totalAttempted: integer("total_attempted").default(0),
+  currentStreak: integer("current_streak").default(0),
+  longestStreak: integer("longest_streak").default(0),
+  lastActiveDate: date("last_active_date").notNull().default(sql`CURRENT_DATE`),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Calendar activity tracking
+export const userActivity = pgTable("user_activity", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  date: date("date").notNull().default(sql`CURRENT_DATE`),
+  problemsSolved: integer("problems_solved").default(0).notNull(),
+  minutesActive: integer("minutes_active").default(0).notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Define relations
-export const userRelations = relations(users, ({ many }) => ({
+export const userRelations = relations(users, ({ many, one }) => ({
   progress: many(userProgress),
+  activity: many(userActivity),
+  stats: one(userStats),
 }));
 
 export const problemRelations = relations(problems, ({ many }) => ({
@@ -74,6 +102,20 @@ export const userProgressRelations = relations(userProgress, ({ one }) => ({
   problem: one(problems, {
     fields: [userProgress.problemId],
     references: [problems.id],
+  }),
+}));
+
+export const userStatsRelations = relations(userStats, ({ one }) => ({
+  user: one(users, {
+    fields: [userStats.userId],
+    references: [users.id],
+  }),
+}));
+
+export const userActivityRelations = relations(userActivity, ({ one }) => ({
+  user: one(users, {
+    fields: [userActivity.userId],
+    references: [users.id],
   }),
 }));
 
@@ -117,6 +159,38 @@ export type Problem = typeof problems.$inferSelect;
 
 export type InsertUserProgress = z.infer<typeof insertUserProgressSchema>;
 export type UserProgress = typeof userProgress.$inferSelect;
+
+export type UserStats = typeof userStats.$inferSelect;
+export type UserActivity = typeof userActivity.$inferSelect;
+
+// Insert schemas for new tables
+export const insertUserStatsSchema = createInsertSchema(userStats)
+  .pick({
+    userId: true,
+    totalSolved: true,
+    easySolved: true,
+    mediumSolved: true,
+    hardSolved: true,
+    totalAttempted: true,
+    currentStreak: true,
+    longestStreak: true,
+  })
+  .extend({
+    lastActiveDate: z.date().default(() => new Date())
+  });
+
+export const insertUserActivitySchema = createInsertSchema(userActivity)
+  .pick({
+    userId: true,
+    problemsSolved: true,
+    minutesActive: true,
+  })
+  .extend({
+    date: z.date().default(() => new Date())
+  });
+
+export type InsertUserStats = z.infer<typeof insertUserStatsSchema>;
+export type InsertUserActivity = z.infer<typeof insertUserActivitySchema>;
 
 // Add GitHub user profile fields to the users table
 export const githubUserSchema = createInsertSchema(users).extend({

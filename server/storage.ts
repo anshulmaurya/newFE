@@ -3,11 +3,17 @@ import {
   type InsertUser, 
   users, 
   problems, 
-  userProgress, 
+  userProgress,
+  userStats,
+  userActivity, 
   type Problem, 
   type InsertProblem,
   type UserProgress,
-  type InsertUserProgress
+  type InsertUserProgress,
+  type UserStats,
+  type InsertUserStats,
+  type UserActivity,
+  type InsertUserActivity
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, sql, like, ilike, or } from "drizzle-orm";
@@ -45,7 +51,7 @@ export interface IStorage {
   createUserProgress(userProgress: InsertUserProgress): Promise<UserProgress>;
   updateUserProgress(id: number, userProgress: Partial<UserProgress>): Promise<UserProgress | undefined>;
   
-  // Stats methods
+  // User Stats methods
   getUserStats(userId: number): Promise<{
     totalProblems: number;
     solvedProblems: number;
@@ -54,6 +60,17 @@ export interface IStorage {
     mediumProblems: { solved: number; total: number };
     hardProblems: { solved: number; total: number };
   }>;
+  
+  // User Stats DB methods
+  getUserStatsRecord(userId: number): Promise<UserStats | undefined>;
+  createUserStats(stats: InsertUserStats): Promise<UserStats>;
+  updateUserStats(userId: number, stats: Partial<UserStats>): Promise<UserStats | undefined>;
+  
+  // User Activity methods
+  getUserActivity(userId: number, fromDate?: Date, toDate?: Date): Promise<UserActivity[]>;
+  recordUserActivity(activity: InsertUserActivity): Promise<UserActivity>;
+  updateUserActivity(id: number, activity: Partial<UserActivity>): Promise<UserActivity | undefined>;
+  getUserStreak(userId: number): Promise<{ current: number, longest: number }>;
 }
 
 // Create PostgreSQL session store
@@ -69,6 +86,104 @@ export class DatabaseStorage implements IStorage {
       pool, 
       createTableIfMissing: true 
     });
+  }
+  
+  // User Stats DB methods
+  async getUserStatsRecord(userId: number): Promise<UserStats | undefined> {
+    const [stats] = await db.select().from(userStats).where(eq(userStats.userId, userId));
+    return stats;
+  }
+  
+  async createUserStats(stats: InsertUserStats): Promise<UserStats> {
+    const [createdStats] = await db.insert(userStats).values(stats).returning();
+    return createdStats;
+  }
+  
+  async updateUserStats(userId: number, stats: Partial<UserStats>): Promise<UserStats | undefined> {
+    const [updatedStats] = await db
+      .update(userStats)
+      .set({
+        ...stats,
+        updatedAt: new Date(),
+      })
+      .where(eq(userStats.userId, userId))
+      .returning();
+    return updatedStats;
+  }
+  
+  // User Activity methods
+  async getUserActivity(userId: number, fromDate?: Date, toDate?: Date): Promise<UserActivity[]> {
+    let query = db.select().from(userActivity).where(eq(userActivity.userId, userId));
+    
+    if (fromDate) {
+      query = query.where(sql`${userActivity.date} >= ${fromDate}`);
+    }
+    
+    if (toDate) {
+      query = query.where(sql`${userActivity.date} <= ${toDate}`);
+    }
+    
+    return await query.orderBy(desc(userActivity.date));
+  }
+  
+  async recordUserActivity(activity: InsertUserActivity): Promise<UserActivity> {
+    // Check if we already have an entry for this date
+    const [existingActivity] = await db
+      .select()
+      .from(userActivity)
+      .where(
+        and(
+          eq(userActivity.userId, activity.userId),
+          eq(userActivity.date, activity.date)
+        )
+      );
+      
+    if (existingActivity) {
+      // Update the existing activity
+      const [updatedActivity] = await db
+        .update(userActivity)
+        .set({
+          problemsSolved: existingActivity.problemsSolved + (activity.problemsSolved || 0),
+          minutesActive: existingActivity.minutesActive + (activity.minutesActive || 0),
+          updatedAt: new Date(),
+        })
+        .where(eq(userActivity.id, existingActivity.id))
+        .returning();
+      return updatedActivity;
+    } else {
+      // Create a new activity
+      const [newActivity] = await db
+        .insert(userActivity)
+        .values(activity)
+        .returning();
+      return newActivity;
+    }
+  }
+  
+  async updateUserActivity(id: number, activity: Partial<UserActivity>): Promise<UserActivity | undefined> {
+    const [updatedActivity] = await db
+      .update(userActivity)
+      .set({
+        ...activity,
+        updatedAt: new Date(),
+      })
+      .where(eq(userActivity.id, id))
+      .returning();
+    return updatedActivity;
+  }
+  
+  async getUserStreak(userId: number): Promise<{ current: number, longest: number }> {
+    // Get the user's stats record first
+    const userStatsRecord = await this.getUserStatsRecord(userId);
+    
+    if (userStatsRecord) {
+      return {
+        current: userStatsRecord.currentStreak,
+        longest: userStatsRecord.longestStreak,
+      };
+    }
+    
+    return { current: 0, longest: 0 };
   }
   
   // User methods

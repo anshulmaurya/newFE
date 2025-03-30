@@ -5,6 +5,8 @@ import { storage } from "./storage";
 import { 
   insertProblemSchema,
   insertUserProgressSchema,
+  insertUserStatsSchema,
+  insertUserActivitySchema,
 } from "@shared/schema";
 import { z } from "zod";
 import { setupAuth } from "./auth";
@@ -289,7 +291,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // User Stats route
+  // User Stats routes
   apiRouter.get("/user-stats", getUserId, async (req: Request, res: Response) => {
     try {
       if (!req.userId) {
@@ -300,6 +302,187 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.json(stats);
     } catch (error) {
       console.error("Error fetching user stats:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
+  });
+  
+  // Get user stats record from the database
+  apiRouter.get("/user-stats-record", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      let stats = await storage.getUserStatsRecord(req.userId);
+      
+      // If stats record doesn't exist, create one
+      if (!stats) {
+        stats = await storage.createUserStats({
+          userId: req.userId,
+          totalSolved: 0,
+          easySolved: 0,
+          mediumSolved: 0,
+          hardSolved: 0,
+          totalAttempted: 0,
+          currentStreak: 0,
+          longestStreak: 0
+        });
+      }
+      
+      return res.json(stats);
+    } catch (error) {
+      console.error("Error fetching user stats record:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
+  });
+  
+  // Update user stats
+  apiRouter.post("/user-stats", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      // Get current stats
+      let currentStats = await storage.getUserStatsRecord(req.userId);
+      
+      // If no stats record exists, create one
+      if (!currentStats) {
+        currentStats = await storage.createUserStats({
+          userId: req.userId,
+          ...req.body
+        });
+        return res.status(201).json(currentStats);
+      }
+      
+      // Otherwise update existing record
+      const updatedStats = await storage.updateUserStats(req.userId, {
+        ...req.body,
+        updatedAt: new Date()
+      });
+      
+      return res.json(updatedStats);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      console.error("Error updating user stats:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
+  });
+  
+  // User Activity routes
+  apiRouter.get("/user-activity", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      // Parse date range if provided
+      const { from, to } = req.query;
+      let fromDate: Date | undefined;
+      let toDate: Date | undefined;
+      
+      if (from && typeof from === 'string') {
+        fromDate = new Date(from);
+      }
+      
+      if (to && typeof to === 'string') {
+        toDate = new Date(to);
+      }
+      
+      const activity = await storage.getUserActivity(req.userId, fromDate, toDate);
+      return res.json(activity);
+    } catch (error) {
+      console.error("Error fetching user activity:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
+  });
+  
+  // Record user activity
+  apiRouter.post("/user-activity", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      // Set userId and ensure date is properly formatted
+      const activityData = {
+        ...req.body,
+        userId: req.userId,
+        date: req.body.date ? new Date(req.body.date) : new Date()
+      };
+      
+      const activity = await storage.recordUserActivity(activityData);
+      
+      // Also update the user's streak
+      let userStats = await storage.getUserStatsRecord(req.userId);
+      
+      if (userStats) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const lastActiveDate = userStats.lastActiveDate;
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        let currentStreak = userStats.currentStreak || 0;
+        let longestStreak = userStats.longestStreak || 0;
+        
+        // If the user was last active yesterday, increment the streak
+        // If today, maintain the streak (don't double count)
+        // If more than a day ago, reset the streak
+        if (lastActiveDate) {
+          const lastDate = new Date(lastActiveDate);
+          lastDate.setHours(0, 0, 0, 0);
+          
+          if (lastDate.getTime() === today.getTime()) {
+            // Already logged today, keep streak the same
+          } else if (lastDate.getTime() === yesterday.getTime()) {
+            // Increment streak for consecutive days
+            currentStreak += 1;
+          } else {
+            // Reset streak for break in consecutive days
+            currentStreak = 1;
+          }
+        } else {
+          // First activity ever
+          currentStreak = 1;
+        }
+        
+        // Update longest streak if needed
+        if (currentStreak > longestStreak) {
+          longestStreak = currentStreak;
+        }
+        
+        // Update user stats with new streak information
+        await storage.updateUserStats(req.userId, {
+          currentStreak,
+          longestStreak
+        });
+      }
+      
+      return res.status(201).json(activity);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      console.error("Error recording user activity:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
+  });
+  
+  // Get user streak
+  apiRouter.get("/user-streak", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const streak = await storage.getUserStreak(req.userId);
+      return res.json(streak);
+    } catch (error) {
+      console.error("Error fetching user streak:", error);
       return res.status(500).json({ error: "Server error" });
     }
   });
