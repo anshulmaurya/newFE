@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import ProgressStats from '@/components/dashboard/progress-stats';
+import ActivityHeatmap from '@/components/dashboard/activity-heatmap';
 import { 
   CheckCircle,
   Circle, 
@@ -581,6 +582,9 @@ export default function Dashboard() {
         <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto px-4 lg:px-0 pt-4">
           {/* Main content area */}
           <div className="flex-grow pt-0 pb-2 px-2 space-y-4">
+            
+            {/* Activity Heatmap */}
+            <ActivityHeatmap />
 
             {/* Selected Bundle Details */}
             {selectedBundle && bundles[selectedBundle as keyof typeof bundles] && (

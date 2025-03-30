@@ -1,189 +1,204 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
+import React, { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import { Skeleton } from '@/components/ui/skeleton';
 
-type ActivityData = {
-  date: string;
-  problemsSolved: number;
-  minutesActive: number;
+interface ActivityData {
+  [date: string]: number;
 }
-
-type MonthData = {
-  month: string;
-  days: {
-    date: string;
-    dayOfWeek: number;
-    problemsSolved: number;
-    intensity: number; // 0 to 4
-  }[];
-}
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default function ActivityHeatmap() {
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const [lastYear, setLastYear] = useState<MonthData[]>([]);
-  const [maxActivity, setMaxActivity] = useState(1);
-  const [totalContributions, setTotalContributions] = useState(0);
-
-  // Fetch user activity for the last year
-  const { data: activityData, isLoading } = useQuery<ActivityData[]>({
-    queryKey: ["/api/user-activity"],
-    enabled: !!user,
-  });
-
-  useEffect(() => {
-    if (!activityData) return;
-
-    // Process activity data into months and days
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setFullYear(endDate.getFullYear() - 1); // Last 12 months
-    
-    // Create array of all dates in the past year
-    const dateMap = new Map<string, ActivityData>();
-    activityData.forEach(activity => {
-      dateMap.set(activity.date, activity);
-    });
-
-    // Calculate max activity to normalize intensity
-    const activities = activityData.map(a => a.problemsSolved);
-    const max = Math.max(...activities, 1);
-    setMaxActivity(max);
-    
-    // Count total contributions
-    const total = activities.reduce((sum, current) => sum + current, 0);
-    setTotalContributions(total);
-
-    // Generate month data
-    const months: MonthData[] = [];
-    const currentDate = new Date(startDate);
-    
-    while (currentDate <= endDate) {
-      const monthIndex = currentDate.getMonth();
-      const monthName = MONTHS[monthIndex];
-      
-      // Find or create month
-      let month = months.find(m => m.month === monthName);
-      if (!month) {
-        month = { month: monthName, days: [] };
-        months.push(month);
+  const [activityData, setActivityData] = useState<ActivityData>({});
+  const [totalSolved, setTotalSolved] = useState<number>(0);
+  
+  // Calculate date range for the last year
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setFullYear(endDate.getFullYear() - 1);
+  
+  // Format dates as ISO strings
+  const formattedStartDate = startDate.toISOString().split('T')[0];
+  const formattedEndDate = endDate.toISOString().split('T')[0];
+  
+  // Fetch user activity data
+  const { data: userActivity, isLoading } = useQuery({
+    queryKey: ['/api/user-activity'],
+    queryFn: async () => {
+      try {
+        const response = await apiRequest('GET', '/api/user-activity');
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching user activity:', error);
+        return [];
       }
+    },
+  });
+  
+  // Process the activity data once it's loaded
+  useEffect(() => {
+    if (userActivity && userActivity.length > 0) {
+      const processedData: ActivityData = {};
+      let total = 0;
       
-      // Format date as YYYY-MM-DD for lookup
-      const dateStr = currentDate.toISOString().split('T')[0];
-      const activity = dateMap.get(dateStr);
-      
-      // Create day object
-      month.days.push({
-        date: dateStr,
-        dayOfWeek: (currentDate.getDay() + 6) % 7, // Convert Sunday=0 to Monday=0
-        problemsSolved: activity?.problemsSolved || 0,
-        intensity: activity ? Math.min(Math.ceil((activity.problemsSolved / max) * 4), 4) : 0
+      userActivity.forEach((activity: any) => {
+        const date = activity.date.split('T')[0]; // Format: YYYY-MM-DD
+        processedData[date] = activity.problemsSolved;
+        total += activity.problemsSolved;
       });
       
-      // Move to next day
-      currentDate.setDate(currentDate.getDate() + 1);
+      setActivityData(processedData);
+      setTotalSolved(total);
+    }
+  }, [userActivity]);
+  
+  // Define color scale based on number of problems solved
+  const colorScale = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
+  
+  // Generate the heatmap data
+  const getDaysArray = () => {
+    const days = [];
+    // Create 7 rows for each day of the week
+    for (let i = 0; i < 7; i++) {
+      const row = [];
+      // Create 52 weeks worth of cells (one year)
+      for (let j = 0; j < 52; j++) {
+        const cellDate = new Date(endDate);
+        // Adjust the date to get the correct day for this cell
+        cellDate.setDate(cellDate.getDate() - (endDate.getDay() - i) - (7 * (51 - j)));
+        
+        const dateKey = cellDate.toISOString().split('T')[0];
+        const value = activityData[dateKey] || 0;
+        
+        // Determine the color based on the value
+        let colorIndex = 0;
+        if (value > 0) {
+          colorIndex = Math.min(Math.floor(value / 2) + 1, 4); // Adjust coloring logic as needed
+        }
+        
+        row.push({
+          date: dateKey,
+          value,
+          color: colorScale[colorIndex],
+          isToday: dateKey === endDate.toISOString().split('T')[0]
+        });
+      }
+      days.push(row);
+    }
+    return days;
+  };
+  
+  const daysMatrix = getDaysArray();
+  
+  // Get month labels positions
+  const getMonthLabels = () => {
+    const months = [];
+    const currentDate = new Date(endDate);
+    currentDate.setDate(1); // Set to first day of current month
+    
+    // Go back to get first of each month in the last year
+    for (let i = 0; i < 12; i++) {
+      if (i > 0) {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+      }
+      
+      // Calculate the position based on week in the year
+      const firstDayDate = new Date(currentDate);
+      const startOfYear = new Date(endDate);
+      startOfYear.setDate(endDate.getDate() - 364); // 52 weeks * 7 days
+      
+      const diffTime = firstDayDate.getTime() - startOfYear.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const weekIndex = Math.floor(diffDays / 7);
+      
+      // Only add if weekIndex is positive and within our 52 weeks range
+      if (weekIndex >= 0 && weekIndex < 52) {
+        months.unshift({
+          name: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][currentDate.getMonth()],
+          index: weekIndex
+        });
+      }
     }
     
-    // Sort months chronologically
-    const sortedMonths = months.slice().sort((a, b) => {
-      return MONTHS.indexOf(a.month) - MONTHS.indexOf(b.month);
-    });
-    
-    setLastYear(sortedMonths);
-  }, [activityData]);
-
-  // Function to get cell color based on intensity
-  const getCellColor = (intensity: number) => {
-    if (intensity === 0) return "bg-gray-800";
-    if (intensity === 1) return "bg-green-900";
-    if (intensity === 2) return "bg-green-700";
-    if (intensity === 3) return "bg-green-500";
-    return "bg-green-300";
+    return months;
   };
-
+  
+  const monthLabels = getMonthLabels();
+  
+  // For loading state
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Loading Activity</CardTitle>
-          <CardDescription>Retrieving your contribution history</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[200px] w-full flex items-center justify-center">
-            <Skeleton className="h-[180px] w-full" />
-          </div>
-        </CardContent>
-      </Card>
+      <div className="rounded-lg bg-[rgb(24,24,27)] p-4 mb-4">
+        <Skeleton className="h-6 w-48 mb-4 bg-[rgb(35,35,40)]" />
+        <Skeleton className="h-36 w-full bg-[rgb(35,35,40)]" />
+      </div>
     );
   }
-
+  
   return (
-    <Card className="w-full">
-      <CardHeader className="pb-3">
-        <CardTitle>{totalContributions} contributions in the last year</CardTitle>
-        <CardDescription>
-          Track your daily problem-solving activity
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {/* LeetCode style activity heatmap */}
-        <div className="flex flex-col">
-          {/* Month headers */}
-          <div className="flex justify-between mb-1 text-xs text-gray-500">
-            {MONTHS.map((month, i) => (
-              i % 2 === 0 && <span key={month}>{month}</span>
-            ))}
-          </div>
-          
-          {/* Day rows with activity cells */}
-          <div className="space-y-1">
-            {DAYS.map((day, dayIndex) => (
-              <div key={day} className="flex items-center">
-                <div className="w-8 text-xs text-gray-500 pr-2">{day}</div>
-                <div className="flex gap-1">
-                  {/* Generate 12 months worth of cells */}
-                  {Array.from({ length: 12 }).map((_, monthIndex) => {
-                    // Create intensity pattern based on month and day
-                    // This creates a wave pattern for better visualization
-                    const intensity = Math.max(0, Math.min(4, 
-                      Math.floor(Math.sin((monthIndex + dayIndex) / 3) * 2 + 2)
-                    ));
-                    
-                    return (
-                      <div
-                        key={`${dayIndex}-${monthIndex}`}
-                        className={`w-4 h-4 rounded-sm ${getCellColor(intensity)}`}
-                        title={`${MONTHS[monthIndex]}, ${day}: ${intensity} problems solved`}
-                      />
-                    );
-                  })}
-                </div>
+    <div className="rounded-lg bg-[rgb(24,24,27)] p-4 mb-4">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-white font-medium">{totalSolved} problems solved in the last year</h2>
+      </div>
+      
+      <div className="overflow-x-auto">
+        <div className="min-w-[650px]">
+          {/* Month labels */}
+          <div className="flex text-xs text-gray-400 mb-1 relative pl-8">
+            {monthLabels.map((month, i) => (
+              <div 
+                key={i}
+                className="absolute transform -translate-x-1/2"
+                style={{ left: `${(month.index / 52) * 100}%` }}
+              >
+                {month.name}
               </div>
             ))}
           </div>
-        </div>
-        
-        {/* Legend */}
-        <div className="flex justify-between items-center mt-4 text-xs text-gray-500">
-          <div>Learn how we count contributions</div>
-          <div className="flex items-center gap-1">
+          
+          <div className="flex">
+            {/* Day of week labels */}
+            <div className="pr-2 flex flex-col justify-start text-xs text-gray-400">
+              <div className="h-[14px]">Mon</div>
+              <div className="h-[14px] mt-[2px]"></div>
+              <div className="h-[14px] mt-[2px]">Wed</div>
+              <div className="h-[14px] mt-[2px]"></div>
+              <div className="h-[14px] mt-[2px]">Fri</div>
+              <div className="h-[14px] mt-[2px]"></div>
+            </div>
+            
+            {/* Heatmap grid */}
+            <div className="flex-grow grid grid-rows-7 gap-[2px]">
+              {daysMatrix.map((row, rowIndex) => (
+                <div key={rowIndex} className="flex gap-[2px]">
+                  {row.map((cell, colIndex) => (
+                    <div 
+                      key={`${rowIndex}-${colIndex}`} 
+                      className={`w-[12px] h-[12px] rounded-sm ${cell.isToday ? 'ring-1 ring-gray-300' : ''}`}
+                      style={{ backgroundColor: cell.color }}
+                      title={`${cell.date}: ${cell.value} problems solved`}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-end mt-2 text-xs text-gray-400">
             <span>Less</span>
-            <div className={`w-3 h-3 rounded-sm bg-gray-800`}></div>
-            <div className={`w-3 h-3 rounded-sm bg-green-900`}></div>
-            <div className={`w-3 h-3 rounded-sm bg-green-700`}></div>
-            <div className={`w-3 h-3 rounded-sm bg-green-500`}></div>
-            <div className={`w-3 h-3 rounded-sm bg-green-300`}></div>
+            <div className="flex items-center mx-2">
+              {colorScale.map((color, i) => (
+                <div 
+                  key={i} 
+                  className="w-3 h-3 mx-[1px]" 
+                  style={{ backgroundColor: color }}
+                ></div>
+              ))}
+            </div>
             <span>More</span>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
