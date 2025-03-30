@@ -62,25 +62,9 @@ export default function ActivityHeatmap() {
       setError(null);
       
       try {
-        // For testing, use this hardcoded data that matches what the API provides
-        const testData: YearlyActivityData = {
-          "2023": {
-            "total": 5, // Total problems solved in 2023
-            "2023-01-01": { "count": 2, "questions": ["Memory Buffer Management", "Thread Synchronization"] },
-            "2023-01-15": { "count": 3, "questions": ["Pointer Arithmetic", "Stack Implementation", "Queue with Arrays"] }
-          },
-          "2024": {
-            "total": 1, // Total problems solved in 2024
-            "2024-03-10": { "count": 1, "questions": ["RTOS Task Creation"] }
-          },
-          "2025": {
-            "total": 1, // Total problems solved in 2025
-            "2025-03-10": { "count": 1, "questions": ["Linked List Implementation"] }
-          }
-        };
+        console.log("Fetching heatmap data for user:", user.username);
         
-        // Uncomment this when API is working properly
-        /* 
+        // Make the actual API call
         const response = await fetch(
           `https://dspcoder-backend-prod.azurewebsites.net/api/get_user_contribution_heatmap?username=${encodeURIComponent(user.username)}`
         );
@@ -90,11 +74,8 @@ export default function ActivityHeatmap() {
         }
         
         const data = await response.json();
+        console.log("Successfully fetched heatmap data:", data);
         setAllYearsData(data);
-        */
-        
-        // Use the test data for now
-        setAllYearsData(testData);
       } catch (err) {
         console.error('Error fetching user activity data:', err);
         setError('Failed to load activity data. Please try again later.');
