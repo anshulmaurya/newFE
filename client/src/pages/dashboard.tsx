@@ -144,7 +144,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="bg-[rgb(14,14,16)] min-h-screen text-white pt-16">
+    <div className="bg-[rgb(14,14,16)] text-white pt-16 h-screen overflow-hidden">
       {/* Header */}
       <Header 
         onNavigateFeatures={handleNavigateFeatures}
@@ -152,8 +152,8 @@ export default function Dashboard() {
         isScrolled={true}
       />
       
-      <div className="mt-6 px-4 lg:px-0 lg:ml-56 lg:mr-64">
-        <div className="flex flex-col gap-4">
+      <div className="h-[calc(100vh-64px)] px-4 lg:px-0 lg:ml-56 lg:mr-64">
+        <div className="flex flex-col gap-4 h-full">
           {/* Left column - navigation (hide on mobile) */}
           <div className="hidden lg:block w-56 bg-[rgb(14,14,16)] fixed left-0 top-0 pt-20 h-screen flex flex-col">
             <div className="px-4 py-2 flex flex-col h-full">
@@ -251,11 +251,11 @@ export default function Dashboard() {
           </div>
           
           {/* Main content */}
-          <div className="flex-grow">
+          <div className="flex-grow overflow-y-auto h-full pt-2 pb-1 pr-2">
 
             
             {/* Filters */}
-            <div className="flex flex-wrap md:flex-nowrap gap-2 mb-4 items-center">
+            <div className="flex flex-wrap md:flex-nowrap gap-2 mb-4 items-center sticky top-0 z-10 bg-[rgb(14,14,16)] py-2">
               <div className="w-full md:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3.5 w-3.5" />

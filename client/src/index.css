@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom scrollbar styling for the entire app */
+:root {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(45, 45, 48) rgb(14, 14, 16);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(14, 14, 16);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(45, 45, 48);
+  border-radius: 10px;
+  border: 2px solid rgb(14, 14, 16);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(65, 65, 68);
+}
+
 /* Custom scrollbar styling for code editor */
 .code-editor-scrollbar {
   scrollbar-width: thin;
@@ -35,7 +60,7 @@
 
   body {
     @apply font-sans antialiased text-foreground;
-    background-color: rgb(24, 24, 26);
+    background-color: rgb(14, 14, 16);
     padding-top: 68px; /* Height of the header */
   }
 }
