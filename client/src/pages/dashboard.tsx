@@ -44,6 +44,7 @@ import {
   FileText,
 } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
+import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import Header from '@/components/layout/header';
 
@@ -90,6 +91,20 @@ export default function Dashboard() {
       const response = await apiRequest('GET', '/api/problems-proxy');
       const data = await response.json();
       return data.problems;
+    },
+  });
+  
+  // Fetch user progress data for problems
+  const { data: userProgressData, isLoading: isLoadingUserProgress } = useQuery({
+    queryKey: ['/api/user-progress'],
+    queryFn: async () => {
+      try {
+        const response = await apiRequest('GET', '/api/user-progress');
+        return await response.json();
+      } catch (error) {
+        // Return empty array if not authenticated or any other error
+        return [];
+      }
     },
   });
 
@@ -702,10 +717,10 @@ export default function Dashboard() {
                     </tr>
                   ) : externalProblems && externalProblems.length > 0 ? (
                     externalProblems.map((problem: any, idx: number) => {
-                      // Create random status for demonstration purposes
-                      const statusOptions = ['Solved', 'Attempted', 'Not Started'];
-                      const randomStatus = statusOptions[Math.floor(Math.random() * statusOptions.length)];
-                      const statusIcon = getStatusIcon(randomStatus);
+                      // Get the problem status from userProgress data if available, otherwise default to "Not Started"
+                      const progressData = userProgressData?.find((p: any) => p.problemId === problem.id);
+                      const problemStatus = progressData?.status || 'Not Started';
+                      const statusIcon = getStatusIcon(problemStatus);
                       
                       return (
                         <tr 
@@ -735,7 +750,7 @@ export default function Dashboard() {
                               {problem.companies && problem.companies.length > 0 ? (
                                 <div className="group relative inline-block">
                                   {/* Show only the first company */}
-                                  <Badge className="bg-blue-900/30 text-blue-200 border border-blue-800 px-1.5 py-0 text-[10px]">
+                                  <Badge className="bg-transparent text-gray-400 border border-gray-700 px-1.5 py-0 text-[10px]">
                                     {problem.companies[0]}
                                   </Badge>
                                   
@@ -760,7 +775,7 @@ export default function Dashboard() {
                                   )}
                                 </div>
                               ) : (
-                                <Badge className="bg-blue-900/30 text-blue-200 border border-blue-800 px-1.5 py-0 text-[10px]">
+                                <Badge className="bg-transparent text-gray-400 border border-gray-700 px-1.5 py-0 text-[10px]">
                                   {idx % 3 === 0 ? "Intel" : idx % 3 === 1 ? "Qualcomm" : "Microsoft"}
                                 </Badge>
                               )}
@@ -771,7 +786,7 @@ export default function Dashboard() {
                               {problem.tags && problem.tags.length > 0 ? (
                                 <div className="group relative inline-block">
                                   {/* Show up to 2 tags */}
-                                  <Badge className="bg-green-900/30 text-green-200 border border-green-800 px-1.5 py-0 text-[10px]">
+                                  <Badge className="bg-transparent text-gray-400 border border-gray-700 px-1.5 py-0 text-[10px]">
                                     {problem.tags[0]}
                                   </Badge>
                                   
@@ -779,7 +794,7 @@ export default function Dashboard() {
                                   {problem.tags.length > 1 && (
                                     <>
                                       {problem.tags.length === 2 ? (
-                                        <Badge className="bg-green-900/30 text-green-200 border border-green-800 px-1.5 py-0 text-[10px] ml-1">
+                                        <Badge className="bg-transparent text-gray-400 border border-gray-700 px-1.5 py-0 text-[10px] ml-1">
                                           {problem.tags[1]}
                                         </Badge>
                                       ) : (
@@ -804,7 +819,7 @@ export default function Dashboard() {
                                   )}
                                 </div>
                               ) : (
-                                <Badge className="bg-green-900/30 text-green-200 border border-green-800 px-1.5 py-0 text-[10px]">
+                                <Badge className="bg-transparent text-gray-400 border border-gray-700 px-1.5 py-0 text-[10px]">
                                   {problem.type || "dsa"}
                                 </Badge>
                               )}
@@ -814,7 +829,7 @@ export default function Dashboard() {
                             {problem.difficulty || 'Easy'}
                           </td>
                           <td className="px-2 py-3 hidden lg:table-cell text-center">
-                            <span className="text-xs text-green-500">
+                            <span className="text-xs text-gray-400">
                               {problem.acceptance_rate ? `${problem.acceptance_rate}%` : 'N/A'}
                             </span>
                           </td>
