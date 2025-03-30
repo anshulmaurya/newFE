@@ -73,7 +73,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${headerBackground} border-b border-gray-800/50`}>
-      <div className="container mx-auto px-4 py-0.5 flex justify-between items-center">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <div className="h-5 w-5 flex items-center justify-center">
             <svg version="1.1" viewBox="0.0 0.0 100.0 100.0" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" width="20" height="20">
@@ -205,7 +205,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
       </div>
       
       {/* Mobile Menu */}
-      <div className={`md:hidden glass absolute w-full z-20 py-3 px-4 ${mobileMenuOpen ? 'block' : 'hidden'} bg-[rgb(24,24,26)]`}>
+      <div className={`md:hidden glass absolute w-full z-20 py-4 px-4 ${mobileMenuOpen ? 'block' : 'hidden'} bg-[rgb(24,24,26)]`}>
         <nav className="flex flex-col space-y-3">
           <div className="flex flex-col space-y-1.5 mb-2">
             <p className="text-xs text-gray-500">Mode:</p>

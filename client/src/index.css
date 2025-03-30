@@ -61,7 +61,7 @@
   body {
     @apply font-sans antialiased text-foreground;
     background-color: rgb(24, 24, 26);
-    padding-top: 44px; /* Height of the header */
+    padding-top: 54px; /* Height of the header - updated for taller navbar */
   }
 }
 
