@@ -135,23 +135,23 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-3">
+          {/* Dark mode toggle */}
+          {toggleDarkMode && (
+            <button 
+              onClick={toggleDarkMode}
+              className="p-1.5 rounded-md text-gray-300 hover:text-white hover:bg-[rgb(36,36,38)] transition-colors"
+              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+          )}
+          
           <button onClick={() => navigateToNotes()} className="nav-link group px-2 py-1">
             <span className={`font-medium text-sm ${location.includes("/notes") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} transition-colors`}>Notes</span>
           </button>
           <button onClick={() => setLocation("/dashboard")} className="nav-link group px-2 py-1">
             <span className={`font-medium text-sm ${location.includes("/dashboard") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} transition-colors`}>Problems</span>
           </button>
-          
-          {/* Dark mode toggle */}
-          {toggleDarkMode && (
-            <button 
-              onClick={toggleDarkMode}
-              className="ml-2 p-1.5 rounded-md text-gray-300 hover:text-white hover:bg-[rgb(36,36,38)] transition-colors"
-              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {darkMode ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
-          )}
           
           {user ? (
             <DropdownMenu>
@@ -240,19 +240,6 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
             </div>
           </div>
 
-          <button 
-            onClick={() => navigateToNotes()}
-            className={`${location.includes("/notes") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} py-1.5 border-b border-gray-700/30 text-sm`}
-          >
-            Notes
-          </button>
-          <button 
-            onClick={() => { setMobileMenuOpen(false); setLocation("/dashboard"); }} 
-            className={`${location.includes("/dashboard") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} py-1.5 border-b border-gray-700/30 text-sm`}
-          >
-            Problems
-          </button>
-          
           {/* Dark mode toggle - mobile */}
           {toggleDarkMode && (
             <div className="flex items-center justify-between py-1.5 border-b border-gray-700/30">
@@ -265,6 +252,19 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
               </button>
             </div>
           )}
+          
+          <button 
+            onClick={() => navigateToNotes()}
+            className={`${location.includes("/notes") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} py-1.5 border-b border-gray-700/30 text-sm`}
+          >
+            Notes
+          </button>
+          <button 
+            onClick={() => { setMobileMenuOpen(false); setLocation("/dashboard"); }} 
+            className={`${location.includes("/dashboard") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} py-1.5 border-b border-gray-700/30 text-sm`}
+          >
+            Problems
+          </button>
           {/* User profile or login button */}
           {user ? (
             <>
