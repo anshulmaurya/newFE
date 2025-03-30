@@ -309,37 +309,31 @@ export default function Dashboard() {
                 className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
                 onClick={() => toggleSection('quick-prep')}
               >
-                <span className="flex items-center">
-                  <Zap className="h-4 w-4 mr-2 text-yellow-400" />
-                  <span>Quick Prep Bundles</span>
-                </span>
+                <span>Quick Prep Bundles</span>
                 <span><ChevronDown className={`h-4 w-4 transition-transform ${expandedSection === 'quick-prep' ? 'rotate-180' : ''}`} /></span>
               </button>
               
               {expandedSection === 'quick-prep' && (
                 <div className="mt-1 pl-3">
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('blind-75')}
                   >
-                    <Code className="h-4 w-4 text-gray-500" />
-                    <span>Blind 75</span>
+                    Blind 75
                   </button>
                   
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('linux-basics')}
                   >
-                    <Terminal className="h-4 w-4 text-gray-500" />
-                    <span>Linux Basics</span>
+                    Linux Basics
                   </button>
                   
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('embedded-essentials')}
                   >
-                    <Cpu className="h-4 w-4 text-gray-500" />
-                    <span>Embedded Essentials</span>
+                    Embedded Essentials
                   </button>
                 </div>
               )}
@@ -351,37 +345,31 @@ export default function Dashboard() {
                 className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
                 onClick={() => toggleSection('target-companies')}
               >
-                <span className="flex items-center">
-                  <Building className="h-4 w-4 mr-2 text-blue-400" />
-                  <span>Target Companies</span>
-                </span>
+                <span>Target Companies</span>
                 <span><ChevronDown className={`h-4 w-4 transition-transform ${expandedSection === 'target-companies' ? 'rotate-180' : ''}`} /></span>
               </button>
               
               {expandedSection === 'target-companies' && (
                 <div className="mt-1 pl-3">
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('arm')}
                   >
-                    <Microchip className="h-4 w-4 text-gray-500" />
-                    <span>ARM</span>
+                    ARM
                   </button>
                   
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('amd')}
                   >
-                    <Microchip className="h-4 w-4 text-gray-500" />
-                    <span>AMD</span>
+                    AMD
                   </button>
                   
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('nvidia')}
                   >
-                    <Microchip className="h-4 w-4 text-gray-500" />
-                    <span>NVIDIA</span>
+                    NVIDIA
                   </button>
                 </div>
               )}
@@ -393,29 +381,24 @@ export default function Dashboard() {
                 className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
                 onClick={() => toggleSection('feeling-lucky')}
               >
-                <span className="flex items-center">
-                  <Sparkles className="h-4 w-4 mr-2 text-purple-400" />
-                  <span>Feeling Lucky</span>
-                </span>
+                <span>Feeling Lucky</span>
                 <span><ChevronDown className={`h-4 w-4 transition-transform ${expandedSection === 'feeling-lucky' ? 'rotate-180' : ''}`} /></span>
               </button>
               
               {expandedSection === 'feeling-lucky' && (
                 <div className="mt-1 pl-3">
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('c-cpp-asm')}
                   >
-                    <Code2 className="h-4 w-4 text-gray-500" />
-                    <span>C/Cpp/ASM Trilogy</span>
+                    C/Cpp/ASM Trilogy
                   </button>
                   
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('hard-algorithms')}
                   >
-                    <Gauge className="h-4 w-4 text-gray-500" />
-                    <span>Hit Hard Algorithms</span>
+                    Hit Hard Algorithms
                   </button>
                 </div>
               )}
@@ -427,37 +410,31 @@ export default function Dashboard() {
                 className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
                 onClick={() => toggleSection('time-based')}
               >
-                <span className="flex items-center">
-                  <Clock className="h-4 w-4 mr-2 text-orange-400" />
-                  <span>Time-Based Prep</span>
-                </span>
+                <span>Time-Based Prep</span>
                 <span><ChevronDown className={`h-4 w-4 transition-transform ${expandedSection === 'time-based' ? 'rotate-180' : ''}`} /></span>
               </button>
               
               {expandedSection === 'time-based' && (
                 <div className="mt-1 pl-3">
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('one-week')}
                   >
-                    <CalendarDays className="h-4 w-4 text-gray-500" />
-                    <span>1-Week Crash Course</span>
+                    1-Week Crash Course
                   </button>
                   
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('two-weeks')}
                   >
-                    <CalendarDays className="h-4 w-4 text-gray-500" />
-                    <span>2-Week Prep</span>
+                    2-Week Prep
                   </button>
                   
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('one-month')}
                   >
-                    <CalendarDays className="h-4 w-4 text-gray-500" />
-                    <span>1-Month Complete Prep</span>
+                    1-Month Complete Prep
                   </button>
                 </div>
               )}
@@ -469,37 +446,31 @@ export default function Dashboard() {
                 className="flex justify-between items-center w-full text-gray-200 hover:text-white text-sm py-2 px-3 rounded-md transition-colors"
                 onClick={() => toggleSection('experience-level')}
               >
-                <span className="flex items-center">
-                  <User className="h-4 w-4 mr-2 text-green-400" />
-                  <span>Experience Level</span>
-                </span>
+                <span>Experience Level</span>
                 <span><ChevronDown className={`h-4 w-4 transition-transform ${expandedSection === 'experience-level' ? 'rotate-180' : ''}`} /></span>
               </button>
               
               {expandedSection === 'experience-level' && (
                 <div className="mt-1 pl-3">
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('entry-level')}
                   >
-                    <Cpu className="h-4 w-4 text-gray-500" />
-                    <span>Entry Level (0-2 YOE)</span>
+                    Entry Level (0-2 YOE)
                   </button>
                   
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('mid-level')}
                   >
-                    <Cpu className="h-4 w-4 text-gray-500" />
-                    <span>Mid Level (3-5 YOE)</span>
+                    Mid Level (3-5 YOE)
                   </button>
                   
                   <button 
-                    className="flex items-center gap-2 text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
                     onClick={() => handleBundleSelect('senior-level')}
                   >
-                    <Cpu className="h-4 w-4 text-gray-500" />
-                    <span>Senior (5+ YOE)</span>
+                    Senior (5+ YOE)
                   </button>
                 </div>
               )}
