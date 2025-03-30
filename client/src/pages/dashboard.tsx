@@ -566,7 +566,7 @@ export default function Dashboard() {
         {/* Main content - scrollable */}
         <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto px-4 lg:px-0">
           {/* Main content area */}
-          <div className="flex-grow px-2 -mt-16 space-y-4">
+          <div className="flex-grow py-2 px-2 space-y-4">
 
             {/* Selected Bundle Details */}
             {selectedBundle && bundles[selectedBundle as keyof typeof bundles] && (
@@ -845,6 +845,11 @@ export default function Dashboard() {
               {/* Progress Stats */}
               <div className="mb-6">
                 <ProgressStats />
+              </div>
+              
+              {/* Activity Heatmap */}
+              <div className="mb-6">
+                <ActivityHeatmap />
               </div>
               
               {/* Resources section */}
