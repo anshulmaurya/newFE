@@ -686,7 +686,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
   };
 
   return (
-    <section className="relative overflow-hidden pt-16 md:pt-24 pb-16 bg-[rgb(24,24,26)]">
+    <section className="relative overflow-hidden pt-0 md:pt-8 pb-16 bg-[rgb(24,24,26)]">
       {/* Circuit board decorative elements */}
       <div className="absolute top-1/4 right-0 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>

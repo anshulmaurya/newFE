@@ -62,7 +62,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${headerBackground} shadow-md`}>
-      <div className="container mx-auto px-4 py-1.5 flex justify-between items-center">
+      <div className="container mx-auto px-4 py-1 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="h-7 w-7 flex items-center justify-center">
             <svg version="1.1" viewBox="0.0 0.0 100.0 100.0" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" width="28" height="28">
