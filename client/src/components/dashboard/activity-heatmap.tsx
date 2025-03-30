@@ -62,31 +62,70 @@ export default function ActivityHeatmap() {
       setError(null);
       
       try {
-        console.log("Fetching heatmap data for user:", user.username);
+        // Debug user object
+        console.log("User object:", user);
+        
+        // Try to use either stored username or display name, with a fallback to 'ninad' for testing
+        const username = user?.username || 
+                         (user?.displayName ? user.displayName.toLowerCase().replace(/\s+/g, '') : 'ninad');
+        console.log("Using username for API call:", username);
         
         // Make the actual API call
         const response = await fetch(
-          `https://dspcoder-backend-prod.azurewebsites.net/api/get_user_contribution_heatmap?username=${encodeURIComponent(user.username)}`
+          `https://dspcoder-backend-prod.azurewebsites.net/api/get_user_contribution_heatmap?username=${encodeURIComponent(username)}`
         );
         
         if (!response.ok) {
           throw new Error(`API request failed with status ${response.status}`);
         }
         
-        const data = await response.json();
-        console.log("Successfully fetched heatmap data:", data);
-        setAllYearsData(data);
+        // Get the raw response text first for debugging
+        const responseText = await response.text();
+        console.log("Raw API response:", responseText);
+        
+        try {
+          // Try to parse the JSON response
+          const data = JSON.parse(responseText);
+          console.log("Successfully parsed heatmap data:", data);
+          
+          // Check if this is empty or has the expected format
+          if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+            console.log("Found valid data with years:", Object.keys(data));
+            setAllYearsData(data);
+          } else {
+            console.warn("API returned empty or invalid data structure:", data);
+            throw new Error("Invalid data format from API");
+          }
+        } catch (jsonError) {
+          console.error("Failed to parse API response as JSON:", jsonError);
+          throw new Error("Invalid JSON response from API");
+        }
       } catch (err) {
         console.error('Error fetching user activity data:', err);
-        setError('Failed to load activity data. Please try again later.');
+        setError('Failed to load activity data. Using sample data instead.');
         
-        // Initialize with empty data for years that matches API format
-        const emptyData: YearlyActivityData = {};
-        availableYears.forEach(year => {
-          // Create empty year data in the format expected from the API
-          emptyData[year.toString()] = {};
-        });
-        setAllYearsData(emptyData);
+        // Use predefined sample data rather than empty data for better debugging
+        console.log("Using sample test data for 'ninad'");
+        const sampleData: YearlyActivityData = {
+          "2023": {
+            "total": 5,
+            "2023-01-01": { "count": 2, "questions": ["Memory Buffer Management", "Thread Synchronization"] },
+            "2023-01-15": { "count": 3, "questions": ["Pointer Arithmetic", "Stack Implementation", "Queue with Arrays"] },
+            "2023-12-30": { "count": 1, "questions": ["Graph Traversal"] }
+          },
+          "2024": {
+            "total": 21,
+            "2024-03-10": { "count": 1, "questions": ["RTOS Task Creation"] },
+            "2024-03-15": { "count": 20, "questions": ["RTOS Task Creation", "RTOS Task Deletion"] }
+          },
+          "2025": {
+            "total": 3,
+            "2025-03-10": { "count": 1, "questions": ["Linked List Implementation"] },
+            "2025-03-15": { "count": 2, "questions": ["Binary Tree Traversal", "Graph Traversal"] }
+          }
+        };
+        
+        setAllYearsData(sampleData);
       } finally {
         setIsLoading(false);
       }
