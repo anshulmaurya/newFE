@@ -88,14 +88,14 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                 <g clipPath="url(#p.0)">
                   <path fill="#000000" fillOpacity="0.0" d="m0 0l100.0 0l0 100.0l-100.0 0z" fillRule="evenodd"/>
                   <path fill="#000000" fillOpacity="0.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
-                  <path stroke="#56B2FF" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" strokeDasharray="8.0,3.0,1.0,3.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
+                  <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" strokeDasharray="8.0,3.0,1.0,3.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
                   <path fill="#000000" fillOpacity="0.0" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
-                  <path stroke="#56B2FF" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
+                  <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
                 </g>
               </svg>
             </div>
             <h1 className="font-display font-bold text-xl tracking-tight">
-              <span className="text-white">dsp</span><span className="text-[#56B2FF]">coder.com</span>
+              <span className="text-white">dsp</span><span className="text-[rgb(214,251,65)]">coder.com</span>
             </h1>
           </button>
           
@@ -116,13 +116,13 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
               <div className="absolute top-full left-0 mt-1 w-32 bg-[rgb(36,36,38)] rounded-md shadow-lg overflow-hidden z-20">
                 <button 
                   onClick={() => handleOptionSelect("Interview")}
-                  className={`block w-full text-left px-4 py-2 text-sm ${selectedOption === "Interview" ? "bg-[#56B2FF]/10 text-[#56B2FF]" : "text-gray-300 hover:bg-[rgb(40,40,42)]"}`}
+                  className={`block w-full text-left px-4 py-2 text-sm ${selectedOption === "Interview" ? "bg-[rgb(214,251,65)]/10 text-[rgb(214,251,65)]" : "text-gray-300 hover:bg-[rgb(40,40,42)]"}`}
                 >
                   Interview
                 </button>
                 <button 
                   onClick={() => handleOptionSelect("Project")}
-                  className={`block w-full text-left px-4 py-2 text-sm ${selectedOption === "Project" ? "bg-[#56B2FF]/10 text-[#56B2FF]" : "text-gray-300 hover:bg-[rgb(40,40,42)]"}`}
+                  className={`block w-full text-left px-4 py-2 text-sm ${selectedOption === "Project" ? "bg-[rgb(214,251,65)]/10 text-[rgb(214,251,65)]" : "text-gray-300 hover:bg-[rgb(40,40,42)]"}`}
                 >
                   Project
                 </button>
@@ -144,13 +144,13 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="ml-2 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#56B2FF] focus:ring-offset-2 focus:ring-offset-background">
-                  <Avatar className="h-8 w-8 border-2 border-[#56B2FF]">
+                <button className="ml-2 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-[rgb(214,251,65)] focus:ring-offset-2 focus:ring-offset-background">
+                  <Avatar className="h-8 w-8 border-2 border-[rgb(214,251,65)]">
                     <AvatarImage 
                       src={user.avatarUrl || "https://github.com/identicons/app/oauth_app/1234"} 
                       alt={user.username || "User"}
                     />
-                    <AvatarFallback className="bg-[rgb(36,36,38)] text-[#56B2FF]">
+                    <AvatarFallback className="bg-[rgb(36,36,38)] text-[rgb(214,251,65)]">
                       {user.username ? user.username.substring(0, 2).toUpperCase() : "U"}
                     </AvatarFallback>
                   </Avatar>
@@ -165,13 +165,13 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                 </div>
                 <DropdownMenuSeparator className="bg-[rgb(46,46,48)]" />
                 <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-[rgb(46,46,48)] focus:text-[#56B2FF]"
+                  className="cursor-pointer focus:bg-[rgb(46,46,48)] focus:text-[rgb(214,251,65)]"
                   onClick={() => setLocation("/dashboard")}
                 >
                   Dashboard
                 </DropdownMenuItem>
                 <DropdownMenuItem 
-                  className="cursor-pointer focus:bg-[rgb(46,46,48)] focus:text-[#56B2FF]"
+                  className="cursor-pointer focus:bg-[rgb(46,46,48)] focus:text-[rgb(214,251,65)]"
                   onClick={() => setLocation("/notes")}
                 >
                   My Notes
@@ -189,7 +189,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           ) : (
             <a 
               href="/api/auth/github" 
-              className="ml-2 px-3 py-1 bg-[#56B2FF] hover:bg-[#3D9DF5] rounded-md text-xs text-white font-bold transition-all inline-flex items-center gap-1 shadow-[0_0_10px_rgba(86,178,255,0.3)] hover:shadow-[0_0_15px_rgba(86,178,255,0.5)] border border-[#78C1FF]"
+              className="ml-2 px-3 py-1 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-xs text-black font-bold transition-all inline-flex items-center gap-1 shadow-[0_0_10px_rgba(214,251,65,0.4)] hover:shadow-[0_0_15px_rgba(214,251,65,0.6)] border border-[rgb(224,255,75)]"
             >
               <SiGithub className="h-3 w-3" />
               Login with GitHub
@@ -215,13 +215,13 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
             <div className="flex space-x-2">
               <button
                 onClick={() => handleOptionSelect("Interview")}
-                className={`px-3 py-1 text-xs rounded ${selectedOption === "Interview" ? "bg-[#56B2FF] text-white" : "bg-[rgb(36,36,38)] text-gray-300"}`}
+                className={`px-3 py-1 text-xs rounded ${selectedOption === "Interview" ? "bg-[rgb(214,251,65)] text-black" : "bg-[rgb(36,36,38)] text-gray-300"}`}
               >
                 Interview
               </button>
               <button
                 onClick={() => handleOptionSelect("Project")}
-                className={`px-3 py-1 text-xs rounded ${selectedOption === "Project" ? "bg-[#56B2FF] text-white" : "bg-[rgb(36,36,38)] text-gray-300"}`}
+                className={`px-3 py-1 text-xs rounded ${selectedOption === "Project" ? "bg-[rgb(214,251,65)] text-black" : "bg-[rgb(36,36,38)] text-gray-300"}`}
               >
                 Project
               </button>
@@ -244,12 +244,12 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           {user ? (
             <>
               <div className="flex items-center gap-3 py-1.5 border-b border-gray-700/30">
-                <Avatar className="h-8 w-8 border-2 border-[#56B2FF]">
+                <Avatar className="h-8 w-8 border-2 border-[rgb(214,251,65)]">
                   <AvatarImage 
                     src={user.avatarUrl || "https://github.com/identicons/app/oauth_app/1234"} 
                     alt={user.username || "User"}
                   />
-                  <AvatarFallback className="bg-[rgb(36,36,38)] text-[#56B2FF]">
+                  <AvatarFallback className="bg-[rgb(36,36,38)] text-[rgb(214,251,65)]">
                     {user.username ? user.username.substring(0, 2).toUpperCase() : "U"}
                   </AvatarFallback>
                 </Avatar>
@@ -272,7 +272,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           ) : (
             <a 
               href="/api/auth/github"
-              className="text-white py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[#56B2FF] shadow-[0_0_10px_rgba(86,178,255,0.3)] border border-[#78C1FF] text-sm"
+              className="text-black py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[rgb(214,251,65)] shadow-[0_0_10px_rgba(214,251,65,0.4)] border border-[rgb(224,255,75)] text-sm"
             >
               <SiGithub className="h-4 w-4 ml-2" />
               <span className="ml-1 mr-2">Login with GitHub</span>

@@ -26,7 +26,7 @@ export default function ComingSoon() {
     <div className="min-h-screen flex items-center justify-center bg-[rgb(24,24,26)]">
       <div className="text-center p-8 max-w-xl">
         <h1 className="text-4xl md:text-5xl font-bold mb-6">
-          <span className="text-white">Project Mode</span> <span className="text-[#56B2FF]">Coming Soon</span>
+          <span className="text-white">Project Mode</span> <span className="text-[rgb(214,251,65)]">Coming Soon</span>
         </h1>
         <p className="text-gray-300 text-lg mb-8">
           We're working hard to bring you the project mode with exciting features.
@@ -35,13 +35,13 @@ export default function ComingSoon() {
         
         <div className="mb-10 p-6 bg-[rgb(30,30,32)] rounded-xl border border-gray-700">
           <div className="flex items-center mb-4">
-            <BellRing className="text-[#56B2FF] mr-2" size={22} />
+            <BellRing className="text-[rgb(214,251,65)] mr-2" size={22} />
             <h2 className="text-white text-xl font-semibold">Get Notified</h2>
           </div>
           
           {isSubmitted ? (
             <div className="flex flex-col items-center justify-center py-4">
-              <CheckCircle className="text-[#56B2FF] mb-2" size={40} />
+              <CheckCircle className="text-[rgb(214,251,65)] mb-2" size={40} />
               <p className="text-gray-200 mb-1">Thank you for your interest!</p>
               <p className="text-gray-400 text-sm">We'll notify you when Project Mode launches.</p>
             </div>
@@ -57,13 +57,13 @@ export default function ComingSoon() {
                   placeholder="your@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 bg-[rgb(40,40,42)] border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#56B2FF] focus:border-transparent"
+                  className="w-full px-4 py-2 bg-[rgb(40,40,42)] border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgb(214,251,65)] focus:border-transparent"
                 />
                 {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
               </div>
               <button
                 type="submit"
-                className="w-full px-4 py-2 bg-[#56B2FF] hover:bg-[#3D9DF5] rounded-md text-white font-medium transition-all shadow-[0_0_15px_rgba(86,178,255,0.3)] hover:shadow-[0_0_20px_rgba(86,178,255,0.5)] border border-[#78C1FF]"
+                className="w-full px-4 py-2 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-black font-medium transition-all shadow-[0_0_15px_rgba(214,251,65,0.3)] hover:shadow-[0_0_20px_rgba(214,251,65,0.5)] border border-[rgb(224,255,75)]"
               >
                 Notify Me
               </button>
@@ -80,7 +80,7 @@ export default function ComingSoon() {
           </Link>
           
           <a 
-            href="https://discord.gg/HxAqXd8Xwt" 
+            href="https://discord.gg/embeddeddev" 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#5865F2] hover:bg-[#4a57e0] rounded-lg text-white transition-all"

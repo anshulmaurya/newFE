@@ -152,9 +152,9 @@ export default function Dashboard() {
         isScrolled={true}
       />
       
-      <div className="flex h-[calc(100vh-74px)]">
+      <div className="flex h-[calc(100vh-64px)]">
         {/* Left sidebar - fixed */}
-        <div className="hidden lg:block w-56 bg-[rgb(14,14,16)] fixed left-0 top-[54px] bottom-0 overflow-y-auto">
+        <div className="hidden lg:block w-56 bg-[rgb(14,14,16)] fixed left-0 top-16 bottom-0 overflow-y-auto">
           <div className="px-4 py-4 flex flex-col h-full">
             <a href="/dashboard" className="block text-white text-sm font-medium py-2 px-3 bg-[rgb(24,24,27)] rounded-md mb-1">
               Dashboard
