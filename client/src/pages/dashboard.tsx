@@ -123,11 +123,11 @@ export default function Dashboard() {
     },
   });
 
-  // For testing only - fetch directly from MongoDB test endpoint
-  const { data: mongoTestData, isLoading: isLoadingMongoTest } = useQuery({
-    queryKey: ['/api/mongodb-test'],
+  // Fetch problems from external API
+  const { data: externalProblems, isLoading: isLoadingExternal } = useQuery({
+    queryKey: ['external-problems'],
     queryFn: async () => {
-      const response = await apiRequest('/api/mongodb-test');
+      const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/get_problems');
       const data = await response.json();
       return data;
     },
@@ -618,7 +618,7 @@ export default function Dashboard() {
                         </div>
                       </td>
                     </tr>
-                  ) : getFilteredProblems().length === 0 && (!mongoTestData || !mongoTestData.problems || mongoTestData.problems.length === 0) ? (
+                  ) : getFilteredProblems().length === 0 && (!externalProblems || externalProblems.length === 0) ? (
                     <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
                       <td colSpan={6} className="px-6 py-16 text-center text-gray-400">
                         No problems found matching your criteria.
@@ -682,11 +682,11 @@ export default function Dashboard() {
                     <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
                       <td colSpan={6} className="px-6 py-8 text-center">
                         <div className="flex flex-col items-center">
-                          {mongoTestData && mongoTestData.problems && mongoTestData.problems.length > 0 ? (
+                          {externalProblems && externalProblems.length > 0 ? (
                             <Fragment>
-                              <p className="text-gray-400 mb-2">Found {mongoTestData.problems.length} problems from MongoDB test endpoint</p>
+                              <p className="text-gray-400 mb-2">Found {externalProblems.length} problems from external API</p>
                               <pre className="bg-[rgb(33,33,33)] p-4 rounded-lg overflow-auto max-h-40 text-xs text-gray-300">
-                                {JSON.stringify(mongoTestData.problems[0], null, 2)}
+                                {JSON.stringify(externalProblems[0], null, 2)}
                               </pre>
                             </Fragment>
                           ) : (
