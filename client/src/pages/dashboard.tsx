@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -33,10 +33,14 @@ import {
   CalendarDays,
   BarChart2,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Building2,
+  Clock,
+  Code
 } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import { cn } from '@/lib/utils';
+import Header from '@/components/layout/header';
 
 // Define types for API responses
 type Problem = {
@@ -110,21 +114,58 @@ export default function Dashboard() {
   // API queries
   const { data: problemsData, isLoading: isLoadingProblems } = useQuery({
     queryKey: ['/api/problems', category, difficulty, search, page, limit, sortBy, sortOrder],
-    queryFn: () => {
+    queryFn: async () => {
       const categoryParam = category === 'all' ? '' : category;
       const difficultyParam = difficulty === 'all' ? '' : difficulty;
-      return apiRequest(`/api/problems?category=${categoryParam}&difficulty=${difficultyParam}&search=${search}&page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}`);
+      const response = await apiRequest(`/api/problems?category=${categoryParam}&difficulty=${difficultyParam}&search=${search}&page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}`);
+      const data = await response.json();
+      return data;
+    },
+  });
+
+  // For testing only - fetch directly from MongoDB test endpoint
+  const { data: mongoTestData, isLoading: isLoadingMongoTest } = useQuery({
+    queryKey: ['/api/mongodb-test'],
+    queryFn: async () => {
+      const response = await apiRequest('/api/mongodb-test');
+      const data = await response.json();
+      return data;
     },
   });
 
   const { data: userProgress, isLoading: isLoadingProgress } = useQuery({
     queryKey: ['/api/user-progress'],
-    queryFn: () => apiRequest('/api/user-progress'),
+    queryFn: async () => {
+      try {
+        const response = await apiRequest('/api/user-progress');
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching user progress:', error);
+        return [];
+      }
+    },
   });
 
   const { data: userStats, isLoading: isLoadingStats } = useQuery({
     queryKey: ['/api/user-stats'],
-    queryFn: () => apiRequest('/api/user-stats'),
+    queryFn: async () => {
+      try {
+        const response = await apiRequest('/api/user-stats');
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching user stats:', error);
+        return {
+          totalProblems: 0,
+          solvedProblems: 0,
+          attemptedProblems: 0,
+          easyProblems: { solved: 0, total: 0 },
+          mediumProblems: { solved: 0, total: 0 },
+          hardProblems: { solved: 0, total: 0 }
+        };
+      }
+    },
   });
 
   // Derived state
@@ -223,8 +264,135 @@ export default function Dashboard() {
     { name: 'Apple', count: 5 }
   ];
 
+  // Function to handle navigation to different sections
+  const handleNavigateFeatures = () => {
+    // You can implement scroll behavior if needed
+  };
+
+  const handleNavigateProblems = () => {
+    // You can implement scroll behavior if needed  
+  };
+
+  // Check if the user is authenticated
+  const isAuthenticated = userStats && Object.keys(userStats).length > 0;
+
   return (
-    <div className="bg-[rgb(17,17,17)] min-h-screen text-white">
+    <div className="bg-[rgb(17,17,17)] min-h-screen text-white pt-16">
+      {/* Header */}
+      <Header 
+        onNavigateFeatures={handleNavigateFeatures}
+        onNavigateProblems={handleNavigateProblems}
+        isScrolled={true}
+      />
+      
+      {/* Authentication status message */}
+      {!isAuthenticated && (
+        <div className="container mx-auto px-4 pt-8 pb-4">
+          <div className="bg-[rgb(33,33,33)] rounded-lg p-6 border border-[rgb(48,48,50)]">
+            <h2 className="text-xl font-bold mb-2">Welcome to DSP Coder Practice</h2>
+            <p className="text-gray-300 mb-4">
+              Sign in with GitHub to track your progress and access all features of the platform.
+              Create personalized study plans and save your solutions.
+            </p>
+            <a 
+              href="/api/auth/github" 
+              className="px-4 py-2 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-sm text-black font-bold transition-all inline-flex items-center gap-2 shadow-[0_0_10px_rgba(214,251,65,0.4)] hover:shadow-[0_0_15px_rgba(214,251,65,0.6)] border border-[rgb(224,255,75)]"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              Login with GitHub
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* Prep Bundles Section */}
+      <div className="container mx-auto px-4 pt-6 pb-4">
+        <h2 className="text-xl font-bold mb-4">Prep Bundles</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Company Bundle */}
+          <div className="bg-[rgb(33,33,33)] rounded-lg p-4 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+            <div className="flex items-center mb-3">
+              <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center mr-3">
+                <Building2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold">Company-wise</h3>
+                <p className="text-xs text-gray-400">Target specific companies</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {companyTrends.map((company, idx) => (
+                <Badge key={idx} className="bg-blue-900/30 text-blue-200 border border-blue-800 hover:bg-blue-800/50">
+                  {company.name} ({company.count})
+                </Badge>
+              ))}
+            </div>
+          </div>
+          
+          {/* Time Bundle */}
+          <div className="bg-[rgb(33,33,33)] rounded-lg p-4 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
+            <div className="flex items-center mb-3">
+              <div className="w-8 h-8 bg-purple-600 rounded-md flex items-center justify-center mr-3">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold">Time-wise</h3>
+                <p className="text-xs text-gray-400">Plan your interview prep</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              <Badge className="bg-purple-900/30 text-purple-200 border border-purple-800 hover:bg-purple-800/50">
+                1 Week Plan (30)
+              </Badge>
+              <Badge className="bg-purple-900/30 text-purple-200 border border-purple-800 hover:bg-purple-800/50">
+                2 Week Plan (50)
+              </Badge>
+              <Badge className="bg-purple-900/30 text-purple-200 border border-purple-800 hover:bg-purple-800/50">
+                1 Month Plan (75)
+              </Badge>
+            </div>
+          </div>
+          
+          {/* Language Bundle */}
+          <div className="bg-[rgb(33,33,33)] rounded-lg p-4 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
+            <div className="flex items-center mb-3">
+              <div className="w-8 h-8 bg-green-600 rounded-md flex items-center justify-center mr-3">
+                <Code className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold">Language-wise</h3>
+                <p className="text-xs text-gray-400">Choose your preferred language</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              <Badge className="bg-green-900/30 text-green-200 border border-green-800 hover:bg-green-800/50">
+                C/C++ (45)
+              </Badge>
+              <Badge className="bg-green-900/30 text-green-200 border border-green-800 hover:bg-green-800/50">
+                Python (35)
+              </Badge>
+              <Badge className="bg-green-900/30 text-green-200 border border-green-800 hover:bg-green-800/50">
+                Rust (20)
+              </Badge>
+              <Badge className="bg-green-900/30 text-green-200 border border-green-800 hover:bg-green-800/50">
+                Assembly (15)
+              </Badge>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       {/* Top study plan section */}
       <div className="container mx-auto px-4 pt-8 pb-4">
         <h2 className="text-xl font-bold mb-4">Study Plan</h2>
@@ -450,13 +618,13 @@ export default function Dashboard() {
                         </div>
                       </td>
                     </tr>
-                  ) : getFilteredProblems().length === 0 ? (
+                  ) : getFilteredProblems().length === 0 && (!mongoTestData || !mongoTestData.problems || mongoTestData.problems.length === 0) ? (
                     <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
                       <td colSpan={6} className="px-6 py-16 text-center text-gray-400">
                         No problems found matching your criteria.
                       </td>
                     </tr>
-                  ) : (
+                  ) : getFilteredProblems().length > 0 ? (
                     getFilteredProblems().map((problem, idx) => {
                       const status = getProblemStatus(problem.id);
                       const statusIcon = getStatusIcon(status);
@@ -510,6 +678,23 @@ export default function Dashboard() {
                         </tr>
                       );
                     })
+                  ) : (
+                    <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
+                      <td colSpan={6} className="px-6 py-8 text-center">
+                        <div className="flex flex-col items-center">
+                          {mongoTestData && mongoTestData.problems && mongoTestData.problems.length > 0 ? (
+                            <Fragment>
+                              <p className="text-gray-400 mb-2">Found {mongoTestData.problems.length} problems from MongoDB test endpoint</p>
+                              <pre className="bg-[rgb(33,33,33)] p-4 rounded-lg overflow-auto max-h-40 text-xs text-gray-300">
+                                {JSON.stringify(mongoTestData.problems[0], null, 2)}
+                              </pre>
+                            </Fragment>
+                          ) : (
+                            <p className="text-gray-400">No problems found from any data source.</p>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>

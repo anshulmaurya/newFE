@@ -40,6 +40,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // MongoDB test endpoint
+  apiRouter.get("/mongodb-test", async (_req: Request, res: Response) => {
+    try {
+      const { getAllProblems } = await import('./mongodb');
+      const problems = await getAllProblems();
+      res.status(200).json({ 
+        status: "ok", 
+        count: problems.length,
+        problems: problems
+      });
+    } catch (error) {
+      console.error("MongoDB test error:", error);
+      res.status(500).json({ error: "Failed to connect to MongoDB" });
+    }
+  });
+
   // GitHub Authentication routes
   apiRouter.get("/auth/github", async (_req: Request, res: Response) => {
     // In a real implementation, we would initialize GitHub OAuth flow here
