@@ -2,14 +2,33 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { SiGithub } from "react-icons/si";
 import { useAuth } from "@/hooks/use-auth";
-import { Redirect } from "wouter";
+import { Redirect, useLocation } from "wouter";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function AuthPage() {
   const { user, isLoading } = useAuth();
+  const [location] = useLocation();
+  const [error, setError] = useState<string | null>(null);
   
-  // Redirect to home if already logged in
+  // Check for error in URL query parameters
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const errorParam = searchParams.get("error");
+    
+    if (errorParam) {
+      if (errorParam === "github_auth_failed") {
+        setError("GitHub authentication failed. Please try again.");
+      } else {
+        setError("Authentication error. Please try again.");
+      }
+    }
+  }, [location]);
+  
+  // Redirect to dashboard if already logged in
   if (!isLoading && user) {
-    return <Redirect to="/" />;
+    return <Redirect to="/dashboard" />;
   }
   
   const handleGitHubLogin = () => {
@@ -29,6 +48,12 @@ export default function AuthPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
               <Button 
                 className="w-full py-6" 
                 onClick={handleGitHubLogin}

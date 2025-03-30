@@ -1,17 +1,29 @@
 import passport from "passport";
 import { Strategy as GithubStrategy } from "passport-github2";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Express } from "express";
+import { Express, Request } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
-import { User } from "@shared/schema";
+import { User as UserType } from "@shared/schema";
 
 // Create type declaration for Express User
 declare global {
   namespace Express {
-    interface User extends User {}
+    // Define User interface to avoid recursive reference
+    interface User {
+      id: number;
+      username: string;
+      password?: string;
+      githubId?: string;
+      displayName?: string;
+      profileUrl?: string;
+      avatarUrl?: string;
+      email?: string;
+      accessToken?: string;
+      createdAt?: Date;
+    }
   }
 }
 
@@ -65,24 +77,52 @@ export function setupAuth(app: Express) {
           ? `${process.env.APP_URL}/api/auth/github/callback` 
           : `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co/api/auth/github/callback`,
       },
-      async function(accessToken, _refreshToken, profile, done) {
+      async function(
+        accessToken: string, 
+        _refreshToken: string, 
+        profile: { 
+          id: string;
+          username?: string;
+          displayName?: string;
+          emails?: { value: string; }[];
+          photos?: { value: string; }[];
+        }, 
+        done: (error: Error | null, user?: any) => void
+      ) {
         try {
+          console.log("GitHub profile received:", {
+            id: profile.id,
+            username: profile.username,
+            displayName: profile.displayName,
+            emails: profile.emails,
+            photos: profile.photos
+          });
+          
           // Check if user exists
           let user = await storage.getUserByGithubId(profile.id);
+          console.log("Existing user found:", user);
           
           if (!user) {
+            console.log("Creating new user for GitHub id:", profile.id);
             // Create new user if not found
-            user = await storage.createUser({
-              username: profile.username || `github_${profile.id}`,
-              githubId: profile.id,
-              avatarUrl: profile.photos?.[0]?.value,
-              email: profile.emails?.[0]?.value,
-              password: await hashPassword(randomBytes(16).toString("hex")), // Random password for GitHub users
-            });
+            try {
+              user = await storage.createUser({
+                username: profile.username || `github_${profile.id}`,
+                githubId: profile.id,
+                avatarUrl: profile.photos?.[0]?.value,
+                email: profile.emails?.[0]?.value || `github_${profile.id}@example.com`, // Provide fallback email
+                password: await hashPassword(randomBytes(16).toString("hex")), // Random password for GitHub users
+              });
+              console.log("New user created:", user);
+            } catch (createError) {
+              console.error("Error creating user:", createError);
+              return done(createError as Error);
+            }
           }
           
           return done(null, user);
         } catch (error) {
+          console.error("Error in GitHub strategy:", error);
           return done(error as Error);
         }
       }
@@ -125,9 +165,20 @@ export function setupAuth(app: Express) {
   
   app.get(
     "/api/auth/github/callback",
-    passport.authenticate("github", { failureRedirect: "/auth" }),
-    (_req, res) => {
+    (req: Request, res: Response, next: NextFunction) => {
+      console.log("GitHub callback received, query params:", req.query);
+      passport.authenticate("github", { 
+        failureRedirect: "/auth",
+        failWithError: true
+      })(req, res, next);
+    },
+    (req: Request, res: Response) => {
+      console.log("GitHub authentication successful, user:", req.user);
       res.redirect("/dashboard");
+    },
+    (err: Error, req: Request, res: Response, next: NextFunction) => {
+      console.error("GitHub authentication error:", err);
+      res.redirect("/auth?error=github_auth_failed");
     }
   );
 
