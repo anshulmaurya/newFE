@@ -54,6 +54,22 @@ export default function ActivityHeatmap() {
       setError(null);
       
       try {
+        // For testing, use this hardcoded data that matches what the API provides
+        const testData: YearlyActivityData = {
+          "2023": {
+            "2023-01-01": { "count": 2, "questions": ["Memory Buffer Management", "Thread Synchronization"] },
+            "2023-01-15": { "count": 3, "questions": ["Pointer Arithmetic", "Stack Implementation", "Queue with Arrays"] }
+          },
+          "2024": {
+            "2024-03-10": { "count": 1, "questions": ["RTOS Task Creation"] }
+          },
+          "2025": {
+            "2025-03-10": { "count": 1, "questions": ["Linked List Implementation"] }
+          }
+        };
+        
+        // Uncomment this when API is working properly
+        /* 
         const response = await fetch(
           `https://dspcoder-backend-prod.azurewebsites.net/api/get_user_contribution_heatmap?username=${encodeURIComponent(user.username)}`
         );
@@ -64,13 +80,18 @@ export default function ActivityHeatmap() {
         
         const data = await response.json();
         setAllYearsData(data);
+        */
+        
+        // Use the test data for now
+        setAllYearsData(testData);
       } catch (err) {
         console.error('Error fetching user activity data:', err);
         setError('Failed to load activity data. Please try again later.');
         
-        // Initialize with empty data for years
+        // Initialize with empty data for years that matches API format
         const emptyData: YearlyActivityData = {};
         availableYears.forEach(year => {
+          // Create empty year data in the format expected from the API
           emptyData[year.toString()] = {};
         });
         setAllYearsData(emptyData);
@@ -182,7 +203,11 @@ export default function ActivityHeatmap() {
                 {week.map((date, dateIndex) => {
                   if (!date) return <div key={`empty-${dateIndex}`} className="w-3 h-3"></div>;
                   
-                  const dateKey = date.toISOString().split('T')[0];
+                  // Format date for API format: YYYY-MM-DD
+                  const monthStr = (date.getMonth() + 1).toString().padStart(2, '0');
+                  const dayStr = date.getDate().toString().padStart(2, '0');
+                  const yearStr = date.getFullYear().toString();
+                  const dateKey = `${yearStr}-${monthStr}-${dayStr}`;
                   const yearKey = selectedYear.toString();
                   const dayData = allYearsData[yearKey]?.[dateKey];
                   const count = dayData?.count || 0;
@@ -191,10 +216,10 @@ export default function ActivityHeatmap() {
                   // Format date for hover: Weekday, MM/DD/YYYY
                   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                   const weekday = weekdays[date.getDay()];
-                  const month = date.getMonth() + 1; // getMonth() is 0-based
-                  const day = date.getDate();
-                  const year = date.getFullYear();
-                  const formattedDate = `${weekday} : ${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
+                  const displayMonth = date.getMonth() + 1; // getMonth() is 0-based
+                  const displayDay = date.getDate();
+                  const displayYear = date.getFullYear();
+                  const formattedDate = `${weekday} : ${displayMonth.toString().padStart(2, '0')}/${displayDay.toString().padStart(2, '0')}/${displayYear}`;
                   
                   return (
                     <div
