@@ -184,10 +184,10 @@ const SkillBadgeCard: React.FC<{ badge: SkillBadge }> = ({ badge }) => {
   
   return (
     <motion.div
-      className={`relative rounded-lg p-4 flex flex-col items-center space-y-2 cursor-pointer ${
+      className={`relative rounded-lg p-3 flex flex-col items-center space-y-1 cursor-pointer ${
         badge.unlocked ? 'bg-[#1E1E24]' : 'bg-[#1A1A1E]'
       }`}
-      whileHover={{ y: -5, boxShadow: `0 10px 30px -10px ${badge.color}30` }}
+      whileHover={{ y: -3, boxShadow: `0 8px 20px -8px ${badge.color}30` }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       initial={{ opacity: 0, y: 20 }}
@@ -198,7 +198,7 @@ const SkillBadgeCard: React.FC<{ badge: SkillBadge }> = ({ badge }) => {
         <ProgressRing 
           progress={badge.progress} 
           color={badge.color} 
-          size={80} 
+          size={60} 
           isHovered={isHovered}
           unlocked={badge.unlocked}
         />
@@ -208,7 +208,7 @@ const SkillBadgeCard: React.FC<{ badge: SkillBadge }> = ({ badge }) => {
       </div>
 
       <h3 
-        className="font-semibold text-center" 
+        className="font-semibold text-center text-sm" 
         style={{ color: badge.unlocked ? badge.color : 'gray' }}
       >
         {badge.name}
@@ -216,7 +216,7 @@ const SkillBadgeCard: React.FC<{ badge: SkillBadge }> = ({ badge }) => {
       
       <Badge 
         variant="outline" 
-        className="text-xs bg-opacity-20"
+        className="text-xs bg-opacity-20 px-2 py-0"
         style={{ backgroundColor: `${badge.color}20`, borderColor: `${badge.color}50` }}
       >
         {badge.category}
@@ -226,7 +226,7 @@ const SkillBadgeCard: React.FC<{ badge: SkillBadge }> = ({ badge }) => {
         <Tooltip>
           <TooltipTrigger asChild>
             <motion.div
-              className="text-xs text-center text-gray-400 mt-2"
+              className="text-xs text-center text-gray-400"
               animate={isHovered ? { y: [0, -3, 0] } : {}}
               transition={{ duration: 0.5 }}
             >
@@ -257,8 +257,8 @@ const SkillBadges: React.FC = () => {
     : skillBadgesData;
     
   return (
-    <div className="rounded-lg bg-[rgb(24,24,27)] p-4 mb-4">
-      <div className="flex items-center justify-between mb-4">
+    <div className="rounded-lg bg-[rgb(24,24,27)] p-3 mb-4">
+      <div className="flex items-center justify-between mb-3">
         <h2 className="text-white font-medium">Skill Badges</h2>
         
         <div className="flex flex-wrap space-x-2">
@@ -279,7 +279,7 @@ const SkillBadges: React.FC = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {filteredBadges.map(badge => (
           <SkillBadgeCard key={badge.id} badge={badge} />
         ))}
