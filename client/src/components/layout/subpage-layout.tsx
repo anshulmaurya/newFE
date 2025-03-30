@@ -5,7 +5,7 @@ import { Link } from 'wouter';
 
 interface SubpageLayoutProps {
   title: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export default function SubpageLayout({ title, children }: SubpageLayoutProps) {
@@ -249,7 +249,13 @@ export default function SubpageLayout({ title, children }: SubpageLayoutProps) {
         <div className="w-full lg:ml-56 overflow-y-auto px-4 lg:px-8 py-6">
           <div className="max-w-5xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">{title}</h1>
-            {children}
+            {children || (
+              <div className="bg-[rgb(20,20,22)] border border-[rgb(35,35,40)] rounded-lg p-8 flex items-center justify-center min-h-[60vh]">
+                <div className="text-center">
+                  <p className="text-gray-400">Content for this section is under development</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
