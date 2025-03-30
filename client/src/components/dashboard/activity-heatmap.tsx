@@ -133,59 +133,53 @@ export default function ActivityHeatmap() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
-          <div className="min-w-[900px]">
-            {/* Month headers */}
-            <div className="flex mb-2 text-xs text-gray-400">
-              <div className="w-10"></div> {/* Placeholder for day labels */}
-              <div className="flex-1 grid grid-cols-52 gap-1">
-                {lastYear.map((month, index) => (
-                  <div
-                    key={index}
-                    className="col-span-4 text-center"
-                    style={{ 
-                      gridColumnStart: Math.floor((index * 52) / 12) + 1
-                    }}
-                  >
-                    {month.month}
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Day rows */}
-            {DAYS.map((day, dayIndex) => (
-              <div key={day} className="flex items-center mb-1">
-                <div className="w-10 text-xs text-gray-400">{day}</div>
-                <div className="flex-1 grid grid-cols-52 gap-1">
-                  {lastYear.flatMap((month) =>
-                    month.days
-                      .filter(d => d.dayOfWeek === dayIndex)
-                      .map((dayData, idx) => (
-                        <div
-                          key={`${month.month}-${idx}`}
-                          className={`w-3 h-3 rounded-sm ${getCellColor(dayData.intensity)}`}
-                          title={`${dayData.date}: ${dayData.problemsSolved} problems solved`}
-                        />
-                      ))
-                  )}
-                </div>
-              </div>
+        <div className="flex">
+          {/* Day labels */}
+          <div className="pr-2 flex flex-col justify-around text-xs text-gray-400">
+            {DAYS.map((day) => (
+              <div key={day} className="h-4">{day}</div>
             ))}
-            
-            {/* Legend */}
-            <div className="flex justify-between items-center mt-4 text-xs text-gray-400">
-              <div>Learn how we count contributions</div>
-              <div className="flex items-center gap-1">
-                <span>Less</span>
-                <div className={`w-3 h-3 rounded-sm bg-gray-800`}></div>
-                <div className={`w-3 h-3 rounded-sm bg-green-900`}></div>
-                <div className={`w-3 h-3 rounded-sm bg-green-700`}></div>
-                <div className={`w-3 h-3 rounded-sm bg-green-500`}></div>
-                <div className={`w-3 h-3 rounded-sm bg-green-300`}></div>
-                <span>More</span>
+          </div>
+          
+          {/* Activity cells - just one vertical column */}
+          <div className="flex space-x-1">
+            <div className="flex flex-col gap-1">
+              {/* Month headers */}
+              <div className="flex mb-1 text-xs text-gray-400 justify-between">
+                <span>Jan</span>
+                <span>Feb</span>
+              </div>
+              
+              {/* Single vertical column of activity cells */}
+              <div className="grid grid-rows-7 gap-1">
+                {Array.from({ length: 7 }).map((_, dayIndex) => {
+                  // Use fixed intensities based on day index (just for demonstration)
+                  const intensities = [0, 1, 2, 3, 4, 2, 1]; 
+                  const intensity = intensities[dayIndex];
+                  return (
+                    <div
+                      key={`day-${dayIndex}`}
+                      className={`w-4 h-4 rounded-sm ${getCellColor(intensity)}`}
+                      title={`Example: ${intensity} problems solved`}
+                    />
+                  );
+                })}
               </div>
             </div>
+          </div>
+        </div>
+        
+        {/* Legend */}
+        <div className="flex justify-between items-center mt-4 text-xs text-gray-400">
+          <div>Learn how we count contributions</div>
+          <div className="flex items-center gap-1">
+            <span>Less</span>
+            <div className={`w-3 h-3 rounded-sm bg-gray-800`}></div>
+            <div className={`w-3 h-3 rounded-sm bg-green-900`}></div>
+            <div className={`w-3 h-3 rounded-sm bg-green-700`}></div>
+            <div className={`w-3 h-3 rounded-sm bg-green-500`}></div>
+            <div className={`w-3 h-3 rounded-sm bg-green-300`}></div>
+            <span>More</span>
           </div>
         </div>
       </CardContent>

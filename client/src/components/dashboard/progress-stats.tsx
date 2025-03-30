@@ -72,9 +72,6 @@ export default function ProgressStats() {
     <Card>
       <CardHeader>
         <CardTitle>Progress Statistics</CardTitle>
-        <CardDescription>
-          Track your progress across difficulty levels
-        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
