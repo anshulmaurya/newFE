@@ -233,17 +233,6 @@ export default function ActivityHeatmap() {
                       style={{ backgroundColor: getColorForCount(count) }}
                       title={`${formattedDate}: ${count} questions solved`}
                     >
-                      {count > 0 && (
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-[rgb(35,35,40)] p-2 rounded-md text-xs shadow-lg text-white z-10 w-48 hidden group-hover:block pointer-events-none">
-                          <p className="font-semibold">{formattedDate}</p>
-                          <p>{count} questions solved</p>
-                          <ul className="mt-1 list-disc pl-4">
-                            {questions.map((q, i) => (
-                              <li key={i} className="truncate">{q}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
                     </div>
                   );
                 })}
