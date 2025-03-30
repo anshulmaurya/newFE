@@ -111,7 +111,7 @@ export default function Notes() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
 
   // Add scroll listener for header background opacity
@@ -211,7 +211,7 @@ export default function Notes() {
               </div>
             </div>
             <div onClick={() => setLocation('/dashboard')}>
-              <div className="nav-link group px-3 py-1.5 font-medium text-sm text-gray-300 hover:text-white transition-colors cursor-pointer">
+              <div className={`nav-link group px-3 py-1.5 font-medium text-sm ${location.includes("/dashboard") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} transition-colors cursor-pointer`}>
                 Problems
               </div>
             </div>
@@ -261,7 +261,7 @@ export default function Notes() {
               </div>
             </div>
             <div onClick={() => { setLocation('/dashboard'); setMobileMenuOpen(false); }}>
-              <div className="text-gray-300 hover:text-white py-1.5 border-b border-gray-700/30 text-sm cursor-pointer">
+              <div className={`${location.includes("/dashboard") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} py-1.5 border-b border-gray-700/30 text-sm cursor-pointer`}>
                 Problems
               </div>
             </div>

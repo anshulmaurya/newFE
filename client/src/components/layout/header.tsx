@@ -22,7 +22,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Interview");
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
   const { user, logoutMutation } = useAuth();
 
@@ -137,7 +137,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
             <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Notes</span>
           </button>
           <button onClick={() => setLocation("/dashboard")} className="nav-link group px-2 py-1">
-            <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Problems</span>
+            <span className={`font-medium text-sm ${location.includes("/dashboard") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} transition-colors`}>Problems</span>
           </button>
           {/* Discord button removed as requested */}
           
@@ -236,7 +236,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           </button>
           <button 
             onClick={() => { setMobileMenuOpen(false); setLocation("/dashboard"); }} 
-            className="text-gray-300 hover:text-white py-1.5 border-b border-gray-700/30 text-sm"
+            className={`${location.includes("/dashboard") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} py-1.5 border-b border-gray-700/30 text-sm`}
           >
             Problems
           </button>
