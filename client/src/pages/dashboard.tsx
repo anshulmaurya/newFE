@@ -151,88 +151,88 @@ export default function Dashboard() {
         isScrolled={true}
       />
       
-      <div className="container mx-auto px-4 mt-6">
-        <div className="flex flex-col lg:flex-row gap-6">
+      <div className="max-w-screen-xl mx-auto px-4 mt-6">
+        <div className="flex flex-col lg:flex-row gap-4">
           {/* Left column - navigation (hide on mobile) */}
-          <div className="hidden lg:block w-64 bg-[rgb(22,22,22)] border border-[rgb(48,48,50)] rounded-lg p-4 h-fit">
-            <h3 className="text-lg font-bold mb-4">Navigation</h3>
+          <div className="hidden lg:block w-56 bg-[rgb(22,22,22)] border border-[rgb(48,48,50)] rounded-lg p-4 h-fit">
+            <h3 className="text-base font-bold mb-3">Navigation</h3>
             
-            <div className="mb-6">
-              <div className="text-xs font-semibold uppercase text-gray-500 mb-2">Prep Bundles</div>
+            <div className="mb-5">
+              <div className="text-xs font-semibold uppercase text-gray-500 mb-2">PREP BUNDLES</div>
               <div className="space-y-1">
-                <div className="bg-[rgb(33,33,33)] rounded-lg p-3 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
+                <div className="bg-[rgb(33,33,33)] rounded-lg p-2 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
                   <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center mr-2">
+                  <div className="flex items-center pl-1">
+                    <div className="w-5 h-5 bg-blue-600 rounded-md flex items-center justify-center mr-2">
                       <Building2 className="w-3 h-3" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-sm">Company-wise</h3>
+                      <h3 className="font-medium text-xs">Company-wise</h3>
                     </div>
                   </div>
                 </div>
                 
-                <div className="bg-[rgb(33,33,33)] rounded-lg p-3 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
+                <div className="bg-[rgb(33,33,33)] rounded-lg p-2 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
                   <div className="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-purple-600 rounded-md flex items-center justify-center mr-2">
+                  <div className="flex items-center pl-1">
+                    <div className="w-5 h-5 bg-purple-600 rounded-md flex items-center justify-center mr-2">
                       <Clock className="w-3 h-3" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-sm">Time-wise</h3>
+                      <h3 className="font-medium text-xs">Time-wise</h3>
                     </div>
                   </div>
                 </div>
                 
-                <div className="bg-[rgb(33,33,33)] rounded-lg p-3 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
+                <div className="bg-[rgb(33,33,33)] rounded-lg p-2 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
                   <div className="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-green-600 rounded-md flex items-center justify-center mr-2">
+                  <div className="flex items-center pl-1">
+                    <div className="w-5 h-5 bg-green-600 rounded-md flex items-center justify-center mr-2">
                       <Code className="w-3 h-3" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-sm">Language-wise</h3>
+                      <h3 className="font-medium text-xs">Language-wise</h3>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="mb-6">
-              <div className="text-xs font-semibold uppercase text-gray-500 mb-2">Study Plans</div>
+            <div className="mb-5">
+              <div className="text-xs font-semibold uppercase text-gray-500 mb-2">STUDY PLANS</div>
               <div className="space-y-1">
-                <div className="bg-[rgb(33,33,33)] rounded-lg p-3 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
+                <div className="bg-[rgb(33,33,33)] rounded-lg p-2 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
                   <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center mr-2">
+                  <div className="flex items-center pl-1">
+                    <div className="w-5 h-5 bg-blue-600 rounded-md flex items-center justify-center mr-2">
                       <Codepen className="w-3 h-3" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-sm">Top Interview 150</h3>
+                      <h3 className="font-medium text-xs">Top Interview 150</h3>
                     </div>
                   </div>
                 </div>
                 
-                <div className="bg-[rgb(33,33,33)] rounded-lg p-3 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
+                <div className="bg-[rgb(33,33,33)] rounded-lg p-2 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden cursor-pointer">
                   <div className="absolute top-0 left-0 w-1 h-full bg-yellow-500"></div>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 bg-yellow-600 rounded-md flex items-center justify-center mr-2">
+                  <div className="flex items-center pl-1">
+                    <div className="w-5 h-5 bg-yellow-600 rounded-md flex items-center justify-center mr-2">
                       <Share2 className="w-3 h-3" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-sm">Embedded Systems 50</h3>
+                      <h3 className="font-medium text-xs">Embedded Systems 50</h3>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="mt-6">
+            <div className="mt-5">
               <a 
                 href="https://discord.gg/HxAqXd8Xwt" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="block p-3 bg-[rgb(88,101,242)] hover:bg-[rgb(71,82,196)] rounded-lg transition-colors text-center text-sm"
+                className="block p-2 bg-[rgb(88,101,242)] hover:bg-[rgb(71,82,196)] rounded-lg transition-colors text-center text-xs"
               >
                 Join Discord Community
               </a>
@@ -242,33 +242,33 @@ export default function Dashboard() {
           {/* Main content */}
           <div className="flex-grow">
             {/* Featured banner */}
-            <div className="bg-gradient-to-r from-[rgb(33,33,45)] to-[rgb(22,22,35)] rounded-xl p-6 mb-6 border border-[rgb(48,48,65)]">
+            <div className="bg-gradient-to-r from-[rgb(33,33,45)] to-[rgb(22,22,35)] rounded-xl p-5 mb-5 border border-[rgb(48,48,65)]">
               <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
                 <div>
-                  <h1 className="text-2xl font-bold mb-2">
+                  <h1 className="text-xl font-bold mb-2">
                     <span className="text-[rgb(214,251,65)]">Embedded Systems</span> Interview Prep
                   </h1>
-                  <p className="text-gray-300 mb-4 max-w-2xl">
+                  <p className="text-gray-300 mb-3 text-sm">
                     Master embedded systems interview questions with our curated problem sets.
                     Focus on memory management, RTOS, drivers, and hardware interfaces.
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-blue-900/30 text-blue-200 border border-blue-800 hover:bg-blue-800/50">
+                    <Badge className="bg-blue-900/30 text-blue-200 border border-blue-800 hover:bg-blue-800/50 text-xs">
                       RTOS
                     </Badge>
-                    <Badge className="bg-green-900/30 text-green-200 border border-green-800 hover:bg-green-800/50">
+                    <Badge className="bg-green-900/30 text-green-200 border border-green-800 hover:bg-green-800/50 text-xs">
                       Device Drivers
                     </Badge>
-                    <Badge className="bg-purple-900/30 text-purple-200 border border-purple-800 hover:bg-purple-800/50">
+                    <Badge className="bg-purple-900/30 text-purple-200 border border-purple-800 hover:bg-purple-800/50 text-xs">
                       Memory Management
                     </Badge>
-                    <Badge className="bg-yellow-900/30 text-yellow-200 border border-yellow-800 hover:bg-yellow-800/50">
+                    <Badge className="bg-yellow-900/30 text-yellow-200 border border-yellow-800 hover:bg-yellow-800/50 text-xs">
                       Interrupts
                     </Badge>
                   </div>
                 </div>
                 <div>
-                  <Button className="bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] text-black font-bold shadow-[0_0_10px_rgba(214,251,65,0.3)]">
+                  <Button className="bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] text-black font-bold text-sm shadow-[0_0_10px_rgba(214,251,65,0.3)]">
                     Start Learning
                   </Button>
                 </div>
@@ -276,29 +276,29 @@ export default function Dashboard() {
             </div>
             
             {/* Filters */}
-            <div className="flex flex-wrap md:flex-nowrap gap-2 mb-6 items-center">
+            <div className="flex flex-wrap md:flex-nowrap gap-2 mb-4 items-center">
               <div className="w-full md:w-auto">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3.5 w-3.5" />
                   <input 
                     type="text" 
                     placeholder="Search problems..." 
-                    className="w-full md:w-64 h-10 pl-10 pr-4 rounded-md bg-[rgb(33,33,33)] border border-[rgb(48,48,50)] text-sm text-white focus:outline-none focus:ring-2 focus:ring-[rgb(214,251,65)] focus:border-transparent"
+                    className="w-full md:w-60 h-9 pl-9 pr-3 rounded-md bg-[rgb(33,33,33)] border border-[rgb(48,48,50)] text-xs text-white focus:outline-none focus:ring-2 focus:ring-[rgb(214,251,65)] focus:border-transparent"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
               </div>
               
-              <div className="w-1/2 md:w-auto">
+              <div className="w-1/3 md:w-auto">
                 <Select
                   value={difficulty}
                   onValueChange={setDifficulty}
                 >
-                  <SelectTrigger className="h-10 bg-[rgb(33,33,33)] border-[rgb(48,48,50)] focus:ring-[rgb(214,251,65)] w-full">
-                    <SelectValue placeholder="Difficulty" />
+                  <SelectTrigger className="h-9 bg-[rgb(33,33,33)] border-[rgb(48,48,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                    <SelectValue placeholder="All Difficulties" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)]">
+                  <SelectContent className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)] text-xs">
                     <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(48,48,50)]">All Difficulties</SelectItem>
                     <SelectItem value="easy" className="text-green-500 focus:bg-[rgb(48,48,50)]">Easy</SelectItem>
                     <SelectItem value="medium" className="text-yellow-500 focus:bg-[rgb(48,48,50)]">Medium</SelectItem>
@@ -307,15 +307,15 @@ export default function Dashboard() {
                 </Select>
               </div>
               
-              <div className="w-1/2 md:w-auto">
+              <div className="w-1/3 md:w-auto">
                 <Select
                   value={category}
                   onValueChange={setCategory}
                 >
-                  <SelectTrigger className="h-10 bg-[rgb(33,33,33)] border-[rgb(48,48,50)] focus:ring-[rgb(214,251,65)] w-full">
-                    <SelectValue placeholder="Category" />
+                  <SelectTrigger className="h-9 bg-[rgb(33,33,33)] border-[rgb(48,48,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                    <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)]">
+                  <SelectContent className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)] text-xs">
                     <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(48,48,50)]">All Categories</SelectItem>
                     <SelectItem value="Memory Management" className="text-gray-200 focus:bg-[rgb(48,48,50)]">Memory Management</SelectItem>
                     <SelectItem value="Multithreading" className="text-gray-200 focus:bg-[rgb(48,48,50)]">Multithreading</SelectItem>
@@ -328,15 +328,15 @@ export default function Dashboard() {
                 </Select>
               </div>
               
-              <div className="w-1/2 md:w-auto">
+              <div className="w-1/3 md:w-auto">
                 <Select
                   value={status}
                   onValueChange={setStatus}
                 >
-                  <SelectTrigger className="h-10 bg-[rgb(33,33,33)] border-[rgb(48,48,50)] focus:ring-[rgb(214,251,65)] w-full">
-                    <SelectValue placeholder="Status" />
+                  <SelectTrigger className="h-9 bg-[rgb(33,33,33)] border-[rgb(48,48,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                    <SelectValue placeholder="All Status" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)]">
+                  <SelectContent className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)] text-xs">
                     <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(48,48,50)]">All Status</SelectItem>
                     <SelectItem value="Solved" className="text-green-500 focus:bg-[rgb(48,48,50)]">Solved</SelectItem>
                     <SelectItem value="Attempted" className="text-yellow-500 focus:bg-[rgb(48,48,50)]">Attempted</SelectItem>
@@ -348,24 +348,24 @@ export default function Dashboard() {
             
             {/* Problem list */}
             <div className="bg-[rgb(22,22,22)] border border-[rgb(48,48,50)] rounded-lg overflow-hidden">
-              <table className="w-full border-collapse">
+              <table className="w-full border-collapse table-fixed">
                 <thead>
                   <tr className="bg-[rgb(33,33,33)] border-b border-[rgb(48,48,50)]">
-                    <th className="px-2 py-3 text-center">Status</th>
-                    <th className="px-6 py-3 text-left">Title</th>
-                    <th className="px-6 py-3 text-center hidden md:table-cell">Solution</th>
-                    <th className="px-6 py-3 text-center hidden md:table-cell">Companies</th>
-                    <th className="px-6 py-3 text-center">Difficulty</th>
-                    <th className="px-6 py-3 text-center hidden lg:table-cell">Tags</th>
+                    <th className="px-2 py-2 text-center w-12 text-xs">Status</th>
+                    <th className="px-3 py-2 text-left text-xs">Title</th>
+                    <th className="px-2 py-2 text-center w-16 hidden md:table-cell text-xs">Solution</th>
+                    <th className="px-2 py-2 text-center w-28 hidden md:table-cell text-xs">Companies</th>
+                    <th className="px-2 py-2 text-center w-20 text-xs">Difficulty</th>
+                    <th className="px-2 py-2 text-center w-16 hidden lg:table-cell text-xs">Tags</th>
                   </tr>
                 </thead>
                 <tbody>
                   {isLoadingExternal ? (
                     <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
-                      <td colSpan={6} className="px-6 py-16 text-center">
+                      <td colSpan={6} className="px-4 py-12 text-center">
                         <div className="flex flex-col items-center">
-                          <Loader2 className="h-8 w-8 animate-spin text-[rgb(214,251,65)]" />
-                          <p className="mt-2 text-gray-400">Loading problems...</p>
+                          <Loader2 className="h-6 w-6 animate-spin text-[rgb(214,251,65)]" />
+                          <p className="mt-2 text-gray-400 text-xs">Loading problems...</p>
                         </div>
                       </td>
                     </tr>
@@ -384,63 +384,80 @@ export default function Dashboard() {
                             idx % 2 === 0 ? "bg-[rgb(18,18,18)]" : "bg-[rgb(22,22,22)]"
                           )}
                         >
-                          <td className="px-2 py-3 text-center">
+                          <td className="px-2 py-2 text-center">
                             {statusIcon}
                           </td>
-                          <td className="px-6 py-3 font-medium">
+                          <td className="px-3 py-2">
                             <div className="flex items-center">
-                              <span className="text-sm font-medium mr-2">{idx + 1}.</span>
-                              <a href="#" className="text-sm hover:text-[rgb(214,251,65)]">
-                                {problem.title}
-                              </a>
-                            </div>
-                            
-                            {/* Tags */}
-                            {showTags && problem.tags && (
-                              <div className="mt-1.5 flex flex-wrap gap-1">
-                                {problem.tags.map((tag: string, tagIdx: number) => (
-                                  <Badge key={tagIdx} className="bg-[rgb(44,44,44)] hover:bg-[rgb(55,55,55)] text-gray-300 text-xs px-1.5 py-0.5">
-                                    {tag}
-                                  </Badge>
-                                ))}
+                              <span className="text-xs font-medium mr-1.5 text-gray-500">{idx + 1}.</span>
+                              <div className="flex flex-col">
+                                <a href="#" className="text-xs hover:text-[rgb(214,251,65)] whitespace-nowrap overflow-hidden text-ellipsis">
+                                  {problem.title || `Problem ${idx + 1}`}
+                                </a>
+                                {/* Small tags below title */}
+                                <div className="mt-1 text-xs text-gray-500">
+                                  {problem.tags?.[0] || 'linkedlist'}
+                                </div>
+                                {problem.tags?.[1] && (
+                                  <div className="text-xs text-gray-500">
+                                    {problem.tags[1]}
+                                  </div>
+                                )}
                               </div>
-                            )}
+                            </div>
                           </td>
-                          <td className="px-6 py-3 hidden md:table-cell text-center">
-                            {Math.random() > 0.5 ? (
+                          <td className="px-2 py-2 hidden md:table-cell text-center">
+                            {idx % 2 === 0 ? (
                               <a href="#" className="text-blue-500 hover:text-blue-400">
-                                <Code className="h-4 w-4 inline" />
+                                <Code className="h-3.5 w-3.5 inline" />
                               </a>
                             ) : (
-                              <Lock className="h-4 w-4 inline text-gray-500" />
+                              <Lock className="h-3.5 w-3.5 inline text-gray-500" />
                             )}
                           </td>
-                          <td className="px-6 py-3 hidden md:table-cell text-center">
-                            <div className="flex justify-center gap-1">
-                              {problem.companies && problem.companies.slice(0, 2).map((company: string, cIdx: number) => (
-                                <Badge key={cIdx} className="bg-blue-900/30 text-blue-200 border border-blue-800">
-                                  {company}
-                                </Badge>
-                              ))}
-                              {problem.companies && problem.companies.length > 2 && (
-                                <Badge className="bg-gray-800 text-gray-300">
-                                  +{problem.companies.length - 2}
-                                </Badge>
+                          <td className="px-2 py-2 hidden md:table-cell text-center">
+                            <div className="flex justify-center gap-1 flex-wrap">
+                              {problem.companies?.length > 0 ? (
+                                <>
+                                  <Badge className="bg-blue-900/30 text-blue-200 border border-blue-800 px-1.5 py-0 text-[10px]">
+                                    {problem.companies[0] || 'Qualcomm'}
+                                  </Badge>
+                                  {problem.companies.length > 1 && (
+                                    <Badge className="bg-blue-900/30 text-blue-200 border border-blue-800 px-1.5 py-0 text-[10px]">
+                                      {problem.companies[1] || 'Microsoft'}
+                                    </Badge>
+                                  )}
+                                  {problem.companies.length > 2 && (
+                                    <Badge className="bg-gray-800 text-gray-300 px-1 py-0 text-[10px]">
+                                      +{problem.companies.length - 2}
+                                    </Badge>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  {idx % 3 === 0 ? (
+                                    <Badge className="bg-blue-900/30 text-blue-200 border border-blue-800 px-1.5 py-0 text-[10px]">Intel</Badge>
+                                  ) : idx % 3 === 1 ? (
+                                    <Badge className="bg-blue-900/30 text-blue-200 border border-blue-800 px-1.5 py-0 text-[10px]">Qualcomm</Badge>
+                                  ) : (
+                                    <Badge className="bg-blue-900/30 text-blue-200 border border-blue-800 px-1.5 py-0 text-[10px]">Microsoft</Badge>
+                                  )}
+                                </>
                               )}
                             </div>
                           </td>
-                          <td className={`px-6 py-3 text-center font-medium ${getDifficultyColor(problem.difficulty)}`}>
-                            {problem.difficulty}
+                          <td className={`px-2 py-2 text-center text-xs font-medium ${getDifficultyColor(problem.difficulty || 'Easy')}`}>
+                            {problem.difficulty || 'easy'}
                           </td>
-                          <td className="px-6 py-3 hidden lg:table-cell text-center">
-                            {problem.type || (problem.tags && problem.tags[0]) || "DSA"}
+                          <td className="px-2 py-2 hidden lg:table-cell text-center text-xs">
+                            {(problem.type || (problem.tags && problem.tags[0]) || "dsa").toLowerCase()}
                           </td>
                         </tr>
                       );
                     })
                   ) : (
                     <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
-                      <td colSpan={6} className="px-6 py-16 text-center text-gray-400">
+                      <td colSpan={6} className="px-4 py-12 text-center text-gray-400 text-xs">
                         No problems found matching your criteria.
                       </td>
                     </tr>
@@ -451,18 +468,18 @@ export default function Dashboard() {
           </div>
           
           {/* Right sidebar - stats (hide on mobile) */}
-          <div className="hidden lg:block w-72 bg-[rgb(22,22,22)] border border-[rgb(48,48,50)] rounded-lg p-4 h-fit">
-            <h3 className="text-lg font-bold mb-4">Top Companies</h3>
+          <div className="hidden lg:block w-56 bg-[rgb(22,22,22)] border border-[rgb(48,48,50)] rounded-lg p-4 h-fit">
+            <h3 className="text-base font-bold mb-3">Top Companies</h3>
             
-            <div className="space-y-3 mb-6">
+            <div className="space-y-2 mb-6">
               {companyTrends.map((company, idx) => (
                 <div key={idx} className="flex justify-between items-center">
                   <div className="flex items-center">
-                    <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
-                    <div className="text-sm">{company.name}</div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5"></div>
+                    <div className="text-xs">{company.name}</div>
                   </div>
                   <div className="flex items-center">
-                    <div className="w-16 h-1.5 bg-[rgb(48,48,50)] rounded-full mr-2">
+                    <div className="w-14 h-1 bg-[rgb(48,48,50)] rounded-full mr-2">
                       <div 
                         className={`h-full rounded-full ${
                           idx === 0 ? "bg-blue-500" :
@@ -473,24 +490,22 @@ export default function Dashboard() {
                         style={{ width: `${(company.count / companyTrends[0].count) * 100}%` }}
                       ></div>
                     </div>
-                    <Badge className="bg-[rgb(48,48,50)] hover:bg-[rgb(55,55,55)]">
-                      {company.count}
-                    </Badge>
+                    <span className="text-xs">{company.count}</span>
                   </div>
                 </div>
               ))}
             </div>
             
             {/* Study Recommendations */}
-            <h3 className="text-lg font-bold mb-4">Recommended</h3>
+            <h3 className="text-base font-bold mb-3">Recommended</h3>
             <div className="bg-[rgb(33,33,33)] rounded-lg p-3 border border-[rgb(48,48,50)]">
-              <h4 className="text-sm font-medium mb-2">Topics to focus on</h4>
+              <h4 className="text-xs font-medium mb-2">Topics to focus on</h4>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <div className="text-xs">Memory Management</div>
                   <div className="text-xs text-green-500">85% mastered</div>
                 </div>
-                <div className="w-full h-1.5 bg-[rgb(48,48,50)] rounded-full">
+                <div className="w-full h-1 bg-[rgb(48,48,50)] rounded-full">
                   <div className="h-full bg-green-500 rounded-full" style={{ width: "85%" }}></div>
                 </div>
                 
@@ -498,7 +513,7 @@ export default function Dashboard() {
                   <div className="text-xs">Multithreading</div>
                   <div className="text-xs text-yellow-500">45% mastered</div>
                 </div>
-                <div className="w-full h-1.5 bg-[rgb(48,48,50)] rounded-full">
+                <div className="w-full h-1 bg-[rgb(48,48,50)] rounded-full">
                   <div className="h-full bg-yellow-500 rounded-full" style={{ width: "45%" }}></div>
                 </div>
                 
@@ -506,7 +521,7 @@ export default function Dashboard() {
                   <div className="text-xs">RTOS</div>
                   <div className="text-xs text-red-500">25% mastered</div>
                 </div>
-                <div className="w-full h-1.5 bg-[rgb(48,48,50)] rounded-full">
+                <div className="w-full h-1 bg-[rgb(48,48,50)] rounded-full">
                   <div className="h-full bg-red-500 rounded-full" style={{ width: "25%" }}></div>
                 </div>
               </div>
