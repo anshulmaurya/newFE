@@ -75,23 +75,29 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
     <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${headerBackground} border-b border-gray-800/50`}>
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <div className="h-5 w-5 flex items-center justify-center">
-            <svg version="1.1" viewBox="0.0 0.0 100.0 100.0" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" width="20" height="20">
-              <clipPath id="p.0">
-                <path d="m0 0l100.0 0l0 100.0l-100.0 0l0 -100.0z" clipRule="nonzero"/>
-              </clipPath>
-              <g clipPath="url(#p.0)">
-                <path fill="#000000" fillOpacity="0.0" d="m0 0l100.0 0l0 100.0l-100.0 0z" fillRule="evenodd"/>
-                <path fill="#000000" fillOpacity="0.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
-                <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" strokeDasharray="8.0,3.0,1.0,3.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
-                <path fill="#000000" fillOpacity="0.0" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
-                <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
-              </g>
-            </svg>
-          </div>
-          <h1 className="font-display font-bold text-xl tracking-tight">
-            <span className="text-white">dsp</span><span className="text-[rgb(214,251,65)]">coder.com</span>
-          </h1>
+          <button 
+            onClick={() => setLocation("/")} 
+            className="flex items-center gap-2 focus:outline-none"
+            aria-label="Go to home page"
+          >
+            <div className="h-5 w-5 flex items-center justify-center">
+              <svg version="1.1" viewBox="0.0 0.0 100.0 100.0" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" width="20" height="20">
+                <clipPath id="p.0">
+                  <path d="m0 0l100.0 0l0 100.0l-100.0 0l0 -100.0z" clipRule="nonzero"/>
+                </clipPath>
+                <g clipPath="url(#p.0)">
+                  <path fill="#000000" fillOpacity="0.0" d="m0 0l100.0 0l0 100.0l-100.0 0z" fillRule="evenodd"/>
+                  <path fill="#000000" fillOpacity="0.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
+                  <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" strokeDasharray="8.0,3.0,1.0,3.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
+                  <path fill="#000000" fillOpacity="0.0" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
+                  <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
+                </g>
+              </svg>
+            </div>
+            <h1 className="font-display font-bold text-xl tracking-tight">
+              <span className="text-white">dsp</span><span className="text-[rgb(214,251,65)]">coder.com</span>
+            </h1>
+          </button>
           
           {/* Vertical Separator */}
           <div className="h-5 border-l border-gray-600 mx-2"></div>
@@ -127,9 +133,6 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-3">
-          <button onClick={() => handleNavClick(() => window.scrollTo(0, 0))} className="nav-link group px-2 py-1">
-            <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Home</span>
-          </button>
           <button onClick={() => navigateToNotes()} className="nav-link group px-2 py-1">
             <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Notes</span>
           </button>
@@ -224,12 +227,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
               </button>
             </div>
           </div>
-          <button 
-            onClick={() => handleNavClick(() => window.scrollTo(0, 0))} 
-            className="text-gray-300 hover:text-white py-1.5 border-b border-gray-700/30 text-sm"
-          >
-            Home
-          </button>
+
           <button 
             onClick={() => navigateToNotes()}
             className="text-gray-300 hover:text-white py-1.5 border-b border-gray-700/30 text-sm"
