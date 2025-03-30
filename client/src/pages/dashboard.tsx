@@ -1,29 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -32,48 +11,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Progress } from '@/components/ui/progress';
-import { Input } from '@/components/ui/input';
 import { 
-  PieChart, 
-  Pie, 
-  Cell, 
-  ResponsiveContainer, 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend,
-  BarChart,
-  Bar 
-} from 'recharts';
-import { 
-  Calendar,
   CheckCircle2, 
-  Clock, 
-  Filter, 
-  GitPullRequest, 
   Loader2, 
-  PlusCircle, 
   Search, 
-  Timer, 
-  TrendingUp, 
-  X, 
-  ListFilter,
-  BarChart2,
+  Filter, 
+  Settings,
+  Lock,
+  Codepen,
+  FolderArchive,
+  Share2,
+  Database,
   Laptop,
   Cpu,
-  Database,
-  Share2,
-  Codepen,
   Zap,
-  FolderArchive,
-  ScanEye,
-  LucideIcon
+  LucideIcon,
+  CheckCircle,
+  Circle,
+  Clock3,
+  Filter as FilterIcon,
+  CalendarDays
 } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
+import { cn } from '@/lib/utils';
 
 // Define types for API responses
 type Problem = {
@@ -126,45 +86,23 @@ const categoryIcons: Record<string, LucideIcon> = {
   'Power Management': Zap
 };
 
-// Helper function to get difficulty color
-const getDifficultyColor = (difficulty: string): string => {
-  switch (difficulty) {
-    case 'Easy':
-      return 'bg-green-500';
-    case 'Medium':
-      return 'bg-yellow-500';
-    case 'Hard':
-      return 'bg-red-500';
-    default:
-      return 'bg-gray-500';
-  }
-};
-
-// Helper function to get status color
-const getStatusColor = (status: string): string => {
-  switch (status) {
-    case 'Solved':
-      return 'bg-green-500';
-    case 'Attempted':
-      return 'bg-yellow-500';
-    case 'Not Started':
-      return 'bg-gray-500';
-    default:
-      return 'bg-gray-500';
-  }
-};
-
 // Dashboard component
 export default function Dashboard() {
   // State
   const [category, setCategory] = useState<string>('all');
   const [difficulty, setDifficulty] = useState<string>('all');
+  const [status, setStatus] = useState<string>('all');
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState<number>(1);
-  const [limit] = useState<number>(16);
+  const [limit] = useState<number>(20);
   const [sortBy, setSortBy] = useState<string>('id');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [activeTab, setActiveTab] = useState<string>('all');
+  const [showTags, setShowTags] = useState(true);
+
+  // Category and Difficulty filter rendering
+  const [selectedTopics, setSelectedTopics] = useState(['All Topics']);
+  const [selectedDifficulty, setSelectedDifficulty] = useState(['All']);
+  const [selectedStatus, setSelectedStatus] = useState(['All']);
 
   // API queries
   const { data: problemsData, isLoading: isLoadingProblems } = useQuery({
@@ -200,509 +138,468 @@ export default function Dashboard() {
     return progress?.status || 'Not Started';
   };
 
-  // Get problem progress data for charts
-  const getProgressData = () => {
-    if (!userStats) return [];
-    
-    const data = [
-      { name: 'Solved', value: userStats.solvedProblems, color: '#22c55e' },
-      { name: 'Attempted', value: userStats.attemptedProblems, color: '#eab308' },
-      { name: 'Not Started', value: userStats.totalProblems - userStats.solvedProblems - userStats.attemptedProblems, color: '#94a3b8' },
-    ];
-    
-    return data;
+  // Get status icon based on problem status
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'Solved':
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case 'Attempted':
+        return <Clock3 className="h-5 w-5 text-yellow-500" />;
+      default:
+        return <Circle className="h-5 w-5 text-gray-500 opacity-50" />;
+    }
   };
 
-  // Get difficulty progress data
-  const getDifficultyData = () => {
-    if (!userStats) return [];
-    
-    return [
-      {
-        name: 'Easy',
-        solved: userStats.easyProblems.solved,
-        total: userStats.easyProblems.total,
-        progress: Math.round((userStats.easyProblems.solved / (userStats.easyProblems.total || 1)) * 100)
-      },
-      {
-        name: 'Medium',
-        solved: userStats.mediumProblems.solved,
-        total: userStats.mediumProblems.total,
-        progress: Math.round((userStats.mediumProblems.solved / (userStats.mediumProblems.total || 1)) * 100)
-      },
-      {
-        name: 'Hard',
-        solved: userStats.hardProblems.solved,
-        total: userStats.hardProblems.total,
-        progress: Math.round((userStats.hardProblems.solved / (userStats.hardProblems.total || 1)) * 100)
-      },
-    ];
+  // Get difficulty color class
+  const getDifficultyColor = (difficulty: string): string => {
+    switch (difficulty) {
+      case 'Easy':
+        return 'text-green-500';
+      case 'Medium':
+        return 'text-yellow-500';
+      case 'Hard':
+        return 'text-red-500';
+      default:
+        return 'text-gray-500';
+    }
   };
 
-  // Filter problems based on status tab
+  // Format frequency to display with % and up to 1 decimal place
+  const formatFrequency = (frequency: number): string => {
+    return `${frequency.toFixed(1)}%`;
+  };
+
+  // Get filtered problems
   const getFilteredProblems = () => {
     if (!problemsData?.problems) return [];
     
-    if (activeTab === 'all') return problemsData.problems;
+    // Apply status filter if not "all"
+    if (status !== 'all') {
+      return problemsData.problems.filter(problem => {
+        const problemStatus = getProblemStatus(problem.id);
+        return problemStatus.toLowerCase() === status.toLowerCase();
+      });
+    }
     
-    return problemsData.problems.filter(problem => {
-      const status = getProblemStatus(problem.id);
-      return activeTab === status.toLowerCase();
-    });
+    return problemsData.problems;
   };
 
-  // Render
+  // Get session stats
+  const getSessionStats = () => {
+    if (!userStats) return { easy: 0, medium: 0, hard: 0, total: 0 };
+    
+    return {
+      easy: userStats.easyProblems.solved,
+      medium: userStats.mediumProblems.solved,
+      hard: userStats.hardProblems.solved,
+      total: userStats.solvedProblems
+    };
+  };
+
+  const stats = getSessionStats();
+
+  // Calendar data
+  const today = new Date();
+  const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const daysInWeek = [...Array(7)].map((_, i) => {
+    const d = new Date();
+    d.setDate(today.getDate() - today.getDay() + i);
+    return {
+      day: dayNames[i],
+      date: d.getDate(),
+      isToday: i === today.getDay()
+    };
+  });
+
   return (
-    <div className="bg-[rgb(24,24,26)] min-h-screen text-white">
-      {/* Header */}
-      <div className="max-w-7xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Problem Dashboard</h1>
-            <p className="mt-1 text-gray-400">Practice embedded systems problems and track your progress</p>
+    <div className="bg-[rgb(17,17,17)] min-h-screen text-white">
+      {/* Top study plan section */}
+      <div className="container mx-auto px-4 pt-8 pb-4">
+        <h2 className="text-xl font-bold mb-4">Study Plan</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-[rgb(33,33,33)] rounded-lg p-4 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+            <div className="flex items-center mb-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center mr-3">
+                <Codepen className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold">Top Interview 150</h3>
+                <p className="text-xs text-gray-400">Must-do List for Interview</p>
+              </div>
+            </div>
           </div>
           
-          <div className="mt-4 md:mt-0 flex items-center space-x-2">
-            <Button 
-              variant="outline" 
-              className="border-[rgb(214,251,65)] hover:bg-[rgb(214,251,65)] hover:text-black"
-            >
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add to Study List
-            </Button>
-            <Button 
-              className="bg-[rgb(214,251,65)] text-black hover:bg-[rgb(194,231,45)]"
-            >
-              Pick Random Problem
-            </Button>
+          <div className="bg-[rgb(33,33,33)] rounded-lg p-4 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
+            <div className="flex items-center mb-2">
+              <div className="w-8 h-8 bg-purple-600 rounded-md flex items-center justify-center mr-3">
+                <Codepen className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold">LeetCode 75</h3>
+                <p className="text-xs text-gray-400">Ace Coding Interview</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-[rgb(33,33,33)] rounded-lg p-4 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-blue-400"></div>
+            <div className="flex items-center mb-2">
+              <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center mr-3">
+                <Database className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold">SQL 50</h3>
+                <p className="text-xs text-gray-400">Crack SQL Interview</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-[rgb(33,33,33)] rounded-lg p-4 hover:bg-[rgb(40,40,40)] transition-colors relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-yellow-500"></div>
+            <div className="flex items-center mb-2">
+              <div className="w-8 h-8 bg-yellow-600 rounded-md flex items-center justify-center mr-3">
+                <Share2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold">Javascript 30</h3>
+                <p className="text-xs text-gray-400">Learn JS Basics</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Stats Section */}
-      <div className="max-w-7xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Progress Overview Card */}
-          <Card className="bg-[rgb(36,36,38)] border-[rgb(48,48,50)] shadow">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium">Progress Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoadingStats ? (
-                <div className="flex justify-center p-6">
-                  <Loader2 className="h-8 w-8 animate-spin text-[rgb(214,251,65)]" />
-                </div>
-              ) : userStats ? (
-                <div className="flex flex-col">
-                  <div className="flex items-center justify-center h-52">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={getProgressData()}
-                          innerRadius={60}
-                          outerRadius={80}
-                          paddingAngle={5}
-                          dataKey="value"
-                        >
-                          {getProgressData().map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip 
-                          formatter={(value: number) => [`${value} problems`, '']}
-                          contentStyle={{ backgroundColor: 'rgb(36,36,38)', borderColor: 'rgb(48,48,50)' }} 
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-2 mt-4">
-                    <div className="flex flex-col items-center">
-                      <div className="text-2xl font-bold text-green-500">{userStats.solvedProblems}</div>
-                      <div className="text-xs text-gray-400">Solved</div>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="text-2xl font-bold text-yellow-500">{userStats.attemptedProblems}</div>
-                      <div className="text-xs text-gray-400">In Progress</div>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="text-2xl font-bold text-gray-500">
-                        {userStats.totalProblems - userStats.solvedProblems - userStats.attemptedProblems}
-                      </div>
-                      <div className="text-xs text-gray-400">Not Started</div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-6 text-gray-400">
-                  No data available
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Difficulty Progress Card */}
-          <Card className="bg-[rgb(36,36,38)] border-[rgb(48,48,50)] shadow">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium">Difficulty Breakdown</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoadingStats ? (
-                <div className="flex justify-center p-6">
-                  <Loader2 className="h-8 w-8 animate-spin text-[rgb(214,251,65)]" />
-                </div>
-              ) : userStats ? (
-                <div className="space-y-4 mt-2">
-                  {getDifficultyData().map((item) => (
-                    <div key={item.name} className="space-y-1">
-                      <div className="flex justify-between">
-                        <span className={`text-sm font-medium ${
-                          item.name === 'Easy' ? 'text-green-500' : 
-                          item.name === 'Medium' ? 'text-yellow-500' : 
-                          'text-red-500'
-                        }`}>
-                          {item.name}
-                        </span>
-                        <span className="text-sm text-gray-400">
-                          {item.solved} / {item.total}
-                        </span>
-                      </div>
-                      <div className={`w-full h-2 rounded-full overflow-hidden ${
-                          item.name === 'Easy' ? 'bg-green-900' : 
-                          item.name === 'Medium' ? 'bg-yellow-900' : 
-                          'bg-red-900'
-                        }`}>
-                        <div 
-                          className={`h-full transition-all ${
-                            item.name === 'Easy' ? 'bg-green-500' : 
-                            item.name === 'Medium' ? 'bg-yellow-500' : 
-                            'bg-red-500'
-                          }`}
-                          style={{ width: `${item.progress}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                  
-                  <div className="pt-4">
-                    <ResponsiveContainer width="100%" height={120}>
-                      <BarChart data={getDifficultyData()}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip 
-                          contentStyle={{ backgroundColor: 'rgb(36,36,38)', borderColor: 'rgb(48,48,50)' }} 
-                        />
-                        <Bar dataKey="solved" name="Solved" fill="#22c55e" />
-                        <Bar dataKey="total" name="Total" fill="#94a3b8" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-6 text-gray-400">
-                  No data available
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Weekly Activity Card */}
-          <Card className="bg-[rgb(36,36,38)] border-[rgb(48,48,50)] shadow">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium">Study Streak</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col space-y-4">
-                <div className="grid grid-cols-7 gap-2">
-                  {Array.from({ length: 7 }).map((_, i) => {
-                    // Mock data - in a real app this would come from the API
-                    const isActive = Math.random() > 0.4;
-                    return (
-                      <div
-                        key={i}
-                        className={`aspect-square rounded flex items-center justify-center ${
-                          isActive ? 'bg-[rgb(214,251,65)]' : 'bg-[rgb(48,48,50)]'
-                        }`}
-                      >
-                        <span className={isActive ? 'text-black' : 'text-gray-400'}>
-                          {['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-                
-                <div className="flex items-center justify-between mt-2">
-                  <div className="text-lg font-bold">5 day streak</div>
-                  <Badge className="bg-[rgb(214,251,65)] text-black">+2 today</Badge>
-                </div>
-
-                <div className="mt-4">
-                  <ResponsiveContainer width="100%" height={120}>
-                    <LineChart 
-                      data={[
-                        { day: 'Mon', problems: 3 },
-                        { day: 'Tue', problems: 5 },
-                        { day: 'Wed', problems: 2 },
-                        { day: 'Thu', problems: 7 },
-                        { day: 'Fri', problems: 4 },
-                        { day: 'Sat', problems: 2 },
-                        { day: 'Sun', problems: 3 },
-                      ]}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                      <XAxis dataKey="day" />
-                      <YAxis />
-                      <Tooltip 
-                        contentStyle={{ backgroundColor: 'rgb(36,36,38)', borderColor: 'rgb(48,48,50)' }} 
-                      />
-                      <Line 
-                        type="monotone" 
-                        dataKey="problems" 
-                        name="Problems" 
-                        stroke="rgb(214,251,65)" 
-                        strokeWidth={2} 
-                        dot={{ fill: 'rgb(214,251,65)', r: 4 }} 
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
+      
+      {/* Calendar and Stats */}
+      <div className="bg-[rgb(33,33,33)] py-2 border-t border-b border-[rgb(48,48,50)]">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-start md:items-center">
+          {/* Left: Day counter */}
+          <div className="flex items-center space-x-1">
+            <CalendarDays className="w-4 h-4 text-gray-400 mr-1" />
+            <div className="text-sm text-gray-400">Day 29</div>
+            <div className="text-xs text-gray-500">00:17:42 left</div>
+          </div>
+          
+          {/* Center: Week days */}
+          <div className="flex space-x-2 mt-2 md:mt-0">
+            {daysInWeek.map((day, idx) => (
+              <div key={idx} className="flex flex-col items-center">
+                <div className="text-xs text-gray-400">{day.day}</div>
+                <div className={cn(
+                  "w-6 h-6 flex items-center justify-center text-xs rounded-full mt-1",
+                  day.isToday ? "bg-[rgb(214,251,65)] text-black font-bold" : "text-gray-400"
+                )}>
+                  {day.date}
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            ))}
+          </div>
+          
+          {/* Right: Session stats */}
+          <div className="mt-2 md:mt-0 flex space-x-4">
+            <div className="flex items-center">
+              <div className="text-sm font-bold">{stats.total}</div>
+              <div className="text-xs text-gray-400 ml-1">Session</div>
+            </div>
+            <div className="flex space-x-2">
+              <Badge className="bg-green-800 text-green-200 hover:bg-green-700">
+                Easy {stats.easy}
+              </Badge>
+              <Badge className="bg-yellow-800 text-yellow-200 hover:bg-yellow-700">
+                Medium {stats.medium}
+              </Badge>
+              <Badge className="bg-red-800 text-red-200 hover:bg-red-700">
+                Hard {stats.hard}
+              </Badge>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Filters and Problems Grid */}
-      <div className="max-w-7xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
-        {/* Search and filter */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+      
+      {/* Main content area */}
+      <div className="container mx-auto px-4 mt-6">
+        {/* Filters */}
+        <div className="flex flex-wrap md:flex-nowrap gap-2 mb-6 items-center">
+          <div className="w-full md:w-auto">
+            <div className="p-1 bg-[rgb(33,33,33)] rounded-md flex items-center">
+              <Button 
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "text-xs px-2 py-1 h-auto",
+                  showTags ? "bg-[rgb(44,44,44)]" : "hover:bg-[rgb(44,44,44)]"
+                )}
+                onClick={() => setShowTags(!showTags)}
+              >
+                All Topics
+              </Button>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className="text-xs px-2 py-1 h-auto hover:bg-[rgb(44,44,44)]"
+                onClick={() => setShowTags(!showTags)}
+              >
+                Algorithms
+              </Button>
+              <Button 
+                variant="ghost"
+                size="sm"
+                className="text-xs px-2 py-1 h-auto hover:bg-[rgb(44,44,44)]"
+                onClick={() => setShowTags(!showTags)}
+              >
+                Database
+              </Button>
+            </div>
+          </div>
+          
+          <div className="w-full md:w-auto flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="text-xs bg-[rgb(33,33,33)] border-[rgb(48,48,50)] hover:bg-[rgb(44,44,44)]"
+            >
+              <FilterIcon className="h-3 w-3 mr-1" />
+              Lists
+            </Button>
+            
+            <Button 
+              variant="outline"
+              size="sm"
+              className="text-xs bg-[rgb(33,33,33)] border-[rgb(48,48,50)] hover:bg-[rgb(44,44,44)]"
+            >
+              <FilterIcon className="h-3 w-3 mr-1" />
+              Difficulty
+            </Button>
+            
+            <Button 
+              variant="outline"
+              size="sm"
+              className="text-xs bg-[rgb(33,33,33)] border-[rgb(48,48,50)] hover:bg-[rgb(44,44,44)]"
+            >
+              <FilterIcon className="h-3 w-3 mr-1" />
+              Status
+            </Button>
+            
+            <Button 
+              variant="outline"
+              size="sm"
+              className="text-xs bg-[rgb(33,33,33)] border-[rgb(48,48,50)] hover:bg-[rgb(44,44,44)]"
+            >
+              <FilterIcon className="h-3 w-3 mr-1" />
+              Tags
+            </Button>
+          </div>
+          
+          <div className="flex-grow relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
-              type="text"
-              placeholder="Search problems..."
-              className="pl-9 bg-[rgb(36,36,38)] border-[rgb(48,48,50)] focus-visible:ring-[rgb(214,251,65)] text-white"
+              placeholder="Search questions"
+              className="pl-9 bg-[rgb(33,33,33)] border-[rgb(48,48,50)] focus-visible:ring-[rgb(214,251,65)] text-sm"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           
-          <div className="flex space-x-2">
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-full bg-[rgb(36,36,38)] border-[rgb(48,48,50)] focus:ring-[rgb(214,251,65)] text-white">
-                <SelectValue placeholder="Filter by category" />
-              </SelectTrigger>
-              <SelectContent className="bg-[rgb(36,36,38)] border-[rgb(48,48,50)] text-white">
-                <SelectGroup>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="Memory Management">Memory Management</SelectItem>
-                  <SelectItem value="Multithreading">Multithreading</SelectItem>
-                  <SelectItem value="Data Structures">Data Structures</SelectItem>
-                  <SelectItem value="C++ API">C++ API</SelectItem>
-                  <SelectItem value="Linux API">Linux API</SelectItem>
-                  <SelectItem value="RTOS">RTOS</SelectItem>
-                  <SelectItem value="Power Management">Power Management</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            
-            <Select value={difficulty} onValueChange={setDifficulty}>
-              <SelectTrigger className="w-full bg-[rgb(36,36,38)] border-[rgb(48,48,50)] focus:ring-[rgb(214,251,65)] text-white">
-                <SelectValue placeholder="Filter by difficulty" />
-              </SelectTrigger>
-              <SelectContent className="bg-[rgb(36,36,38)] border-[rgb(48,48,50)] text-white">
-                <SelectGroup>
-                  <SelectItem value="all">All Difficulties</SelectItem>
-                  <SelectItem value="Easy">Easy</SelectItem>
-                  <SelectItem value="Medium">Medium</SelectItem>
-                  <SelectItem value="Hard">Hard</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="flex space-x-2">
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full bg-[rgb(36,36,38)] border-[rgb(48,48,50)] focus:ring-[rgb(214,251,65)] text-white">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent className="bg-[rgb(36,36,38)] border-[rgb(48,48,50)] text-white">
-                <SelectGroup>
-                  <SelectItem value="id">ID</SelectItem>
-                  <SelectItem value="title">Title</SelectItem>
-                  <SelectItem value="difficulty">Difficulty</SelectItem>
-                  <SelectItem value="category">Category</SelectItem>
-                  <SelectItem value="frequency">Frequency</SelectItem>
-                  <SelectItem value="acceptanceRate">Acceptance Rate</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            
-            <Button
-              variant="outline"
-              className="bg-[rgb(36,36,38)] border-[rgb(48,48,50)] hover:bg-[rgb(48,48,50)] text-white"
-              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+          <div>
+            <Button 
+              variant="ghost"
+              size="sm"
+              className="bg-[rgb(214,251,65)] text-black hover:bg-[rgb(194,231,45)]"
             >
-              {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+              Pick One
             </Button>
           </div>
         </div>
-
-        {/* Tabs for filtering problems by status */}
-        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList className="bg-[rgb(36,36,38)] border border-[rgb(48,48,50)]">
-            <TabsTrigger 
-              value="all" 
-              className="data-[state=active]:bg-[rgb(214,251,65)] data-[state=active]:text-black"
-            >
-              All Problems
-            </TabsTrigger>
-            <TabsTrigger 
-              value="solved" 
-              className="data-[state=active]:bg-[rgb(214,251,65)] data-[state=active]:text-black"
-            >
-              Solved
-            </TabsTrigger>
-            <TabsTrigger 
-              value="attempted" 
-              className="data-[state=active]:bg-[rgb(214,251,65)] data-[state=active]:text-black"
-            >
-              In Progress
-            </TabsTrigger>
-            <TabsTrigger 
-              value="not started" 
-              className="data-[state=active]:bg-[rgb(214,251,65)] data-[state=active]:text-black"
-            >
-              Not Started
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        {/* Problems grid */}
-        {isLoadingProblems ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="h-12 w-12 animate-spin text-[rgb(214,251,65)]" />
-            <p className="mt-4 text-gray-400">Loading problems...</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {getFilteredProblems().map((problem) => {
-                const status = getProblemStatus(problem.id);
-                const CategoryIcon = categoryIcons[problem.category] || Codepen;
-                
+        
+        {/* Problems table */}
+        <div className="relative overflow-x-auto rounded-lg border border-[rgb(48,48,50)]">
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs text-gray-400 uppercase bg-[rgb(33,33,33)]">
+              <tr>
+                <th scope="col" className="px-2 py-3 w-12 text-center">Status</th>
+                <th scope="col" className="px-6 py-3">Title</th>
+                <th scope="col" className="px-6 py-3 hidden md:table-cell text-center">Solution</th>
+                <th scope="col" className="px-6 py-3 hidden md:table-cell text-center">Acceptance</th>
+                <th scope="col" className="px-6 py-3 text-center">Difficulty</th>
+                <th scope="col" className="px-6 py-3 hidden lg:table-cell text-center">Frequency</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoadingProblems ? (
+                <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
+                  <td colSpan={6} className="px-6 py-16 text-center">
+                    <div className="flex flex-col items-center">
+                      <Loader2 className="h-8 w-8 animate-spin text-[rgb(214,251,65)]" />
+                      <p className="mt-2 text-gray-400">Loading problems...</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : getFilteredProblems().length === 0 ? (
+                <tr className="bg-[rgb(22,22,22)] border-b border-[rgb(48,48,50)]">
+                  <td colSpan={6} className="px-6 py-16 text-center text-gray-400">
+                    No problems found matching your criteria.
+                  </td>
+                </tr>
+              ) : (
+                getFilteredProblems().map((problem, idx) => {
+                  const status = getProblemStatus(problem.id);
+                  const statusIcon = getStatusIcon(status);
+                  
+                  return (
+                    <tr 
+                      key={problem.id} 
+                      className={cn(
+                        "border-b border-[rgb(48,48,50)] hover:bg-[rgb(33,33,33)]",
+                        idx % 2 === 0 ? "bg-[rgb(18,18,18)]" : "bg-[rgb(22,22,22)]"
+                      )}
+                    >
+                      <td className="px-2 py-3 text-center">
+                        {statusIcon}
+                      </td>
+                      <td className="px-6 py-3 font-medium">
+                        <div className="flex items-center">
+                          <span className="text-sm font-medium mr-2">{problem.id}.</span>
+                          <a href="#" className="text-sm hover:text-[rgb(214,251,65)]">
+                            {problem.title}
+                          </a>
+                        </div>
+                        
+                        {/* Tags */}
+                        {showTags && (
+                          <div className="mt-1.5 flex flex-wrap gap-1">
+                            <Badge className="bg-[rgb(44,44,44)] hover:bg-[rgb(55,55,55)] text-gray-300 text-xs px-1.5 py-0.5">
+                              {problem.category}
+                            </Badge>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-3 hidden md:table-cell text-center">
+                        {Math.random() > 0.5 ? (
+                          <a href="#" className="text-blue-500 hover:text-blue-400">
+                            <Settings className="h-4 w-4 inline" />
+                          </a>
+                        ) : (
+                          <Lock className="h-4 w-4 inline text-gray-500" />
+                        )}
+                      </td>
+                      <td className="px-6 py-3 hidden md:table-cell text-center">
+                        {problem.acceptanceRate}%
+                      </td>
+                      <td className={`px-6 py-3 text-center font-medium ${getDifficultyColor(problem.difficulty)}`}>
+                        {problem.difficulty}
+                      </td>
+                      <td className="px-6 py-3 hidden lg:table-cell text-center">
+                        {formatFrequency(problem.frequency)}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+        
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <nav className="flex items-center space-x-1">
+              <Button 
+                variant="outline"
+                size="sm"
+                className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)]"
+                disabled={page === 1}
+                onClick={() => setPage(page - 1)}
+              >
+                Previous
+              </Button>
+              
+              {[...Array(Math.min(totalPages, 10))].map((_, idx) => {
+                const pageNumber = idx + 1;
                 return (
-                  <Card key={problem.id} className="bg-[rgb(36,36,38)] border-[rgb(48,48,50)] h-full shadow-lg hover:shadow-xl transition-shadow">
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-center mb-2">
-                        <Badge 
-                          className={`${getDifficultyColor(problem.difficulty)} text-white`}
-                        >
-                          {problem.difficulty}
-                        </Badge>
-                        <Badge 
-                          className={`${getStatusColor(status)} text-white`}
-                        >
-                          {status}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-lg font-bold truncate">{problem.title}</CardTitle>
-                      <div className="flex space-x-2 items-center mt-1">
-                        <Badge variant="outline" className="flex items-center space-x-1 py-0 h-5">
-                          <CategoryIcon className="h-3 w-3" />
-                          <span className="text-xs">{problem.category}</span>
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <p className="text-sm text-gray-400 line-clamp-2">
-                        {problem.description}
-                      </p>
-                    </CardContent>
-                    <CardFooter className="flex justify-between items-center pt-0">
-                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-400">
-                        <div className="flex items-center">
-                          <CheckCircle2 className="h-3 w-3 mr-1" />
-                          <span>{problem.acceptanceRate}%</span>
-                        </div>
-                        <div className="flex items-center">
-                          <Clock className="h-3 w-3 mr-1" />
-                          <span>{problem.estimatedTime}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <TrendingUp className="h-3 w-3 mr-1" />
-                          <span>Freq: {problem.frequency}%</span>
-                        </div>
-                        <div className="flex items-center">
-                          <GitPullRequest className="h-3 w-3 mr-1" />
-                          <span>{problem.completionRate}</span>
-                        </div>
-                      </div>
-                      
-                      <Button 
-                        size="sm" 
-                        className="bg-[rgb(214,251,65)] text-black hover:bg-[rgb(194,231,45)]"
-                      >
-                        Solve
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                  <Button
+                    key={idx}
+                    variant={pageNumber === page ? "default" : "outline"}
+                    size="sm"
+                    className={cn(
+                      pageNumber === page 
+                        ? "bg-[rgb(214,251,65)] text-black" 
+                        : "bg-[rgb(33,33,33)] border-[rgb(48,48,50)]"
+                    )}
+                    onClick={() => setPage(pageNumber)}
+                  >
+                    {pageNumber}
+                  </Button>
                 );
               })}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-center mt-8">
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    className="bg-[rgb(36,36,38)] border-[rgb(48,48,50)] hover:bg-[rgb(48,48,50)] text-white"
-                    disabled={page === 1}
-                    onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                  >
-                    Previous
-                  </Button>
-                  
-                  <div className="flex">
-                    {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
-                      const pageNumber = i + 1;
-                      return (
-                        <Button
-                          key={pageNumber}
-                          variant={page === pageNumber ? "default" : "outline"}
-                          className={
-                            page === pageNumber
-                              ? "bg-[rgb(214,251,65)] text-black hover:bg-[rgb(194,231,45)]"
-                              : "bg-[rgb(36,36,38)] border-[rgb(48,48,50)] hover:bg-[rgb(48,48,50)] text-white"
-                          }
-                          onClick={() => setPage(pageNumber)}
-                        >
-                          {pageNumber}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                  
-                  <Button
-                    variant="outline"
-                    className="bg-[rgb(36,36,38)] border-[rgb(48,48,50)] hover:bg-[rgb(48,48,50)] text-white"
-                    disabled={page === totalPages}
-                    onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
-            )}
-          </>
+              
+              <Button 
+                variant="outline"
+                size="sm"
+                className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)]"
+                disabled={page === totalPages}
+                onClick={() => setPage(page + 1)}
+              >
+                Next
+              </Button>
+            </nav>
+          </div>
         )}
       </div>
       
-      {/* Bottom padding */}
-      <div className="h-20"></div>
+      {/* Company trends sidebar - only shown on larger screens */}
+      <div className="hidden lg:block fixed right-0 top-[80px] w-64 bg-[rgb(33,33,33)] border-l border-[rgb(48,48,50)] h-[calc(100vh-80px)] overflow-y-auto p-4">
+        <h3 className="text-lg font-bold mb-2">Trending Companies</h3>
+        
+        <div className="space-y-4">
+          {/* Company list */}
+          <div className="space-y-2">
+            {[
+              { name: 'Amazon', count: 1325 },
+              { name: 'Google', count: 1557 },
+              { name: 'Uber', count: 500 },
+              { name: 'Meta', count: 1050 },
+              { name: 'Apple', count: 688 },
+              { name: 'Bloomberg', count: 372 },
+              { name: 'TikTok', count: 440 },
+              { name: 'Microsoft', count: 1115 },
+            ].map((company, idx) => (
+              <div key={idx} className="flex justify-between items-center">
+                <div className="text-sm">{company.name}</div>
+                <Badge className="bg-[rgb(48,48,50)] hover:bg-[rgb(55,55,55)]">
+                  {company.count}
+                </Badge>
+              </div>
+            ))}
+          </div>
+          
+          {/* Session counter */}
+          <div className="mt-8 border-t border-[rgb(48,48,50)] pt-4">
+            <h3 className="text-sm font-bold mb-2">Session</h3>
+            <div className="bg-[rgb(22,22,22)] rounded-md p-3 mb-3">
+              <div className="flex justify-between items-center mb-2">
+                <div className="text-2xl font-bold">322</div>
+                <div className="text-xs text-gray-400">Solved / 1501</div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <div className="text-xs text-green-500">Easy</div>
+                  <div className="text-xs"><span className="text-green-500">101</span>/369</div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="text-xs text-yellow-500">Medium</div>
+                  <div className="text-xs"><span className="text-yellow-500">208</span>/818</div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="text-xs text-red-500">Hard</div>
+                  <div className="text-xs"><span className="text-red-500">13</span>/314</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
