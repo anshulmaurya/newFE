@@ -65,9 +65,13 @@ export default function ActivityHeatmap() {
         // Debug user object
         console.log("User object:", user);
         
-        // Try to use either stored username or display name, with a fallback to 'ninad' for testing
+        // Try to use either stored username or display name if available
+        if (!user?.username && !user?.displayName) {
+          throw new Error("No username available for API request");
+        }
+        
         const username = user?.username || 
-                         (user?.displayName ? user.displayName.toLowerCase().replace(/\s+/g, '') : 'ninad');
+                         (user?.displayName ? user.displayName.toLowerCase().replace(/\s+/g, '') : '');
         console.log("Using username for API call:", username);
         
         // Make the actual API call
@@ -102,30 +106,18 @@ export default function ActivityHeatmap() {
         }
       } catch (err) {
         console.error('Error fetching user activity data:', err);
-        setError('Failed to load activity data. Using sample data instead.');
+        setError('Failed to load activity data from API. Please try again later.');
         
-        // Use predefined sample data rather than empty data for better debugging
-        console.log("Using sample test data for 'ninad'");
-        const sampleData: YearlyActivityData = {
-          "2023": {
-            "total": 5,
-            "2023-01-01": { "count": 2, "questions": ["Memory Buffer Management", "Thread Synchronization"] },
-            "2023-01-15": { "count": 3, "questions": ["Pointer Arithmetic", "Stack Implementation", "Queue with Arrays"] },
-            "2023-12-30": { "count": 1, "questions": ["Graph Traversal"] }
-          },
-          "2024": {
-            "total": 21,
-            "2024-03-10": { "count": 1, "questions": ["RTOS Task Creation"] },
-            "2024-03-15": { "count": 20, "questions": ["RTOS Task Creation", "RTOS Task Deletion"] }
-          },
-          "2025": {
-            "total": 3,
-            "2025-03-10": { "count": 1, "questions": ["Linked List Implementation"] },
-            "2025-03-15": { "count": 2, "questions": ["Binary Tree Traversal", "Graph Traversal"] }
-          }
-        };
+        // Initialize with empty data for years that matches API format
+        const emptyData: YearlyActivityData = {};
+        availableYears.forEach(year => {
+          // Create empty year data with total = 0 in the format expected from the API
+          emptyData[year.toString()] = {
+            "total": 0
+          };
+        });
         
-        setAllYearsData(sampleData);
+        setAllYearsData(emptyData);
       } finally {
         setIsLoading(false);
       }
