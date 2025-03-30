@@ -613,7 +613,7 @@ export default function Dashboard() {
                   <input 
                     type="text" 
                     placeholder="Search problems..." 
-                    className="w-full md:w-60 h-9 pl-9 pr-3 rounded-md bg-[rgb(33,33,33)] border border-[rgb(48,48,50)] text-xs text-white focus:outline-none focus:ring-2 focus:ring-[rgb(214,251,65)] focus:border-transparent"
+                    className="w-full md:w-60 h-9 pl-9 pr-3 rounded-md bg-[rgb(24,24,27)] border border-[rgb(45,45,50)] text-xs text-white focus:outline-none focus:ring-2 focus:ring-[rgb(214,251,65)] focus:border-transparent"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
@@ -625,14 +625,14 @@ export default function Dashboard() {
                   value={difficulty}
                   onValueChange={setDifficulty}
                 >
-                  <SelectTrigger className="h-9 bg-[rgb(33,33,33)] border-[rgb(48,48,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                  <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
                     <SelectValue placeholder="All Difficulties" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)] text-xs">
-                    <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(48,48,50)]">All Difficulties</SelectItem>
-                    <SelectItem value="easy" className="text-green-500 focus:bg-[rgb(48,48,50)]">Easy</SelectItem>
-                    <SelectItem value="medium" className="text-yellow-500 focus:bg-[rgb(48,48,50)]">Medium</SelectItem>
-                    <SelectItem value="hard" className="text-red-500 focus:bg-[rgb(48,48,50)]">Hard</SelectItem>
+                  <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
+                    <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">All Difficulties</SelectItem>
+                    <SelectItem value="easy" className="text-green-500 focus:bg-[rgb(45,45,50)]">Easy</SelectItem>
+                    <SelectItem value="medium" className="text-yellow-500 focus:bg-[rgb(45,45,50)]">Medium</SelectItem>
+                    <SelectItem value="hard" className="text-red-500 focus:bg-[rgb(45,45,50)]">Hard</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -642,18 +642,18 @@ export default function Dashboard() {
                   value={category}
                   onValueChange={setCategory}
                 >
-                  <SelectTrigger className="h-9 bg-[rgb(33,33,33)] border-[rgb(48,48,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                  <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)] text-xs">
-                    <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(48,48,50)]">All Categories</SelectItem>
-                    <SelectItem value="Memory Management" className="text-gray-200 focus:bg-[rgb(48,48,50)]">Memory Management</SelectItem>
-                    <SelectItem value="Multithreading" className="text-gray-200 focus:bg-[rgb(48,48,50)]">Multithreading</SelectItem>
-                    <SelectItem value="Data Structures" className="text-gray-200 focus:bg-[rgb(48,48,50)]">Data Structures</SelectItem>
-                    <SelectItem value="C++ API" className="text-gray-200 focus:bg-[rgb(48,48,50)]">C++ API</SelectItem>
-                    <SelectItem value="Linux API" className="text-gray-200 focus:bg-[rgb(48,48,50)]">Linux API</SelectItem>
-                    <SelectItem value="RTOS" className="text-gray-200 focus:bg-[rgb(48,48,50)]">RTOS</SelectItem>
-                    <SelectItem value="Power Management" className="text-gray-200 focus:bg-[rgb(48,48,50)]">Power Management</SelectItem>
+                  <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
+                    <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">All Categories</SelectItem>
+                    <SelectItem value="Memory Management" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Memory Management</SelectItem>
+                    <SelectItem value="Multithreading" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Multithreading</SelectItem>
+                    <SelectItem value="Data Structures" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Data Structures</SelectItem>
+                    <SelectItem value="C++ API" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C++ API</SelectItem>
+                    <SelectItem value="Linux API" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Linux API</SelectItem>
+                    <SelectItem value="RTOS" className="text-gray-200 focus:bg-[rgb(45,45,50)]">RTOS</SelectItem>
+                    <SelectItem value="Power Management" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Power Management</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -663,14 +663,14 @@ export default function Dashboard() {
                   value={status}
                   onValueChange={setStatus}
                 >
-                  <SelectTrigger className="h-9 bg-[rgb(33,33,33)] border-[rgb(48,48,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                  <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
                     <SelectValue placeholder="All Status" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[rgb(33,33,33)] border-[rgb(48,48,50)] text-xs">
-                    <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(48,48,50)]">All Status</SelectItem>
-                    <SelectItem value="Solved" className="text-green-500 focus:bg-[rgb(48,48,50)]">Solved</SelectItem>
-                    <SelectItem value="Attempted" className="text-yellow-500 focus:bg-[rgb(48,48,50)]">Attempted</SelectItem>
-                    <SelectItem value="Not Started" className="text-gray-200 focus:bg-[rgb(48,48,50)]">Not Started</SelectItem>
+                  <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
+                    <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">All Status</SelectItem>
+                    <SelectItem value="Solved" className="text-green-500 focus:bg-[rgb(45,45,50)]">Solved</SelectItem>
+                    <SelectItem value="Attempted" className="text-yellow-500 focus:bg-[rgb(45,45,50)]">Attempted</SelectItem>
+                    <SelectItem value="Not Started" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Not Started</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
