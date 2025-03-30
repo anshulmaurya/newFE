@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Link } from 'wouter';
 import {
   Select,
   SelectContent,
@@ -82,12 +81,6 @@ export default function Dashboard() {
   const [selectedBundle, setSelectedBundle] = useState<string | null>(null);
   const [jobDescription, setJobDescription] = useState<string>('');
   const [jdSubmitted, setJdSubmitted] = useState<boolean>(false);
-  
-  // Initialize with all problems when dashboard is loaded
-  useEffect(() => {
-    // Reset selectedBundle to null to show all problems when dashboard is loaded
-    setSelectedBundle(null);
-  }, []);
 
   // Fetch problems from external API via our server proxy
   const { data: externalProblems, isLoading: isLoadingExternal } = useQuery({
@@ -317,9 +310,9 @@ export default function Dashboard() {
         {/* Left sidebar - fixed */}
         <div className="hidden lg:block w-56 bg-[rgb(14,14,16)] fixed left-0 top-16 bottom-0 overflow-y-auto border-r border-[rgb(35,35,40)]">
           <div className="px-4 py-4 flex flex-col h-full">
-            <Link to="/dashboard" className="block text-white text-sm font-medium py-2 px-3 bg-[rgb(24,24,27)] rounded-md mb-3">
+            <a href="/dashboard" className="block text-white text-sm font-medium py-2 px-3 bg-[rgb(24,24,27)] rounded-md mb-3">
               Dashboard
-            </Link>
+            </a>
             
             {/* Quick Prep Bundles */}
             <div className="mb-4">
@@ -438,12 +431,12 @@ export default function Dashboard() {
                       >
                         View Recommended Questions
                       </button>
-                      <Link 
-                        to="/notes"
-                        className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md block w-full text-left"
+                      <button 
+                        className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                        onClick={() => window.location.href = '/notes'}
                       >
                         View Study Notes
-                      </Link>
+                      </button>
                       <button 
                         className="text-yellow-500 hover:text-yellow-400 py-2 px-3 text-xs rounded-md w-full text-left"
                         onClick={() => {
