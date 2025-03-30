@@ -3,174 +3,130 @@ import { useQuery } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import Calendar from 'react-github-contribution-calendar';
+import { Tooltip } from '@/components/ui/tooltip';
+import { TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ActivityData {
-  [date: string]: number;
+  [date: string]: {
+    count: number;
+    questions: string[];
+  };
 }
+
+// Sample activity data format - this would come from the API in production
+// The API should return data in this format:
+// {
+//   "2023-01-01": {
+//     "count": 2,
+//     "questions": ["Memory Buffer Management", "Thread Synchronization"]
+//   },
+//   "2023-01-02": {
+//     "count": 5,
+//     "questions": ["Pointer Arithmetic", "Stack Implementation", "Queue with Arrays", "RTOS Task Creation", "Linux Semaphores"]
+//   }
+// }
 
 export default function ActivityHeatmap() {
   const [activityData, setActivityData] = useState<ActivityData>({});
+  const [formattedData, setFormattedData] = useState<{[key: string]: number}>({});
   const [totalSolved, setTotalSolved] = useState<number>(0);
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-  
-  // Calculate the start of the selected year (January 1st)
-  const startDate = new Date(selectedYear, 0, 1);
-  // Calculate the end of the selected year (December 31st)
-  const endDate = new Date(selectedYear, 11, 31);
   
   // Calculate available years (current year and 2 previous years)
   const currentYear = new Date().getFullYear();
   const availableYears = [currentYear, currentYear - 1, currentYear - 2];
   
-  // Format dates as ISO strings
-  const formattedStartDate = startDate.toISOString().split('T')[0];
-  const formattedEndDate = endDate.toISOString().split('T')[0];
+  // Calculate the end date (today or last day of selected year)
+  const today = new Date();
+  const endDate = selectedYear === currentYear 
+    ? today
+    : new Date(selectedYear, 11, 31); // December 31st of selected year
   
-  // Fetch user activity data
-  const { data: userActivity, isLoading } = useQuery({
-    queryKey: ['/api/user-activity'],
-    queryFn: async () => {
-      try {
-        const response = await apiRequest('GET', '/api/user-activity');
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error('Error fetching user activity:', error);
-        return [];
-      }
-    },
-  });
-  
-  // Process the activity data once it's loaded
+  // Create some mock activity data for demonstration
   useEffect(() => {
-    if (userActivity && userActivity.length > 0) {
-      const processedData: ActivityData = {};
-      let total = 0;
+    // Generate mock data for the selected year
+    const mockData: ActivityData = {};
+    let total = 0;
+    
+    // Generate some random activity for the selected year
+    const startDate = new Date(selectedYear, 0, 1); // January 1st
+    const endOfYear = new Date(selectedYear, 11, 31); // December 31st
+    
+    // List of sample question titles
+    const questionTitles = [
+      "Memory Buffer Management", 
+      "Thread Synchronization", 
+      "Pointer Arithmetic", 
+      "Stack Implementation", 
+      "Queue with Arrays", 
+      "RTOS Task Creation", 
+      "Linux Semaphores",
+      "C++ Smart Pointers",
+      "Mutex Implementation",
+      "Signal Handling",
+      "Device Driver Basics",
+      "Interrupt Handling",
+      "Power Management States",
+      "Memory Leak Detection",
+      "Task Scheduling Algorithm"
+    ];
+    
+    // Add more active days in recent months
+    for (let i = 0; i < 150; i++) {
+      // Create a random date within the year
+      const randomDay = new Date(startDate);
+      randomDay.setDate(randomDay.getDate() + Math.floor(Math.random() * 365));
       
-      userActivity.forEach((activity: any) => {
-        const date = activity.date.split('T')[0]; // Format: YYYY-MM-DD
-        const year = new Date(date).getFullYear();
-        
-        // Only include activities from the selected year
-        if (year === selectedYear) {
-          processedData[date] = activity.problemsSolved;
-          total += activity.problemsSolved;
-        }
-      });
+      // Only include dates in the selected year and not in the future
+      if (randomDay > today || randomDay > endOfYear) continue;
       
-      setActivityData(processedData);
-      setTotalSolved(total);
+      const dateKey = randomDay.toISOString().split('T')[0];
+      
+      // Random number of problems solved (1-12)
+      const count = Math.floor(Math.random() * 12) + 1;
+      
+      // Select random questions
+      const questions = [];
+      const questionCount = Math.min(count, questionTitles.length);
+      
+      // Shuffle and pick questions
+      const shuffled = [...questionTitles].sort(() => 0.5 - Math.random());
+      for (let j = 0; j < questionCount; j++) {
+        questions.push(shuffled[j]);
+      }
+      
+      mockData[dateKey] = {
+        count,
+        questions
+      };
+      
+      total += count;
     }
-  }, [userActivity, selectedYear]);
+    
+    setActivityData(mockData);
+    setTotalSolved(total);
+    
+    // Format data for the calendar component
+    const formatted: {[key: string]: number} = {};
+    Object.keys(mockData).forEach(date => {
+      formatted[date] = mockData[date].count;
+    });
+    setFormattedData(formatted);
+  }, [selectedYear, today]);
   
   // Define color scale based on number of problems solved
-  const colorScale = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
-  
-  // Generate the heatmap data
-  const getDaysArray = () => {
-    // Create a date object pointing to January 1st of the selected year
-    const yearStart = new Date(selectedYear, 0, 1);
-    // Get the day of week for January 1st (0 = Sunday, 6 = Saturday)
-    const firstDayOfWeek = yearStart.getDay();
-    
-    // Calculate the number of days in the selected year
-    const daysInYear = (selectedYear % 4 === 0 && (selectedYear % 100 !== 0 || selectedYear % 400 === 0)) ? 366 : 365;
-    
-    // Calculate number of weeks needed to display the full year
-    // Add 1 week to account for the offset caused by the first day of the year not being a Sunday
-    const weeksNeeded = Math.ceil((daysInYear + firstDayOfWeek) / 7);
-    
-    const days = [];
-    // Create 7 rows for each day of the week (0 = Sunday, 6 = Saturday)
-    for (let i = 0; i < 7; i++) {
-      const row = [];
-      // Create cells for each week
-      for (let j = 0; j < weeksNeeded; j++) {
-        // Calculate the day offset from the start of the year
-        // (j * 7) moves us to the correct week
-        // (i - firstDayOfWeek) adjusts for the day of the week
-        const dayOffset = (j * 7) + i - firstDayOfWeek;
-        
-        // Create a date for this cell
-        const cellDate = new Date(yearStart);
-        cellDate.setDate(yearStart.getDate() + dayOffset);
-        
-        // Skip days outside the selected year
-        if (cellDate.getFullYear() !== selectedYear) {
-          // Push an empty cell for days outside the year
-          row.push({
-            date: '',
-            value: 0,
-            color: 'transparent',
-            isToday: false,
-            isValid: false
-          });
-          continue;
-        }
-        
-        const dateKey = cellDate.toISOString().split('T')[0];
-        const value = activityData[dateKey] || 0;
-        
-        // Determine the color based on the value
-        let colorIndex = 0;
-        if (value > 0) {
-          colorIndex = Math.min(Math.floor(value / 2) + 1, 4); // Adjust coloring logic as needed
-        }
-        
-        const today = new Date();
-        const isToday = cellDate.getDate() === today.getDate() && 
-                       cellDate.getMonth() === today.getMonth() && 
-                       cellDate.getFullYear() === today.getFullYear();
-        
-        row.push({
-          date: dateKey,
-          value,
-          color: colorScale[colorIndex],
-          isToday,
-          isValid: true
-        });
-      }
-      days.push(row);
-    }
-    return days;
+  // Light green for 1-4, medium green for 5-9, dark green for 10+
+  const panelColors = {
+    level0: '#161b22', // empty
+    level1: '#0e4429', // 1-4 problems
+    level2: '#006d32', // 5-9 problems
+    level3: '#26a641', // 10+ problems
+    level4: '#39d353'  // Not used, but required by the library
   };
-  
-  const daysMatrix = getDaysArray();
-  
-  // Get month labels positions
-  const getMonthLabels = () => {
-    const months = [];
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    
-    // For each month in the year
-    for (let month = 0; month < 12; month++) {
-      // Create a date for the first day of the month
-      const firstDayOfMonth = new Date(selectedYear, month, 1);
-      
-      // Get the day of the year (0-indexed)
-      const startOfYear = new Date(selectedYear, 0, 1);
-      const dayOfYear = Math.floor((firstDayOfMonth.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000));
-      
-      // Calculate the week index
-      const firstDayOfWeek = startOfYear.getDay(); // 0 = Sunday, 6 = Saturday
-      const weekIndex = Math.floor((dayOfYear + firstDayOfWeek) / 7);
-      
-      months.push({
-        name: monthNames[month],
-        index: weekIndex
-      });
-    }
-    
-    return months;
-  };
-  
-  const monthLabels = getMonthLabels();
-  
-  // Calculate total weeks in the visualization
-  const totalWeeks = daysMatrix[0]?.length || 52;
   
   // For loading state
-  if (isLoading) {
+  if (Object.keys(formattedData).length === 0) {
     return (
       <div className="rounded-lg bg-[rgb(24,24,27)] p-4 mb-4">
         <Skeleton className="h-6 w-48 mb-4 bg-[rgb(35,35,40)]" />
@@ -178,6 +134,31 @@ export default function ActivityHeatmap() {
       </div>
     );
   }
+  
+  // Function to determine tooltip content for a date
+  const getTooltipContent = (date: string) => {
+    if (!activityData[date]) return "0 problems solved";
+    
+    const { count, questions } = activityData[date];
+    return (
+      <div className="max-w-xs">
+        <p className="font-medium">{count} problems solved on {new Date(date).toLocaleDateString()}</p>
+        <ul className="text-xs mt-1 max-h-48 overflow-auto">
+          {questions.map((q, i) => (
+            <li key={i} className="mt-1">• {q}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+  
+  // Function to transform the count value to color
+  const transformDayCount = (count: number) => {
+    if (count === 0) return 0;
+    if (count >= 1 && count <= 4) return 1;
+    if (count >= 5 && count <= 9) return 2;
+    return 3; // 10+
+  };
   
   return (
     <div className="rounded-lg bg-[rgb(24,24,27)] p-4 mb-4">
@@ -203,63 +184,66 @@ export default function ActivityHeatmap() {
       
       <div className="overflow-x-auto">
         <div className="min-w-[750px]">
-          {/* Month labels */}
-          <div className="flex text-xs text-gray-400 mb-1 pl-8 relative">
-            {monthLabels.map((month, i) => (
-              <div 
-                key={i}
-                className="absolute transform -translate-x-1/2"
-                style={{ left: `${(month.index / totalWeeks) * 100}%` }}
-              >
-                {month.name}
-              </div>
-            ))}
-          </div>
-          
-          <div className="flex">
-            {/* Day of week labels */}
-            <div className="pr-2 flex flex-col justify-around text-xs text-gray-400 h-[90px]">
-              <div>Mon</div>
-              <div>Wed</div>
-              <div>Fri</div>
-            </div>
-            
-            {/* Heatmap grid */}
-            <div className="flex-grow">
-              <div className="grid grid-rows-7 gap-[2px]">
-                {daysMatrix.map((row, rowIndex) => (
-                  <div key={rowIndex} className="flex gap-[2px]">
-                    {row.map((cell, colIndex) => (
-                      cell.isValid ? (
-                        <div 
-                          key={`${rowIndex}-${colIndex}`} 
-                          className={`w-[10px] h-[10px] rounded-sm ${cell.isToday ? 'ring-1 ring-gray-300' : ''}`}
-                          style={{ backgroundColor: cell.color }}
-                          title={`${cell.date}: ${cell.value} problems solved`}
+          <TooltipProvider>
+            <div className="relative">
+              <Calendar 
+                values={formattedData}
+                until={endDate.toISOString().split('T')[0]}
+                transformDayCount={transformDayCount}
+                panelColors={panelColors}
+                weekNames={['', 'Mon', '', 'Wed', '', 'Fri', '']}
+                monthNames={['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
+                monthLabelAttrs={{
+                  'text-anchor': 'start',
+                  'dominant-baseline': 'text-before-edge',
+                  fontSize: '12px',
+                  fill: '#a3a3a3'
+                }}
+                weekLabelAttrs={{
+                  'text-anchor': 'end',
+                  'dominant-baseline': 'middle',
+                  fontSize: '12px',
+                  fill: '#a3a3a3'
+                }}
+                panelAttributes={(day: string) => ({
+                  'data-date': day,
+                  rx: '2',
+                  ry: '2',
+                  'stroke-width': 0
+                })}
+                renderPanel={(day: string, value: number, fill: string) => {
+                  return (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <rect
+                          x="0"
+                          y="0"
+                          width="10"
+                          height="10"
+                          fill={fill}
+                          data-date={day}
+                          rx="2"
+                          ry="2"
+                          stroke-width="0"
                         />
-                      ) : (
-                        <div 
-                          key={`${rowIndex}-${colIndex}`} 
-                          className="w-[10px] h-[10px]"
-                        />
-                      )
-                    ))}
-                  </div>
-                ))}
-              </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="top">
+                        {getTooltipContent(day)}
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                }}
+              />
             </div>
-          </div>
+          </TooltipProvider>
           
           <div className="flex items-center justify-end mt-2 text-xs text-gray-400">
             <span>Less</span>
             <div className="flex items-center mx-2">
-              {colorScale.map((color, i) => (
-                <div 
-                  key={i} 
-                  className="w-3 h-3 mx-[1px]" 
-                  style={{ backgroundColor: color }}
-                ></div>
-              ))}
+              <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: panelColors.level0 }}></div>
+              <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: panelColors.level1 }}></div>
+              <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: panelColors.level2 }}></div>
+              <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: panelColors.level3 }}></div>
             </div>
             <span>More</span>
           </div>
