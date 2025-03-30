@@ -123,13 +123,13 @@ export default function Dashboard() {
     },
   });
 
-  // Fetch problems from external API
+  // Fetch problems from external API via our server proxy
   const { data: externalProblems, isLoading: isLoadingExternal } = useQuery({
     queryKey: ['external-problems'],
     queryFn: async () => {
-      const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/get_problems');
+      const response = await apiRequest('/api/problems-proxy');
       const data = await response.json();
-      return data;
+      return data.problems;
     },
   });
 
