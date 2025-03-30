@@ -74,9 +74,16 @@ export default function ActivityHeatmap() {
                          (user?.displayName ? user.displayName.toLowerCase().replace(/\s+/g, '') : '');
         console.log("Using username for API call:", username);
         
-        // Make the actual API call
+        // Make the actual API call using POST request with username in the body
         const response = await fetch(
-          `https://dspcoder-backend-prod.azurewebsites.net/api/get_user_contribution_heatmap?username=${encodeURIComponent(username)}`
+          'https://dspcoder-backend-prod.azurewebsites.net/api/get_user_contribution_heatmap',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username })
+          }
         );
         
         if (!response.ok) {
