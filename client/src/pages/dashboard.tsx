@@ -675,6 +675,16 @@ export default function Dashboard() {
                   </SelectContent>
                 </Select>
               </div>
+              
+              <Button 
+                className="h-9 bg-[#56B2FF] hover:bg-[#4CA0E6] text-white text-xs px-4"
+                onClick={() => {
+                  // Implement search functionality if needed
+                  console.log("Search filters applied");
+                }}
+              >
+                Search
+              </Button>
             </div>
             
             {/* Problem list */}
