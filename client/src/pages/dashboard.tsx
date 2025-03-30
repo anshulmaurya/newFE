@@ -497,83 +497,162 @@ export default function Dashboard() {
           <div className="hidden lg:block w-64 fixed right-0 top-16 bottom-0 overflow-y-auto bg-[rgb(14,14,16)]">
             <div className="px-4 py-2 h-full">
               <div className="mb-6">
-                <h3 className="text-sm font-bold mb-3">Top Companies</h3>
-                
-                <div className="space-y-2">
-                  {companyTrends.map((company, idx) => (
-                    <div key={idx} className="flex items-center">
-                      <div className="text-xs text-gray-400 mr-2 w-3.5 h-3.5 flex items-center justify-center">
-                        <div className={`w-2 h-2 rounded-full ${
-                          idx === 0 ? "bg-blue-500" : 
-                          idx === 1 ? "bg-purple-500" : 
-                          idx === 2 ? "bg-green-500" : 
-                          idx === 3 ? "bg-yellow-500" : "bg-red-500"
-                        }`}></div>
-                      </div>
-                      <div className="text-xs text-gray-300 w-20">{company.name}</div>
-                      <div className="flex-grow h-1 bg-[rgb(24,24,27)] rounded-full mx-2">
-                        <div 
-                          className={`h-full rounded-full ${
-                            idx === 0 ? "bg-blue-500" :
-                            idx === 1 ? "bg-purple-500" :
-                            idx === 2 ? "bg-green-500" :
-                            idx === 3 ? "bg-yellow-500" : "bg-red-500"
-                          }`}
-                          style={{ width: `${(company.count / companyTrends[0].count) * 100}%` }}
-                        ></div>
-                      </div>
-                      <div className="text-xs text-gray-400 w-5 text-right">{company.count}</div>
+                <div className="bg-[rgb(24,24,27)] rounded-lg p-3">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-sm font-bold">Day 30</h3>
+                    <span className="text-xs text-gray-400">17:21:41 left</span>
+                    <div className="flex space-x-2">
+                      <button className="text-gray-400 hover:text-white">
+                        <ChevronDown className="h-4 w-4 rotate-90" />
+                      </button>
+                      <button className="text-gray-400 hover:text-white">
+                        <ChevronDown className="h-4 w-4 -rotate-90" />
+                      </button>
                     </div>
-                  ))}
+                  </div>
+                  
+                  {/* Calendar */}
+                  <div className="grid grid-cols-7 gap-1 mb-3">
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                      <div key={`header-${idx}`} className="text-[10px] text-center text-gray-500">
+                        {day}
+                      </div>
+                    ))}
+                    
+                    {/* First week - blank days + days 1-2 */}
+                    {[...Array(5)].map((_, idx) => (
+                      <div key={`empty-${idx}`} className="text-center"></div>
+                    ))}
+                    <div className="text-[10px] text-center flex flex-col items-center">
+                      <span>1</span>
+                      <div className="w-1 h-1 rounded-full bg-red-500 mt-1"></div>
+                    </div>
+                    <div className="text-[10px] text-center flex flex-col items-center">
+                      <span>2</span>
+                      <div className="w-1 h-1 rounded-full bg-red-500 mt-1"></div>
+                    </div>
+                    
+                    {/* Calendar days 3-29 */}
+                    {[...Array(27)].map((_, idx) => (
+                      <div key={`day-${idx + 3}`} className="text-[10px] text-center flex flex-col items-center">
+                        <span>{idx + 3}</span>
+                        <div className="w-1 h-1 rounded-full bg-red-500 mt-1"></div>
+                      </div>
+                    ))}
+                    
+                    {/* Day 30 - Current day */}
+                    <div className="text-[10px] text-center">
+                      <div className="flex flex-col items-center justify-center w-6 h-6 rounded-full bg-green-500 mx-auto">
+                        <span className="text-black font-bold">30</span>
+                      </div>
+                    </div>
+                    
+                    {/* Day 31 */}
+                    <div className="text-[10px] text-center">31</div>
+                  </div>
+                  
+                  {/* Weekly Premium */}
+                  <div className="bg-[#2d2315] rounded-md p-2 mb-2">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-xs text-orange-400 font-medium">Weekly Premium</span>
+                      <span className="text-xs text-gray-400">1 day left</span>
+                    </div>
+                    <div className="flex justify-between">
+                      {['W1', 'W2', 'W3', 'W4'].map((week) => (
+                        <div key={week} className="text-[10px] text-orange-400 px-1">
+                          {week}
+                        </div>
+                      ))}
+                      <div className="bg-orange-400 rounded-full w-6 h-6 flex items-center justify-center text-[10px] text-black font-medium">
+                        W5
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Redeem */}
+                  <div className="flex justify-between items-center mt-3">
+                    <div className="flex items-center space-x-2">
+                      <div className="bg-[#1a2f23] text-green-500 p-1 rounded">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M6 9l6 6 6-6" />
+                        </svg>
+                      </div>
+                      <span className="text-xs text-gray-300">0</span>
+                      <span className="text-xs text-green-500">Redeem</span>
+                    </div>
+                    <span className="text-xs text-gray-400">Rules</span>
+                  </div>
                 </div>
               </div>
               
-              {/* Study Recommendations */}
+              {/* Session Statistics */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold mb-3">Recommended</h3>
-                <div className="bg-[rgb(24,24,27)] rounded-md p-3">
-                  <div className="text-xs font-medium text-gray-400 mb-2">Topics to focus on</div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div className="text-xs text-gray-300">Memory Management</div>
-                      <div className="text-xs text-green-500">85% mastered</div>
+                <div className="bg-[rgb(24,24,27)] rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-sm font-bold">Session</h3>
+                    <div className="bg-[rgb(35,35,37)] rounded-md text-xs text-gray-400 px-3 py-1">
+                      Anonymous
                     </div>
-                    <div className="w-full h-1 bg-[rgb(32,32,35)] rounded-full">
-                      <div className="h-full bg-green-500 rounded-full" style={{ width: "85%" }}></div>
+                    <button className="text-gray-400">
+                      <Settings className="h-4 w-4" />
+                    </button>
+                  </div>
+                  
+                  <div className="flex justify-between mb-3">
+                    <div className="relative flex items-center justify-center">
+                      {/* Circular progress background */}
+                      <div className="w-20 h-20 rounded-full border-4 border-[rgb(35,35,37)] relative">
+                        {/* Progress segments */}
+                        <div className="absolute top-0 left-0 w-full h-full rounded-full border-4 border-[rgb(35,35,37)] border-t-green-500 border-r-yellow-500 -rotate-45"></div>
+                      </div>
+                      
+                      {/* Center text */}
+                      <div className="absolute flex flex-col items-center justify-center">
+                        <span className="text-2xl font-bold">322</span>
+                        <span className="text-xs text-gray-500">3505</span>
+                      </div>
                     </div>
                     
-                    <div className="flex justify-between items-center">
-                      <div className="text-xs text-gray-300">Multithreading</div>
-                      <div className="text-xs text-yellow-500">45% mastered</div>
-                    </div>
-                    <div className="w-full h-1 bg-[rgb(32,32,35)] rounded-full">
-                      <div className="h-full bg-yellow-500 rounded-full" style={{ width: "45%" }}></div>
-                    </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <div className="text-xs text-gray-300">RTOS</div>
-                      <div className="text-xs text-red-500">25% mastered</div>
-                    </div>
-                    <div className="w-full h-1 bg-[rgb(32,32,35)] rounded-full">
-                      <div className="h-full bg-red-500 rounded-full" style={{ width: "25%" }}></div>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-green-500 text-sm mr-2">Easy</span>
+                        <div className="flex items-center">
+                          <span className="text-white text-sm mr-1">101</span>
+                          <span className="text-gray-500 text-sm">/870</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-yellow-500 text-sm mr-2">Medium</span>
+                        <div className="flex items-center">
+                          <span className="text-white text-sm mr-1">208</span>
+                          <span className="text-gray-500 text-sm">/1819</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-red-500 text-sm mr-2">Hard</span>
+                        <div className="flex items-center">
+                          <span className="text-white text-sm mr-1">13</span>
+                          <span className="text-gray-500 text-sm">/816</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
               
-              {/* Additional resources section */}
+              {/* Resources section */}
               <div className="mb-6">
                 <h3 className="text-sm font-bold mb-3">Resources</h3>
-                <div className="space-y-2">
-                  <a href="#" className="block text-xs text-gray-400 hover:text-white py-2 px-3 rounded-md hover:bg-[rgb(24,24,27)] transition-colors">
-                    Embedded Systems Interview Guide
-                  </a>
-                  <a href="#" className="block text-xs text-gray-400 hover:text-white py-2 px-3 rounded-md hover:bg-[rgb(24,24,27)] transition-colors">
-                    RTOS Fundamentals
-                  </a>
-                  <a href="#" className="block text-xs text-gray-400 hover:text-white py-2 px-3 rounded-md hover:bg-[rgb(24,24,27)] transition-colors">
-                    Memory Management Patterns
-                  </a>
+                <div className="bg-[rgb(24,24,27)] rounded-lg p-4 flex flex-col items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-[rgb(35,35,37)] flex items-center justify-center mb-3">
+                    <Clock className="h-6 w-6 text-gray-500" />
+                  </div>
+                  <p className="text-gray-400 text-sm text-center mb-1">Coming Soon</p>
+                  <p className="text-gray-500 text-xs text-center">
+                    Our curated learning resources for embedded systems are being prepared and will be available soon.
+                  </p>
                 </div>
               </div>
             </div>
