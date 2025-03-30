@@ -578,9 +578,9 @@ export default function Dashboard() {
         </div>
             
         {/* Main content - scrollable */}
-        <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto px-4 lg:px-0">
+        <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto px-4 lg:px-0 pt-0">
           {/* Main content area */}
-          <div className="flex-grow py-2 px-2 space-y-4">
+          <div className="flex-grow pt-0 pb-2 px-2 space-y-4">
 
             {/* Selected Bundle Details */}
             {selectedBundle && bundles[selectedBundle as keyof typeof bundles] && (
@@ -622,7 +622,7 @@ export default function Dashboard() {
             )}
             
             {/* Filters */}
-            <div className="flex flex-wrap md:flex-nowrap gap-2 mb-2 items-center sticky top-0 z-10 bg-[rgb(14,14,16)] pt-0 pb-2 -mx-2 px-2 shadow-md">
+            <div className="flex flex-wrap md:flex-nowrap gap-2 mb-0 items-center sticky top-0 z-10 bg-[rgb(14,14,16)] pt-0 pb-2 -mx-2 px-2 shadow-md">
               <div className="w-full md:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3.5 w-3.5" />
@@ -693,7 +693,7 @@ export default function Dashboard() {
             </div>
             
             {/* Problem list */}
-            <div className="bg-[rgb(16,16,18)] border border-[rgb(45,45,50)] rounded-lg overflow-hidden shadow-lg">
+            <div className="bg-[rgb(16,16,18)] border border-[rgb(45,45,50)] rounded-lg overflow-hidden shadow-lg mt-0">
               <table className="w-full border-collapse table-fixed">
                 <thead>
                   <tr className="bg-gradient-to-r from-[rgb(21,21,24)] to-[rgb(25,25,28)] text-gray-300 border-b border-[rgb(45,45,50)]">
