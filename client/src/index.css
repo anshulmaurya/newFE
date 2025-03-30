@@ -61,7 +61,7 @@
   body {
     @apply font-sans antialiased text-foreground;
     background-color: rgb(14, 14, 16);
-    padding-top: 38px; /* Height of the header */
+    padding-top: 44px; /* Height of the header */
   }
 }
 
