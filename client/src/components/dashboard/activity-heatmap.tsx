@@ -171,10 +171,8 @@ export default function ActivityHeatmap() {
     const firstDate = dates[0];
     const firstDay = firstDate.getDay(); // 0 = Sunday, 1 = Monday, ...
     
-    // Add empty slots for days before the first date
-    for (let i = 0; i < firstDay; i++) {
-      currentWeek.push(null as any);
-    }
+    // We're skipping the empty slots at the beginning of the year
+    // to ensure a consistent calendar view without extra blank spaces
     
     dates.forEach(date => {
       const day = date.getDay(); // 0 = Sunday, 1 = Monday, ...
@@ -203,17 +201,6 @@ export default function ActivityHeatmap() {
         </div>
         
         <div className="flex">
-          {/* Weekday labels */}
-          <div className="flex flex-col mr-3 text-xs text-gray-400 w-14">
-            <div className="h-3"></div> {/* Empty space for alignment */}
-            <div className="h-3 flex items-center justify-start">Mon</div>
-            <div className="h-3"></div>
-            <div className="h-3 flex items-center justify-start">Wed</div>
-            <div className="h-3"></div>
-            <div className="h-3 flex items-center justify-start">Fri</div>
-            <div className="h-3"></div>
-          </div>
-          
           {/* Calendar cells */}
           <div className="flex-1 grid" style={{ gridTemplateColumns: 'repeat(52, minmax(0, 1fr))' , gap: '2px' }}>
             {weeks.map((week, weekIndex) => (
