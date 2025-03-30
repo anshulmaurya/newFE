@@ -153,7 +153,7 @@ export default function Notes() {
         textDark: "text-gray-500",
         sidebarBg: "bg-[rgb(36,36,38)]",
         borderColor: "border-gray-700",
-        highlight: "bg-[#56B2FF]/10",
+        highlight: "bg-[rgb(214,251,65)]/20",
         codeBlock: "bg-gray-900 text-gray-100",
         infoBlock: "bg-[rgb(40,50,70)] border-[rgb(60,130,210)]",
         infoText: "text-blue-300",
@@ -166,7 +166,7 @@ export default function Notes() {
         textDark: "text-gray-500",
         sidebarBg: "bg-gray-100",
         borderColor: "border-gray-200",
-        highlight: "bg-[#56B2FF]/10",
+        highlight: "bg-[rgb(214,251,65)]/20",
         codeBlock: "bg-gray-900 text-gray-100",
         infoBlock: "bg-blue-50 border-blue-400",
         infoText: "text-blue-700",
@@ -197,7 +197,7 @@ export default function Notes() {
                   </svg>
                 </div>
                 <h1 className="font-display font-bold text-lg tracking-tight ml-1">
-                  <span className="text-white">dsp</span><span className="text-[rgb(214,251,65)]">coder.com</span>
+                  <span className="text-white">dsp</span><span className="text-[#56B2FF]">coder.com</span>
                 </h1>
               </div>
             </div>
@@ -227,7 +227,7 @@ export default function Notes() {
             
             <a 
               href="#" 
-              className="ml-3 px-4 py-1.5 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-xs text-black font-bold transition-all inline-flex items-center gap-1.5 shadow-[0_0_10px_rgba(214,251,65,0.3)] hover:shadow-[0_0_15px_rgba(214,251,65,0.5)] border border-[rgb(234,255,85)]"
+              className="ml-3 px-4 py-1.5 bg-[#56B2FF] hover:bg-[#3D9DF5] rounded-md text-xs text-white font-bold transition-all inline-flex items-center gap-1.5 shadow-[0_0_10px_rgba(86,178,255,0.3)] hover:shadow-[0_0_15px_rgba(86,178,255,0.5)] border border-[#78C1FF]"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -278,7 +278,7 @@ export default function Notes() {
             
             <a 
               href="#"
-              className="text-black py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[rgb(214,251,65)] shadow-[0_0_10px_rgba(214,251,65,0.3)] border border-[rgb(234,255,85)] text-sm"
+              className="text-white py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[#56B2FF] shadow-[0_0_10px_rgba(86,178,255,0.3)] border border-[#78C1FF] text-sm"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
