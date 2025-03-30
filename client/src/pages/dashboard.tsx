@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/select';
 import ProgressStats from '@/components/dashboard/progress-stats';
 import ActivityHeatmap from '@/components/dashboard/activity-heatmap';
+import SkillBadges from '@/components/dashboard/skill-badges';
 import { 
   CheckCircle,
   Circle, 
@@ -585,6 +586,9 @@ export default function Dashboard() {
             
             {/* Activity Heatmap */}
             <ActivityHeatmap />
+            
+            {/* Skill Badges */}
+            <SkillBadges />
 
             {/* Selected Bundle Details */}
             {selectedBundle && bundles[selectedBundle as keyof typeof bundles] && (
