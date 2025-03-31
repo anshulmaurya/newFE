@@ -19,7 +19,8 @@ import {
   MoreHorizontal,
   Building2,
   Tags,
-  PercentSquare
+  PercentSquare,
+  Play
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -397,6 +398,38 @@ export default function CodingEnvironment() {
 
 
         </TooltipProvider>
+      </div>
+      
+      {/* Action buttons for code execution */}
+      <div className="absolute top-0 left-[80px] z-10 flex items-center h-12 px-4 border-b border-[#1E1E1E] bg-[#252526]">
+        <Button 
+          variant="ghost"
+          className="h-8 px-4 mr-3 bg-yellow-500 hover:bg-yellow-600 text-black"
+          onClick={() => {
+            // Will implement API call later
+            toast({
+              title: 'Run Code',
+              description: 'Running your code...',
+            });
+          }}
+        >
+          <Play className="h-4 w-4 mr-2" />
+          Run
+        </Button>
+        <Button 
+          variant="ghost"
+          className="h-8 px-4 bg-yellow-500 hover:bg-yellow-600 text-black"
+          onClick={() => {
+            // Will implement API call later
+            toast({
+              title: 'Submit Solution',
+              description: 'Submitting your solution for evaluation...',
+            });
+          }}
+        >
+          <Send className="h-4 w-4 mr-2" />
+          Submit
+        </Button>
       </div>
       
       {/* Main content area */}
