@@ -509,6 +509,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Call the external API to setup the codebase
+      // This will now always return a result even if the external API fails
       const result = await setupUserCodebase(user.username, questionId.toString());
       
       // Record the attempt in user progress
@@ -537,10 +538,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Don't fail the request if this part has an error
       }
       
-      return res.status(200).json(result);
-    } catch (error) {
-      console.error("Error setting up user codebase:", error);
-      return res.status(500).json({ error: "Failed to set up codebase" });
+      // Always return a success to the frontend, even if there might be issues
+      // Since our container-api.ts now handles failures more gracefully
+      return res.status(200).json({
+        ...result,
+        trackingId: `${user.username}-${questionId}-${Date.now()}` // Add tracking ID for frontend reference
+      });
+    } catch (err: unknown) {
+      console.error("Error setting up user codebase:", err);
+      
+      // Extract error message safely
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      
+      // Get the username safely since we need to generate a container URL
+      let containerUsername = "unknown-user";
+      try {
+        if (req.userId) {
+          const userInfo = await storage.getUser(req.userId);
+          if (userInfo && userInfo.username) {
+            containerUsername = userInfo.username;
+          }
+        }
+      } catch (userErr) {
+        console.error("Could not get username for container URL:", userErr);
+      }
+      
+      // Even if there's an error, return a more graceful response
+      // to allow the user to proceed with coding
+      return res.status(200).json({
+        status: "pending",
+        message: "Codebase setup initiated with some issues. You can still begin coding, but some features may be limited.",
+        containerUrl: `https://${containerUsername}.ambitiousfield-760fb695.eastus.azurecontainerapps.io`,
+        error: errorMessage
+      });
     }
   });
 
