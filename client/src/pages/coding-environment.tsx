@@ -126,7 +126,7 @@ export default function CodingEnvironment() {
   const [questionId, setQuestionId] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<'description' | 'solution' | 'companies' | 'discussion'>('description');
+  const [activeSection, setActiveSection] = useState<'description' | 'solution' | 'discussion'>('description');
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState<Comment[]>(SAMPLE_COMMENTS);
   const { user } = useAuth();
@@ -195,7 +195,7 @@ export default function CodingEnvironment() {
     setIsFullscreen(!isFullscreen);
   };
   
-  const toggleDescription = (section?: 'description' | 'solution' | 'companies' | 'discussion') => {
+  const toggleDescription = (section?: 'description' | 'solution' | 'discussion') => {
     if (section && !isDescriptionOpen) {
       setIsDescriptionOpen(true);
       setActiveSection(section);
@@ -323,24 +323,7 @@ export default function CodingEnvironment() {
             </Tooltip>
           </div>
 
-          {/* Companies button */}
-          <div className="my-2">
-            <Tooltip delayDuration={300}>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant={activeSection === 'companies' && isDescriptionOpen ? "secondary" : "ghost"}
-                  size="icon" 
-                  onClick={() => toggleDescription('companies')}
-                  className="h-12 w-12 rounded-xl hover:bg-[#2D2D30]"
-                >
-                  <Building2 className="h-5 w-5 text-gray-400" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Companies & Tags</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
+
           
           {/* Discussion button */}
           <div className="my-2">
@@ -500,69 +483,7 @@ export default function CodingEnvironment() {
                     </div>
                   )}
                   
-                  {activeSection === 'companies' && (
-                    <div className="space-y-6">
-                      {/* Companies section */}
-                      {problem.companies && problem.companies.length > 0 && (
-                        <div>
-                          <h3 className="font-medium text-lg mb-3">Companies that ask this question:</h3>
-                          <div className="flex flex-wrap gap-2">
-                            {problem.companies.map((company, idx) => (
-                              <Badge key={idx} variant="outline" className="bg-[#2D2D30] text-white">
-                                {company}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      
-                      {/* Tags section */}
-                      {problem.tags && problem.tags.length > 0 && (
-                        <div>
-                          <h3 className="font-medium text-lg mb-3">Tags:</h3>
-                          <div className="flex flex-wrap gap-2">
-                            {problem.tags.map((tag, idx) => (
-                              <Badge key={idx} variant="outline" className="bg-[#3E3E42] text-white">
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      
-                      {/* Empty state */}
-                      {(!problem.companies || problem.companies.length === 0) && 
-                       (!problem.tags || problem.tags.length === 0) && (
-                        <div className="text-center py-12">
-                          <Info className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-                          <p className="text-gray-400">No company or tag information available for this problem.</p>
-                        </div>
-                      )}
-                      
-                      {/* Problem metrics */}
-                      {(problem.acceptance_rate || problem.type) && (
-                        <div>
-                          <h3 className="font-medium text-lg mb-3">Problem Metrics</h3>
-                          
-                          {problem.acceptance_rate && (
-                            <div className="flex items-center justify-between mb-2">
-                              <span>Acceptance Rate:</span>
-                              <Badge variant="outline" className="bg-[#3E3E42]">
-                                {problem.acceptance_rate.toFixed(1)}%
-                              </Badge>
-                            </div>
-                          )}
-                          
-                          {problem.type && (
-                            <div className="flex items-center justify-between">
-                              <span>Category:</span>
-                              <span className="text-sm">{problem.type}</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
+
                   
                   {activeSection === 'discussion' && (
                     <div className="space-y-6">
