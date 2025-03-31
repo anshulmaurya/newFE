@@ -20,6 +20,8 @@ import JDBasedPage from '@/pages/jd-based';
 
 // Import notes pages
 import GettingStarted from '@/pages/notes/getting-started';
+import GitbookDocumentation from '@/pages/notes/gitbook-documentation';
+import Quickstart from '@/pages/notes/quickstart';
 import CommunicationProtocols from '@/pages/notes/communication-protocols';
 import DataStructures from '@/pages/notes/data-structures';
 
@@ -48,6 +50,8 @@ function Router() {
       {/* Notes routes */}
       <Route path="/notes" component={Notes} />
       <Route path="/notes/getting-started" component={GettingStarted} />
+      <Route path="/notes/gitbook-documentation" component={GitbookDocumentation} />
+      <Route path="/notes/quickstart" component={Quickstart} />
       <Route path="/notes/communication-protocols" component={CommunicationProtocols} />
       <Route path="/notes/data-structures" component={DataStructures} />
       

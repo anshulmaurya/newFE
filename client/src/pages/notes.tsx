@@ -35,14 +35,13 @@ const notesTopics: TopicSection[] = [
         id: "gitbook-documentation",
         label: "GitBook Documentation",
         icon: <BookOpen className="h-4 w-4 mr-2" />,
-        path: "/notes/getting-started",
+        path: "/notes/gitbook-documentation",
       },
       {
         id: "quickstart", 
         label: "Quickstart",
         icon: <Zap className="h-4 w-4 mr-2" />,
-        path: "/notes/getting-started",
-        active: true
+        path: "/notes/quickstart",
       },
       {
         id: "importing-content",
@@ -278,43 +277,49 @@ export default function Notes() {
                     {/* Main items */}
                     {topic.subsections && topic.subsections.map((section) => {
                       const isExpanded = section.expanded || false;
-                      const isActive = section.active || section.id === 'quickstart'; // for demo purposes
+                      const isActive = currentPath === section.path;
                       
                       return (
                         <div key={section.id} className="mb-1">
-                          <Link
-                            href={section.path}
-                          >
-                            <a className={`flex items-center w-full text-left px-3 py-1.5 rounded-md text-sm ${
+                          <div 
+                            onClick={() => section.path && setLocation(section.path)}
+                            className={`flex items-center w-full text-left px-3 py-1.5 rounded-md text-sm cursor-pointer ${
                               isActive 
                                 ? `${themeClasses.activeItem} ${darkMode ? 'text-white' : 'text-gray-900'} font-medium` 
                                 : `${darkMode ? 'text-gray-300 hover:bg-[rgb(35,35,40)]' : 'text-gray-600 hover:bg-gray-200'}`
                             }`}
-                            >
-                              {section.icon}
-                              <span>{section.label}</span>
-                              {section.expandable && (
-                                <ChevronDown className={`h-4 w-4 ml-auto transform transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                              )}
-                            </a>
-                          </Link>
+                          >
+                            {section.icon}
+                            <span>{section.label}</span>
+                            {section.expandable && (
+                              <ChevronDown 
+                                className={`h-4 w-4 ml-auto transform transition-transform ${isExpanded ? 'rotate-180' : ''}`} 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  section.expanded = !isExpanded;
+                                  setSelectedTopic(topic.id);
+                                }}
+                              />
+                            )}
+                          </div>
                           
                           {/* Section subsections */}
                           {section.expandable && section.subsections && isExpanded && (
                             <div className="py-1 ml-9 space-y-1">
                               {section.subsections.map((subsection: Subsection) => (
-                                <Link
+                                <div
                                   key={subsection.id}
-                                  href={subsection.path}
+                                  onClick={() => subsection.path && setLocation(subsection.path)}
+                                  className={`block text-sm py-1 px-3 rounded-md cursor-pointer ${
+                                    currentPath === subsection.path
+                                      ? `${themeClasses.activeItem} ${darkMode ? 'text-white' : 'text-gray-900'} font-medium`
+                                      : darkMode 
+                                        ? 'text-gray-400 hover:text-gray-200 hover:bg-[rgb(35,35,40)]' 
+                                        : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                                  }`}
                                 >
-                                  <a className={`block text-sm py-1 px-3 rounded-md ${
-                                    darkMode 
-                                      ? 'text-gray-400 hover:text-gray-200 hover:bg-[rgb(35,35,40)]' 
-                                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
-                                  }`}>
-                                    {subsection.label}
-                                  </a>
-                                </Link>
+                                  {subsection.label}
+                                </div>
                               ))}
                             </div>
                           )}
