@@ -1,20 +1,54 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
-import { ExternalLink, ArrowLeft, Check, AlertTriangle } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  Code, 
+  AlertTriangle, 
+  Maximize2,
+  Settings,
+  RefreshCw,
+  Monitor
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 import { fadeIn } from '@/lib/animation-utils';
+import { cn } from '@/lib/utils';
+
+interface ExampleData {
+  input: string;
+  output: string;
+  explanation?: string;
+}
+
+// Mock data until you have the real API to fetch problem content
+const mockExamples: ExampleData[] = [
+  {
+    input: "5\n1 2 3 4 5",
+    output: "5 4 3 2 1",
+    explanation: "The linked list 1 -> 2 -> 3 -> 4 -> 5 is reversed to 5 -> 4 -> 3 -> 2 -> 1."
+  }
+];
 
 export default function CodingEnvironment() {
   const [, setLocation] = useLocation();
   const [containerUrl, setContainerUrl] = useState<string | null>(null);
   const [problemId, setProblemId] = useState<string | null>(null);
   const [problemTitle, setProblemTitle] = useState<string | null>(null);
+  const [difficulty, setDifficulty] = useState<'Easy' | 'Medium' | 'Hard' | null>('Easy');
+  const [category, setCategory] = useState<string | null>('dsa');
+  const [companies, setCompanies] = useState<string[]>(['Qualcomm', 'Microsoft', 'Amazon']);
+  const [tags, setTags] = useState<string[]>(['Linked List']);
+  const [description, setDescription] = useState<string>("Given the head of a singly linked list, your task is to reverse the list and return the reversed version.");
+  const [examples, setExamples] = useState<ExampleData[]>(mockExamples);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -50,25 +84,29 @@ export default function CodingEnvironment() {
     enabled: !!problemId && !problemTitle,
   });
   
-  // Set problem title from query result if available
+  // Set problem title and other data from query result if available
   useEffect(() => {
-    if (problemData && !problemTitle) {
-      setProblemTitle(problemData.title);
+    if (problemData) {
+      if (!problemTitle) setProblemTitle(problemData.title);
+      if (problemData.difficulty) setDifficulty(problemData.difficulty);
+      if (problemData.category) setCategory(problemData.category);
+      // Set other problem data as needed
     }
   }, [problemData, problemTitle]);
   
-  const handleOpenEditor = () => {
-    if (containerUrl) {
-      // Open the container URL in a new tab
-      window.open(containerUrl, '_blank', 'noopener,noreferrer');
-      
-      // Show success toast
+  const refreshIframe = () => {
+    if (iframeRef.current && iframeRef.current.src) {
+      iframeRef.current.src = iframeRef.current.src;
       toast({
-        title: "Editor opened in new tab",
-        description: "You can now start coding in the online environment",
+        title: "Refreshing workspace",
+        description: "The coding environment is being refreshed",
         variant: "default",
       });
     }
+  };
+  
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
   };
   
   const goBack = () => {
@@ -79,84 +117,224 @@ export default function CodingEnvironment() {
       setLocation('/dashboard');
     }
   };
+
+  // Function to get difficulty badge color
+  const getDifficultyColor = (difficulty: string | null) => {
+    switch(difficulty) {
+      case 'Easy': return 'bg-green-500/15 text-green-500 hover:bg-green-500/20';
+      case 'Medium': return 'bg-yellow-500/15 text-yellow-500 hover:bg-yellow-500/20';
+      case 'Hard': return 'bg-red-500/15 text-red-500 hover:bg-red-500/20';
+      default: return 'bg-green-500/15 text-green-500 hover:bg-green-500/20';
+    }
+  };
   
   return (
     <motion.div 
       variants={fadeIn("up")} 
       initial="hidden" 
       animate="show"
-      className="container py-8 max-w-4xl"
+      className={cn(
+        "flex flex-col w-full h-screen overflow-hidden",
+        isFullscreen ? "p-0" : "p-4"
+      )}
     >
-      <Button 
-        variant="ghost" 
-        onClick={goBack}
-        className="mb-6"
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" /> Back to {problemId ? 'Problem' : 'Dashboard'}
-      </Button>
+      {!isFullscreen && (
+        <div className="flex items-center justify-between mb-2">
+          <Button 
+            variant="ghost" 
+            onClick={goBack}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" /> 
+            Back
+          </Button>
+          
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={refreshIframe} className="gap-1">
+              <RefreshCw className="h-3.5 w-3.5" />
+              Refresh
+            </Button>
+            <Button variant="outline" size="sm" onClick={toggleFullscreen} className="gap-1">
+              <Maximize2 className="h-3.5 w-3.5" />
+              Fullscreen
+            </Button>
+          </div>
+        </div>
+      )}
       
-      <Card className="shadow-lg border-2">
-        <CardHeader>
-          <CardTitle className="text-2xl flex items-center">
-            {isLoadingProblem && problemId && !problemTitle ? (
-              <Skeleton className="h-8 w-64" />
-            ) : (
-              problemTitle || "Coding Environment"
-            )}
-          </CardTitle>
-          <CardDescription>
-            Online IDE and development environment for solving embedded problems
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent>
-          {containerUrl ? (
-            <>
-              <Alert className="mb-6">
-                <Check className="h-4 w-4 text-green-500" />
+      <div className={cn(
+        "flex flex-grow border rounded-lg overflow-hidden",
+        isFullscreen ? "border-0 rounded-none" : "shadow-md"
+      )}>
+        {/* Left Panel - Problem Description */}
+        <div className={cn(
+          "flex flex-col overflow-y-auto",
+          isFullscreen ? "hidden" : "w-2/5"
+        )}>
+          <div className="p-4 border-b flex flex-col gap-2">
+            <div className="flex items-center gap-2 font-medium text-xl">
+              {isLoadingProblem && problemId && !problemTitle ? (
+                <Skeleton className="h-8 w-64" />
+              ) : (
+                problemTitle || "Reverse Linked List"
+              )}
+              <Code className="h-4 w-4 text-muted-foreground" />
+            </div>
+            
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge variant="outline" className={getDifficultyColor(difficulty)}>
+                {difficulty || 'Easy'}
+              </Badge>
+              
+              {category && (
+                <Badge variant="outline" className="bg-slate-100">
+                  Type: {category}
+                </Badge>
+              )}
+              
+              {tags && tags.length > 0 && (
+                <Badge variant="outline" className="bg-blue-500/10 text-blue-500">
+                  {tags[0]}
+                </Badge>
+              )}
+            </div>
+          </div>
+          
+          <Tabs defaultValue="description" className="w-full">
+            <TabsList className="w-full bg-muted/50 rounded-none border-b">
+              <TabsTrigger value="description" className="flex-1">Description</TabsTrigger>
+              <TabsTrigger value="examples" className="flex-1">Examples</TabsTrigger>
+              <TabsTrigger value="hints" className="flex-1">Hints</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="description" className="p-4 space-y-4 mt-0">
+              <div>
+                <h3 className="font-medium text-lg mb-2">Problem Description</h3>
+                <p className="text-sm">{description}</p>
+              </div>
+              
+              {companies && companies.length > 0 && (
+                <div>
+                  <h3 className="font-medium mb-2">Companies:</h3>
+                  <div className="flex gap-2 flex-wrap">
+                    {companies.map((company, idx) => (
+                      <Badge key={idx} variant="outline" className="bg-purple-500/10 text-purple-500">
+                        {company}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="examples" className="mt-0">
+              {examples.map((example, idx) => (
+                <div key={idx} className="p-4 border-b last:border-b-0">
+                  <h3 className="font-medium mb-2">Example {idx + 1}:</h3>
+                  
+                  <div className="mb-2">
+                    <div className="text-sm font-medium mb-1">Input:</div>
+                    <div className="bg-muted p-2 rounded-md font-mono text-xs whitespace-pre">
+                      {example.input}
+                    </div>
+                  </div>
+                  
+                  <div className="mb-2">
+                    <div className="text-sm font-medium mb-1">Output:</div>
+                    <div className="bg-muted p-2 rounded-md font-mono text-xs whitespace-pre">
+                      {example.output}
+                    </div>
+                  </div>
+                  
+                  {example.explanation && (
+                    <div>
+                      <div className="text-sm font-medium mb-1">Explanation:</div>
+                      <div className="text-xs">{example.explanation}</div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </TabsContent>
+            
+            <TabsContent value="hints" className="p-4 space-y-4 mt-0">
+              <Alert>
                 <AlertDescription>
-                  Your coding environment is ready! Click the button below to open it in a new tab.
+                  Consider using a three-pointer approach (prev, current, next) to reverse the linked list in-place.
+                </AlertDescription>
+              </Alert>
+            </TabsContent>
+          </Tabs>
+        </div>
+        
+        {/* Resizer */}
+        {!isFullscreen && (
+          <div className="w-1 hover:bg-blue-500 hover:cursor-col-resize flex-shrink-0 bg-border"></div>
+        )}
+        
+        {/* Right Panel - Code Editor */}
+        <div className={cn(
+          "flex flex-col bg-background",
+          isFullscreen ? "w-full" : "w-3/5"
+        )}>
+          {isFullscreen && (
+            <div className="flex items-center justify-between p-2 border-b">
+              <div className="font-medium">
+                {problemTitle || "Reverse Linked List"} - Coding Environment
+              </div>
+              <Button variant="ghost" size="sm" onClick={toggleFullscreen} className="gap-1">
+                <Maximize2 className="h-3.5 w-3.5" />
+                Exit Fullscreen
+              </Button>
+            </div>
+          )}
+          
+          {containerUrl ? (
+            <iframe 
+              ref={iframeRef}
+              src={containerUrl} 
+              className="flex-grow w-full border-0"
+              title="Coding Environment"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full p-8">
+              <Alert variant="destructive" className="mb-6 max-w-md">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  Container URL not found. Please go back and try setting up the codebase again.
                 </AlertDescription>
               </Alert>
               
-              <div className="flex flex-col gap-4">
-                <p className="text-sm text-muted-foreground">
-                  You'll be redirected to a fully configured VS Code-like environment where you can write, compile, and test your code. All necessary libraries and configurations are pre-installed.
-                </p>
-                
-                <div className="p-4 bg-muted rounded-lg break-all">
-                  <p className="font-mono text-xs">
-                    <span className="text-muted-foreground mr-2">Environment URL:</span> 
-                    {containerUrl}
-                  </p>
-                </div>
-              </div>
-            </>
-          ) : (
-            <Alert variant="destructive" className="mb-6">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                Container URL not found. Please go back and try setting up the codebase again.
-              </AlertDescription>
-            </Alert>
+              <Button onClick={goBack} className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Return to Dashboard
+              </Button>
+            </div>
           )}
-        </CardContent>
-        
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" onClick={goBack}>
-            Cancel
-          </Button>
+        </div>
+      </div>
+      
+      {/* Footer with controls - only visible when not in fullscreen */}
+      {!isFullscreen && containerUrl && (
+        <div className="py-2 px-4 mt-2 border rounded-lg flex items-center justify-between shadow-sm bg-background">
+          <div className="text-sm text-muted-foreground flex items-center gap-2">
+            <Monitor className="h-4 w-4" />
+            <span>Workspace running at:</span>
+            <span className="font-mono text-xs truncate max-w-[300px]">{containerUrl}</span>
+          </div>
           
-          <Button 
-            onClick={handleOpenEditor} 
-            disabled={!containerUrl}
-            className="gap-2"
-          >
-            <ExternalLink className="h-4 w-4" />
-            Open Coding Environment
-          </Button>
-        </CardFooter>
-      </Card>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" className="gap-1">
+              <Settings className="h-3.5 w-3.5" />
+              Settings
+            </Button>
+            <Button size="sm" variant="outline" onClick={refreshIframe} className="gap-1">
+              <RefreshCw className="h-3.5 w-3.5" />
+              Refresh
+            </Button>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }
