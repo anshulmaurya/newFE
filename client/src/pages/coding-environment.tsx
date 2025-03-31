@@ -6,9 +6,10 @@ import {
   Code, 
   AlertTriangle, 
   Maximize2,
-  Settings,
+  ChevronLeft,
+  ChevronRight,
   RefreshCw,
-  Monitor
+  Info
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,44 +21,51 @@ import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 import { fadeIn } from '@/lib/animation-utils';
 import { cn } from '@/lib/utils';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
-interface ExampleData {
-  input: string;
-  output: string;
-  explanation?: string;
+interface ProblemDescription {
+  id: string;
+  title: string;
+  difficulty: string;
+  type: string;
+  tags: string[];
+  companies: string[];
+  file_path: string;
+  likes: number;
+  dislikes: number;
+  successful_submissions: number;
+  failed_submissions: number;
+  acceptance_rate: number;
+  importance: string;
+  question_id: string;
+  readme: string;
+  solution: string;
 }
 
-// Mock data until you have the real API to fetch problem content
-const mockExamples: ExampleData[] = [
-  {
-    input: "5\n1 2 3 4 5",
-    output: "5 4 3 2 1",
-    explanation: "The linked list 1 -> 2 -> 3 -> 4 -> 5 is reversed to 5 -> 4 -> 3 -> 2 -> 1."
-  }
-];
+interface ProblemDescriptionResponse {
+  status: string;
+  message: string;
+  data: ProblemDescription;
+}
 
 export default function CodingEnvironment() {
   const [, setLocation] = useLocation();
   const [containerUrl, setContainerUrl] = useState<string | null>(null);
   const [problemId, setProblemId] = useState<string | null>(null);
-  const [problemTitle, setProblemTitle] = useState<string | null>(null);
-  const [difficulty, setDifficulty] = useState<'Easy' | 'Medium' | 'Hard' | null>('Easy');
-  const [category, setCategory] = useState<string | null>('dsa');
-  const [companies, setCompanies] = useState<string[]>(['Qualcomm', 'Microsoft', 'Amazon']);
-  const [tags, setTags] = useState<string[]>(['Linked List']);
-  const [description, setDescription] = useState<string>("Given the head of a singly linked list, your task is to reverse the list and return the reversed version.");
-  const [examples, setExamples] = useState<ExampleData[]>(mockExamples);
+  const [questionId, setQuestionId] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    // Extract container URL from query parameters
+    // Extract params from URL
     const queryParams = new URLSearchParams(window.location.search);
     
     const urlParam = queryParams.get('containerUrl');
     const idParam = queryParams.get('problemId');
-    const titleParam = queryParams.get('title');
+    const qIdParam = queryParams.get('questionId');
     
     if (urlParam) {
       setContainerUrl(decodeURIComponent(urlParam));
@@ -66,33 +74,37 @@ export default function CodingEnvironment() {
     if (idParam) {
       setProblemId(idParam);
     }
-    
-    if (titleParam) {
-      setProblemTitle(decodeURIComponent(titleParam));
+
+    if (qIdParam) {
+      setQuestionId(qIdParam);
     }
   }, []);
   
-  // Fetch problem details if we only have an ID but no title
-  const { data: problemData, isLoading: isLoadingProblem } = useQuery({
-    queryKey: ['/api/problems', problemId],
+  // Fetch problem description from the external API
+  const { data: problemDescription, isLoading: isLoadingDescription } = useQuery<ProblemDescriptionResponse>({
+    queryKey: ['problemDescription', questionId],
     queryFn: async () => {
-      if (!problemId) return null;
-      const res = await fetch(`/api/problems/${problemId}`);
-      if (!res.ok) throw new Error('Failed to fetch problem details');
+      if (!questionId) {
+        // Try to get question_id from MongoDB problem data
+        const problemRes = await fetch(`/api/problems/${problemId}`);
+        if (problemRes.ok) {
+          const problemData = await problemRes.json();
+          if (problemData.question_id) {
+            setQuestionId(problemData.question_id);
+            const descRes = await fetch(`https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_question_id?question_id=${problemData.question_id}`);
+            if (!descRes.ok) throw new Error('Failed to fetch problem description');
+            return descRes.json();
+          }
+        }
+        throw new Error('Question ID not available');
+      }
+      
+      const res = await fetch(`https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_question_id?question_id=${questionId}`);
+      if (!res.ok) throw new Error('Failed to fetch problem description');
       return res.json();
     },
-    enabled: !!problemId && !problemTitle,
+    enabled: !!questionId || !!problemId,
   });
-  
-  // Set problem title and other data from query result if available
-  useEffect(() => {
-    if (problemData) {
-      if (!problemTitle) setProblemTitle(problemData.title);
-      if (problemData.difficulty) setDifficulty(problemData.difficulty);
-      if (problemData.category) setCategory(problemData.category);
-      // Set other problem data as needed
-    }
-  }, [problemData, problemTitle]);
   
   const refreshIframe = () => {
     if (iframeRef.current && iframeRef.current.src) {
@@ -107,6 +119,11 @@ export default function CodingEnvironment() {
   
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
+    setIsPanelCollapsed(false);
+  };
+  
+  const togglePanel = () => {
+    setIsPanelCollapsed(!isPanelCollapsed);
   };
   
   const goBack = () => {
@@ -119,42 +136,50 @@ export default function CodingEnvironment() {
   };
 
   // Function to get difficulty badge color
-  const getDifficultyColor = (difficulty: string | null) => {
-    switch(difficulty) {
-      case 'Easy': return 'bg-green-500/15 text-green-500 hover:bg-green-500/20';
-      case 'Medium': return 'bg-yellow-500/15 text-yellow-500 hover:bg-yellow-500/20';
-      case 'Hard': return 'bg-red-500/15 text-red-500 hover:bg-red-500/20';
+  const getDifficultyColor = (difficulty: string) => {
+    switch(difficulty?.toLowerCase()) {
+      case 'easy': return 'bg-green-500/15 text-green-500 hover:bg-green-500/20';
+      case 'medium': return 'bg-yellow-500/15 text-yellow-500 hover:bg-yellow-500/20';
+      case 'hard': return 'bg-red-500/15 text-red-500 hover:bg-red-500/20';
       default: return 'bg-green-500/15 text-green-500 hover:bg-green-500/20';
     }
   };
+  
+  const problem = problemDescription?.data;
   
   return (
     <motion.div 
       variants={fadeIn("up")} 
       initial="hidden" 
       animate="show"
-      className={cn(
-        "flex flex-col w-full h-screen overflow-hidden",
-        isFullscreen ? "p-0" : "p-4"
-      )}
+      className="flex flex-col w-full h-screen overflow-hidden"
     >
+      {/* Top controls - only visible when not in fullscreen */}
       {!isFullscreen && (
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between p-2 border-b bg-[#1E1E1E] text-white">
           <Button 
             variant="ghost" 
             onClick={goBack}
-            className="gap-2"
+            className="gap-2 hover:bg-[#2D2D2D]"
           >
             <ArrowLeft className="h-4 w-4" /> 
             Back
           </Button>
           
+          <div className="flex-1 text-center font-medium truncate px-4">
+            {isLoadingDescription ? (
+              <Skeleton className="h-5 w-64 mx-auto" />
+            ) : (
+              problem?.title || "Coding Environment"
+            )}
+          </div>
+          
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={refreshIframe} className="gap-1">
+            <Button variant="ghost" size="sm" onClick={refreshIframe} className="gap-1 hover:bg-[#2D2D2D]">
               <RefreshCw className="h-3.5 w-3.5" />
               Refresh
             </Button>
-            <Button variant="outline" size="sm" onClick={toggleFullscreen} className="gap-1">
+            <Button variant="ghost" size="sm" onClick={toggleFullscreen} className="gap-1 hover:bg-[#2D2D2D]">
               <Maximize2 className="h-3.5 w-3.5" />
               Fullscreen
             </Button>
@@ -162,129 +187,206 @@ export default function CodingEnvironment() {
         </div>
       )}
       
-      <div className={cn(
-        "flex flex-grow border rounded-lg overflow-hidden",
-        isFullscreen ? "border-0 rounded-none" : "shadow-md"
-      )}>
-        {/* Left Panel - Problem Description */}
-        <div className={cn(
-          "flex flex-col overflow-y-auto",
-          isFullscreen ? "hidden" : "w-2/5"
-        )}>
-          <div className="p-4 border-b flex flex-col gap-2">
-            <div className="flex items-center gap-2 font-medium text-xl">
-              {isLoadingProblem && problemId && !problemTitle ? (
-                <Skeleton className="h-8 w-64" />
+      <div className="flex flex-grow overflow-hidden">
+        {/* Left Panel - Problem Description (collapsible) */}
+        {(!isFullscreen || isFullscreen && !isPanelCollapsed) && (
+          <div className={cn(
+            "flex flex-col bg-[#252526] text-white border-r border-[#1E1E1E]",
+            isPanelCollapsed ? "w-0" : isFullscreen ? "w-1/3" : "w-2/5"
+          )}>
+            <div className={cn(
+              "h-full flex flex-col",
+              isPanelCollapsed && "hidden"
+            )}>
+              <div className="p-3 border-b border-[#1E1E1E] flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 font-medium text-lg">
+                    <Code className="h-4 w-4 text-gray-400" />
+                    {isLoadingDescription ? (
+                      <Skeleton className="h-7 w-48" />
+                    ) : (
+                      problem?.title || "Loading problem..."
+                    )}
+                  </div>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={togglePanel}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                {isLoadingDescription ? (
+                  <div className="flex gap-2">
+                    <Skeleton className="h-6 w-16" />
+                    <Skeleton className="h-6 w-20" />
+                  </div>
+                ) : problem && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge variant="outline" className={getDifficultyColor(problem.difficulty)}>
+                      {problem.difficulty}
+                    </Badge>
+                    
+                    {problem.acceptance_rate && (
+                      <Badge variant="outline" className="bg-slate-700 text-white">
+                        Acceptance: {problem.acceptance_rate.toFixed(1)}%
+                      </Badge>
+                    )}
+                    
+                    {problem.type && (
+                      <Badge variant="outline" className="bg-slate-700 text-white">
+                        {problem.type}
+                      </Badge>
+                    )}
+                  </div>
+                )}
+              </div>
+              
+              {isLoadingDescription ? (
+                <div className="p-4 space-y-4">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-20 w-full mt-6" />
+                </div>
+              ) : problem ? (
+                <Tabs defaultValue="description" className="w-full flex-1 flex flex-col">
+                  <TabsList className="w-full bg-[#2D2D30] rounded-none border-b border-[#1E1E1E]">
+                    <TabsTrigger value="description" className="flex-1 data-[state=active]:bg-[#1E1E1E]">
+                      Description
+                    </TabsTrigger>
+                    <TabsTrigger value="solution" className="flex-1 data-[state=active]:bg-[#1E1E1E]">
+                      Solution
+                    </TabsTrigger>
+                    {problem.companies && problem.companies.length > 0 && (
+                      <TabsTrigger value="companies" className="flex-1 data-[state=active]:bg-[#1E1E1E]">
+                        Companies
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
+                  
+                  <TabsContent value="description" className="flex-1 overflow-auto mt-0 px-1">
+                    <div className="p-3">
+                      <div className="prose prose-sm prose-invert max-w-none">
+                        <ReactMarkdown components={{
+                          p: ({node, ...props}) => <p {...props} />,
+                          h1: ({node, ...props}) => <h1 {...props} />,
+                          h2: ({node, ...props}) => <h2 {...props} />,
+                          h3: ({node, ...props}) => <h3 {...props} />,
+                          ul: ({node, ...props}) => <ul {...props} />,
+                          ol: ({node, ...props}) => <ol {...props} />,
+                          li: ({node, ...props}) => <li {...props} />,
+                          code: ({node, ...props}) => <code {...props} />,
+                          pre: ({node, ...props}) => <pre {...props} />
+                        }}>
+                          {problem.readme || "No description available."}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="solution" className="flex-1 overflow-auto mt-0 px-1">
+                    <div className="p-3">
+                      <div className="prose prose-sm prose-invert max-w-none">
+                        <ReactMarkdown components={{
+                          p: ({node, ...props}) => <p {...props} />,
+                          h1: ({node, ...props}) => <h1 {...props} />,
+                          h2: ({node, ...props}) => <h2 {...props} />,
+                          h3: ({node, ...props}) => <h3 {...props} />,
+                          ul: ({node, ...props}) => <ul {...props} />,
+                          ol: ({node, ...props}) => <ol {...props} />,
+                          li: ({node, ...props}) => <li {...props} />,
+                          code: ({node, ...props}) => <code {...props} />,
+                          pre: ({node, ...props}) => <pre {...props} />
+                        }}>
+                          {problem.solution || "Solution is not available yet."}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  {problem.companies && problem.companies.length > 0 && (
+                    <TabsContent value="companies" className="mt-0 p-3">
+                      <h3 className="font-medium mb-2">Companies that ask this question:</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {problem.companies.map((company, idx) => (
+                          <Badge key={idx} variant="outline" className="bg-[#2D2D30] text-white">
+                            {company}
+                          </Badge>
+                        ))}
+                      </div>
+                      
+                      {problem.tags && problem.tags.length > 0 && (
+                        <div className="mt-6">
+                          <h3 className="font-medium mb-2">Tags:</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {problem.tags.map((tag, idx) => (
+                              <Badge key={idx} variant="outline" className="bg-[#3E3E42] text-white">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </TabsContent>
+                  )}
+                </Tabs>
               ) : (
-                problemTitle || "Reverse Linked List"
-              )}
-              <Code className="h-4 w-4 text-muted-foreground" />
-            </div>
-            
-            <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="outline" className={getDifficultyColor(difficulty)}>
-                {difficulty || 'Easy'}
-              </Badge>
-              
-              {category && (
-                <Badge variant="outline" className="bg-slate-100">
-                  Type: {category}
-                </Badge>
-              )}
-              
-              {tags && tags.length > 0 && (
-                <Badge variant="outline" className="bg-blue-500/10 text-blue-500">
-                  {tags[0]}
-                </Badge>
+                <div className="p-4 text-center flex flex-col items-center justify-center h-full">
+                  <Info className="h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium mb-2">Problem description not available</h3>
+                  <p className="text-gray-400 max-w-md">
+                    We couldn't load the problem description. Please try again or go back to the problem page.
+                  </p>
+                </div>
               )}
             </div>
           </div>
-          
-          <Tabs defaultValue="description" className="w-full">
-            <TabsList className="w-full bg-muted/50 rounded-none border-b">
-              <TabsTrigger value="description" className="flex-1">Description</TabsTrigger>
-              <TabsTrigger value="examples" className="flex-1">Examples</TabsTrigger>
-              <TabsTrigger value="hints" className="flex-1">Hints</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="description" className="p-4 space-y-4 mt-0">
-              <div>
-                <h3 className="font-medium text-lg mb-2">Problem Description</h3>
-                <p className="text-sm">{description}</p>
-              </div>
-              
-              {companies && companies.length > 0 && (
-                <div>
-                  <h3 className="font-medium mb-2">Companies:</h3>
-                  <div className="flex gap-2 flex-wrap">
-                    {companies.map((company, idx) => (
-                      <Badge key={idx} variant="outline" className="bg-purple-500/10 text-purple-500">
-                        {company}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </TabsContent>
-            
-            <TabsContent value="examples" className="mt-0">
-              {examples.map((example, idx) => (
-                <div key={idx} className="p-4 border-b last:border-b-0">
-                  <h3 className="font-medium mb-2">Example {idx + 1}:</h3>
-                  
-                  <div className="mb-2">
-                    <div className="text-sm font-medium mb-1">Input:</div>
-                    <div className="bg-muted p-2 rounded-md font-mono text-xs whitespace-pre">
-                      {example.input}
-                    </div>
-                  </div>
-                  
-                  <div className="mb-2">
-                    <div className="text-sm font-medium mb-1">Output:</div>
-                    <div className="bg-muted p-2 rounded-md font-mono text-xs whitespace-pre">
-                      {example.output}
-                    </div>
-                  </div>
-                  
-                  {example.explanation && (
-                    <div>
-                      <div className="text-sm font-medium mb-1">Explanation:</div>
-                      <div className="text-xs">{example.explanation}</div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </TabsContent>
-            
-            <TabsContent value="hints" className="p-4 space-y-4 mt-0">
-              <Alert>
-                <AlertDescription>
-                  Consider using a three-pointer approach (prev, current, next) to reverse the linked list in-place.
-                </AlertDescription>
-              </Alert>
-            </TabsContent>
-          </Tabs>
-        </div>
+        )}
         
-        {/* Resizer */}
-        {!isFullscreen && (
-          <div className="w-1 hover:bg-blue-500 hover:cursor-col-resize flex-shrink-0 bg-border"></div>
+        {/* Collapsed panel toggle */}
+        {isPanelCollapsed && !isFullscreen && (
+          <Button 
+            variant="ghost"
+            size="sm"
+            className="absolute left-0 top-1/2 z-10 h-24 rounded-l-none bg-[#2D2D30] hover:bg-[#3E3E42]"
+            onClick={togglePanel}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         )}
         
         {/* Right Panel - Code Editor */}
-        <div className={cn(
-          "flex flex-col bg-background",
-          isFullscreen ? "w-full" : "w-3/5"
-        )}>
+        <div className="flex-1 flex flex-col bg-[#1E1E1E]">
           {isFullscreen && (
-            <div className="flex items-center justify-between p-2 border-b">
-              <div className="font-medium">
-                {problemTitle || "Reverse Linked List"} - Coding Environment
-              </div>
-              <Button variant="ghost" size="sm" onClick={toggleFullscreen} className="gap-1">
-                <Maximize2 className="h-3.5 w-3.5" />
-                Exit Fullscreen
+            <div className="flex items-center justify-between p-2 border-b border-[#2D2D30] bg-[#1E1E1E] text-white">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-1 hover:bg-[#2D2D30]"
+                onClick={() => setIsPanelCollapsed(!isPanelCollapsed)}
+              >
+                {isPanelCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                {isPanelCollapsed ? "Show" : "Hide"} Problem
               </Button>
+              
+              <div className="font-medium">
+                {problem?.title || "Coding Environment"}
+              </div>
+              
+              <div className="flex gap-2">
+                <Button variant="ghost" size="sm" onClick={refreshIframe} className="gap-1 hover:bg-[#2D2D30]">
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  Refresh
+                </Button>
+                <Button variant="ghost" size="sm" onClick={toggleFullscreen} className="gap-1 hover:bg-[#2D2D30]">
+                  <Maximize2 className="h-3.5 w-3.5" />
+                  Exit Fullscreen
+                </Button>
+              </div>
             </div>
           )}
           
@@ -295,9 +397,10 @@ export default function CodingEnvironment() {
               className="flex-grow w-full border-0"
               title="Coding Environment"
               sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
+              loading="eager"
             />
           ) : (
-            <div className="flex flex-col items-center justify-center h-full p-8">
+            <div className="flex flex-col items-center justify-center h-full p-8 text-white">
               <Alert variant="destructive" className="mb-6 max-w-md">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
@@ -313,28 +416,6 @@ export default function CodingEnvironment() {
           )}
         </div>
       </div>
-      
-      {/* Footer with controls - only visible when not in fullscreen */}
-      {!isFullscreen && containerUrl && (
-        <div className="py-2 px-4 mt-2 border rounded-lg flex items-center justify-between shadow-sm bg-background">
-          <div className="text-sm text-muted-foreground flex items-center gap-2">
-            <Monitor className="h-4 w-4" />
-            <span>Workspace running at:</span>
-            <span className="font-mono text-xs truncate max-w-[300px]">{containerUrl}</span>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" className="gap-1">
-              <Settings className="h-3.5 w-3.5" />
-              Settings
-            </Button>
-            <Button size="sm" variant="outline" onClick={refreshIframe} className="gap-1">
-              <RefreshCw className="h-3.5 w-3.5" />
-              Refresh
-            </Button>
-          </div>
-        </div>
-      )}
     </motion.div>
   );
 }

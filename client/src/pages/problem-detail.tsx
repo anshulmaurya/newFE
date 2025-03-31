@@ -73,8 +73,12 @@ export default function ProblemDetail() {
         const encodedUrl = encodeURIComponent(data.containerUrl);
         const encodedTitle = encodeURIComponent(problem?.title || 'Coding Problem');
         
+        // Include the question_id if available for direct API call
+        const questionIdParam = problem?.question_id ? 
+          `&questionId=${encodeURIComponent(problem.question_id)}` : '';
+        
         // Redirect to the coding environment page
-        setLocation(`/coding-environment?containerUrl=${encodedUrl}&problemId=${id}&title=${encodedTitle}`);
+        setLocation(`/coding-environment?containerUrl=${encodedUrl}&problemId=${id}${questionIdParam}&title=${encodedTitle}`);
       } else {
         toast({
           title: "Missing container URL",
