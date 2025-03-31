@@ -336,14 +336,14 @@ export default function CodingEnvironment() {
                   className={cn(
                     "h-12 w-12",
                     activeSection === 'description' && isDescriptionOpen 
-                      ? "bg-yellow-500 hover:bg-yellow-600" 
+                      ? "bg-[#c2ee4a] hover:bg-[#b2de3a] text-black" 
                       : "hover:bg-[#2D2D30]"
                   )}
                 >
                   <FileText className={cn(
                     "h-5 w-5", 
                     activeSection === 'description' && isDescriptionOpen 
-                      ? "text-white" 
+                      ? "text-black" 
                       : "text-gray-400"
                   )} />
                 </Button>
@@ -365,14 +365,14 @@ export default function CodingEnvironment() {
                   className={cn(
                     "h-12 w-12",
                     activeSection === 'solution' && isDescriptionOpen 
-                      ? "bg-yellow-500 hover:bg-yellow-600" 
+                      ? "bg-[#c2ee4a] hover:bg-[#b2de3a] text-black" 
                       : "hover:bg-[#2D2D30]"
                   )}
                 >
                   <ScrollText className={cn(
                     "h-5 w-5", 
                     activeSection === 'solution' && isDescriptionOpen 
-                      ? "text-white" 
+                      ? "text-black" 
                       : "text-gray-400"
                   )} />
                 </Button>
@@ -396,14 +396,14 @@ export default function CodingEnvironment() {
                   className={cn(
                     "h-12 w-12",
                     activeSection === 'discussion' && isDescriptionOpen 
-                      ? "bg-yellow-500 hover:bg-yellow-600" 
+                      ? "bg-[#c2ee4a] hover:bg-[#b2de3a] text-black" 
                       : "hover:bg-[#2D2D30]"
                   )}
                 >
                   <MessagesSquare className={cn(
                     "h-5 w-5", 
                     activeSection === 'discussion' && isDescriptionOpen 
-                      ? "text-white" 
+                      ? "text-black" 
                       : "text-gray-400"
                   )} />
                 </Button>
@@ -425,7 +425,7 @@ export default function CodingEnvironment() {
                   className={cn(
                     "h-12 w-12",
                     activeSection === 'submissions' && isDescriptionOpen 
-                      ? "bg-yellow-500 hover:bg-yellow-600" 
+                      ? "bg-[#c2ee4a] hover:bg-[#b2de3a] text-black" 
                       : "hover:bg-[#2D2D30]",
                     submissionResult ? "ring-1 ring-green-500" : ""
                   )}
@@ -433,7 +433,7 @@ export default function CodingEnvironment() {
                   <ClipboardCheck className={cn(
                     "h-5 w-5", 
                     activeSection === 'submissions' && isDescriptionOpen 
-                      ? "text-white" 
+                      ? "text-black" 
                       : submissionResult ? "text-green-500" : "text-gray-400"
                   )} />
                 </Button>
@@ -655,19 +655,19 @@ export default function CodingEnvironment() {
                         <div className="border-b border-[#3E3E42] mb-6">
                           <div className="flex space-x-4">
                             <button 
-                              className={`pb-2 px-1 ${activeTab === 'test-results' ? 'border-b-2 border-yellow-500 text-white' : 'text-gray-400'}`}
+                              className={`pb-2 px-1 ${activeTab === 'test-results' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
                               onClick={() => setActiveTab('test-results')}
                             >
                               Test Results
                             </button>
                             <button 
-                              className={`pb-2 px-1 ${activeTab === 'memory-profile' ? 'border-b-2 border-yellow-500 text-white' : 'text-gray-400'}`}
+                              className={`pb-2 px-1 ${activeTab === 'memory-profile' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
                               onClick={() => setActiveTab('memory-profile')}
                             >
                               Memory Profile
                             </button>
                             <button 
-                              className={`pb-2 px-1 ${activeTab === 'cache-profile' ? 'border-b-2 border-yellow-500 text-white' : 'text-gray-400'}`}
+                              className={`pb-2 px-1 ${activeTab === 'cache-profile' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
                               onClick={() => setActiveTab('cache-profile')}
                             >
                               Cache Profile
