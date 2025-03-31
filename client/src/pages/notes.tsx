@@ -1,37 +1,149 @@
 import { useState, useEffect } from "react";
-import { Search, Moon, Sun, ChevronDown, Menu, X, BookOpen, Code, Database } from "lucide-react";
+import { Search, Moon, Sun, ChevronDown, Menu, X, BookOpen, Code, Database, FileText, Zap, Upload, GitBranch, Pencil, Grid3X3, Puzzle, Link as LinkIcon, Search as SearchIcon, Terminal, FileCode, FileBox, LayoutGrid, Globe } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import Header from "@/components/layout/header";
 
+interface Subsection {
+  id: string;
+  label: string;
+  path: string;
+  icon?: React.ReactNode;
+  active?: boolean;
+  expandable?: boolean;
+  expanded?: boolean;
+  subsections?: Subsection[];
+}
+
+interface TopicSection {
+  id: string;
+  label: string;
+  category?: boolean;
+  icon?: React.ReactNode;
+  path?: string;
+  subsections: Subsection[];
+}
+
 // Define topic sections and their subsections
-const notesTopics = [
+const notesTopics: TopicSection[] = [
   { 
     id: "getting-started", 
-    label: "Getting Started",
-    icon: <BookOpen className="h-4 w-4 mr-2" />,
+    label: "GETTING STARTED",
     path: "/notes/getting-started",
-    subsections: []
-  },
-  { 
-    id: "communication-protocols", 
-    label: "Communication Protocols",
-    icon: <Code className="h-4 w-4 mr-2" />,
-    path: "/notes/communication-protocols",
+    category: true,
     subsections: [
-      { id: "spi", label: "SPI", path: "/notes/communication-protocols/spi" },
-      { id: "i2c", label: "I2C", path: "/notes/communication-protocols/i2c" },
-      { id: "uart", label: "UART", path: "/notes/communication-protocols/uart" }
+      {
+        id: "gitbook-documentation",
+        label: "GitBook Documentation",
+        icon: <BookOpen className="h-4 w-4 mr-2" />,
+        path: "/notes/getting-started",
+      },
+      {
+        id: "quickstart", 
+        label: "Quickstart",
+        icon: <Zap className="h-4 w-4 mr-2" />,
+        path: "/notes/getting-started",
+        active: true
+      },
+      {
+        id: "importing-content",
+        label: "Importing content",
+        icon: <Upload className="h-4 w-4 mr-2" />,
+        path: "/notes/getting-started",
+      },
+      {
+        id: "github-gitlab-sync",
+        label: "GitHub & GitLab Sync",
+        icon: <GitBranch className="h-4 w-4 mr-2" />,
+        path: "/notes/communication-protocols",
+        expandable: true,
+        expanded: false,
+        subsections: [
+          { id: "enabling-github-sync", label: "Enabling GitHub Sync", path: "/notes/communication-protocols/spi" },
+          { id: "enabling-gitlab-sync", label: "Enabling GitLab Sync", path: "/notes/communication-protocols/i2c" },
+          { id: "content-configuration", label: "Content configuration", path: "/notes/communication-protocols/uart" },
+          { id: "github-pull-request", label: "GitHub pull request preview", path: "/notes/communication-protocols/uart" },
+          { id: "commit-messages", label: "Commit messages & Autolink", path: "/notes/communication-protocols/uart" },
+          { id: "monorepos", label: "Monorepos", path: "/notes/communication-protocols/uart" },
+          { id: "troubleshooting", label: "Troubleshooting", path: "/notes/communication-protocols/uart" }
+        ]
+      }
     ]
   },
   { 
-    id: "data-structures", 
-    label: "Data Structures",
-    icon: <Database className="h-4 w-4 mr-2" />,
-    path: "/notes/data-structures",
+    id: "creating-content", 
+    label: "CREATING CONTENT",
+    path: "/notes/communication-protocols",
+    category: true,
     subsections: [
-      { id: "linked-list", label: "Linked List", path: "/notes/data-structures/linked-list" },
-      { id: "array", label: "Array", path: "/notes/data-structures/array" },
-      { id: "string", label: "String", path: "/notes/data-structures/string" }
+      {
+        id: "formatting-content",
+        label: "Formatting your content",
+        icon: <Pencil className="h-4 w-4 mr-2" />,
+        path: "/notes/communication-protocols",
+        expandable: true
+      },
+      {
+        id: "content-structure",
+        label: "Content structure",
+        icon: <Grid3X3 className="h-4 w-4 mr-2" />,
+        path: "/notes/communication-protocols",
+        expandable: true
+      },
+      {
+        id: "blocks",
+        label: "Blocks",
+        icon: <Puzzle className="h-4 w-4 mr-2" />,
+        path: "/notes/communication-protocols",
+        expandable: true
+      },
+      {
+        id: "reusable-content",
+        label: "Reusable content",
+        icon: <FileCode className="h-4 w-4 mr-2" />,
+        path: "/notes/data-structures",
+      },
+      {
+        id: "broken-links",
+        label: "Broken links",
+        icon: <LinkIcon className="h-4 w-4 mr-2" />,
+        path: "/notes/data-structures",
+      },
+      {
+        id: "searching-content",
+        label: "Searching content",
+        icon: <SearchIcon className="h-4 w-4 mr-2" />,
+        path: "/notes/data-structures",
+        expandable: true
+      },
+      {
+        id: "openapi",
+        label: "OpenAPI",
+        icon: <Terminal className="h-4 w-4 mr-2" />,
+        path: "/notes/data-structures",
+        expandable: true
+      }
+    ]
+  },
+  { 
+    id: "publishing-documentation", 
+    label: "PUBLISHING DOCUMENTATION",
+    path: "/notes/data-structures",
+    category: true,
+    subsections: [
+      {
+        id: "publish-docs-site",
+        label: "Publish a docs site",
+        icon: <Globe className="h-4 w-4 mr-2" />,
+        path: "/notes/data-structures",
+        expandable: true
+      },
+      {
+        id: "site-structure",
+        label: "Site structure",
+        icon: <LayoutGrid className="h-4 w-4 mr-2" />,
+        path: "/notes/data-structures",
+        expandable: true
+      }
     ]
   }
 ];
@@ -91,30 +203,32 @@ export default function Notes() {
   // Determine theme classes
   const themeClasses = darkMode 
     ? {
-        bg: "bg-[rgb(24,24,26)]",
+        bg: "bg-[rgb(10,10,14)]",
         text: "text-gray-300",
         textDark: "text-gray-500",
-        sidebarBg: "bg-[rgb(36,36,38)]",
-        borderColor: "border-gray-700",
+        sidebarBg: "bg-[rgb(20,20,25)]",
+        borderColor: "border-gray-800",
         highlight: "bg-[rgb(214,251,65)]/20",
         codeBlock: "bg-gray-900 text-gray-100",
         infoBlock: "bg-[rgb(40,50,70)] border-[rgb(60,130,210)]",
         infoText: "text-blue-300",
         infoTextDark: "text-blue-400",
-        card: "bg-[rgb(36,36,38)] border-gray-700 hover:bg-[rgb(45,45,47)]"
+        card: "bg-[rgb(25,25,30)] border-gray-800 hover:bg-[rgb(35,35,40)]",
+        activeItem: "bg-[rgb(44,46,50)]"
       }
     : {
         bg: "bg-white",
         text: "text-gray-700",
         textDark: "text-gray-500",
-        sidebarBg: "bg-gray-100",
+        sidebarBg: "bg-[rgb(252,252,252)]",
         borderColor: "border-gray-200",
         highlight: "bg-[rgb(214,251,65)]/20",
         codeBlock: "bg-gray-900 text-gray-100",
         infoBlock: "bg-blue-50 border-blue-400",
         infoText: "text-blue-700",
         infoTextDark: "text-blue-800",
-        card: "bg-gray-50 border-gray-200 hover:bg-gray-100"
+        card: "bg-gray-50 border-gray-200 hover:bg-gray-100",
+        activeItem: "bg-[rgb(248,248,250)]"
       };
 
   const navigateToFeatures = () => {
@@ -151,55 +265,62 @@ export default function Notes() {
 
           <div className="space-y-2">
             <div>
-              <div className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-3 text-sm pl-1.5`}>
-                Learning Resources
-              </div>
               <nav className="space-y-1.5">
                 {notesTopics.map(topic => (
-                  <div key={topic.id} className="mb-2">
-                    <Link
-                      href={topic.path}
-                      onClick={() => setSelectedTopic(topic.id)}
-                    >
-                      <a className={`flex items-center w-full text-left px-3 py-2 rounded-md text-sm transition-all duration-150 ${
-                        selectedTopic === topic.id 
-                          ? `bg-[#c2ee4a] text-black font-medium` 
-                          : `${darkMode ? 'text-gray-300 hover:bg-[rgb(40,40,42)]' : 'text-gray-600 hover:bg-gray-200'}`
-                      }`}
-                      >
-                        {topic.icon}
-                        <span>{topic.label}</span>
-                        {topic.subsections.length > 0 && (
-                          <ChevronDown className={`h-4 w-4 ml-auto transform transition-transform ${selectedTopic === topic.id ? 'rotate-180' : ''}`} />
-                        )}
-                      </a>
-                    </Link>
-                    
-                    {/* Subsections */}
-                    {selectedTopic === topic.id && topic.subsections.length > 0 && (
-                      <div className="pl-2 mt-1.5 mb-1.5 space-y-1 border-l-2 border-dashed border-gray-600 ml-3">
-                        {topic.subsections.map(subsection => {
-                          const isActive = currentPath === subsection.path;
-                          return (
-                            <Link
-                              key={subsection.id}
-                              href={subsection.path}
-                            >
-                              <a className={`flex pl-4 pr-3 py-1.5 text-sm rounded-md hover:bg-opacity-30 ${
-                                isActive
-                                  ? 'bg-[#c2ee4a]/20 text-[#c2ee4a] font-medium'
-                                  : darkMode 
-                                    ? 'text-gray-400 hover:text-gray-200 hover:bg-[#c2ee4a]/20' 
-                                    : 'text-gray-500 hover:text-gray-900 hover:bg-[#c2ee4a]/20'
-                              }`}
-                              >
-                                {subsection.label}
-                              </a>
-                            </Link>
-                          );
-                        })}
+                  <div key={topic.id} className="mb-6">
+                    {/* Category Header */}
+                    {topic.category && (
+                      <div className={`text-xs font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-2 pl-1.5`}>
+                        {topic.label}
                       </div>
                     )}
+                    
+                    {/* Main items */}
+                    {topic.subsections && topic.subsections.map((section) => {
+                      const isExpanded = section.expanded || false;
+                      const isActive = section.active || section.id === 'quickstart'; // for demo purposes
+                      
+                      return (
+                        <div key={section.id} className="mb-1">
+                          <Link
+                            href={section.path}
+                          >
+                            <a className={`flex items-center w-full text-left px-3 py-1.5 rounded-md text-sm ${
+                              isActive 
+                                ? `${themeClasses.activeItem} ${darkMode ? 'text-white' : 'text-gray-900'} font-medium` 
+                                : `${darkMode ? 'text-gray-300 hover:bg-[rgb(35,35,40)]' : 'text-gray-600 hover:bg-gray-200'}`
+                            }`}
+                            >
+                              {section.icon}
+                              <span>{section.label}</span>
+                              {section.expandable && (
+                                <ChevronDown className={`h-4 w-4 ml-auto transform transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                              )}
+                            </a>
+                          </Link>
+                          
+                          {/* Section subsections */}
+                          {section.expandable && section.subsections && isExpanded && (
+                            <div className="py-1 ml-9 space-y-1">
+                              {section.subsections.map((subsection: Subsection) => (
+                                <Link
+                                  key={subsection.id}
+                                  href={subsection.path}
+                                >
+                                  <a className={`block text-sm py-1 px-3 rounded-md ${
+                                    darkMode 
+                                      ? 'text-gray-400 hover:text-gray-200 hover:bg-[rgb(35,35,40)]' 
+                                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                                  }`}>
+                                    {subsection.label}
+                                  </a>
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 ))}
               </nav>
@@ -208,8 +329,8 @@ export default function Notes() {
         </div>
 
         {/* Main content */}
-        <div className="flex-grow px-8 pb-10 mt-2 overflow-auto">
-          <div className="max-w-4xl mx-auto">
+        <div className="flex-grow px-6 pb-10 mt-0 overflow-auto">
+          <div className="max-w-4xl mx-auto pt-8">
             {selectedTopic === "getting-started" && (
               <>
                 <div className="flex items-center mb-1 text-gray-500 text-sm">
