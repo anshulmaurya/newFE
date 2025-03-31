@@ -26,6 +26,7 @@ interface Problem {
   type?: string;
   acceptance_rate?: string;
   companies?: string[];
+  question_id?: string; // Added this field based on MongoDB data
 }
 
 export default function ProblemDetail() {
@@ -51,7 +52,13 @@ export default function ProblemDetail() {
   const setupCodebaseMutation = useMutation({
     mutationFn: async () => {
       if (!id) throw new Error("Problem ID is required");
-      const res = await apiRequest("POST", "/api/setup-codebase", { questionId: id });
+      if (!problem) throw new Error("Problem data is not loaded");
+      if (!problem.question_id) throw new Error("Question ID is missing in problem data");
+      
+      // Use the question_id field from MongoDB instead of the id field
+      const res = await apiRequest("POST", "/api/setup-codebase", { 
+        questionId: problem.question_id 
+      });
       return await res.json();
     },
     onSuccess: (data) => {

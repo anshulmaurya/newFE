@@ -11,6 +11,7 @@ import {
 import { z } from "zod";
 import { setupAuth } from "./auth";
 import { setupUserCodebase } from "./container-api";
+import { connectToMongoDB, getProblemsCollection } from "./mongodb";
 
 // Add userId to Request type
 declare global {
@@ -508,9 +509,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Question ID is required" });
       }
       
-      // Call the external API to setup the codebase
-      // This will now always return a result even if the external API fails
-      const result = await setupUserCodebase(user.username, questionId.toString());
+      // Get the MongoDB problem details to extract the question_id field
+      let mongoDbQuestionId = questionId;
+      
+      // Try to retrieve the question_id from MongoDB if this is a MongoDB ID
+      try {
+        const mongoClient = await connectToMongoDB();
+        const collection = await getProblemsCollection();
+        
+        // Look up the problem by _id
+        const problem = await collection.findOne({ 
+          $or: [
+            { _id: questionId }, 
+            { id: questionId }
+          ]
+        });
+        
+        // Use the question_id field from MongoDB if available
+        if (problem && problem.question_id) {
+          console.log(`Found MongoDB problem with question_id: ${problem.question_id}`);
+          mongoDbQuestionId = problem.question_id;
+        } else {
+          console.log(`Using original questionId: ${questionId} (MongoDB problem not found or missing question_id field)`);
+        }
+      } catch (err) {
+        console.warn("Error looking up MongoDB problem:", err);
+        // Continue with the original questionId
+      }
+      
+      // Call the external API to setup the codebase using the question_id from MongoDB
+      const result = await setupUserCodebase(user.username, mongoDbQuestionId.toString());
       
       // Record the attempt in user progress
       try {

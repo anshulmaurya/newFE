@@ -51,12 +51,12 @@ export async function deleteUserContainer(username: string): Promise<void> {
 /**
  * Sets up the codebase for a specific question in the user's container
  * @param username The GitHub username of the user
- * @param questionId The ID of the question
+ * @param questionId The ID of the question - This should be the "question_id" field from MongoDB, NOT the MongoDB document ID
  * @returns Promise that resolves when the codebase is set up
  */
 export async function setupUserCodebase(username: string, questionId: string, lang: string = "cpp"): Promise<any> {
   try {
-    console.log(`Setting up codebase for user: ${username}, question: ${questionId}, language: ${lang}`);
+    console.log(`Setting up user codebase for ${username} with question_id: ${questionId} and lang: ${lang}`);
     
     // Format the request body exactly as shown in Postman example
     const requestBody = {
@@ -66,7 +66,7 @@ export async function setupUserCodebase(username: string, questionId: string, la
       "original": "false"
     };
     
-    console.log(`Making request to ${SETUP_CODEBASE_URL} with body:`, requestBody);
+    console.log(`Making request to ${SETUP_CODEBASE_URL} with body:`, JSON.stringify(requestBody));
     
     const response = await fetch(SETUP_CODEBASE_URL, {
       method: 'POST',
