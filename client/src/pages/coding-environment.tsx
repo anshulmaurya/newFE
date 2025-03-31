@@ -783,12 +783,58 @@ export default function CodingEnvironment() {
                 <Button 
                   variant="default"
                   className="h-6 px-3 text-xs bg-[#c2ee4a] hover:bg-[#b2de3a] text-black border-none rounded-full"
-                  onClick={() => {
-                    // Will implement API call later
+                  onClick={async () => {
+                    if (!questionId || !user) {
+                      toast({
+                        title: 'Error',
+                        description: 'Problem ID or user information is missing.',
+                        variant: 'destructive'
+                      });
+                      return;
+                    }
+                    
                     toast({
                       title: 'Run Code',
                       description: 'Running your code...',
                     });
+                    
+                    try {
+                      const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/run_question', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          username: user.username,
+                          question_id: questionId,
+                          lang: 'c',
+                          profile: 'False'
+                        })
+                      });
+                      
+                      const data = await response.json();
+                      
+                      if (response.ok) {
+                        toast({
+                          title: 'Success',
+                          description: 'Code ran successfully!',
+                        });
+                        console.log('Run result:', data);
+                      } else {
+                        toast({
+                          title: 'Error',
+                          description: data.message || 'Failed to run code.',
+                          variant: 'destructive'
+                        });
+                      }
+                    } catch (error) {
+                      console.error('Error running code:', error);
+                      toast({
+                        title: 'Error',
+                        description: 'Failed to run code. Please try again.',
+                        variant: 'destructive'
+                      });
+                    }
                   }}
                 >
                   <Play className="h-3 w-3 mr-1" />
@@ -797,12 +843,58 @@ export default function CodingEnvironment() {
                 <Button 
                   variant="default"
                   className="h-6 px-3 text-xs bg-[#c2ee4a] hover:bg-[#b2de3a] text-black border-none rounded-full"
-                  onClick={() => {
-                    // Will implement API call later
+                  onClick={async () => {
+                    if (!questionId || !user) {
+                      toast({
+                        title: 'Error',
+                        description: 'Problem ID or user information is missing.',
+                        variant: 'destructive'
+                      });
+                      return;
+                    }
+                    
                     toast({
                       title: 'Submit Solution',
                       description: 'Submitting your solution for evaluation...',
                     });
+                    
+                    try {
+                      const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/submit_question', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          username: user.username,
+                          question_id: questionId,
+                          lang: 'c',
+                          profile: 'False'
+                        })
+                      });
+                      
+                      const data = await response.json();
+                      
+                      if (response.ok) {
+                        toast({
+                          title: 'Success',
+                          description: 'Solution submitted successfully!',
+                        });
+                        console.log('Submit result:', data);
+                      } else {
+                        toast({
+                          title: 'Error',
+                          description: data.message || 'Failed to submit solution.',
+                          variant: 'destructive'
+                        });
+                      }
+                    } catch (error) {
+                      console.error('Error submitting solution:', error);
+                      toast({
+                        title: 'Error',
+                        description: 'Failed to submit solution. Please try again.',
+                        variant: 'destructive'
+                      });
+                    }
                   }}
                 >
                   <Send className="h-3 w-3 mr-1" />
