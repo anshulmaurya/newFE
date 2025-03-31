@@ -782,7 +782,7 @@ export default function CodingEnvironment() {
               <div className="absolute top-1 left-[95px] z-10 flex items-center space-x-2">
                 <Button 
                   variant="default"
-                  className="h-6 px-3 text-xs bg-yellow-500 hover:bg-yellow-600 text-black border-none rounded-none"
+                  className="h-6 px-3 text-xs bg-[#c2ee4a] hover:bg-[#b2de3a] text-black border-none rounded-full"
                   onClick={() => {
                     // Will implement API call later
                     toast({
@@ -796,7 +796,7 @@ export default function CodingEnvironment() {
                 </Button>
                 <Button 
                   variant="default"
-                  className="h-6 px-3 text-xs bg-yellow-500 hover:bg-yellow-600 text-black border-none rounded-none"
+                  className="h-6 px-3 text-xs bg-[#c2ee4a] hover:bg-[#b2de3a] text-black border-none rounded-full"
                   onClick={() => {
                     // Will implement API call later
                     toast({
