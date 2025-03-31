@@ -52,9 +52,10 @@ export async function deleteUserContainer(username: string): Promise<void> {
  * Sets up the codebase for a specific question in the user's container
  * @param username The GitHub username of the user
  * @param questionId The ID of the question - This should be the "question_id" field from MongoDB, NOT the MongoDB document ID
+ * @param lang The programming language to use (default: "c")
  * @returns Promise that resolves when the codebase is set up
  */
-export async function setupUserCodebase(username: string, questionId: string, lang: string = "cpp"): Promise<any> {
+export async function setupUserCodebase(username: string, questionId: string, lang: string = "c"): Promise<any> {
   try {
     console.log(`Setting up user codebase for ${username} with question_id: ${questionId} and lang: ${lang}`);
     
