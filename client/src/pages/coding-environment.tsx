@@ -294,9 +294,9 @@ export default function CodingEnvironment() {
                   size="icon" 
                   onClick={() => toggleDescription('description')}
                   className={cn(
-                    "h-12 w-12 rounded-xl",
+                    "h-12 w-12",
                     activeSection === 'description' && isDescriptionOpen 
-                      ? "bg-blue-600 hover:bg-blue-700" 
+                      ? "bg-yellow-500 hover:bg-yellow-600" 
                       : "hover:bg-[#2D2D30]"
                   )}
                 >
@@ -323,9 +323,9 @@ export default function CodingEnvironment() {
                   size="icon" 
                   onClick={() => toggleDescription('solution')}
                   className={cn(
-                    "h-12 w-12 rounded-xl",
+                    "h-12 w-12",
                     activeSection === 'solution' && isDescriptionOpen 
-                      ? "bg-blue-600 hover:bg-blue-700" 
+                      ? "bg-yellow-500 hover:bg-yellow-600" 
                       : "hover:bg-[#2D2D30]"
                   )}
                 >
@@ -354,9 +354,9 @@ export default function CodingEnvironment() {
                   size="icon" 
                   onClick={() => toggleDescription('discussion')}
                   className={cn(
-                    "h-12 w-12 rounded-xl",
+                    "h-12 w-12",
                     activeSection === 'discussion' && isDescriptionOpen 
-                      ? "bg-blue-600 hover:bg-blue-700" 
+                      ? "bg-yellow-500 hover:bg-yellow-600" 
                       : "hover:bg-[#2D2D30]"
                   )}
                 >
@@ -384,7 +384,7 @@ export default function CodingEnvironment() {
                   variant="ghost" 
                   size="icon" 
                   onClick={refreshIframe}
-                  className="h-12 w-12 rounded-xl hover:bg-[#2D2D30]"
+                  className="h-12 w-12 hover:bg-[#2D2D30]"
                 >
                   <RefreshCw className="h-5 w-5 text-gray-400" />
                 </Button>
