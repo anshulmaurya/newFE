@@ -746,7 +746,7 @@ export default function Dashboard() {
                               <span className="text-xs font-medium mr-2 text-gray-500 w-5 text-right">{idx + 1}.</span>
                               <div className="flex flex-col">
                                 <a 
-                                  href={`/problems/${problem.id}`} 
+                                  href={`/coding/${problem.id}`} 
                                   className="text-xs font-medium hover:text-[#56B2FF] whitespace-nowrap overflow-hidden text-ellipsis transition-colors"
                                 >
                                   {problem.title || `Problem ${idx + 1}`}

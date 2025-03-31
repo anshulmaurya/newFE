@@ -24,7 +24,8 @@ function Router() {
       <Route path="/" component={Home}/>
       <ProtectedRoute path="/dashboard" component={Dashboard} />
       <ProtectedRoute path="/problems" component={Dashboard} />
-      <ProtectedRoute path="/problems/:id" component={ProblemDetail} />
+      {/* Redirect users directly to coding environment, bypassing the problem detail page */}
+      <ProtectedRoute path="/coding/:id" component={CodingEnvironment} />
       <ProtectedRoute path="/coding-environment" component={CodingEnvironment} />
       <ProtectedRoute path="/jd-based" component={JDBasedPage} />
       <ProtectedRoute path="/quick-prep/blind-75" component={Blind75Page} />

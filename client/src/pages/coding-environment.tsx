@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, useParams } from 'wouter';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { 
   ArrowLeft, 
@@ -121,11 +121,12 @@ const SAMPLE_COMMENTS: Comment[] = [
 
 export default function CodingEnvironment() {
   const [, setLocation] = useLocation();
+  const params = useParams<{ id?: string }>();
   const [containerUrl, setContainerUrl] = useState<string | null>(null);
-  const [problemId, setProblemId] = useState<string | null>(null);
+  const [problemId, setProblemId] = useState<string | null>(params.id || null);
   const [questionId, setQuestionId] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
+  const [isDescriptionOpen, setIsDescriptionOpen] = useState(true);
   const [activeSection, setActiveSection] = useState<'description' | 'solution' | 'discussion'>('description');
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState<Comment[]>(SAMPLE_COMMENTS);
@@ -138,7 +139,7 @@ export default function CodingEnvironment() {
     const queryParams = new URLSearchParams(window.location.search);
     
     const urlParam = queryParams.get('containerUrl');
-    const idParam = queryParams.get('problemId');
+    const idParam = queryParams.get('problemId') || params.id;
     const qIdParam = queryParams.get('questionId');
     
     if (urlParam) {
@@ -152,7 +153,7 @@ export default function CodingEnvironment() {
     if (qIdParam) {
       setQuestionId(qIdParam);
     }
-  }, []);
+  }, [params.id]);
   
   // Fetch problem description from the external API
   const { data: problemDescription, isLoading: isLoadingDescription } = useQuery<ProblemDescriptionResponse>({
@@ -211,12 +212,8 @@ export default function CodingEnvironment() {
   };
   
   const goBack = () => {
-    // Go back to problem detail page if we have a problem ID, otherwise to dashboard
-    if (problemId) {
-      setLocation(`/problems/${problemId}`);
-    } else {
-      setLocation('/dashboard');
-    }
+    // Always go back to dashboard
+    setLocation('/dashboard');
   };
 
   const goHome = () => {
