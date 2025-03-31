@@ -64,7 +64,6 @@ export default function ProblemDetail() {
       toast({
         title: "Ready to code!",
         description: "Your environment is ready. You can now begin coding.",
-        variant: "success",
       });
     },
     onError: (error: Error) => {
@@ -107,7 +106,7 @@ export default function ProblemDetail() {
 
   if (isLoading) {
     return (
-      <SubpageLayout title="Problem" subtitle="Loading problem details...">
+      <SubpageLayout title="Problem">
         <div className="py-10">
           <div className="max-w-4xl mx-auto">
             <Skeleton className="h-12 w-3/4 mb-4" />
@@ -125,7 +124,7 @@ export default function ProblemDetail() {
 
   if (error || !problem) {
     return (
-      <SubpageLayout title="Problem" subtitle="Error loading problem">
+      <SubpageLayout title="Problem">
         <div className="py-10">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-2xl font-bold mb-4">Problem not found</h2>
@@ -140,7 +139,7 @@ export default function ProblemDetail() {
   }
 
   return (
-    <SubpageLayout title="Problem" subtitle="Challenge your embedded systems skills">
+    <SubpageLayout title="Problem">
       <div className="py-4 max-w-6xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="lg:w-3/4">

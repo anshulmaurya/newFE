@@ -148,6 +148,7 @@ export const insertUserProgressSchema = createInsertSchema(userProgress).pick({
   status: true,
   attemptCount: true,
   notes: true,
+  lastAttemptedAt: true,
 });
 
 // Types
