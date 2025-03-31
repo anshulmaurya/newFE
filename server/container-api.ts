@@ -114,18 +114,48 @@ export async function setupUserCodebase(username: string, questionId: string, la
     if (!response.ok) {
       console.warn(`External API returned error: ${response.status} ${response.statusText}. Response body: ${responseText}`);
       
-      // Return a fallback response with constructed URL based on username pattern
+      // Try to extract URL from error response if possible
+      let containerUrl = "";
+      try {
+        // Check if there's still a URL in the error response
+        if (responseText.includes('azurecontainerapps.io')) {
+          const urlMatch = responseText.match(/(https:\/\/.*?azurecontainerapps\.io[^\s"']*)/);
+          if (urlMatch && urlMatch[1]) {
+            containerUrl = urlMatch[1];
+          }
+        }
+      } catch (err) {
+        // Ignore extraction errors
+      }
+      
+      // Use extracted URL or construct a fallback
+      if (!containerUrl) {
+        containerUrl = `https://${username}.ambitiousfield-760fb695.eastus.azurecontainerapps.io`;
+      }
+      
       return {
         status: "pending",
         message: "Server encountered an error. You can try accessing your environment directly.",
-        containerUrl: `https://${username}.ambitiousfield-760fb695.eastus.azurecontainerapps.io/?folder=/home/${username}`,
+        containerUrl: containerUrl,
         error: responseText
       };
     }
     
-    // If we got here, we have a successful response but couldn't extract a URL
-    // Construct the expected URL based on the known format
-    const containerUrl = `https://${username}.ambitiousfield-760fb695.eastus.azurecontainerapps.io/?folder=/home/${username}`;
+    // If we got here, we have a successful response but couldn't extract a URL from JSON
+    let containerUrl = "";
+    
+    // Try to extract the URL directly from the response text as a last resort
+    if (responseText.includes('azurecontainerapps.io')) {
+      const urlMatch = responseText.match(/(https:\/\/.*?azurecontainerapps\.io[^\s"']*)/);
+      if (urlMatch && urlMatch[1]) {
+        containerUrl = urlMatch[1];
+      }
+    }
+    
+    // If still no URL, use a constructed fallback
+    if (!containerUrl) {
+      containerUrl = `https://${username}.ambitiousfield-760fb695.eastus.azurecontainerapps.io`;
+    }
     
     console.log(`Codebase set up successfully for ${username}, question: ${questionId}`);
     return {
@@ -140,11 +170,15 @@ export async function setupUserCodebase(username: string, questionId: string, la
     // Extract error message safely
     const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
     
+    // Construct a standard URL based on the username 
+    // This is only used if everything else fails (network error, etc.)
+    const fallbackUrl = `https://${username}.ambitiousfield-760fb695.eastus.azurecontainerapps.io`;
+    
     // Instead of failing completely, return a response with a fallback URL
     return {
       status: "pending",
       message: "Error connecting to container service. You can still try accessing your environment directly.",
-      containerUrl: `https://${username}.ambitiousfield-760fb695.eastus.azurecontainerapps.io/?folder=/home/${username}`,
+      containerUrl: fallbackUrl,
       error: errorMessage
     };
   }
