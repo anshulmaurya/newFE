@@ -779,10 +779,10 @@ export default function CodingEnvironment() {
           {containerUrl ? (
             <div className="relative flex-grow w-full">
               {/* Action buttons overlay */}
-              <div className="absolute top-2 left-[85px] z-10 flex items-center space-x-2">
+              <div className="absolute top-1 left-[95px] z-10 flex items-center space-x-2">
                 <Button 
                   variant="default"
-                  className="h-8 px-4 bg-yellow-500 hover:bg-yellow-600 text-black border-none rounded-none"
+                  className="h-6 px-3 text-xs bg-yellow-500 hover:bg-yellow-600 text-black border-none rounded-none"
                   onClick={() => {
                     // Will implement API call later
                     toast({
@@ -791,12 +791,12 @@ export default function CodingEnvironment() {
                     });
                   }}
                 >
-                  <Play className="h-4 w-4 mr-2" />
+                  <Play className="h-3 w-3 mr-1" />
                   Run
                 </Button>
                 <Button 
                   variant="default"
-                  className="h-8 px-4 bg-yellow-500 hover:bg-yellow-600 text-black border-none rounded-none"
+                  className="h-6 px-3 text-xs bg-yellow-500 hover:bg-yellow-600 text-black border-none rounded-none"
                   onClick={() => {
                     // Will implement API call later
                     toast({
@@ -805,7 +805,7 @@ export default function CodingEnvironment() {
                     });
                   }}
                 >
-                  <Send className="h-4 w-4 mr-2" />
+                  <Send className="h-3 w-3 mr-1" />
                   Submit
                 </Button>
               </div>
