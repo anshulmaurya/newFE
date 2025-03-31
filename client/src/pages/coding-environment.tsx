@@ -5,7 +5,6 @@ import {
   ArrowLeft, 
   FileText, 
   AlertTriangle, 
-  Maximize2,
   RefreshCw,
   Info,
   Code,
@@ -16,7 +15,11 @@ import {
   Send,
   User,
   ThumbsUp,
-  MoreHorizontal
+  ThumbsDown,
+  MoreHorizontal,
+  Building2,
+  Tags,
+  PercentSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -69,8 +72,9 @@ interface Comment {
   avatarUrl?: string;
   content: string;
   createdAt: string;
-  likes: number;
-  isLiked?: boolean;
+  upvotes: number;
+  downvotes: number;
+  userVote?: 'upvote' | 'downvote' | null;
 }
 
 interface NewComment {
@@ -88,7 +92,8 @@ const SAMPLE_COMMENTS: Comment[] = [
     avatarUrl: 'https://github.com/identicons/dspcoder.png',
     content: 'Watch out for edge cases with circular linked lists. Make sure your pointers are initialized correctly!',
     createdAt: '2025-03-29T12:00:00Z',
-    likes: 5,
+    upvotes: 5,
+    downvotes: 1,
   },
   {
     id: 2,
@@ -98,7 +103,8 @@ const SAMPLE_COMMENTS: Comment[] = [
     avatarUrl: 'https://github.com/identicons/embeddedsystems.png',
     content: 'I found it helpful to use Floyd\'s cycle-finding algorithm (tortoise and hare) for this problem. The trick is to have one pointer move twice as fast as the other.',
     createdAt: '2025-03-29T13:30:00Z',
-    likes: 12,
+    upvotes: 12,
+    downvotes: 0,
   },
   {
     id: 3,
@@ -108,7 +114,8 @@ const SAMPLE_COMMENTS: Comment[] = [
     avatarUrl: 'https://github.com/identicons/cplusplusexpert.png',
     content: 'Be careful with memory management here. In a real-world implementation, you\'d need to consider how to properly free memory and avoid leaks.',
     createdAt: '2025-03-30T09:15:00Z',
-    likes: 8,
+    upvotes: 8,
+    downvotes: 2,
   }
 ];
 
@@ -326,7 +333,7 @@ export default function CodingEnvironment() {
                   onClick={() => toggleDescription('companies')}
                   className="h-12 w-12 rounded-xl hover:bg-[#2D2D30]"
                 >
-                  <MessageSquare className="h-5 w-5 text-gray-400" />
+                  <Building2 className="h-5 w-5 text-gray-400" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
@@ -375,24 +382,7 @@ export default function CodingEnvironment() {
             </Tooltip>
           </div>
 
-          {/* Fullscreen button */}
-          <div className="my-2">
-            <Tooltip delayDuration={300}>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={toggleFullscreen}
-                  className="h-12 w-12 rounded-xl hover:bg-[#2D2D30]"
-                >
-                  <Maximize2 className="h-5 w-5 text-gray-400" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Fullscreen</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
+
         </TooltipProvider>
       </div>
       
@@ -431,20 +421,71 @@ export default function CodingEnvironment() {
               ) : problem ? (
                 <div className="p-4">
                   {activeSection === 'description' && (
-                    <div className="prose prose-sm prose-invert max-w-none">
-                      <ReactMarkdown components={{
-                        p: ({node, ...props}) => <p {...props} />,
-                        h1: ({node, ...props}) => <h1 {...props} />,
-                        h2: ({node, ...props}) => <h2 {...props} />,
-                        h3: ({node, ...props}) => <h3 {...props} />,
-                        ul: ({node, ...props}) => <ul {...props} />,
-                        ol: ({node, ...props}) => <ol {...props} />,
-                        li: ({node, ...props}) => <li {...props} />,
-                        code: ({node, ...props}) => <code {...props} />,
-                        pre: ({node, ...props}) => <pre {...props} />
-                      }}>
-                        {problem.readme || "No description available."}
-                      </ReactMarkdown>
+                    <div>
+                      {/* Problem metadata section */}
+                      <div className="mb-5 bg-[#2D2D30] rounded-md p-4 space-y-3">
+                        {/* Acceptance rate */}
+                        {problem.acceptance_rate && (
+                          <div className="flex items-center gap-2">
+                            <PercentSquare className="h-4 w-4 text-gray-400" />
+                            <span className="text-sm text-gray-300">Acceptance Rate:</span>
+                            <Badge variant="outline" className="bg-[#3E3E42]">
+                              {problem.acceptance_rate.toFixed(1)}%
+                            </Badge>
+                          </div>
+                        )}
+                        
+                        {/* Companies */}
+                        {problem.companies && problem.companies.length > 0 && (
+                          <div className="flex items-start gap-2">
+                            <Building2 className="h-4 w-4 text-gray-400 mt-1" />
+                            <div className="flex-1">
+                              <span className="text-sm text-gray-300 block mb-1.5">Companies:</span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {problem.companies.map((company, idx) => (
+                                  <Badge key={idx} variant="outline" className="bg-[#2D2D30] text-white">
+                                    {company}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Tags */}
+                        {problem.tags && problem.tags.length > 0 && (
+                          <div className="flex items-start gap-2">
+                            <Tags className="h-4 w-4 text-gray-400 mt-1" />
+                            <div className="flex-1">
+                              <span className="text-sm text-gray-300 block mb-1.5">Tags:</span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {problem.tags.map((tag, idx) => (
+                                  <Badge key={idx} variant="outline" className="bg-[#3E3E42] text-white">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Problem description */}
+                      <div className="prose prose-sm prose-invert max-w-none">
+                        <ReactMarkdown components={{
+                          p: ({node, ...props}) => <p {...props} />,
+                          h1: ({node, ...props}) => <h1 {...props} />,
+                          h2: ({node, ...props}) => <h2 {...props} />,
+                          h3: ({node, ...props}) => <h3 {...props} />,
+                          ul: ({node, ...props}) => <ul {...props} />,
+                          ol: ({node, ...props}) => <ol {...props} />,
+                          li: ({node, ...props}) => <li {...props} />,
+                          code: ({node, ...props}) => <code {...props} />,
+                          pre: ({node, ...props}) => <pre {...props} />
+                        }}>
+                          {problem.readme || "No description available."}
+                        </ReactMarkdown>
+                      </div>
                     </div>
                   )}
                   
@@ -551,7 +592,8 @@ export default function CodingEnvironment() {
                                 avatarUrl: user.avatarUrl || undefined,
                                 content: commentText,
                                 createdAt: new Date().toISOString(),
-                                likes: 0,
+                                upvotes: 0,
+                                downvotes: 0,
                               };
 
                               setComments([...comments, newComment]);
@@ -575,8 +617,25 @@ export default function CodingEnvironment() {
 
                       {/* Comments list */}
                       <div className="space-y-4">
-                        {comments.map((comment) => (
-                          <div key={comment.id} className="bg-[#2D2D30] p-3 rounded-md">
+                        {/* Sort comments by upvotes and put user's comments at the top */}
+                        {comments
+                          .slice()
+                          .sort((a, b) => {
+                            // First put user's comments at the top
+                            if (user && a.userId === user.id && b.userId !== user.id) return -1;
+                            if (user && a.userId !== user.id && b.userId === user.id) return 1;
+                            // Then sort by upvotes
+                            return (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes);
+                          })
+                          .map((comment) => (
+                          <div 
+                            key={comment.id} 
+                            className={cn(
+                              "p-3 rounded-md",
+                              user && comment.userId === user.id 
+                                ? "bg-gradient-to-r from-[#2D2D30] to-[#2D3340] border border-blue-700/20" 
+                                : "bg-[#2D2D30]"
+                            )}>
                             <div className="flex justify-between items-start">
                               <div className="flex items-center gap-2">
                                 <Avatar className="h-8 w-8">
@@ -639,11 +698,31 @@ export default function CodingEnvironment() {
                                   // This would be an API call in a real app
                                   const updatedComments = comments.map(c => {
                                     if (c.id === comment.id) {
-                                      return { 
-                                        ...c, 
-                                        likes: c.isLiked ? c.likes - 1 : c.likes + 1,
-                                        isLiked: !c.isLiked
-                                      };
+                                      // If already upvoted, remove upvote
+                                      if (c.userVote === 'upvote') {
+                                        return { 
+                                          ...c, 
+                                          upvotes: c.upvotes - 1,
+                                          userVote: null
+                                        };
+                                      } 
+                                      // If downvoted, switch to upvote
+                                      else if (c.userVote === 'downvote') {
+                                        return { 
+                                          ...c, 
+                                          upvotes: c.upvotes + 1,
+                                          downvotes: c.downvotes - 1,
+                                          userVote: 'upvote'
+                                        };
+                                      } 
+                                      // If no vote, add upvote
+                                      else {
+                                        return { 
+                                          ...c, 
+                                          upvotes: c.upvotes + 1,
+                                          userVote: 'upvote'
+                                        };
+                                      }
                                     }
                                     return c;
                                   });
@@ -652,9 +731,55 @@ export default function CodingEnvironment() {
                               >
                                 <ThumbsUp className={cn(
                                   "h-3.5 w-3.5",
-                                  comment.isLiked && "fill-current text-blue-500"
+                                  comment.userVote === 'upvote' && "fill-current text-blue-500"
                                 )} />
-                                {comment.likes > 0 && <span>{comment.likes}</span>}
+                                {comment.upvotes > 0 && <span>{comment.upvotes}</span>}
+                              </Button>
+                              
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                className="h-7 px-2 text-xs gap-1 text-gray-400 hover:text-white"
+                                onClick={() => {
+                                  // This would be an API call in a real app
+                                  const updatedComments = comments.map(c => {
+                                    if (c.id === comment.id) {
+                                      // If already downvoted, remove downvote
+                                      if (c.userVote === 'downvote') {
+                                        return { 
+                                          ...c, 
+                                          downvotes: c.downvotes - 1,
+                                          userVote: null
+                                        };
+                                      } 
+                                      // If upvoted, switch to downvote
+                                      else if (c.userVote === 'upvote') {
+                                        return { 
+                                          ...c, 
+                                          upvotes: c.upvotes - 1,
+                                          downvotes: c.downvotes + 1,
+                                          userVote: 'downvote'
+                                        };
+                                      } 
+                                      // If no vote, add downvote
+                                      else {
+                                        return { 
+                                          ...c, 
+                                          downvotes: c.downvotes + 1,
+                                          userVote: 'downvote'
+                                        };
+                                      }
+                                    }
+                                    return c;
+                                  });
+                                  setComments(updatedComments);
+                                }}
+                              >
+                                <ThumbsDown className={cn(
+                                  "h-3.5 w-3.5",
+                                  comment.userVote === 'downvote' && "fill-current text-red-500"
+                                )} />
+                                {comment.downvotes > 0 && <span>{comment.downvotes}</span>}
                               </Button>
                             </div>
                           </div>
