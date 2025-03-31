@@ -799,7 +799,7 @@ export default function CodingEnvironment() {
                     });
                     
                     try {
-                      const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/run_question', {
+                      const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/build_and_run_question', {
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',
