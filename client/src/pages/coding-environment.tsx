@@ -1040,10 +1040,10 @@ export default function CodingEnvironment() {
           {containerUrl ? (
             <div className="relative flex-grow w-full">
               {/* Action buttons overlay */}
-              <div className="absolute top-1 left-[95px] z-10 flex items-center space-x-2">
+              <div className="absolute top-0.5 left-[115px] z-10 flex items-center space-x-1.5">
                 <Button 
                   variant="default"
-                  className="h-6 px-3 text-xs bg-[#c2ee4a] hover:bg-[#b2de3a] text-black border-none rounded-full"
+                  className="h-5 px-2 text-xs bg-[#c2ee4a] hover:bg-[#b2de3a] text-black border-none rounded-full"
                   onClick={async () => {
                     if (!questionId || !user) {
                       toast({
@@ -1098,12 +1098,12 @@ export default function CodingEnvironment() {
                     }
                   }}
                 >
-                  <Play className="h-3 w-3 mr-1" />
+                  <Play className="h-2.5 w-2.5 mr-0.5" />
                   Run
                 </Button>
                 <Button 
                   variant="default"
-                  className="h-6 px-3 text-xs bg-[#c2ee4a] hover:bg-[#b2de3a] text-black border-none rounded-full"
+                  className="h-5 px-2 text-xs bg-[#c2ee4a] hover:bg-[#b2de3a] text-black border-none rounded-full"
                   onClick={async () => {
                     if (!questionId || !user) {
                       toast({
@@ -1173,7 +1173,7 @@ export default function CodingEnvironment() {
                     }
                   }}
                 >
-                  <Send className="h-3 w-3 mr-1" />
+                  <Send className="h-2.5 w-2.5 mr-0.5" />
                   Submit
                 </Button>
               </div>
