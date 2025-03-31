@@ -779,37 +779,35 @@ export default function CodingEnvironment() {
           {containerUrl ? (
             <div className="relative flex-grow w-full">
               {/* Action buttons overlay */}
-              <div className="absolute top-0 left-0 z-10 flex items-center h-12 bg-[#1E1E1E] w-full">
-                <div className="flex ml-5">
-                  <Button 
-                    variant="default"
-                    className="h-8 px-4 mr-2 bg-yellow-500 hover:bg-yellow-600 text-black border-none rounded-none"
-                    onClick={() => {
-                      // Will implement API call later
-                      toast({
-                        title: 'Run Code',
-                        description: 'Running your code...',
-                      });
-                    }}
-                  >
-                    <Play className="h-4 w-4 mr-2" />
-                    Run
-                  </Button>
-                  <Button 
-                    variant="default"
-                    className="h-8 px-4 bg-yellow-500 hover:bg-yellow-600 text-black border-none rounded-none"
-                    onClick={() => {
-                      // Will implement API call later
-                      toast({
-                        title: 'Submit Solution',
-                        description: 'Submitting your solution for evaluation...',
-                      });
-                    }}
-                  >
-                    <Send className="h-4 w-4 mr-2" />
-                    Submit
-                  </Button>
-                </div>
+              <div className="absolute top-2 left-[85px] z-10 flex items-center space-x-2">
+                <Button 
+                  variant="default"
+                  className="h-8 px-4 bg-yellow-500 hover:bg-yellow-600 text-black border-none rounded-none"
+                  onClick={() => {
+                    // Will implement API call later
+                    toast({
+                      title: 'Run Code',
+                      description: 'Running your code...',
+                    });
+                  }}
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  Run
+                </Button>
+                <Button 
+                  variant="default"
+                  className="h-8 px-4 bg-yellow-500 hover:bg-yellow-600 text-black border-none rounded-none"
+                  onClick={() => {
+                    // Will implement API call later
+                    toast({
+                      title: 'Submit Solution',
+                      description: 'Submitting your solution for evaluation...',
+                    });
+                  }}
+                >
+                  <Send className="h-4 w-4 mr-2" />
+                  Submit
+                </Button>
               </div>
               <iframe 
                 ref={iframeRef}
