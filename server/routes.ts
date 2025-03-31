@@ -10,6 +10,7 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 import { setupAuth } from "./auth";
+import { setupUserCodebase } from "./container-api";
 
 // Add userId to Request type
 declare global {
@@ -486,6 +487,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching user streak:", error);
       return res.status(500).json({ error: "Server error" });
+    }
+  });
+
+  // Setup user codebase for a specific question
+  apiRouter.post("/setup-codebase", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      // Get the user to find the username
+      const user = await storage.getUser(req.userId);
+      if (!user || !user.username) {
+        return res.status(404).json({ error: "User not found or username missing" });
+      }
+      
+      const { questionId } = req.body;
+      if (!questionId) {
+        return res.status(400).json({ error: "Question ID is required" });
+      }
+      
+      // Call the external API to setup the codebase
+      const result = await setupUserCodebase(user.username, questionId.toString());
+      
+      // Record the attempt in user progress
+      try {
+        const problemId = parseInt(questionId);
+        if (!isNaN(problemId)) {
+          const existingProgress = await storage.getUserProgressForProblem(req.userId, problemId);
+          
+          if (existingProgress) {
+            await storage.updateUserProgress(existingProgress.id, {
+              lastAttemptedAt: new Date(),
+              attemptCount: (existingProgress.attemptCount || 0) + 1
+            });
+          } else {
+            await storage.createUserProgress({
+              userId: req.userId,
+              problemId: problemId,
+              status: "Attempted",
+              lastAttemptedAt: new Date(),
+              attemptCount: 1
+            });
+          }
+        }
+      } catch (progressError) {
+        console.error("Error updating user progress:", progressError);
+        // Don't fail the request if this part has an error
+      }
+      
+      return res.status(200).json(result);
+    } catch (error) {
+      console.error("Error setting up user codebase:", error);
+      return res.status(500).json({ error: "Failed to set up codebase" });
     }
   });
 

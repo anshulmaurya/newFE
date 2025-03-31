@@ -8,6 +8,7 @@ import ComingSoon from "@/pages/coming-soon";
 import Notes from "@/pages/notes";
 import Dashboard from "@/pages/dashboard";
 import AuthPage from "@/pages/auth-page";
+import ProblemDetail from "@/pages/problem-detail";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/" component={Home}/>
       <ProtectedRoute path="/dashboard" component={Dashboard} />
       <ProtectedRoute path="/problems" component={Dashboard} />
+      <ProtectedRoute path="/problems/:id" component={ProblemDetail} />
       <ProtectedRoute path="/jd-based" component={JDBasedPage} />
       <ProtectedRoute path="/quick-prep/blind-75" component={Blind75Page} />
       <ProtectedRoute path="/quick-prep/linux-basics" component={LinuxBasicsPage} />

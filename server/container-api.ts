@@ -45,3 +45,41 @@ export async function deleteUserContainer(username: string): Promise<void> {
     // We don't throw here to prevent logout failures if container deletion fails
   }
 }
+
+/**
+ * Sets up the codebase for a specific question in the user's container
+ * @param username The GitHub username of the user
+ * @param questionId The ID of the question
+ * @returns Promise that resolves when the codebase is set up
+ */
+export async function setupUserCodebase(username: string, questionId: string): Promise<any> {
+  try {
+    console.log(`Setting up codebase for user: ${username}, question: ${questionId}`);
+    
+    const requestBody = {
+      username,
+      question_id: questionId,
+      lang: "c",
+      original: "false"
+    };
+    
+    const response = await fetch(`${BACKEND_BASE_URL}/setup_user_codebase`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to set up codebase: ${response.status} ${response.statusText}`);
+    }
+    
+    const result = await response.json();
+    console.log(`Codebase set up successfully for ${username}, question: ${questionId}, response:`, result);
+    return result;
+  } catch (error) {
+    console.error('Error setting up codebase:', error);
+    throw error; // We throw here because this is a user-initiated action
+  }
+}
