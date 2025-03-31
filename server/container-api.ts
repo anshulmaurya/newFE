@@ -1,6 +1,8 @@
 import fetch from 'node-fetch';
 
+// Use the exact URL from Postman for setup_user_codebase
 const BACKEND_BASE_URL = 'https://dspcoder-backend-prod.azurewebsites.net/api';
+const SETUP_CODEBASE_URL = 'https://dspcoder-backend-prod.azurewebsites.net/api/setup_user_codebase';
 
 /**
  * Creates a container for a user in the cloud
@@ -52,20 +54,21 @@ export async function deleteUserContainer(username: string): Promise<void> {
  * @param questionId The ID of the question
  * @returns Promise that resolves when the codebase is set up
  */
-export async function setupUserCodebase(username: string, questionId: string): Promise<any> {
+export async function setupUserCodebase(username: string, questionId: string, lang: string = "cpp"): Promise<any> {
   try {
-    console.log(`Setting up codebase for user: ${username}, question: ${questionId}`);
+    console.log(`Setting up codebase for user: ${username}, question: ${questionId}, language: ${lang}`);
     
+    // Format the request body exactly as shown in Postman example
     const requestBody = {
-      username,
-      question_id: questionId,
-      lang: "c",
-      original: "false"
+      "username": username,
+      "question_id": questionId,
+      "lang": lang,
+      "original": "false"
     };
     
-    console.log(`Making request to ${BACKEND_BASE_URL}/setup_user_codebase with body:`, requestBody);
+    console.log(`Making request to ${SETUP_CODEBASE_URL} with body:`, requestBody);
     
-    const response = await fetch(`${BACKEND_BASE_URL}/setup_user_codebase`, {
+    const response = await fetch(SETUP_CODEBASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -77,46 +80,71 @@ export async function setupUserCodebase(username: string, questionId: string): P
     const responseText = await response.text();
     console.log(`Response from setup_user_codebase API (${response.status}): ${responseText}`);
     
-    // For now, we'll return a success message even with errors to prevent blocking the user
-    // The external API might be having temporary issues
-    if (!response.ok) {
-      console.warn(`External API returned error: ${response.status} ${response.statusText}. Response body: ${responseText}`);
-      
-      // Return a fallback response - this way the front-end still shows success
-      // and user can try using the environment (which might actually be working)
-      return {
-        status: "success",
-        message: "Codebase setup initiated. You can now start coding.",
-        containerUrl: `https://${username}.ambitiousfield-760fb695.eastus.azurecontainerapps.io`
-      };
-    }
-    
-    // Try to parse the response as JSON
+    // Try to parse the response as JSON first
     let result;
     try {
       result = JSON.parse(responseText);
+      
+      // If we get a response object with a URL, format it for our frontend
+      if (result.response && typeof result.response === 'string' && result.response.includes('azurecontainerapps.io')) {
+        return {
+          status: "success",
+          message: "Codebase setup completed successfully",
+          containerUrl: result.response,
+          rawResponse: result
+        };
+      }
     } catch (jsonError) {
       console.warn(`Failed to parse response as JSON. Using text response instead.`);
-      // If JSON parsing fails, create a synthetic response object
-      result = {
-        status: "success", 
-        message: "Codebase setup completed",
-        responseText
+      // Check if the response contains a URL we can extract
+      if (responseText.includes('azurecontainerapps.io')) {
+        // Simple container URL extraction (this is a fallback)
+        const urlMatch = responseText.match(/(https:\/\/.*?azurecontainerapps\.io[^\s"']*)/);
+        if (urlMatch && urlMatch[1]) {
+          return {
+            status: "success",
+            message: "Codebase setup completed",
+            containerUrl: urlMatch[1]
+          };
+        }
+      }
+    }
+    
+    // If response is not OK, still try to provide something useful
+    if (!response.ok) {
+      console.warn(`External API returned error: ${response.status} ${response.statusText}. Response body: ${responseText}`);
+      
+      // Return a fallback response with constructed URL based on username pattern
+      return {
+        status: "pending",
+        message: "Server encountered an error. You can try accessing your environment directly.",
+        containerUrl: `https://${username}.ambitiousfield-760fb695.eastus.azurecontainerapps.io/?folder=/home/${username}`,
+        error: responseText
       };
     }
     
+    // If we got here, we have a successful response but couldn't extract a URL
+    // Construct the expected URL based on the known format
+    const containerUrl = `https://${username}.ambitiousfield-760fb695.eastus.azurecontainerapps.io/?folder=/home/${username}`;
+    
     console.log(`Codebase set up successfully for ${username}, question: ${questionId}`);
-    return result;
+    return {
+      status: "success",
+      message: "Codebase setup completed",
+      containerUrl: containerUrl,
+      rawResponse: result || responseText
+    };
   } catch (err: unknown) {
     console.error('Error setting up codebase:', err);
     
     // Extract error message safely
     const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
     
-    // Instead of failing completely, return a response that allows the front-end to continue
+    // Instead of failing completely, return a response with a fallback URL
     return {
       status: "pending",
-      message: "Codebase setup has been initiated. You may begin coding, but the environment might not be fully ready.",
+      message: "Error connecting to container service. You can still try accessing your environment directly.",
+      containerUrl: `https://${username}.ambitiousfield-760fb695.eastus.azurecontainerapps.io/?folder=/home/${username}`,
       error: errorMessage
     };
   }

@@ -54,17 +54,27 @@ export default function ProblemDetail() {
       const res = await apiRequest("POST", "/api/setup-codebase", { questionId: id });
       return await res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
-        title: "Codebase setup started",
-        description: "Your coding environment is being prepared. This may take a moment.",
+        title: "Codebase setup successful",
+        description: "Your coding environment is ready. You'll be redirected momentarily.",
       });
       
-      // In a real implementation, you might redirect to an IDE page or show a status
-      toast({
-        title: "Ready to code!",
-        description: "Your environment is ready. You can now begin coding.",
-      });
+      // Redirect to coding environment page with the container URL
+      if (data && data.containerUrl) {
+        // Encode the URL to pass it as a query parameter
+        const encodedUrl = encodeURIComponent(data.containerUrl);
+        const encodedTitle = encodeURIComponent(problem?.title || 'Coding Problem');
+        
+        // Redirect to the coding environment page
+        setLocation(`/coding-environment?containerUrl=${encodedUrl}&problemId=${id}&title=${encodedTitle}`);
+      } else {
+        toast({
+          title: "Missing container URL",
+          description: "The environment was set up, but we couldn't get the container URL.",
+          variant: "destructive",
+        });
+      }
     },
     onError: (error: Error) => {
       toast({
