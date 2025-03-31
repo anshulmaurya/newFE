@@ -305,7 +305,7 @@ export default function CodingEnvironment() {
                     activeSection === 'description' && isDescriptionOpen 
                       ? "text-white" 
                       : "text-gray-400"
-                  )} />
+                  )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
@@ -322,19 +322,9 @@ export default function CodingEnvironment() {
                   variant={activeSection === 'solution' && isDescriptionOpen ? "secondary" : "ghost"}
                   size="icon" 
                   onClick={() => toggleDescription('solution')}
-                  className={cn(
-                    "h-12 w-12 rounded-xl",
-                    activeSection === 'solution' && isDescriptionOpen 
-                      ? "bg-blue-600 hover:bg-blue-700" 
-                      : "hover:bg-[#2D2D30]"
-                  )}
+                  className="h-12 w-12 rounded-xl hover:bg-[#2D2D30]"
                 >
-                  <ScrollText className={cn(
-                    "h-5 w-5", 
-                    activeSection === 'solution' && isDescriptionOpen 
-                      ? "text-white" 
-                      : "text-gray-400"
-                  )} />
+                  <ScrollText className="h-5 w-5 text-gray-400" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
@@ -353,19 +343,9 @@ export default function CodingEnvironment() {
                   variant={activeSection === 'discussion' && isDescriptionOpen ? "secondary" : "ghost"}
                   size="icon" 
                   onClick={() => toggleDescription('discussion')}
-                  className={cn(
-                    "h-12 w-12 rounded-xl",
-                    activeSection === 'discussion' && isDescriptionOpen 
-                      ? "bg-blue-600 hover:bg-blue-700" 
-                      : "hover:bg-[#2D2D30]"
-                  )}
+                  className="h-12 w-12 rounded-xl hover:bg-[#2D2D30]"
                 >
-                  <MessagesSquare className={cn(
-                    "h-5 w-5", 
-                    activeSection === 'discussion' && isDescriptionOpen 
-                      ? "text-white" 
-                      : "text-gray-400"
-                  )} />
+                  <MessagesSquare className="h-5 w-5 text-gray-400" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
