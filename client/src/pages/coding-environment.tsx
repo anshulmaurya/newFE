@@ -237,15 +237,19 @@ export default function CodingEnvironment() {
   
   const toggleDescription = (section?: 'description' | 'solution' | 'discussion' | 'submissions') => {
     if (section && !isDescriptionOpen) {
+      // If panel is closed, open it with the selected section
       setIsDescriptionOpen(true);
       setActiveSection(section);
     } else if (section && isDescriptionOpen) {
       if (activeSection === section) {
+        // Toggle panel off
         setIsDescriptionOpen(false);
       } else {
+        // Switch to the selected section
         setActiveSection(section);
       }
     } else {
+      // Toggle the description panel on/off
       setIsDescriptionOpen(!isDescriptionOpen);
     }
   };
@@ -1136,8 +1140,10 @@ export default function CodingEnvironment() {
                         if (data.response && data.response.status) {
                           setSubmissionResult(data.response);
                           
-                          // Auto-open the submissions panel
-                          toggleDescription('submissions');
+                          // Make sure the submissions panel is open
+                          // We need to ensure this doesn't toggle off if already open
+                          setIsDescriptionOpen(true);
+                          setActiveSection('submissions');
                           
                           toast({
                             title: 'Success',
