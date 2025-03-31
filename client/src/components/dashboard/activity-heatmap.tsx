@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
@@ -49,22 +49,27 @@ export default function ActivityHeatmap() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Calculate available years (current year and 2 previous years)
-  const currentYear = new Date().getFullYear();
-  const availableYears = [currentYear, currentYear - 1, currentYear - 2];
+  // Use a ref to track if we've already fetched data to prevent multiple API calls
+  const didFetchData = useRef<boolean>(false);
   
-  // Fetch real activity data from the API
+  // Calculate available years (current year and 2 previous years) - memoized to prevent recalculation
+  const currentYear = useMemo(() => new Date().getFullYear(), []);
+  const availableYears = useMemo(() => [currentYear, currentYear - 1, currentYear - 2], [currentYear]);
+  
+  // Fetch real activity data from the API - only when the user changes
   useEffect(() => {
+    // Function to fetch user activity data
     const fetchUserActivity = async () => {
+      // Skip fetching if no username is available
       if (!user?.username) return;
       
-      setIsLoading(true);
+      // Only set loading on first fetch
+      if (Object.keys(allYearsData).length === 0) {
+        setIsLoading(true);
+      }
       setError(null);
       
       try {
-        // Debug user object
-        console.log("User object:", user);
-        
         // Try to use either stored username or display name if available
         if (!user?.username && !user?.displayName) {
           throw new Error("No username available for API request");
@@ -72,7 +77,6 @@ export default function ActivityHeatmap() {
         
         const username = user?.username || 
                          (user?.displayName ? user.displayName.toLowerCase().replace(/\s+/g, '') : '');
-        console.log("Using username for API call:", username);
         
         // Make the actual API call using POST request with username in the body
         const response = await fetch(
@@ -92,19 +96,15 @@ export default function ActivityHeatmap() {
         
         // Get the raw response text first for debugging
         const responseText = await response.text();
-        console.log("Raw API response:", responseText);
         
         try {
           // Try to parse the JSON response
           const data = JSON.parse(responseText);
-          console.log("Successfully parsed heatmap data:", data);
           
           // Check if this is empty or has the expected format
           if (data && typeof data === 'object' && Object.keys(data).length > 0) {
-            console.log("Found valid data with years:", Object.keys(data));
             setAllYearsData(data);
           } else {
-            console.warn("API returned empty or invalid data structure:", data);
             throw new Error("Invalid data format from API");
           }
         } catch (jsonError) {
@@ -130,8 +130,12 @@ export default function ActivityHeatmap() {
       }
     };
     
-    fetchUserActivity();
-  }, [user?.username, availableYears]);
+    // Only fetch if we have a user and haven't already fetched the data
+    if (user?.username && !didFetchData.current) {
+      didFetchData.current = true;
+      fetchUserActivity();
+    }
+  }, [user?.username]);
   
   // Calculate the total problems solved for the selected year
   const totalSolved = useMemo(() => {
