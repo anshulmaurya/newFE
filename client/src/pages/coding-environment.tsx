@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { 
   ArrowLeft, 
   FileText, 
@@ -11,7 +11,12 @@ import {
   Code,
   ScrollText,
   MessageSquare,
-  Home
+  Home,
+  MessagesSquare,
+  Send,
+  User,
+  ThumbsUp,
+  MoreHorizontal
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -22,6 +27,12 @@ import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 import { fadeIn } from '@/lib/animation-utils';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
+import { Textarea } from '@/components/ui/textarea';
+import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { format } from 'date-fns';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -50,6 +61,57 @@ interface ProblemDescriptionResponse {
   data: ProblemDescription;
 }
 
+interface Comment {
+  id: number;
+  problemId: string;
+  userId: number;
+  username: string;
+  avatarUrl?: string;
+  content: string;
+  createdAt: string;
+  likes: number;
+  isLiked?: boolean;
+}
+
+interface NewComment {
+  problemId: string;
+  content: string;
+}
+
+// Sample comment data
+const SAMPLE_COMMENTS: Comment[] = [
+  {
+    id: 1,
+    problemId: '671988657912757f63726161',
+    userId: 1,
+    username: 'dspcoder',
+    avatarUrl: 'https://github.com/identicons/dspcoder.png',
+    content: 'Watch out for edge cases with circular linked lists. Make sure your pointers are initialized correctly!',
+    createdAt: '2025-03-29T12:00:00Z',
+    likes: 5,
+  },
+  {
+    id: 2,
+    problemId: '671988657912757f63726161',
+    userId: 2,
+    username: 'embeddedsystems',
+    avatarUrl: 'https://github.com/identicons/embeddedsystems.png',
+    content: 'I found it helpful to use Floyd\'s cycle-finding algorithm (tortoise and hare) for this problem. The trick is to have one pointer move twice as fast as the other.',
+    createdAt: '2025-03-29T13:30:00Z',
+    likes: 12,
+  },
+  {
+    id: 3,
+    problemId: '671988657912757f63726161',
+    userId: 3,
+    username: 'cplusplusexpert',
+    avatarUrl: 'https://github.com/identicons/cplusplusexpert.png',
+    content: 'Be careful with memory management here. In a real-world implementation, you\'d need to consider how to properly free memory and avoid leaks.',
+    createdAt: '2025-03-30T09:15:00Z',
+    likes: 8,
+  }
+];
+
 export default function CodingEnvironment() {
   const [, setLocation] = useLocation();
   const [containerUrl, setContainerUrl] = useState<string | null>(null);
@@ -57,7 +119,10 @@ export default function CodingEnvironment() {
   const [questionId, setQuestionId] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<'description' | 'solution' | 'companies'>('description');
+  const [activeSection, setActiveSection] = useState<'description' | 'solution' | 'companies' | 'discussion'>('description');
+  const [commentText, setCommentText] = useState('');
+  const [comments, setComments] = useState<Comment[]>(SAMPLE_COMMENTS);
+  const { user } = useAuth();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
 
@@ -123,7 +188,7 @@ export default function CodingEnvironment() {
     setIsFullscreen(!isFullscreen);
   };
   
-  const toggleDescription = (section?: 'description' | 'solution' | 'companies') => {
+  const toggleDescription = (section?: 'description' | 'solution' | 'companies' | 'discussion') => {
     if (section && !isDescriptionOpen) {
       setIsDescriptionOpen(true);
       setActiveSection(section);
@@ -266,6 +331,25 @@ export default function CodingEnvironment() {
               </TooltipTrigger>
               <TooltipContent side="right">
                 <p>Companies & Tags</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          
+          {/* Discussion button */}
+          <div className="my-2">
+            <Tooltip delayDuration={300}>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant={activeSection === 'discussion' && isDescriptionOpen ? "secondary" : "ghost"}
+                  size="icon" 
+                  onClick={() => toggleDescription('discussion')}
+                  className="h-12 w-12 rounded-xl hover:bg-[#2D2D30]"
+                >
+                  <MessagesSquare className="h-5 w-5 text-gray-400" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Discussion Forum</p>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -433,6 +517,156 @@ export default function CodingEnvironment() {
                           )}
                         </div>
                       )}
+                    </div>
+                  )}
+                  
+                  {activeSection === 'discussion' && (
+                    <div className="space-y-6">
+                      <h3 className="font-medium text-lg">Discussion Forum</h3>
+                      
+                      {/* Comment form */}
+                      <div className="bg-[#2D2D30] p-3 rounded-md">
+                        <h4 className="text-sm font-medium mb-2">Add your thoughts</h4>
+                        <Textarea 
+                          placeholder="Share your solution approach, tips, or ask questions..." 
+                          className="resize-none bg-[#1E1E1E] border-[#3E3E42]" 
+                          value={commentText}
+                          onChange={(e) => setCommentText(e.target.value)}
+                          rows={4}
+                        />
+                        <div className="flex justify-end mt-2">
+                          <Button 
+                            size="sm" 
+                            className="gap-1"
+                            disabled={!commentText.trim() || !user}
+                            onClick={() => {
+                              if (!problemId || !user) return;
+
+                              // In a real app, this would be an API call
+                              const newComment: Comment = {
+                                id: comments.length + 1,
+                                problemId: problemId,
+                                userId: user.id,
+                                username: user.username,
+                                avatarUrl: user.avatarUrl || undefined,
+                                content: commentText,
+                                createdAt: new Date().toISOString(),
+                                likes: 0,
+                              };
+
+                              setComments([...comments, newComment]);
+                              setCommentText('');
+                              toast({
+                                title: 'Comment added',
+                                description: 'Your comment has been posted successfully',
+                              });
+                            }}
+                          >
+                            <Send className="h-3.5 w-3.5" />
+                            Post
+                          </Button>
+                        </div>
+                        {!user && (
+                          <p className="text-xs text-gray-400 mt-1 text-center">
+                            You need to be logged in to post comments.
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Comments list */}
+                      <div className="space-y-4">
+                        {comments.map((comment) => (
+                          <div key={comment.id} className="bg-[#2D2D30] p-3 rounded-md">
+                            <div className="flex justify-between items-start">
+                              <div className="flex items-center gap-2">
+                                <Avatar className="h-8 w-8">
+                                  <AvatarImage src={comment.avatarUrl} />
+                                  <AvatarFallback>{comment.username.charAt(0).toUpperCase()}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <p className="text-sm font-medium">{comment.username}</p>
+                                  <p className="text-xs text-gray-400">
+                                    {format(new Date(comment.createdAt), 'MMM d, yyyy')}
+                                  </p>
+                                </div>
+                              </div>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      // This would be an API call in a real app
+                                      navigator.clipboard.writeText(comment.content);
+                                      toast({
+                                        title: 'Comment copied',
+                                        description: 'Comment text copied to clipboard',
+                                      });
+                                    }}
+                                  >
+                                    Copy text
+                                  </DropdownMenuItem>
+                                  {user && comment.userId === user.id && (
+                                    <DropdownMenuItem
+                                      onClick={() => {
+                                        // This would be an API call in a real app
+                                        setComments(comments.filter(c => c.id !== comment.id));
+                                        toast({
+                                          title: 'Comment deleted',
+                                          description: 'Your comment has been deleted',
+                                        });
+                                      }}
+                                      className="text-red-500"
+                                    >
+                                      Delete
+                                    </DropdownMenuItem>
+                                  )}
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                            <div className="mt-2 text-sm">
+                              {comment.content}
+                            </div>
+                            <div className="mt-3 flex items-center gap-2">
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                className="h-7 px-2 text-xs gap-1 text-gray-400 hover:text-white"
+                                onClick={() => {
+                                  // This would be an API call in a real app
+                                  const updatedComments = comments.map(c => {
+                                    if (c.id === comment.id) {
+                                      return { 
+                                        ...c, 
+                                        likes: c.isLiked ? c.likes - 1 : c.likes + 1,
+                                        isLiked: !c.isLiked
+                                      };
+                                    }
+                                    return c;
+                                  });
+                                  setComments(updatedComments);
+                                }}
+                              >
+                                <ThumbsUp className={cn(
+                                  "h-3.5 w-3.5",
+                                  comment.isLiked && "fill-current text-blue-500"
+                                )} />
+                                {comment.likes > 0 && <span>{comment.likes}</span>}
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+
+                        {comments.length === 0 && (
+                          <div className="text-center py-8">
+                            <MessagesSquare className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                            <p className="text-gray-400">No comments yet. Be the first to share your thoughts!</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
