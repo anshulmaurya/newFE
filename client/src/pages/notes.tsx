@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Search, Moon, Sun, ChevronDown, Menu, X } from "lucide-react";
-import { useLocation } from "wouter";
+import { Search, Moon, Sun, ChevronDown, Menu, X, BookOpen, Code, Database } from "lucide-react";
+import { useLocation, Link } from "wouter";
 import Header from "@/components/layout/header";
 
 // Define topic sections and their subsections
@@ -8,103 +8,32 @@ const notesTopics = [
   { 
     id: "getting-started", 
     label: "Getting Started",
-    subsections: [
-      { id: "setup-environment", label: "Setup Environment" },
-      { id: "toolchains", label: "Toolchains" },
-      { id: "hello-world", label: "Hello World" }
-    ]
+    icon: <BookOpen className="h-4 w-4 mr-2" />,
+    path: "/notes/getting-started",
+    subsections: []
   },
   { 
     id: "communication-protocols", 
     label: "Communication Protocols",
+    icon: <Code className="h-4 w-4 mr-2" />,
+    path: "/notes/communication-protocols",
     subsections: [
-      { id: "uart", label: "UART" },
-      { id: "i2c", label: "I²C" },
-      { id: "spi", label: "SPI" },
-      { id: "can", label: "CAN" }
+      { id: "spi", label: "SPI", path: "/notes/communication-protocols/spi" },
+      { id: "i2c", label: "I2C", path: "/notes/communication-protocols/i2c" },
+      { id: "uart", label: "UART", path: "/notes/communication-protocols/uart" }
     ]
   },
   { 
-    id: "memory-management", 
-    label: "Memory Management",
+    id: "data-structures", 
+    label: "Data Structures",
+    icon: <Database className="h-4 w-4 mr-2" />,
+    path: "/notes/data-structures",
     subsections: [
-      { id: "memory-types", label: "Memory Types" },
-      { id: "allocation-techniques", label: "Allocation Techniques" },
-      { id: "fragmentation", label: "Fragmentation" }
+      { id: "linked-list", label: "Linked List", path: "/notes/data-structures/linked-list" },
+      { id: "array", label: "Array", path: "/notes/data-structures/array" },
+      { id: "string", label: "String", path: "/notes/data-structures/string" }
     ]
-  },
-  { 
-    id: "rtos-fundamentals", 
-    label: "RTOS Fundamentals",
-    subsections: [
-      { id: "tasks", label: "Tasks & Scheduling" },
-      { id: "semaphores", label: "Semaphores" },
-      { id: "mutexes", label: "Mutexes" }
-    ]
-  },
-  { 
-    id: "interrupt-handling", 
-    label: "Interrupt Handling",
-    subsections: [
-      { id: "isr", label: "ISR Structure" },
-      { id: "priority", label: "Priority & Nesting" },
-      { id: "latency", label: "Latency & Performance" }
-    ]
-  },
-  { 
-    id: "driver-development", 
-    label: "Driver Development",
-    subsections: [
-      { id: "driver-models", label: "Driver Models" },
-      { id: "hardware-abstraction", label: "Hardware Abstraction" }
-    ]
-  },
-  { 
-    id: "peripherals", 
-    label: "Peripherals & Interfaces",
-    subsections: [
-      { id: "gpio", label: "GPIO" },
-      { id: "adc-dac", label: "ADC/DAC" },
-      { id: "timers", label: "Timers" }
-    ]
-  },
-  { 
-    id: "debugging-techniques", 
-    label: "Debugging Techniques",
-    subsections: [
-      { id: "jtag", label: "JTAG & SWD" },
-      { id: "logging", label: "Logging Strategies" }
-    ]
-  },
-  { 
-    id: "optimization", 
-    label: "Optimization Strategies",
-    subsections: [
-      { id: "code-optimization", label: "Code Optimization" },
-      { id: "power-optimization", label: "Power Optimization" }
-    ]
-  },
-  { 
-    id: "firmware-design", 
-    label: "Firmware Design Patterns",
-    subsections: [
-      { id: "state-machines", label: "State Machines" },
-      { id: "event-driven", label: "Event-Driven Design" }
-    ]
-  },
-  { 
-    id: "code-examples", 
-    label: "Code Examples",
-    subsections: [
-      { id: "c-examples", label: "C Examples" },
-      { id: "cpp-examples", label: "C++ Examples" }
-    ]
-  },
-  { 
-    id: "faq", 
-    label: "Frequently Asked Questions",
-    subsections: []
-  },
+  }
 ];
 
 export default function Notes() {
@@ -113,7 +42,20 @@ export default function Notes() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const [location, setLocation] = useLocation();
+  const [currentPath] = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
+  
+  // Update selected topic based on current path
+  useEffect(() => {
+    // Find the topic that matches the current path
+    const currentTopic = notesTopics.find(topic => 
+      currentPath === topic.path || currentPath.startsWith(`${topic.path}/`)
+    );
+    
+    if (currentTopic) {
+      setSelectedTopic(currentTopic.id);
+    }
+  }, [currentPath]);
 
   // Add scroll listener for header background opacity
   useEffect(() => {
@@ -209,40 +151,53 @@ export default function Notes() {
 
           <div className="space-y-2">
             <div>
-              <div className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-1.5 text-sm pl-1.5`}>Documentation</div>
-              <nav>
+              <div className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-3 text-sm pl-1.5`}>
+                Learning Resources
+              </div>
+              <nav className="space-y-1.5">
                 {notesTopics.map(topic => (
-                  <div key={topic.id} className="mb-1">
-                    <button
+                  <div key={topic.id} className="mb-2">
+                    <Link
+                      href={topic.path}
                       onClick={() => setSelectedTopic(topic.id)}
-                      className={`flex justify-between items-center w-full text-left px-2.5 py-1.5 rounded text-sm ${
+                    >
+                      <a className={`flex items-center w-full text-left px-3 py-2 rounded-md text-sm transition-all duration-150 ${
                         selectedTopic === topic.id 
-                          ? `${themeClasses.highlight} ${darkMode ? 'text-[rgb(214,251,65)]' : 'text-gray-800'} font-medium border-l-2 border-[rgb(214,251,65)]` 
+                          ? `bg-[#c2ee4a] text-black font-medium` 
                           : `${darkMode ? 'text-gray-300 hover:bg-[rgb(40,40,42)]' : 'text-gray-600 hover:bg-gray-200'}`
                       }`}
-                    >
-                      <span>{topic.label}</span>
-                      {topic.subsections.length > 0 && (
-                        <ChevronDown className={`h-3.5 w-3.5 transform transition-transform ${selectedTopic === topic.id ? 'rotate-180' : ''}`} />
-                      )}
-                    </button>
+                      >
+                        {topic.icon}
+                        <span>{topic.label}</span>
+                        {topic.subsections.length > 0 && (
+                          <ChevronDown className={`h-4 w-4 ml-auto transform transition-transform ${selectedTopic === topic.id ? 'rotate-180' : ''}`} />
+                        )}
+                      </a>
+                    </Link>
                     
                     {/* Subsections */}
                     {selectedTopic === topic.id && topic.subsections.length > 0 && (
-                      <div className="pl-4 mt-0.5 mb-1 space-y-0.5 border-l border-dashed border-gray-600 ml-2.5">
-                        {topic.subsections.map(subsection => (
-                          <a 
-                            key={subsection.id}
-                            href={`#${subsection.id}`}
-                            className={`block pl-3 pr-2 py-1 text-xs rounded hover:bg-opacity-20 ${
-                              darkMode 
-                                ? 'text-gray-400 hover:text-gray-200 hover:bg-gray-700' 
-                                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-200'
-                            }`}
-                          >
-                            {subsection.label}
-                          </a>
-                        ))}
+                      <div className="pl-2 mt-1.5 mb-1.5 space-y-1 border-l-2 border-dashed border-gray-600 ml-3">
+                        {topic.subsections.map(subsection => {
+                          const isActive = currentPath === subsection.path;
+                          return (
+                            <Link
+                              key={subsection.id}
+                              href={subsection.path}
+                            >
+                              <a className={`flex pl-4 pr-3 py-1.5 text-sm rounded-md hover:bg-opacity-30 ${
+                                isActive
+                                  ? 'bg-[#c2ee4a]/20 text-[#c2ee4a] font-medium'
+                                  : darkMode 
+                                    ? 'text-gray-400 hover:text-gray-200 hover:bg-[#c2ee4a]/20' 
+                                    : 'text-gray-500 hover:text-gray-900 hover:bg-[#c2ee4a]/20'
+                              }`}
+                              >
+                                {subsection.label}
+                              </a>
+                            </Link>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -255,6 +210,156 @@ export default function Notes() {
         {/* Main content */}
         <div className="flex-grow px-8 pb-10 mt-2 overflow-auto">
           <div className="max-w-4xl mx-auto">
+            {selectedTopic === "getting-started" && (
+              <>
+                <div className="flex items-center mb-1 text-gray-500 text-sm">
+                  <span>Docs</span>
+                  <span className="mx-2">›</span>
+                  <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Getting Started</span>
+                </div>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Getting Started with Embedded Systems</h1>
+
+                <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
+                  <p className="lead">
+                    Embedded systems are specialized computing systems designed to perform dedicated functions within a larger system. 
+                    This guide will help you take your first steps in this exciting and rapidly growing field.
+                  </p>
+
+                  <h2 id="what-are-embedded-systems">What Are Embedded Systems?</h2>
+                  <p>
+                    Embedded systems are computer systems with dedicated functions within a larger mechanical or electrical system.
+                    They're found in everything from simple devices like digital watches to complex systems like automotive control units,
+                    medical equipment, industrial machines, and aerospace applications.
+                  </p>
+
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
+                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Key Characteristics:</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>Dedicated to specific tasks rather than general-purpose computing</li>
+                      <li>Real-time operation requirements</li>
+                      <li>Resource constraints (memory, processing power, energy)</li>
+                      <li>Long-term reliability and robustness</li>
+                      <li>Often interact directly with physical environment through sensors and actuators</li>
+                    </ul>
+                  </div>
+
+                  <h2 id="essential-skills">Essential Skills for Embedded Development</h2>
+                  <p>
+                    Successful embedded systems developers need a diverse set of skills spanning hardware, software, and system design:
+                  </p>
+
+                  <ul>
+                    <li><strong>Programming Languages</strong>: C/C++ remain the dominant languages in embedded development</li>
+                    <li><strong>Hardware Understanding</strong>: Knowledge of microcontrollers, peripherals, and interfaces</li>
+                    <li><strong>Digital Electronics</strong>: Understanding of basic electronics principles</li>
+                    <li><strong>Operating Systems</strong>: Familiarity with real-time operating systems (RTOS)</li>
+                    <li><strong>Debugging Skills</strong>: Proficiency with debugging tools and techniques</li>
+                    <li><strong>Communication Protocols</strong>: Understanding of common interfaces like SPI, I2C, UART</li>
+                  </ul>
+
+                  <h2 id="getting-started-steps">Getting Started Steps</h2>
+                  <ol>
+                    <li><strong>Choose a Development Platform</strong>: Start with beginner-friendly platforms like Arduino, STM32 Nucleo, or ESP32</li>
+                    <li><strong>Set Up Development Environment</strong>: Install the necessary toolchain, IDE, and debugging tools</li>
+                    <li><strong>Learn the Basics</strong>: Understand microcontroller architecture and peripheral interfacing</li>
+                    <li><strong>Start Small</strong>: Begin with simple projects like LED blinking, button interfaces, and sensor reading</li>
+                    <li><strong>Advance Gradually</strong>: Progress to more complex projects involving multiple peripherals and real-time constraints</li>
+                  </ol>
+
+                  <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <svg className={`h-5 w-5 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>Beginner Tip</h3>
+                        <div className={`text-sm ${themeClasses.infoText}`}>
+                          <p>Don't try to learn everything at once. Focus on mastering one microcontroller platform before branching out to others. The fundamentals you learn will transfer across platforms.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {selectedTopic === "data-structures" && (
+              <>
+                <div className="flex items-center mb-1 text-gray-500 text-sm">
+                  <span>Docs</span>
+                  <span className="mx-2">›</span>
+                  <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Data Structures</span>
+                </div>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Data Structures for Embedded Systems</h1>
+
+                <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
+                  <p className="lead">
+                    Efficient data structures are crucial in embedded systems where resources are limited. This guide covers common data structures 
+                    and their implementation considerations for embedded applications.
+                  </p>
+
+                  <h2 id="data-structures-overview">Data Structures Overview</h2>
+                  <p>
+                    Data structures in embedded systems must be selected with careful consideration of memory usage, processing overhead, and 
+                    real-time constraints. Common data structures include arrays, linked lists, queues, stacks, and simple hash tables.
+                  </p>
+
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
+                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Selection Considerations:</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>Memory footprint and fragmentation potential</li>
+                      <li>Execution time determinism</li>
+                      <li>Access patterns (random vs. sequential)</li>
+                      <li>Complexity of implementation and maintenance</li>
+                      <li>Power consumption implications</li>
+                    </ul>
+                  </div>
+
+                  <h2 id="linked-list">Linked Lists</h2>
+                  <p>
+                    Linked lists are sequences of data elements, where each element points to the next one in the sequence.
+                    They're useful when the size of the collection may change dynamically.
+                  </p>
+
+                  <h3>Types of Linked Lists</h3>
+                  <ul>
+                    <li><strong>Singly Linked Lists</strong>: Each node points to the next node</li>
+                    <li><strong>Doubly Linked Lists</strong>: Each node points to both the next and previous nodes</li>
+                    <li><strong>Circular Linked Lists</strong>: The last node points back to the first node</li>
+                  </ul>
+
+                  <pre className={`${themeClasses.codeBlock} p-4 rounded-md overflow-x-auto`}>
+                    <code className="language-c">
+{`// Simple singly linked list implementation
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+// Create a new node
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode) {
+        newNode->data = data;
+        newNode->next = NULL;
+    }
+    return newNode;
+}
+
+// Insert at beginning
+void insertAtBeginning(Node** head, int data) {
+    Node* newNode = createNode(data);
+    newNode->next = *head;
+    *head = newNode;
+}`}
+                    </code>
+                  </pre>
+                </div>
+              </>
+            )}
+            
             {selectedTopic === "communication-protocols" && (
               <>
                 <div className="flex items-center mb-1 text-gray-500 text-sm">

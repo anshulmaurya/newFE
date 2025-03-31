@@ -18,6 +18,19 @@ import Blind75Page from '@/pages/quick-prep/blind-75';
 import LinuxBasicsPage from '@/pages/quick-prep/linux-basics';
 import JDBasedPage from '@/pages/jd-based';
 
+// Import notes pages
+import GettingStarted from '@/pages/notes/getting-started';
+import CommunicationProtocols from '@/pages/notes/communication-protocols';
+import DataStructures from '@/pages/notes/data-structures';
+
+// Import notes subpages
+import SPI from '@/pages/notes/communication-protocols/spi';
+import I2C from '@/pages/notes/communication-protocols/i2c';
+import UART from '@/pages/notes/communication-protocols/uart';
+import LinkedList from '@/pages/notes/data-structures/linked-list';
+import ArrayPage from '@/pages/notes/data-structures/array';
+import StringPage from '@/pages/notes/data-structures/string';
+
 function Router() {
   return (
     <Switch>
@@ -31,7 +44,21 @@ function Router() {
       <ProtectedRoute path="/quick-prep/linux-basics" component={LinuxBasicsPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/coming-soon" component={ComingSoon} />
+      
+      {/* Notes routes */}
       <Route path="/notes" component={Notes} />
+      <Route path="/notes/getting-started" component={GettingStarted} />
+      <Route path="/notes/communication-protocols" component={CommunicationProtocols} />
+      <Route path="/notes/data-structures" component={DataStructures} />
+      
+      {/* Notes subpages */}
+      <Route path="/notes/communication-protocols/spi" component={SPI} />
+      <Route path="/notes/communication-protocols/i2c" component={I2C} />
+      <Route path="/notes/communication-protocols/uart" component={UART} />
+      <Route path="/notes/data-structures/linked-list" component={LinkedList} />
+      <Route path="/notes/data-structures/array" component={ArrayPage} />
+      <Route path="/notes/data-structures/string" component={StringPage} />
+      
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
