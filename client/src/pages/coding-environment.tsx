@@ -422,13 +422,12 @@ export default function CodingEnvironment() {
                 <div className="p-4">
                   {activeSection === 'description' && (
                     <div>
-                      {/* Problem metadata section */}
-                      <div className="mb-5 bg-[#2D2D30] rounded-md p-4 space-y-3">
+                      {/* Problem metadata section - streamlined with no separate box */}
+                      <div className="mb-5 space-y-4">
                         {/* Acceptance rate */}
                         {problem.acceptance_rate && (
                           <div className="flex items-center gap-2">
-                            <PercentSquare className="h-4 w-4 text-gray-400" />
-                            <span className="text-sm text-gray-300">Acceptance Rate:</span>
+                            <span className="text-sm font-medium">Acceptance Rate:</span>
                             <Badge variant="outline" className="bg-[#3E3E42]">
                               {problem.acceptance_rate.toFixed(1)}%
                             </Badge>
@@ -437,34 +436,28 @@ export default function CodingEnvironment() {
                         
                         {/* Companies */}
                         {problem.companies && problem.companies.length > 0 && (
-                          <div className="flex items-start gap-2">
-                            <Building2 className="h-4 w-4 text-gray-400 mt-1" />
-                            <div className="flex-1">
-                              <span className="text-sm text-gray-300 block mb-1.5">Companies:</span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {problem.companies.map((company, idx) => (
-                                  <Badge key={idx} variant="outline" className="bg-[#2D2D30] text-white">
-                                    {company}
-                                  </Badge>
-                                ))}
-                              </div>
+                          <div>
+                            <span className="text-sm font-medium block mb-2">Companies:</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {problem.companies.map((company, idx) => (
+                                <Badge key={idx} variant="outline" className="bg-[#2D2D30] text-white">
+                                  {company}
+                                </Badge>
+                              ))}
                             </div>
                           </div>
                         )}
                         
                         {/* Tags */}
                         {problem.tags && problem.tags.length > 0 && (
-                          <div className="flex items-start gap-2">
-                            <Tags className="h-4 w-4 text-gray-400 mt-1" />
-                            <div className="flex-1">
-                              <span className="text-sm text-gray-300 block mb-1.5">Tags:</span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {problem.tags.map((tag, idx) => (
-                                  <Badge key={idx} variant="outline" className="bg-[#3E3E42] text-white">
-                                    {tag}
-                                  </Badge>
-                                ))}
-                              </div>
+                          <div>
+                            <span className="text-sm font-medium block mb-2">Tags:</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {problem.tags.map((tag, idx) => (
+                                <Badge key={idx} variant="outline" className="bg-[#3E3E42] text-white">
+                                  {tag}
+                                </Badge>
+                              ))}
                             </div>
                           </div>
                         )}
@@ -508,9 +501,10 @@ export default function CodingEnvironment() {
                   )}
                   
                   {activeSection === 'companies' && (
-                    <div>
+                    <div className="space-y-6">
+                      {/* Companies section */}
                       {problem.companies && problem.companies.length > 0 && (
-                        <div className="mb-6">
+                        <div>
                           <h3 className="font-medium text-lg mb-3">Companies that ask this question:</h3>
                           <div className="flex flex-wrap gap-2">
                             {problem.companies.map((company, idx) => (
@@ -522,6 +516,7 @@ export default function CodingEnvironment() {
                         </div>
                       )}
                       
+                      {/* Tags section */}
                       {problem.tags && problem.tags.length > 0 && (
                         <div>
                           <h3 className="font-medium text-lg mb-3">Tags:</h3>
@@ -535,6 +530,7 @@ export default function CodingEnvironment() {
                         </div>
                       )}
                       
+                      {/* Empty state */}
                       {(!problem.companies || problem.companies.length === 0) && 
                        (!problem.tags || problem.tags.length === 0) && (
                         <div className="text-center py-12">
@@ -543,17 +539,24 @@ export default function CodingEnvironment() {
                         </div>
                       )}
                       
-                      {problem.acceptance_rate && (
-                        <div className="mt-6 p-4 bg-[#2D2D30] rounded-md">
-                          <div className="flex justify-between items-center">
-                            <span className="text-gray-400">Acceptance Rate:</span>
-                            <span className="font-medium">{problem.acceptance_rate.toFixed(1)}%</span>
-                          </div>
+                      {/* Problem metrics */}
+                      {(problem.acceptance_rate || problem.type) && (
+                        <div>
+                          <h3 className="font-medium text-lg mb-3">Problem Metrics</h3>
+                          
+                          {problem.acceptance_rate && (
+                            <div className="flex items-center justify-between mb-2">
+                              <span>Acceptance Rate:</span>
+                              <Badge variant="outline" className="bg-[#3E3E42]">
+                                {problem.acceptance_rate.toFixed(1)}%
+                              </Badge>
+                            </div>
+                          )}
                           
                           {problem.type && (
-                            <div className="flex justify-between items-center mt-2">
-                              <span className="text-gray-400">Category:</span>
-                              <span>{problem.type}</span>
+                            <div className="flex items-center justify-between">
+                              <span>Category:</span>
+                              <span className="text-sm">{problem.type}</span>
                             </div>
                           )}
                         </div>
