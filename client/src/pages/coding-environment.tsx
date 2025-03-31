@@ -373,7 +373,7 @@ export default function CodingEnvironment() {
       <div className="flex flex-1 overflow-hidden">
         {/* Left Panel - Problem Description (when open) */}
         {isDescriptionOpen && (
-          <div className="w-2/5 max-w-lg border-r border-[#1E1E1E] bg-[#252526] text-white">
+          <div className="w-2/5 min-w-[480px] max-w-2xl border-r border-[#1E1E1E] bg-[#252526] text-white">
             <div className="flex items-center justify-between p-3 border-b border-[#1E1E1E]">
               <div className="flex items-center gap-2">
                 <Code className="h-4 w-4 text-gray-400" />
@@ -402,7 +402,7 @@ export default function CodingEnvironment() {
                   <Skeleton className="h-20 w-full mt-6" />
                 </div>
               ) : problem ? (
-                <div className="p-4">
+                <div className="p-4 pb-24">
                   {activeSection === 'description' && (
                     <div>
                       {/* Problem metadata section - streamlined with no separate box */}
@@ -627,7 +627,7 @@ export default function CodingEnvironment() {
                                         return { 
                                           ...c, 
                                           upvotes: c.upvotes - 1,
-                                          userVote: null
+                                          userVote: null as ('upvote' | 'downvote' | null)
                                         };
                                       } 
                                       // If downvoted, switch to upvote
@@ -636,7 +636,7 @@ export default function CodingEnvironment() {
                                           ...c, 
                                           upvotes: c.upvotes + 1,
                                           downvotes: c.downvotes - 1,
-                                          userVote: 'upvote'
+                                          userVote: 'upvote' as ('upvote' | 'downvote' | null)
                                         };
                                       } 
                                       // If no vote, add upvote
@@ -644,13 +644,13 @@ export default function CodingEnvironment() {
                                         return { 
                                           ...c, 
                                           upvotes: c.upvotes + 1,
-                                          userVote: 'upvote'
+                                          userVote: 'upvote' as ('upvote' | 'downvote' | null)
                                         };
                                       }
                                     }
                                     return c;
                                   });
-                                  setComments(updatedComments);
+                                  setComments(updatedComments as Comment[]);
                                 }}
                               >
                                 <ThumbsUp className={cn(
@@ -673,7 +673,7 @@ export default function CodingEnvironment() {
                                         return { 
                                           ...c, 
                                           downvotes: c.downvotes - 1,
-                                          userVote: null
+                                          userVote: null as ('upvote' | 'downvote' | null)
                                         };
                                       } 
                                       // If upvoted, switch to downvote
@@ -682,7 +682,7 @@ export default function CodingEnvironment() {
                                           ...c, 
                                           upvotes: c.upvotes - 1,
                                           downvotes: c.downvotes + 1,
-                                          userVote: 'downvote'
+                                          userVote: 'downvote' as ('upvote' | 'downvote' | null)
                                         };
                                       } 
                                       // If no vote, add downvote
@@ -690,13 +690,13 @@ export default function CodingEnvironment() {
                                         return { 
                                           ...c, 
                                           downvotes: c.downvotes + 1,
-                                          userVote: 'downvote'
+                                          userVote: 'downvote' as ('upvote' | 'downvote' | null)
                                         };
                                       }
                                     }
                                     return c;
                                   });
-                                  setComments(updatedComments);
+                                  setComments(updatedComments as Comment[]);
                                 }}
                               >
                                 <ThumbsDown className={cn(
