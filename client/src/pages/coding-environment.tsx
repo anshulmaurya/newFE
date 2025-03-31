@@ -295,7 +295,7 @@ export default function CodingEnvironment() {
                   onClick={goHome}
                   className="h-12 w-12 rounded-xl hover:bg-[#2D2D30]"
                 >
-                  <Home className="h-5 w-5 text-[#c2ee4a]" />
+                  <Home className="h-5 w-5 text-gray-400" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
@@ -314,7 +314,7 @@ export default function CodingEnvironment() {
                   onClick={goBack}
                   className="h-12 w-12 rounded-xl hover:bg-[#2D2D30]"
                 >
-                  <ArrowLeft className="h-5 w-5 text-[#c2ee4a]" />
+                  <ArrowLeft className="h-5 w-5 text-gray-400" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
@@ -344,7 +344,7 @@ export default function CodingEnvironment() {
                     "h-5 w-5", 
                     activeSection === 'description' && isDescriptionOpen 
                       ? "text-white" 
-                      : "text-[#c2ee4a]"
+                      : "text-gray-400"
                   )} />
                 </Button>
               </TooltipTrigger>
@@ -373,7 +373,7 @@ export default function CodingEnvironment() {
                     "h-5 w-5", 
                     activeSection === 'solution' && isDescriptionOpen 
                       ? "text-white" 
-                      : "text-[#c2ee4a]"
+                      : "text-gray-400"
                   )} />
                 </Button>
               </TooltipTrigger>
@@ -404,7 +404,7 @@ export default function CodingEnvironment() {
                     "h-5 w-5", 
                     activeSection === 'discussion' && isDescriptionOpen 
                       ? "text-white" 
-                      : "text-[#c2ee4a]"
+                      : "text-gray-400"
                   )} />
                 </Button>
               </TooltipTrigger>
@@ -434,7 +434,7 @@ export default function CodingEnvironment() {
                     "h-5 w-5", 
                     activeSection === 'submissions' && isDescriptionOpen 
                       ? "text-white" 
-                      : submissionResult ? "text-green-500" : "text-[#c2ee4a]"
+                      : submissionResult ? "text-green-500" : "text-gray-400"
                   )} />
                 </Button>
               </TooltipTrigger>
@@ -456,7 +456,7 @@ export default function CodingEnvironment() {
                   onClick={refreshIframe}
                   className="h-12 w-12 hover:bg-[#2D2D30]"
                 >
-                  <RefreshCw className="h-5 w-5 text-[#c2ee4a]" />
+                  <RefreshCw className="h-5 w-5 text-gray-400" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
@@ -655,19 +655,19 @@ export default function CodingEnvironment() {
                         <div className="border-b border-[#3E3E42] mb-6">
                           <div className="flex space-x-4">
                             <button 
-                              className={`pb-2 px-1 ${activeTab === 'test-results' ? 'border-b-2 border-yellow-500 text-white' : 'text-[#c2ee4a]'}`}
+                              className={`pb-2 px-1 ${activeTab === 'test-results' ? 'border-b-2 border-yellow-500 text-white' : 'text-gray-400'}`}
                               onClick={() => setActiveTab('test-results')}
                             >
                               Test Results
                             </button>
                             <button 
-                              className={`pb-2 px-1 ${activeTab === 'memory-profile' ? 'border-b-2 border-yellow-500 text-white' : 'text-[#c2ee4a]'}`}
+                              className={`pb-2 px-1 ${activeTab === 'memory-profile' ? 'border-b-2 border-yellow-500 text-white' : 'text-gray-400'}`}
                               onClick={() => setActiveTab('memory-profile')}
                             >
                               Memory Profile
                             </button>
                             <button 
-                              className={`pb-2 px-1 ${activeTab === 'cache-profile' ? 'border-b-2 border-yellow-500 text-white' : 'text-[#c2ee4a]'}`}
+                              className={`pb-2 px-1 ${activeTab === 'cache-profile' ? 'border-b-2 border-yellow-500 text-white' : 'text-gray-400'}`}
                               onClick={() => setActiveTab('cache-profile')}
                             >
                               Cache Profile
@@ -907,7 +907,7 @@ export default function CodingEnvironment() {
                               <Button 
                                 variant="ghost" 
                                 size="sm"
-                                className="h-7 px-2 text-xs gap-1 text-[#c2ee4a] hover:text-white"
+                                className="h-7 px-2 text-xs gap-1 text-gray-400 hover:text-white"
                                 onClick={() => {
                                   // This would be an API call in a real app
                                   const updatedComments = comments.map(c => {
@@ -953,7 +953,7 @@ export default function CodingEnvironment() {
                               <Button 
                                 variant="ghost" 
                                 size="sm"
-                                className="h-7 px-2 text-xs gap-1 text-[#c2ee4a] hover:text-white"
+                                className="h-7 px-2 text-xs gap-1 text-gray-400 hover:text-white"
                                 onClick={() => {
                                   // This would be an API call in a real app
                                   const updatedComments = comments.map(c => {
@@ -1001,7 +1001,7 @@ export default function CodingEnvironment() {
 
                         {comments.length === 0 && (
                           <div className="text-center py-8">
-                            <MessagesSquare className="h-12 w-12 text-[#c2ee4a] mx-auto mb-4" />
+                            <MessagesSquare className="h-12 w-12 text-gray-500 mx-auto mb-4" />
                             <p className="text-gray-400">No comments yet. Be the first to share your thoughts!</p>
                           </div>
                         )}
@@ -1011,7 +1011,7 @@ export default function CodingEnvironment() {
                 </div>
               ) : (
                 <div className="p-4 text-center flex flex-col items-center justify-center h-full">
-                  <Info className="h-12 w-12 text-[#c2ee4a] mb-4" />
+                  <Info className="h-12 w-12 text-gray-400 mb-4" />
                   <h3 className="text-lg font-medium mb-2">Problem description not available</h3>
                   <p className="text-gray-400 max-w-md">
                     We couldn't load the problem description. Please try again or go back to the problem page.
