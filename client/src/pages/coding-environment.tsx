@@ -474,308 +474,361 @@ export default function CodingEnvironment() {
       </div>
       
       {/* Code execution buttons will be rendered inside the iframe */}
-      
-      {/* Main content area */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left Panel - Problem Description (when open) */}
+      <div className="flex flex-1 h-full">
+        {/* Split Layout */}
+        {/* Left Panel - Problem Description when open */}
         {isDescriptionOpen && (
-          <div className="w-2/5 min-w-[480px] max-w-2xl border-r border-[#1E1E1E] bg-[#252526] text-white">
-            <div className="flex items-center justify-between p-3 border-b border-[#1E1E1E]">
-              <div className="flex items-center gap-2">
-                <Code className="h-4 w-4 text-gray-400" />
-                <h2 className="font-medium truncate">
-                  {isLoadingDescription ? (
-                    <Skeleton className="h-5 w-48" />
-                  ) : (
-                    problem?.title || "Loading problem..."
-                  )}
+          <div className="w-[450px] border-r border-[#3E3E42] bg-[#1E1E1E] overflow-y-auto">
+            {/* Panel header - sticky */}
+            <div className="sticky top-0 z-10 bg-[#1E1E1E] border-b border-[#3E3E42] px-4 py-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-medium">
+                  {problem?.title || "Problem"}
                 </h2>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setIsDescriptionOpen(false)}
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
               </div>
               
-              {problem && (
-                <Badge variant="outline" className={getDifficultyColor(problem.difficulty)}>
-                  {problem.difficulty}
-                </Badge>
-              )}
+              {/* Section tabs */}
+              <div className="flex space-x-1 mt-2">
+                <Button 
+                  variant={activeSection === 'description' ? "secondary" : "ghost"}
+                  size="sm"
+                  className={cn(
+                    "text-xs h-8 px-3",
+                    activeSection === 'description' && "bg-[#c2ee4a] hover:bg-[#b2de3a] text-black"
+                  )}
+                  onClick={() => setActiveSection('description')}
+                >
+                  Description
+                </Button>
+                <Button 
+                  variant={activeSection === 'solution' ? "secondary" : "ghost"}
+                  size="sm"
+                  className={cn(
+                    "text-xs h-8 px-3",
+                    activeSection === 'solution' && "bg-[#c2ee4a] hover:bg-[#b2de3a] text-black"
+                  )}
+                  onClick={() => setActiveSection('solution')}
+                >
+                  Solution
+                </Button>
+                <Button 
+                  variant={activeSection === 'discussion' ? "secondary" : "ghost"}
+                  size="sm"
+                  className={cn(
+                    "text-xs h-8 px-3",
+                    activeSection === 'discussion' && "bg-[#c2ee4a] hover:bg-[#b2de3a] text-black"
+                  )}
+                  onClick={() => setActiveSection('discussion')}
+                >
+                  Discussion
+                </Button>
+                <Button 
+                  variant={activeSection === 'submissions' ? "secondary" : "ghost"}
+                  size="sm"
+                  className={cn(
+                    "text-xs h-8 px-3",
+                    activeSection === 'submissions' && "bg-[#c2ee4a] hover:bg-[#b2de3a] text-black"
+                  )}
+                  onClick={() => setActiveSection('submissions')}
+                >
+                  Submissions
+                </Button>
+              </div>
             </div>
             
-            <div className="h-full overflow-y-auto">
+            {/* Panel content - scrollable */}
+            <div className="p-4">
               {isLoadingDescription ? (
-                <div className="p-4 space-y-4">
+                <div className="space-y-4">
+                  <Skeleton className="h-8 w-3/4" />
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-20 w-full mt-6" />
+                  <Skeleton className="h-4 w-2/3" />
+                  <div className="flex gap-2 mt-6">
+                    <Skeleton className="h-6 w-16" />
+                    <Skeleton className="h-6 w-16" />
+                    <Skeleton className="h-6 w-16" />
+                  </div>
                 </div>
-              ) : problem ? (
-                <div className="p-4 pb-24">
+              ) : problemDescription?.data ? (
+                <div className="text-gray-300">
                   {activeSection === 'description' && (
-                    <div>
-                      {/* Problem metadata section - streamlined with no separate box */}
-                      <div className="mb-5 space-y-4">
-                        {/* Acceptance rate */}
-                        {problem.acceptance_rate && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">Acceptance Rate:</span>
-                            <Badge variant="outline" className="bg-[#3E3E42]">
-                              {problem.acceptance_rate.toFixed(1)}%
-                            </Badge>
-                          </div>
-                        )}
+                    <div className="space-y-6">
+                      {/* Problem metadata */}
+                      <div className="flex flex-wrap gap-2">
+                        <Badge 
+                          variant="outline" 
+                          className={getDifficultyColor(problem.difficulty)}
+                        >
+                          {problem.difficulty}
+                        </Badge>
                         
-                        {/* Companies */}
-                        {problem.companies && problem.companies.length > 0 && (
-                          <div>
-                            <span className="text-sm font-medium block mb-2">Companies:</span>
-                            <div className="flex flex-wrap gap-1.5">
-                              {problem.companies.map((company, idx) => (
-                                <Badge key={idx} variant="outline" className="bg-[#2D2D30] text-white">
-                                  {company}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        
-                        {/* Tags */}
-                        {problem.tags && problem.tags.length > 0 && (
-                          <div>
-                            <span className="text-sm font-medium block mb-2">Tags:</span>
-                            <div className="flex flex-wrap gap-1.5">
-                              {problem.tags.map((tag, idx) => (
-                                <Badge key={idx} variant="outline" className="bg-[#3E3E42] text-white">
-                                  {tag}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
+                        <Badge variant="outline" className="bg-blue-500/15 text-blue-500 hover:bg-blue-500/20">
+                          Acceptance: {problem.acceptance_rate}%
+                        </Badge>
                       </div>
                       
-                      {/* Problem description */}
-                      <div className="prose prose-sm prose-invert max-w-none">
-                        <ReactMarkdown components={{
-                          p: ({node, ...props}) => <p {...props} />,
-                          h1: ({node, ...props}) => <h1 {...props} />,
-                          h2: ({node, ...props}) => <h2 {...props} />,
-                          h3: ({node, ...props}) => <h3 {...props} />,
-                          ul: ({node, ...props}) => <ul {...props} />,
-                          ol: ({node, ...props}) => <ol {...props} />,
-                          li: ({node, ...props}) => <li {...props} />,
-                          code: ({node, ...props}) => <code {...props} />,
-                          pre: ({node, ...props}) => <pre {...props} />
-                        }}>
-                          {problem.readme || "No description available."}
+                      {problem.tags && problem.tags.length > 0 && (
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-1 text-sm text-gray-400">
+                            <Tags className="h-4 w-4" />
+                            <span>Tags</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {problem.tags.map((tag, index) => (
+                              <Badge key={index} variant="outline" className="bg-[#2D2D30] hover:bg-[#3E3E42] text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {problem.companies && problem.companies.length > 0 && (
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-1 text-sm text-gray-400">
+                            <Building2 className="h-4 w-4" />
+                            <span>Companies</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {problem.companies.map((company, index) => (
+                              <Badge key={index} variant="outline" className="bg-[#2D2D30] hover:bg-[#3E3E42] text-xs">
+                                {company}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      <Separator className="my-4" />
+                      
+                      {/* Actual problem content */}
+                      <div className="prose prose-invert max-w-none">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {problem.readme || 'No problem description available.'}
                         </ReactMarkdown>
                       </div>
                     </div>
                   )}
                   
                   {activeSection === 'solution' && (
-                    <div className="prose prose-sm prose-invert max-w-none">
-                      <ReactMarkdown components={{
-                        p: ({node, ...props}) => <p {...props} />,
-                        h1: ({node, ...props}) => <h1 {...props} />,
-                        h2: ({node, ...props}) => <h2 {...props} />,
-                        h3: ({node, ...props}) => <h3 {...props} />,
-                        ul: ({node, ...props}) => <ul {...props} />,
-                        ol: ({node, ...props}) => <ol {...props} />,
-                        li: ({node, ...props}) => <li {...props} />,
-                        code: ({node, ...props}) => <code {...props} />,
-                        pre: ({node, ...props}) => <pre {...props} />
-                      }}>
-                        {problem.solution || "Solution is not available yet."}
-                      </ReactMarkdown>
+                    <div className="space-y-6">
+                      <div className="prose prose-invert max-w-none">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {problem.solution || 'No solution available for this problem yet.'}
+                        </ReactMarkdown>
+                      </div>
+                      
+                      {!problem.solution && (
+                        <div className="text-center py-8">
+                          <ScrollText className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                          <p className="text-gray-400">No solution is available for this problem yet.</p>
+                        </div>
+                      )}
                     </div>
                   )}
                   
-
-                  
-                  {activeSection === 'submissions' && submissionResult && (
+                  {activeSection === 'submissions' && (
                     <div className="space-y-6">
-                      <div className="bg-[#1E1E1E] rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-1">
-                          <h2 className="text-xl font-bold">Submission Result</h2>
-                          <Badge 
-                            variant="outline"
-                            className={submissionResult.output.metadata.overall_status === "PASS" ? "bg-green-600" : "bg-red-600"}
-                          >
-                            {submissionResult.output.metadata.overall_status}
-                          </Badge>
-                        </div>
-                        <p className="text-gray-400 mb-4">Execution completed in {submissionResult.output.metadata.Total_Time.toFixed(2)}ms</p>
-                        
-                        <div className="grid grid-cols-3 gap-4 mb-6">
-                          <div className="flex items-center gap-2">
-                            <div className="rounded-full bg-[#2D2D30] p-2">
-                              <Clock className="h-5 w-5 text-blue-400" />
-                            </div>
-                            <div>
-                              <p className="text-sm text-gray-400">Runtime</p>
-                              <p className="font-semibold">{submissionResult.output.metadata.Total_Time.toFixed(2)}ms</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-2">
-                            <div className="rounded-full bg-[#2D2D30] p-2">
-                              <Database className="h-5 w-5 text-purple-400" />
-                            </div>
-                            <div>
-                              <p className="text-sm text-gray-400">Memory</p>
-                              <p className="font-semibold">{(submissionResult.output.metadata.mem_stat.footprint.total_ram / 1024).toFixed(2)} KB</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-2">
-                            <div className="rounded-full bg-[#2D2D30] p-2">
-                              <AlertCircle className="h-5 w-5 text-yellow-400" />
-                            </div>
-                            <div>
-                              <p className="text-sm text-gray-400">Memory Leaks</p>
-                              <p className="font-semibold">{submissionResult.output.metadata.mem_stat.memory_leak.definitely_lost} bytes</p>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Test case summary */}
-                        <div className="mb-6">
-                          <div className="flex justify-between items-center mb-2">
-                            <h3 className="font-medium">Test Cases: {Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length}/{Object.keys(submissionResult.output.test_cases).length} passed</h3>
-                            <p className="text-sm text-gray-400">
-                              {((Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length / Object.keys(submissionResult.output.test_cases).length) * 100).toFixed(1)}%
-                            </p>
-                          </div>
-                          <div className="w-full bg-[#2D2D30] rounded-full h-2.5">
-                            <div 
-                              className="bg-green-600 h-2.5 rounded-full" 
-                              style={{ 
-                                width: `${(Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length / Object.keys(submissionResult.output.test_cases).length) * 100}%` 
-                              }}
-                            ></div>
-                          </div>
-                        </div>
-                        
-                        {/* Tab buttons for test results, memory profile, etc. */}
-                        <div className="border-b border-[#3E3E42] mb-6">
-                          <div className="flex space-x-4">
-                            <button 
-                              className={`pb-2 px-1 ${activeTab === 'test-results' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
-                              onClick={() => setActiveTab('test-results')}
+                      <h3 className="font-medium text-lg">Submission Results</h3>
+                      {submissionResult ? (
+                        <div className="bg-[#1E1E1E] rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-1">
+                            <h2 className="text-xl font-bold">Submission Result</h2>
+                            <Badge 
+                              variant="outline"
+                              className={submissionResult.output.metadata.overall_status === "PASS" ? "bg-green-600" : "bg-red-600"}
                             >
-                              Test Results
-                            </button>
-                            <button 
-                              className={`pb-2 px-1 ${activeTab === 'memory-profile' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
-                              onClick={() => setActiveTab('memory-profile')}
-                            >
-                              Memory Profile
-                            </button>
-                            <button 
-                              className={`pb-2 px-1 ${activeTab === 'cache-profile' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
-                              onClick={() => setActiveTab('cache-profile')}
-                            >
-                              Cache Profile
-                            </button>
+                              {submissionResult.output.metadata.overall_status}
+                            </Badge>
                           </div>
-                        </div>
+                          <p className="text-gray-400 mb-4">Execution completed in {submissionResult.output.metadata.Total_Time.toFixed(2)}ms</p>
                         
-                        {/* Tab content */}
-                        {activeTab === 'test-results' && (
-                          <div className="space-y-4">
-                            <h3 className="font-medium text-lg">Test Case Results</h3>
-                            <p className="text-sm text-gray-400 mb-4">
-                              {Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length} passed, {Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "FAIL").length} failed
-                            </p>
+                          <div className="grid grid-cols-3 gap-4 mb-6">
+                            <div className="flex items-center gap-2">
+                              <div className="rounded-full bg-[#2D2D30] p-2">
+                                <Clock className="h-5 w-5 text-blue-400" />
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-400">Runtime</p>
+                                <p className="font-semibold">{submissionResult.output.metadata.Total_Time.toFixed(2)}ms</p>
+                              </div>
+                            </div>
                             
+                            <div className="flex items-center gap-2">
+                              <div className="rounded-full bg-[#2D2D30] p-2">
+                                <Database className="h-5 w-5 text-purple-400" />
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-400">Memory</p>
+                                <p className="font-semibold">{(submissionResult.output.metadata.mem_stat.footprint.total_ram / 1024).toFixed(2)} KB</p>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <div className="rounded-full bg-[#2D2D30] p-2">
+                                <AlertCircle className="h-5 w-5 text-yellow-400" />
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-400">Memory Leaks</p>
+                                <p className="font-semibold">{submissionResult.output.metadata.mem_stat.memory_leak.definitely_lost} bytes</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Test case summary */}
+                          <div className="mb-6">
+                            <div className="flex justify-between items-center mb-2">
+                              <h3 className="font-medium">Test Cases: {Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length}/{Object.keys(submissionResult.output.test_cases).length} passed</h3>
+                              <p className="text-sm text-gray-400">
+                                {((Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length / Object.keys(submissionResult.output.test_cases).length) * 100).toFixed(1)}%
+                              </p>
+                            </div>
+                            <div className="w-full bg-[#2D2D30] rounded-full h-2.5">
+                              <div 
+                                className="bg-green-600 h-2.5 rounded-full" 
+                                style={{ 
+                                  width: `${(Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length / Object.keys(submissionResult.output.test_cases).length) * 100}%` 
+                                }}
+                              ></div>
+                            </div>
+                          </div>
+                          
+                          {/* Tab buttons for test results, memory profile, etc. */}
+                          <div className="border-b border-[#3E3E42] mb-6">
+                            <div className="flex space-x-4">
+                              <button 
+                                className={`pb-2 px-1 ${activeTab === 'test-results' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
+                                onClick={() => setActiveTab('test-results')}
+                              >
+                                Test Results
+                              </button>
+                              <button 
+                                className={`pb-2 px-1 ${activeTab === 'memory-profile' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
+                                onClick={() => setActiveTab('memory-profile')}
+                              >
+                                Memory Profile
+                              </button>
+                              <button 
+                                className={`pb-2 px-1 ${activeTab === 'cache-profile' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
+                                onClick={() => setActiveTab('cache-profile')}
+                              >
+                                Cache Profile
+                              </button>
+                            </div>
+                          </div>
+                          
+                          {/* Tab content */}
+                          {activeTab === 'test-results' && (
                             <div className="space-y-4">
-                              {Object.entries(submissionResult.output.test_cases).map(([testName, testCase]) => (
-                                <div key={testName} className="flex items-start justify-between border-b border-[#3E3E42] pb-4">
-                                  <div className="flex items-center gap-2">
-                                    {testCase.status === "PASS" ? (
-                                      <CheckCircle2 className="h-5 w-5 text-green-500" />
-                                    ) : (
-                                      <XCircle className="h-5 w-5 text-red-500" />
-                                    )}
-                                    <span className="font-mono text-sm">{testName}</span>
+                              <h3 className="font-medium text-lg">Test Case Results</h3>
+                              <p className="text-sm text-gray-400 mb-4">
+                                {Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length} passed, {Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "FAIL").length} failed
+                              </p>
+                              
+                              <div className="space-y-4">
+                                {Object.entries(submissionResult.output.test_cases).map(([testName, testCase]) => (
+                                  <div key={testName} className="flex items-start justify-between border-b border-[#3E3E42] pb-4">
+                                    <div className="flex items-center gap-2">
+                                      {testCase.status === "PASS" ? (
+                                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                                      ) : (
+                                        <XCircle className="h-5 w-5 text-red-500" />
+                                      )}
+                                      <span className="font-mono text-sm">{testName}</span>
+                                    </div>
+                                    <Badge 
+                                      variant={testCase.status === "PASS" ? "outline" : "destructive"}
+                                      className={testCase.status === "PASS" ? "bg-green-500/10 text-green-500 border-green-500/20" : ""}
+                                    >
+                                      {testCase.status}
+                                    </Badge>
                                   </div>
-                                  <Badge 
-                                    variant={testCase.status === "PASS" ? "outline" : "destructive"}
-                                    className={testCase.status === "PASS" ? "bg-green-500/10 text-green-500 border-green-500/20" : ""}
-                                  >
-                                    {testCase.status}
-                                  </Badge>
-                                </div>
-                              ))}
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                        
-                        {activeTab === 'memory-profile' && (
-                          <div className="space-y-4">
-                            <h3 className="font-medium text-lg">Memory Profile</h3>
-                            
-                            <div className="bg-[#2D2D30] p-4 rounded-md">
-                              <h4 className="text-sm font-medium mb-2">Memory Footprint</h4>
-                              <div className="grid grid-cols-3 gap-4">
-                                <div>
-                                  <p className="text-xs text-gray-400">Heap Usage</p>
-                                  <p className="font-mono">{(submissionResult.output.metadata.mem_stat.footprint.heap_usage / 1024).toFixed(2)} KB</p>
+                          )}
+                          
+                          {activeTab === 'memory-profile' && (
+                            <div className="space-y-4">
+                              <h3 className="font-medium text-lg">Memory Profile</h3>
+                              
+                              <div className="bg-[#2D2D30] p-4 rounded-md">
+                                <h4 className="text-sm font-medium mb-2">Memory Footprint</h4>
+                                <div className="grid grid-cols-3 gap-4">
+                                  <div>
+                                    <p className="text-xs text-gray-400">Heap Usage</p>
+                                    <p className="font-mono">{(submissionResult.output.metadata.mem_stat.footprint.heap_usage / 1024).toFixed(2)} KB</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-gray-400">Stack Usage</p>
+                                    <p className="font-mono">{(submissionResult.output.metadata.mem_stat.footprint.stack_usage / 1024).toFixed(2)} KB</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-gray-400">Total RAM</p>
+                                    <p className="font-mono">{(submissionResult.output.metadata.mem_stat.footprint.total_ram / 1024).toFixed(2)} KB</p>
+                                  </div>
                                 </div>
-                                <div>
-                                  <p className="text-xs text-gray-400">Stack Usage</p>
-                                  <p className="font-mono">{(submissionResult.output.metadata.mem_stat.footprint.stack_usage / 1024).toFixed(2)} KB</p>
-                                </div>
-                                <div>
-                                  <p className="text-xs text-gray-400">Total RAM</p>
-                                  <p className="font-mono">{(submissionResult.output.metadata.mem_stat.footprint.total_ram / 1024).toFixed(2)} KB</p>
+                              </div>
+                              
+                              <div className="bg-[#2D2D30] p-4 rounded-md">
+                                <h4 className="text-sm font-medium mb-2">Memory Leaks</h4>
+                                <div className="grid grid-cols-3 gap-4">
+                                  <div>
+                                    <p className="text-xs text-gray-400">Definitely Lost</p>
+                                    <p className="font-mono">{submissionResult.output.metadata.mem_stat.memory_leak.definitely_lost} bytes</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-gray-400">Indirectly Lost</p>
+                                    <p className="font-mono">{submissionResult.output.metadata.mem_stat.memory_leak.indirectly_lost} bytes</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-gray-400">Possibly Lost</p>
+                                    <p className="font-mono">{submissionResult.output.metadata.mem_stat.memory_leak.possibly_lost} bytes</p>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                            
-                            <div className="bg-[#2D2D30] p-4 rounded-md">
-                              <h4 className="text-sm font-medium mb-2">Memory Leaks</h4>
-                              <div className="grid grid-cols-3 gap-4">
-                                <div>
-                                  <p className="text-xs text-gray-400">Definitely Lost</p>
-                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.memory_leak.definitely_lost} bytes</p>
-                                </div>
-                                <div>
-                                  <p className="text-xs text-gray-400">Indirectly Lost</p>
-                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.memory_leak.indirectly_lost} bytes</p>
-                                </div>
-                                <div>
-                                  <p className="text-xs text-gray-400">Possibly Lost</p>
-                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.memory_leak.possibly_lost} bytes</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        
-                        {activeTab === 'cache-profile' && (
-                          <div className="space-y-4">
-                            <h3 className="font-medium text-lg">Cache Profile</h3>
-                            
-                            <div className="bg-[#2D2D30] p-4 rounded-md">
-                              <h4 className="text-sm font-medium mb-2">Cache Misses</h4>
-                              <div className="grid grid-cols-3 gap-4">
-                                <div>
-                                  <p className="text-xs text-gray-400">L1 Cache Misses</p>
-                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.cache_profile.l1_miss}</p>
-                                </div>
-                                <div>
-                                  <p className="text-xs text-gray-400">L2 Cache Misses</p>
-                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.cache_profile.l2_miss}</p>
-                                </div>
-                                <div>
-                                  <p className="text-xs text-gray-400">Branch Misses</p>
-                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.cache_profile.branch_miss}</p>
+                          )}
+                          
+                          {activeTab === 'cache-profile' && (
+                            <div className="space-y-4">
+                              <h3 className="font-medium text-lg">Cache Profile</h3>
+                              
+                              <div className="bg-[#2D2D30] p-4 rounded-md">
+                                <h4 className="text-sm font-medium mb-2">Cache Misses</h4>
+                                <div className="grid grid-cols-3 gap-4">
+                                  <div>
+                                    <p className="text-xs text-gray-400">L1 Cache Misses</p>
+                                    <p className="font-mono">{submissionResult.output.metadata.mem_stat.cache_profile.l1_miss}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-gray-400">L2 Cache Misses</p>
+                                    <p className="font-mono">{submissionResult.output.metadata.mem_stat.cache_profile.l2_miss}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-gray-400">Branch Misses</p>
+                                    <p className="font-mono">{submissionResult.output.metadata.mem_stat.cache_profile.branch_miss}</p>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        )}
-                      </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8">
+                          <ClipboardCheck className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                          <p className="text-gray-400">No submissions yet. Submit your code to see results here.</p>
+                        </div>
+                      )}
                     </div>
                   )}
                   
@@ -1070,37 +1123,43 @@ export default function CodingEnvironment() {
                           question_id: questionId,
                           lang: 'c',
                           profile: 'False'
-                        })
+                        }),
                       });
                       
-                      const data = await response.json();
+                      const result = await response.json();
                       
                       if (response.ok) {
                         toast({
-                          title: 'Success',
-                          description: 'Code ran successfully!',
+                          title: 'Code executed',
+                          description: result.message || 'Your code was executed successfully',
                         });
-                        console.log('Run result:', data);
+                        
+                        setSubmissionResult(result);
+                        if (!isDescriptionOpen) {
+                          toggleDescription('submissions');
+                        } else if (activeSection !== 'submissions') {
+                          setActiveSection('submissions');
+                        }
                       } else {
                         toast({
-                          title: 'Error',
-                          description: data.message || 'Failed to run code.',
-                          variant: 'destructive'
+                          title: 'Execution failed',
+                          description: result.message || 'Failed to execute your code',
+                          variant: 'destructive',
                         });
                       }
                     } catch (error) {
-                      console.error('Error running code:', error);
                       toast({
                         title: 'Error',
-                        description: 'Failed to run code. Please try again.',
-                        variant: 'destructive'
+                        description: 'An error occurred while trying to execute your code',
+                        variant: 'destructive',
                       });
                     }
                   }}
                 >
-                  <Play className="h-3 w-3 mr-1" />
+                  <Play className="h-3.5 w-3.5 mr-1" />
                   Run
                 </Button>
+                
                 <Button 
                   variant="default"
                   className="h-6 px-3 text-xs bg-[#c2ee4a] hover:bg-[#b2de3a] text-black border-none rounded-full"
@@ -1115,8 +1174,8 @@ export default function CodingEnvironment() {
                     }
                     
                     toast({
-                      title: 'Submit Solution',
-                      description: 'Submitting your solution for evaluation...',
+                      title: 'Submitting',
+                      description: 'Submitting your solution...',
                     });
                     
                     try {
@@ -1130,75 +1189,72 @@ export default function CodingEnvironment() {
                           question_id: questionId,
                           lang: 'c',
                           profile: 'False'
-                        })
+                        }),
                       });
                       
-                      const data = await response.json();
+                      const result = await response.json();
                       
                       if (response.ok) {
-                        // Store the submission result
-                        if (data.response && data.response.status) {
-                          setSubmissionResult(data.response);
-                          
-                          // Make sure the submissions panel is open
-                          // We need to ensure this doesn't toggle off if already open
-                          setIsDescriptionOpen(true);
+                        const passedAllTests = result.output.metadata.overall_status === "PASS";
+                        
+                        toast({
+                          title: passedAllTests ? 'Submission Successful' : 'Submission Failed',
+                          description: passedAllTests 
+                            ? 'Congratulations! Your solution passed all test cases.' 
+                            : 'Your solution did not pass all test cases.',
+                          variant: passedAllTests ? 'default' : 'destructive',
+                        });
+                        
+                        setSubmissionResult(result);
+                        if (!isDescriptionOpen) {
+                          toggleDescription('submissions');
+                        } else if (activeSection !== 'submissions') {
                           setActiveSection('submissions');
-                          
-                          toast({
-                            title: 'Success',
-                            description: 'Solution submitted successfully!',
-                          });
-                          console.log('Submit result:', data);
-                        } else {
-                          toast({
-                            title: 'Success',
-                            description: 'Solution submitted, but no detailed results available.',
-                          });
                         }
+                        
+                        // In a real app, this would update the user's progress
+                        // and stats in the database
                       } else {
                         toast({
-                          title: 'Error',
-                          description: data.message || 'Failed to submit solution.',
-                          variant: 'destructive'
+                          title: 'Submission failed',
+                          description: result.message || 'Failed to submit your code',
+                          variant: 'destructive',
                         });
                       }
                     } catch (error) {
-                      console.error('Error submitting solution:', error);
                       toast({
                         title: 'Error',
-                        description: 'Failed to submit solution. Please try again.',
-                        variant: 'destructive'
+                        description: 'An error occurred while trying to submit your code',
+                        variant: 'destructive',
                       });
                     }
                   }}
                 >
-                  <Send className="h-3 w-3 mr-1" />
+                  <ClipboardCheck className="h-3.5 w-3.5 mr-1" />
                   Submit
                 </Button>
               </div>
+              
+              {/* Code editor iframe */}
               <iframe 
                 ref={iframeRef}
                 src={containerUrl} 
-                className="w-full h-full border-0"
+                className="w-full h-full"
                 title="Coding Environment"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
-                loading="eager"
               />
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full p-8 text-white">
-              <Alert variant="destructive" className="mb-6 max-w-md">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Container URL not found. Please go back and try setting up the codebase again.
-                </AlertDescription>
-              </Alert>
-              
-              <Button onClick={goBack} className="gap-2">
-                <ArrowLeft className="h-4 w-4" />
-                Return to Dashboard
-              </Button>
+            <div className="flex items-center justify-center h-full bg-[#1E1E1E]">
+              <div className="text-center p-8 max-w-md">
+                <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+                <h2 className="text-xl font-bold mb-2">Container Not Available</h2>
+                <p className="text-gray-400 mb-6">
+                  The coding environment is not available. This could be because the container URL is missing or invalid.
+                </p>
+                <Button variant="default" onClick={goBack}>
+                  Go Back
+                </Button>
+              </div>
             </div>
           )}
         </div>
