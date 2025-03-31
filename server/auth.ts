@@ -7,6 +7,7 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User as UserType, insertUserStatsSchema } from "@shared/schema";
+import { createUserContainer, deleteUserContainer } from "./container-api";
 
 // Create type declaration for Express User
 declare global {
@@ -211,8 +212,14 @@ export function setupAuth(app: Express) {
         failWithError: true
       })(req, res, next);
     },
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
       console.log("GitHub authentication successful, user:", req.user);
+      
+      // Create container for user if they have a username
+      if (req.user && req.user.username) {
+        await createUserContainer(req.user.username);
+      }
+      
       res.redirect("/dashboard");
     },
     (err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -221,13 +228,27 @@ export function setupAuth(app: Express) {
     }
   );
 
-  app.post("/api/login", passport.authenticate("local"), (req, res) => {
+  app.post("/api/login", passport.authenticate("local"), async (req, res) => {
+    // Create container for user if they have a username
+    if (req.user && req.user.username) {
+      await createUserContainer(req.user.username);
+    }
+    
     res.json(req.user);
   });
 
-  app.post("/api/logout", (req, res, next) => {
-    req.logout((err) => {
+  app.post("/api/logout", async (req, res, next) => {
+    // Store the username before logging out
+    const username = req.user?.username;
+    
+    req.logout(async (err) => {
       if (err) return next(err);
+      
+      // Delete container for the user if they have a username
+      if (username) {
+        await deleteUserContainer(username);
+      }
+      
       res.sendStatus(200);
     });
   });
@@ -264,8 +285,11 @@ export function setupAuth(app: Express) {
       });
       
       // Log user in
-      req.login(user, (err) => {
+      req.login(user, async (err) => {
         if (err) return next(err);
+        
+        // Create container for the new user
+        await createUserContainer(user.username);
         
         // Return user without password
         const { password, ...userData } = user;
