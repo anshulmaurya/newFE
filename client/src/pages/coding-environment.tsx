@@ -10,7 +10,6 @@ import {
   Code,
   ScrollText,
   MessageSquare,
-  Home,
   MessagesSquare,
   Send,
   User,
@@ -21,6 +20,7 @@ import {
   Tags,
   PercentSquare
 } from 'lucide-react';
+import DSPCoderIcon from '@/components/ui/dspcoder-icon';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -245,7 +245,7 @@ export default function CodingEnvironment() {
       {/* Vertical navbar */}
       <div className="flex flex-col w-14 bg-[#252526] text-white items-center border-r border-[#1E1E1E] py-2">
         <TooltipProvider>
-          {/* Home button */}
+          {/* DSPCoder Home button */}
           <div className="mb-4 mt-2">
             <Tooltip delayDuration={300}>
               <TooltipTrigger asChild>
@@ -255,11 +255,11 @@ export default function CodingEnvironment() {
                   onClick={goHome}
                   className="h-12 w-12 rounded-xl hover:bg-[#2D2D30]"
                 >
-                  <Home className="h-5 w-5 text-gray-400" />
+                  <DSPCoderIcon className="h-5 w-5 text-gray-400" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
-                <p>Home</p>
+                <p>DSPCoder Home</p>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -410,7 +410,7 @@ export default function CodingEnvironment() {
               )}
             </div>
             
-            <div className="h-full overflow-y-auto">
+            <div className="h-[calc(100vh-48px)] overflow-y-auto">
               {isLoadingDescription ? (
                 <div className="p-4 space-y-4">
                   <Skeleton className="h-4 w-full" />
@@ -427,7 +427,6 @@ export default function CodingEnvironment() {
                         {/* Acceptance rate */}
                         {problem.acceptance_rate && (
                           <div className="flex items-center gap-2">
-                            <PercentSquare className="h-4 w-4 text-gray-400" />
                             <span className="text-sm text-gray-300">Acceptance Rate:</span>
                             <Badge variant="outline" className="bg-[#3E3E42]">
                               {problem.acceptance_rate.toFixed(1)}%
@@ -437,34 +436,28 @@ export default function CodingEnvironment() {
                         
                         {/* Companies */}
                         {problem.companies && problem.companies.length > 0 && (
-                          <div className="flex items-start gap-2">
-                            <Building2 className="h-4 w-4 text-gray-400 mt-1" />
-                            <div className="flex-1">
-                              <span className="text-sm text-gray-300 block mb-1.5">Companies:</span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {problem.companies.map((company, idx) => (
-                                  <Badge key={idx} variant="outline" className="bg-[#2D2D30] text-white">
-                                    {company}
-                                  </Badge>
-                                ))}
-                              </div>
+                          <div>
+                            <span className="text-sm text-gray-300 block mb-1.5">Companies:</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {problem.companies.map((company, idx) => (
+                                <Badge key={idx} variant="outline" className="bg-[#2D2D30] text-white">
+                                  {company}
+                                </Badge>
+                              ))}
                             </div>
                           </div>
                         )}
                         
                         {/* Tags */}
                         {problem.tags && problem.tags.length > 0 && (
-                          <div className="flex items-start gap-2">
-                            <Tags className="h-4 w-4 text-gray-400 mt-1" />
-                            <div className="flex-1">
-                              <span className="text-sm text-gray-300 block mb-1.5">Tags:</span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {problem.tags.map((tag, idx) => (
-                                  <Badge key={idx} variant="outline" className="bg-[#3E3E42] text-white">
-                                    {tag}
-                                  </Badge>
-                                ))}
-                              </div>
+                          <div>
+                            <span className="text-sm text-gray-300 block mb-1.5">Tags:</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {problem.tags.map((tag, idx) => (
+                                <Badge key={idx} variant="outline" className="bg-[#3E3E42] text-white">
+                                  {tag}
+                                </Badge>
+                              ))}
                             </div>
                           </div>
                         )}
