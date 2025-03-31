@@ -20,7 +20,13 @@ import {
   Building2,
   Tags,
   PercentSquare,
-  Play
+  Play,
+  ClipboardCheck,
+  Clock,
+  Database,
+  AlertCircle,
+  CheckCircle2,
+  XCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -78,6 +84,37 @@ interface Comment {
   userVote?: 'upvote' | 'downvote' | null;
 }
 
+interface SubmissionResult {
+  status: string;
+  output: {
+    metadata: {
+      Total_Time: number;
+      overall_status: string;
+      mem_stat: {
+        footprint: {
+          heap_usage: number;
+          stack_usage: number;
+          total_ram: number;
+        };
+        memory_leak: {
+          definitely_lost: number;
+          indirectly_lost: number;
+          possibly_lost: number;
+          still_reachable: number;
+          suppressed: number;
+        };
+        cache_profile: {
+          l1_miss: number;
+          l2_miss: number;
+          branch_miss: number;
+        };
+      };
+    };
+    test_cases: Record<string, { status: string }>;
+  };
+  message: string;
+}
+
 interface NewComment {
   problemId: string;
   content: string;
@@ -127,9 +164,11 @@ export default function CodingEnvironment() {
   const [questionId, setQuestionId] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<'description' | 'solution' | 'discussion'>('description');
+  const [activeSection, setActiveSection] = useState<'description' | 'solution' | 'discussion' | 'submissions'>('description');
   const [commentText, setCommentText] = useState('');
   const [comments, setComments] = useState<Comment[]>(SAMPLE_COMMENTS);
+  const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
+  const [activeTab, setActiveTab] = useState<'test-results' | 'memory-profile' | 'cache-profile'>('test-results');
   const { user } = useAuth();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
@@ -196,7 +235,7 @@ export default function CodingEnvironment() {
     setIsFullscreen(!isFullscreen);
   };
   
-  const toggleDescription = (section?: 'description' | 'solution' | 'discussion') => {
+  const toggleDescription = (section?: 'description' | 'solution' | 'discussion' | 'submissions') => {
     if (section && !isDescriptionOpen) {
       setIsDescriptionOpen(true);
       setActiveSection(section);
@@ -374,6 +413,36 @@ export default function CodingEnvironment() {
               </TooltipContent>
             </Tooltip>
           </div>
+          
+          {/* Submissions button */}
+          <div className="my-2">
+            <Tooltip delayDuration={300}>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant={activeSection === 'submissions' && isDescriptionOpen ? "secondary" : "ghost"}
+                  size="icon" 
+                  onClick={() => toggleDescription('submissions')}
+                  className={cn(
+                    "h-12 w-12",
+                    activeSection === 'submissions' && isDescriptionOpen 
+                      ? "bg-yellow-500 hover:bg-yellow-600" 
+                      : "hover:bg-[#2D2D30]",
+                    submissionResult ? "ring-1 ring-green-500" : ""
+                  )}
+                >
+                  <ClipboardCheck className={cn(
+                    "h-5 w-5", 
+                    activeSection === 'submissions' && isDescriptionOpen 
+                      ? "text-white" 
+                      : submissionResult ? "text-green-500" : "text-gray-400"
+                  )} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Submission Results</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
 
           <div className="border-t border-[#3E3E42] w-10 my-2"></div>
 
@@ -517,6 +586,194 @@ export default function CodingEnvironment() {
                   )}
                   
 
+                  
+                  {activeSection === 'submissions' && submissionResult && (
+                    <div className="space-y-6">
+                      <div className="bg-[#1E1E1E] rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-1">
+                          <h2 className="text-xl font-bold">Submission Result</h2>
+                          <Badge 
+                            variant="outline"
+                            className={submissionResult.output.metadata.overall_status === "PASS" ? "bg-green-600" : "bg-red-600"}
+                          >
+                            {submissionResult.output.metadata.overall_status}
+                          </Badge>
+                        </div>
+                        <p className="text-gray-400 mb-4">Execution completed in {submissionResult.output.metadata.Total_Time.toFixed(2)}ms</p>
+                        
+                        <div className="grid grid-cols-3 gap-4 mb-6">
+                          <div className="flex items-center gap-2">
+                            <div className="rounded-full bg-[#2D2D30] p-2">
+                              <Clock className="h-5 w-5 text-blue-400" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-400">Runtime</p>
+                              <p className="font-semibold">{submissionResult.output.metadata.Total_Time.toFixed(2)}ms</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <div className="rounded-full bg-[#2D2D30] p-2">
+                              <Database className="h-5 w-5 text-purple-400" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-400">Memory</p>
+                              <p className="font-semibold">{(submissionResult.output.metadata.mem_stat.footprint.total_ram / 1024).toFixed(2)} KB</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <div className="rounded-full bg-[#2D2D30] p-2">
+                              <AlertCircle className="h-5 w-5 text-yellow-400" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-400">Memory Leaks</p>
+                              <p className="font-semibold">{submissionResult.output.metadata.mem_stat.memory_leak.definitely_lost} bytes</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Test case summary */}
+                        <div className="mb-6">
+                          <div className="flex justify-between items-center mb-2">
+                            <h3 className="font-medium">Test Cases: {Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length}/{Object.keys(submissionResult.output.test_cases).length} passed</h3>
+                            <p className="text-sm text-gray-400">
+                              {((Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length / Object.keys(submissionResult.output.test_cases).length) * 100).toFixed(1)}%
+                            </p>
+                          </div>
+                          <div className="w-full bg-[#2D2D30] rounded-full h-2.5">
+                            <div 
+                              className="bg-green-600 h-2.5 rounded-full" 
+                              style={{ 
+                                width: `${(Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length / Object.keys(submissionResult.output.test_cases).length) * 100}%` 
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                        
+                        {/* Tab buttons for test results, memory profile, etc. */}
+                        <div className="border-b border-[#3E3E42] mb-6">
+                          <div className="flex space-x-4">
+                            <button 
+                              className={`pb-2 px-1 ${activeTab === 'test-results' ? 'border-b-2 border-yellow-500 text-white' : 'text-gray-400'}`}
+                              onClick={() => setActiveTab('test-results')}
+                            >
+                              Test Results
+                            </button>
+                            <button 
+                              className={`pb-2 px-1 ${activeTab === 'memory-profile' ? 'border-b-2 border-yellow-500 text-white' : 'text-gray-400'}`}
+                              onClick={() => setActiveTab('memory-profile')}
+                            >
+                              Memory Profile
+                            </button>
+                            <button 
+                              className={`pb-2 px-1 ${activeTab === 'cache-profile' ? 'border-b-2 border-yellow-500 text-white' : 'text-gray-400'}`}
+                              onClick={() => setActiveTab('cache-profile')}
+                            >
+                              Cache Profile
+                            </button>
+                          </div>
+                        </div>
+                        
+                        {/* Tab content */}
+                        {activeTab === 'test-results' && (
+                          <div className="space-y-4">
+                            <h3 className="font-medium text-lg">Test Case Results</h3>
+                            <p className="text-sm text-gray-400 mb-4">
+                              {Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length} passed, {Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "FAIL").length} failed
+                            </p>
+                            
+                            <div className="space-y-4">
+                              {Object.entries(submissionResult.output.test_cases).map(([testName, testCase]) => (
+                                <div key={testName} className="flex items-start justify-between border-b border-[#3E3E42] pb-4">
+                                  <div className="flex items-center gap-2">
+                                    {testCase.status === "PASS" ? (
+                                      <CheckCircle2 className="h-5 w-5 text-green-500" />
+                                    ) : (
+                                      <XCircle className="h-5 w-5 text-red-500" />
+                                    )}
+                                    <span className="font-mono text-sm">{testName}</span>
+                                  </div>
+                                  <Badge 
+                                    variant={testCase.status === "PASS" ? "outline" : "destructive"}
+                                    className={testCase.status === "PASS" ? "bg-green-500/10 text-green-500 border-green-500/20" : ""}
+                                  >
+                                    {testCase.status}
+                                  </Badge>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {activeTab === 'memory-profile' && (
+                          <div className="space-y-4">
+                            <h3 className="font-medium text-lg">Memory Profile</h3>
+                            
+                            <div className="bg-[#2D2D30] p-4 rounded-md">
+                              <h4 className="text-sm font-medium mb-2">Memory Footprint</h4>
+                              <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                  <p className="text-xs text-gray-400">Heap Usage</p>
+                                  <p className="font-mono">{(submissionResult.output.metadata.mem_stat.footprint.heap_usage / 1024).toFixed(2)} KB</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">Stack Usage</p>
+                                  <p className="font-mono">{(submissionResult.output.metadata.mem_stat.footprint.stack_usage / 1024).toFixed(2)} KB</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">Total RAM</p>
+                                  <p className="font-mono">{(submissionResult.output.metadata.mem_stat.footprint.total_ram / 1024).toFixed(2)} KB</p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="bg-[#2D2D30] p-4 rounded-md">
+                              <h4 className="text-sm font-medium mb-2">Memory Leaks</h4>
+                              <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                  <p className="text-xs text-gray-400">Definitely Lost</p>
+                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.memory_leak.definitely_lost} bytes</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">Indirectly Lost</p>
+                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.memory_leak.indirectly_lost} bytes</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">Possibly Lost</p>
+                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.memory_leak.possibly_lost} bytes</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {activeTab === 'cache-profile' && (
+                          <div className="space-y-4">
+                            <h3 className="font-medium text-lg">Cache Profile</h3>
+                            
+                            <div className="bg-[#2D2D30] p-4 rounded-md">
+                              <h4 className="text-sm font-medium mb-2">Cache Misses</h4>
+                              <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                  <p className="text-xs text-gray-400">L1 Cache Misses</p>
+                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.cache_profile.l1_miss}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">L2 Cache Misses</p>
+                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.cache_profile.l2_miss}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">Branch Misses</p>
+                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.cache_profile.branch_miss}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                   
                   {activeSection === 'discussion' && (
                     <div className="space-y-6">
@@ -875,11 +1132,24 @@ export default function CodingEnvironment() {
                       const data = await response.json();
                       
                       if (response.ok) {
-                        toast({
-                          title: 'Success',
-                          description: 'Solution submitted successfully!',
-                        });
-                        console.log('Submit result:', data);
+                        // Store the submission result
+                        if (data.response && data.response.status) {
+                          setSubmissionResult(data.response);
+                          
+                          // Auto-open the submissions panel
+                          toggleDescription('submissions');
+                          
+                          toast({
+                            title: 'Success',
+                            description: 'Solution submitted successfully!',
+                          });
+                          console.log('Submit result:', data);
+                        } else {
+                          toast({
+                            title: 'Success',
+                            description: 'Solution submitted, but no detailed results available.',
+                          });
+                        }
                       } else {
                         toast({
                           title: 'Error',
