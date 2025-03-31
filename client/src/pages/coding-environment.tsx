@@ -400,37 +400,7 @@ export default function CodingEnvironment() {
         </TooltipProvider>
       </div>
       
-      {/* Action buttons for code execution */}
-      <div className="absolute top-0 left-[80px] z-10 flex items-center h-12 px-4 border-b border-[#1E1E1E] bg-[#252526]">
-        <Button 
-          variant="ghost"
-          className="h-8 px-4 mr-3 bg-yellow-500 hover:bg-yellow-600 text-black"
-          onClick={() => {
-            // Will implement API call later
-            toast({
-              title: 'Run Code',
-              description: 'Running your code...',
-            });
-          }}
-        >
-          <Play className="h-4 w-4 mr-2" />
-          Run
-        </Button>
-        <Button 
-          variant="ghost"
-          className="h-8 px-4 bg-yellow-500 hover:bg-yellow-600 text-black"
-          onClick={() => {
-            // Will implement API call later
-            toast({
-              title: 'Submit Solution',
-              description: 'Submitting your solution for evaluation...',
-            });
-          }}
-        >
-          <Send className="h-4 w-4 mr-2" />
-          Submit
-        </Button>
-      </div>
+      {/* Code execution buttons will be rendered inside the iframe */}
       
       {/* Main content area */}
       <div className="flex flex-1 overflow-hidden">
@@ -807,14 +777,49 @@ export default function CodingEnvironment() {
           )}
           
           {containerUrl ? (
-            <iframe 
-              ref={iframeRef}
-              src={containerUrl} 
-              className="flex-grow w-full border-0"
-              title="Coding Environment"
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
-              loading="eager"
-            />
+            <div className="relative flex-grow w-full">
+              {/* Action buttons overlay */}
+              <div className="absolute top-0 left-0 z-10 flex items-center h-12 bg-[#1E1E1E] w-full">
+                <div className="flex ml-5">
+                  <Button 
+                    variant="default"
+                    className="h-8 px-4 mr-2 bg-yellow-500 hover:bg-yellow-600 text-black border-none rounded-none"
+                    onClick={() => {
+                      // Will implement API call later
+                      toast({
+                        title: 'Run Code',
+                        description: 'Running your code...',
+                      });
+                    }}
+                  >
+                    <Play className="h-4 w-4 mr-2" />
+                    Run
+                  </Button>
+                  <Button 
+                    variant="default"
+                    className="h-8 px-4 bg-yellow-500 hover:bg-yellow-600 text-black border-none rounded-none"
+                    onClick={() => {
+                      // Will implement API call later
+                      toast({
+                        title: 'Submit Solution',
+                        description: 'Submitting your solution for evaluation...',
+                      });
+                    }}
+                  >
+                    <Send className="h-4 w-4 mr-2" />
+                    Submit
+                  </Button>
+                </div>
+              </div>
+              <iframe 
+                ref={iframeRef}
+                src={containerUrl} 
+                className="w-full h-full border-0"
+                title="Coding Environment"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
+                loading="eager"
+              />
+            </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full p-8 text-white">
               <Alert variant="destructive" className="mb-6 max-w-md">
