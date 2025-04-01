@@ -77,7 +77,7 @@ export default function UserStatistics() {
   const recentlyCompletedProblems = (userProgress || []).slice(0, 5);
   
   return (
-    <div className="bg-[rgb(14,14,16)] text-white min-h-screen">
+    <div className="bg-[rgb(14,14,16)] text-white h-full">
       <Header 
         isScrolled={true} 
         onNavigateFeatures={() => {}} 

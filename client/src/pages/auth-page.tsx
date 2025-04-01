@@ -50,7 +50,7 @@ export default function AuthPage() {
   };
   
   return (
-    <div className={`flex flex-col min-h-screen ${darkMode ? 'bg-[rgb(24,24,26)] text-white' : 'bg-gray-100 text-gray-900'} transition-colors duration-200`}>
+    <div className={`flex flex-col h-full ${darkMode ? 'bg-[rgb(24,24,26)] text-white' : 'bg-gray-100 text-gray-900'} transition-colors duration-200`}>
       <Header 
         onNavigateFeatures={navigateToFeatures} 
         onNavigateProblems={navigateToProblems}

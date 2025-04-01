@@ -175,7 +175,7 @@ export default function Notes() {
   };
 
   return (
-    <div className={`flex flex-col min-h-screen ${themeClasses.bg} ${themeClasses.text} transition-colors duration-200`}>
+    <div className={`flex flex-col h-full ${themeClasses.bg} ${themeClasses.text} transition-colors duration-200`}>
       <Header 
         onNavigateFeatures={navigateToFeatures} 
         onNavigateProblems={navigateToProblems}

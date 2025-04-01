@@ -23,7 +23,7 @@ export default function ComingSoon() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[rgb(24,24,26)]">
+    <div className="h-full flex items-center justify-center bg-[rgb(24,24,26)]">
       <div className="text-center p-8 max-w-xl">
         <h1 className="text-4xl md:text-5xl font-bold mb-6">
           <span className="text-white">Project Mode</span> <span className="text-[rgb(214,251,65)]">Coming Soon</span>
