@@ -69,17 +69,29 @@ const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
 >(({ className, children, position = "popper", ...props }, ref) => {
-  // Prevent scroll manipulation when dropdown opens
+  // Create a reference to track the scroll position
+  const scrollPosRef = React.useRef<number>(0);
+  
+  // Save the current scroll position when the dropdown is about to open
   React.useEffect(() => {
-    const originalStyle = window.getComputedStyle(document.body).overflow;
+    // Save scroll position when component mounts
+    scrollPosRef.current = window.scrollY;
+    
+    // Prevent default scroll behavior
+    const handleScroll = () => {
+      if (window.scrollY !== scrollPosRef.current) {
+        window.scrollTo(0, scrollPosRef.current);
+      }
+    };
+    
+    // Add scroll listener to prevent position changes
+    window.addEventListener('scroll', handleScroll);
+    
+    // Cleanup
     return () => {
-      // Ensure we restore original overflow style when component unmounts
-      document.body.style.overflow = originalStyle;
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
-  // Create a copy of props to avoid modifying the original
-  const contentProps = { ...props };
 
   return (
     <SelectPrimitive.Portal>
@@ -88,15 +100,15 @@ const SelectContent = React.forwardRef<
         className={cn(
           "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
           // Remove animations that might cause scroll position to change
-          "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0", 
           className
         )}
         position={position}
-        // Add a custom event handler to prevent auto-focusing which causes scroll jumps
-        onCloseAutoFocus={(event: Event) => {
-          event.preventDefault();
-        }}
-        {...contentProps}
+        // Prevent focus which causes scroll jumps
+        onCloseAutoFocus={(event) => event.preventDefault()}
+        // Important: disable all positioning side effects
+        sticky="always"
+        sideOffset={0}
+        {...props}
       >
         <SelectScrollUpButton />
         <SelectPrimitive.Viewport
@@ -130,32 +142,26 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName
 const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
->(({ className, children, ...props }, ref) => {
-  // Create a copy of props to avoid modifying the original
-  const itemProps = { ...props };
-  
-  // Delete onSelect to avoid double-binding
-  delete itemProps.onSelect;
+>(({ className, children, ...props }, ref) => (
+  <SelectPrimitive.Item
+    ref={ref}
+    className={cn(
+      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      className
+    )}
+    // Disable text selection which can cause scroll jumps
+    onMouseDown={(e) => e.preventDefault()}
+    {...props}
+  >
+    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+      <SelectPrimitive.ItemIndicator>
+        <Check className="h-4 w-4" />
+      </SelectPrimitive.ItemIndicator>
+    </span>
 
-  return (
-    <SelectPrimitive.Item
-      ref={ref}
-      className={cn(
-        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        className
-      )}
-      {...itemProps}
-    >
-      <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-        <SelectPrimitive.ItemIndicator>
-          <Check className="h-4 w-4" />
-        </SelectPrimitive.ItemIndicator>
-      </span>
-
-      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-    </SelectPrimitive.Item>
-  );
-})
+    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+  </SelectPrimitive.Item>
+))
 SelectItem.displayName = SelectPrimitive.Item.displayName
 
 const SelectSeparator = React.forwardRef<

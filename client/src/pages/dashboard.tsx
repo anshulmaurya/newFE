@@ -48,6 +48,34 @@ import {
   FileText,
 } from 'lucide-react';
 
+// Add a scoped style element to fix dropdown scroll behavior
+const NoScrollDropdownStyles = () => {
+  React.useEffect(() => {
+    // Create a style element to prevent scroll jumps when select dropdowns open
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `
+      [data-radix-select-content] {
+        position: fixed !important;
+        transform: none !important;
+      }
+      body[style*="overflow: hidden"] {
+        overflow: auto !important;
+        padding-right: 0 !important;
+      }
+      body {
+        scroll-behavior: auto !important;
+      }
+    `;
+    document.head.appendChild(styleEl);
+    
+    return () => {
+      document.head.removeChild(styleEl);
+    };
+  }, []);
+  
+  return null;
+};
+
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import Header from '@/components/layout/header';
@@ -392,6 +420,9 @@ export default function Dashboard() {
 
   return (
     <div className="bg-[rgb(14,14,16)] text-white h-full overflow-hidden">
+      {/* Apply the dropdown scroll fix styles */}
+      <NoScrollDropdownStyles />
+      
       {/* Header */}
       <Header 
         onNavigateFeatures={handleNavigateFeatures}
