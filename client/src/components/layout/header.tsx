@@ -146,17 +146,35 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
             </button>
           )}
           
-          <button onClick={() => navigateToNotes()} className="nav-link group px-2 py-1">
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              navigateToNotes();
+            }} 
+            className="nav-link group px-2 py-1"
+            type="button"
+          >
             <span className={`font-medium text-sm ${location.includes("/notes") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} transition-colors`}>Notes</span>
           </button>
-          <button onClick={() => setLocation("/dashboard")} className="nav-link group px-2 py-1">
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              setLocation("/dashboard");
+            }} 
+            className="nav-link group px-2 py-1"
+            type="button"
+          >
             <span className={`font-medium text-sm ${location.includes("/dashboard") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} transition-colors`}>Problems</span>
           </button>
           
           {user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="ml-2 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-[rgb(214,251,65)] focus:ring-offset-2 focus:ring-offset-background">
+              <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
+                <button 
+                  type="button" 
+                  className="ml-2 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-[rgb(214,251,65)] focus:ring-offset-2 focus:ring-offset-background"
+                  onMouseDown={(e) => e.preventDefault()} // Prevent focus behavior
+                >
                   <Avatar className="h-8 w-8 border-2 border-[rgb(214,251,65)]">
                     <AvatarImage 
                       src={user.avatarUrl || "https://github.com/identicons/app/oauth_app/1234"} 
@@ -190,7 +208,10 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                 <div className="p-1">
                   <DropdownMenuItem 
                     className="flex items-center py-3 px-3 focus:bg-[rgb(30,32,40)] text-white hover:bg-[rgb(30,32,40)]"
-                    onClick={() => setLocation("/user-statistics")}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setLocation("/user-statistics");
+                    }}
                   >
                     <div className="flex items-center">
                       <BarChart3 className="mr-3 h-5 w-5 text-[rgb(214,251,65)]" />
@@ -232,7 +253,10 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                 <div className="p-1">
                   <DropdownMenuItem 
                     className="cursor-pointer text-red-400 flex items-center py-3 px-3 focus:bg-[rgb(30,32,40)]"
-                    onClick={() => logoutMutation.mutate()}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      logoutMutation.mutate();
+                    }}
                   >
                     <LogOut className="mr-3 h-5 w-5" />
                     <span>Logout</span>
@@ -254,7 +278,11 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
         
         <button 
           className="md:hidden text-gray-300 focus:outline-none" 
-          onClick={toggleMobileMenu}
+          onClick={(e) => {
+            e.preventDefault();
+            toggleMobileMenu();
+          }}
+          type="button"
           aria-label="Toggle mobile menu"
         >
           {mobileMenuOpen ? <X className="text-xl" /> : <Menu className="text-xl" />}
@@ -296,19 +324,33 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           )}
           
           <button 
-            onClick={() => navigateToNotes()}
+            onClick={(e) => {
+              e.preventDefault();
+              navigateToNotes();
+            }}
+            type="button"
             className={`${location.includes("/notes") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} py-1.5 border-b border-gray-700/30 text-sm`}
           >
             Notes
           </button>
           <button 
-            onClick={() => { setMobileMenuOpen(false); setLocation("/dashboard"); }} 
+            onClick={(e) => { 
+              e.preventDefault();
+              setMobileMenuOpen(false); 
+              setLocation("/dashboard"); 
+            }}
+            type="button" 
             className={`${location.includes("/dashboard") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} py-1.5 border-b border-gray-700/30 text-sm`}
           >
             Problems
           </button>
           <button 
-            onClick={() => { setMobileMenuOpen(false); setLocation("/user-statistics"); }} 
+            onClick={(e) => { 
+              e.preventDefault();
+              setMobileMenuOpen(false); 
+              setLocation("/user-statistics"); 
+            }}
+            type="button"
             className={`${location.includes("/user-statistics") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} py-1.5 border-b border-gray-700/30 text-sm flex items-center`}
           >
             <BarChart3 className="h-4 w-4 mr-2 text-[rgb(214,251,65)]" />
@@ -333,11 +375,13 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                 </div>
               </div>
               <button 
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setMobileMenuOpen(false);
                   logoutMutation.mutate();
                 }}
                 className="text-red-400 py-1.5 font-medium flex items-center gap-2 text-sm"
+                type="button"
               >
                 <LogOut className="ml-2 h-4 w-4" />
                 <span>Log out</span>
