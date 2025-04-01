@@ -778,29 +778,21 @@ export default function Dashboard() {
                 >
                   <SelectTrigger 
                     className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs"
-                    onClick={(e) => {
-                      // Prevent event from propagating to parent elements
-                      e.stopPropagation();
-                    }}
                   >
                     <SelectValue placeholder="Language" />
                   </SelectTrigger>
                   <SelectContent 
                     className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs"
-                    position="popper"
-                    sideOffset={5}
                   >
                     <SelectItem 
                       value="c" 
                       className="text-gray-200 focus:bg-[rgb(45,45,50)]"
-                      onClick={(e) => e.stopPropagation()}
                     >
                       C
                     </SelectItem>
                     <SelectItem 
                       value="cpp" 
                       className="text-gray-200 focus:bg-[rgb(45,45,50)]"
-                      onClick={(e) => e.stopPropagation()}
                     >
                       C++
                     </SelectItem>
