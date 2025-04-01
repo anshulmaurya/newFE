@@ -323,7 +323,7 @@ export default function Dashboard() {
         isScrolled={true}
       />
       
-      <div className="flex h-[calc(100vh-64px)]">
+      <div className="flex h-[calc(100vh-64px)] overflow-hidden">
         {/* Left sidebar - fixed */}
         <div className="hidden lg:block w-56 bg-[rgb(14,14,16)] fixed left-0 top-16 bottom-0 overflow-y-auto border-r border-[rgb(35,35,40)]">
           <div className="px-4 py-4 flex flex-col h-full">
@@ -579,9 +579,9 @@ export default function Dashboard() {
         </div>
             
         {/* Main content - scrollable */}
-        <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto px-4 lg:px-0 pt-4">
+        <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-4">
           {/* Main content area */}
-          <div className="flex-grow pt-0 pb-2 px-2 space-y-4">
+          <div className="flex-grow pt-0 pb-2 px-2 space-y-4 overflow-x-hidden">
             
             {/* Activity Heatmap */}
             <ActivityHeatmap />
@@ -697,8 +697,8 @@ export default function Dashboard() {
             </div>
             
             {/* Problem list */}
-            <div className="bg-[rgb(16,16,18)] border border-[rgb(45,45,50)] rounded-lg overflow-hidden shadow-lg mt-0">
-              <table className="w-full border-collapse table-fixed">
+            <div className="bg-[rgb(16,16,18)] border border-[rgb(45,45,50)] rounded-lg overflow-hidden shadow-lg mt-0 w-full">
+              <table className="w-full border-collapse table-fixed overflow-hidden">
                 <thead>
                   <tr className="bg-gradient-to-r from-[rgb(21,21,24)] to-[rgb(25,25,28)] text-gray-300 border-b border-[rgb(45,45,50)]">
                     <th className="px-2 py-3 text-center w-12 text-xs font-medium">Status</th>

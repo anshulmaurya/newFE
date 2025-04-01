@@ -250,7 +250,7 @@ export default function ActivityHeatmap() {
         
         <div className="flex">
           {/* Calendar cells */}
-          <div className="flex-1 grid" style={{ gridTemplateColumns: 'repeat(53, minmax(0, 1fr))' , gap: '3px' }}>
+          <div className="flex-1 grid" style={{ gridTemplateColumns: 'repeat(52, minmax(0, 1fr))' , gap: '2px' }}>
             {weeks.map((week, weekIndex) => (
               <div key={weekIndex} className="flex flex-col gap-1">
                 {week.map((date, dateIndex) => {
@@ -335,8 +335,8 @@ export default function ActivityHeatmap() {
         </div>
       </div>
       
-      <div className="overflow-x-auto bg-[rgb(18,18,20)] p-2 rounded-md">
-        <div className="min-w-[800px] p-2 bg-[rgb(18,18,20)]">
+      <div className="overflow-x-hidden bg-[rgb(18,18,20)] p-2 rounded-md">
+        <div className="w-full p-2 bg-[rgb(18,18,20)]">
           {renderCalendar()}
         </div>
       </div>
