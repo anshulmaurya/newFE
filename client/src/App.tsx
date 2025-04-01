@@ -6,14 +6,12 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import ComingSoon from "@/pages/coming-soon";
 import Notes from "@/pages/notes";
-import Documentation from "./pages/documentation";
 import Dashboard from "@/pages/dashboard";
 import AuthPage from "@/pages/auth-page";
 import ProblemDetail from "@/pages/problem-detail";
 import CodingEnvironment from "@/pages/coding-environment";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
-import { DarkModeProvider } from "./hooks/use-dark-mode";
 
 // Import components directly
 import Blind75Page from '@/pages/quick-prep/blind-75';
@@ -49,12 +47,7 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/coming-soon" component={ComingSoon} />
       
-      {/* New MDX-based documentation routes */}
-      <Route path="/docs/:section/:subsection" component={Documentation} />
-      <Route path="/docs/:section" component={Documentation} />
-      <Route path="/docs" component={Documentation} />
-      
-      {/* Legacy Notes routes */}
+      {/* Notes routes */}
       <Route path="/notes" component={Notes} />
       <Route path="/notes/getting-started" component={GettingStarted} />
       <Route path="/notes/gitbook-documentation" component={GitbookDocumentation} />
@@ -62,7 +55,7 @@ function Router() {
       <Route path="/notes/communication-protocols" component={CommunicationProtocols} />
       <Route path="/notes/data-structures" component={DataStructures} />
       
-      {/* Legacy Notes subpages */}
+      {/* Notes subpages */}
       <Route path="/notes/communication-protocols/spi" component={SPI} />
       <Route path="/notes/communication-protocols/i2c" component={I2C} />
       <Route path="/notes/communication-protocols/uart" component={UART} />
@@ -80,10 +73,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <DarkModeProvider>
-          <Router />
-          <Toaster />
-        </DarkModeProvider>
+        <Router />
+        <Toaster />
       </AuthProvider>
     </QueryClientProvider>
   );
