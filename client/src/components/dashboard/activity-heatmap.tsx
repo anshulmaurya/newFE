@@ -240,9 +240,9 @@ export default function ActivityHeatmap() {
     }
     
     return (
-      <div className="mt-1">
+      <div className="mt-2">
         {/* Month labels */}
-        <div className="flex text-[10px] text-gray-400 mb-0.5 pl-10 overflow-visible">
+        <div className="flex text-xs text-gray-400 mb-1 pl-12 overflow-visible">
           {months.map((month, i) => (
             <div key={month} className="flex-1 text-center">{month}</div>
           ))}
@@ -254,7 +254,7 @@ export default function ActivityHeatmap() {
             {weeks.map((week, weekIndex) => (
               <div key={weekIndex} className="flex flex-col gap-1">
                 {week.map((date, dateIndex) => {
-                  if (!date) return <div key={`empty-${dateIndex}`} className="w-2.5 h-2.5"></div>;
+                  if (!date) return <div key={`empty-${dateIndex}`} className="w-3 h-3"></div>;
                   
                   // Format date for API format: YYYY-MM-DD
                   const monthStr = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -286,7 +286,7 @@ export default function ActivityHeatmap() {
                   return (
                     <div
                       key={dateKey}
-                      className="w-2.5 h-2.5 rounded-sm cursor-pointer relative group border border-[rgba(255,255,255,0.04)]"
+                      className="w-3 h-3 rounded-sm cursor-pointer relative group border border-[rgba(255,255,255,0.04)]"
                       style={{ backgroundColor: getColorForCount(count) }}
                       title={`${formattedDate}: ${count} questions solved`}
                     >
@@ -299,13 +299,13 @@ export default function ActivityHeatmap() {
         </div>
         
         {/* Legend */}
-        <div className="flex items-center justify-end mt-1 text-[10px] text-gray-400">
+        <div className="flex items-center justify-end mt-2 text-xs text-gray-400">
           <span>Less</span>
-          <div className="flex items-center mx-1">
-            <div className="w-2.5 h-2.5 mx-[1px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#1a1a1e' }}></div>
-            <div className="w-2.5 h-2.5 mx-[1px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#124429' }}></div>
-            <div className="w-2.5 h-2.5 mx-[1px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#26a641' }}></div>
-            <div className="w-2.5 h-2.5 mx-[1px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#89D54A' }}></div>
+          <div className="flex items-center mx-2">
+            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#1a1a1e' }}></div>
+            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#124429' }}></div>
+            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#26a641' }}></div>
+            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#89D54A' }}></div>
           </div>
           <span>More</span>
         </div>
@@ -314,8 +314,8 @@ export default function ActivityHeatmap() {
   };
   
   return (
-    <div className="rounded-lg bg-[rgb(24,24,27)] p-3 mb-2 overflow-hidden">
-      <div className="flex items-center justify-between mb-1">
+    <div className="rounded-lg bg-[rgb(24,24,27)] p-3 mb-2">
+      <div className="flex items-center justify-between mb-2">
         <h2 className="text-white font-medium">{totalSolved} problems solved in {selectedYear}</h2>
         
         {/* Year selector */}
@@ -335,8 +335,8 @@ export default function ActivityHeatmap() {
         </div>
       </div>
       
-      <div className="overflow-x-auto bg-[rgb(18,18,20)] p-2 rounded-md">
-        <div className="w-full py-0 px-1 bg-[rgb(18,18,20)]">
+      <div className="overflow-x-hidden bg-[rgb(18,18,20)] p-2 rounded-md">
+        <div className="w-full py-1 px-2 bg-[rgb(18,18,20)]">
           {renderCalendar()}
         </div>
       </div>

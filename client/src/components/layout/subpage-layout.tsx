@@ -37,7 +37,7 @@ export default function SubpageLayout({ title, children }: SubpageLayoutProps) {
   };
 
   return (
-    <div className="bg-[rgb(14,14,16)] text-white h-screen flex flex-col overflow-hidden">
+    <div className="bg-[rgb(14,14,16)] text-white h-screen overflow-hidden">
       {/* Header */}
       <Header 
         onNavigateFeatures={handleNavigateFeatures}
@@ -45,7 +45,7 @@ export default function SubpageLayout({ title, children }: SubpageLayoutProps) {
         isScrolled={true}
       />
       
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex h-[calc(100vh-64px)]">
         {/* Left sidebar - fixed */}
         <div className="hidden lg:block w-56 bg-[rgb(14,14,16)] fixed left-0 top-16 bottom-0 overflow-y-auto border-r border-[rgb(35,35,40)]">
           <div className="px-4 py-4 flex flex-col h-full">
@@ -246,9 +246,9 @@ export default function SubpageLayout({ title, children }: SubpageLayoutProps) {
         </div>
             
         {/* Main content - scrollable */}
-        <div className="w-full lg:ml-56 overflow-y-auto overflow-x-hidden px-4 lg:px-8 py-6 pb-0">
+        <div className="w-full lg:ml-56 overflow-y-auto px-4 lg:px-8 py-6">
           <div className="max-w-5xl mx-auto">
-            <h1 className="text-2xl font-bold mb-4">{title}</h1>
+            <h1 className="text-2xl font-bold mb-6">{title}</h1>
             {children || (
               <div className="bg-[rgb(20,20,22)] border border-[rgb(35,35,40)] rounded-lg p-8 flex items-center justify-center min-h-[60vh]">
                 <div className="text-center">
