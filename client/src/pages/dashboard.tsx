@@ -775,14 +775,6 @@ export default function Dashboard() {
                 <Select
                   value={language}
                   onValueChange={setLanguage}
-                  onOpenChange={(open) => {
-                    // Prevent scroll when the dropdown is opened or closed
-                    if (open) {
-                      document.body.style.overflow = 'hidden';
-                    } else {
-                      document.body.style.overflow = '';
-                    }
-                  }}
                 >
                   <SelectTrigger 
                     className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs"
