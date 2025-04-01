@@ -169,7 +169,15 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           
           {user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild onClick={(e) => e.preventDefault()}>
+              <DropdownMenuTrigger asChild onClick={(e) => {
+                e.preventDefault();
+                // Prevent default scroll behavior
+                e.stopPropagation();
+                // Store current scroll position
+                const scrollPos = window.scrollY;
+                // Add a small delay to allow dropdown to open before restoring scroll
+                setTimeout(() => window.scrollTo(0, scrollPos), 0);
+              }}>
                 <button 
                   type="button" 
                   className="ml-2 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-[rgb(214,251,65)] focus:ring-offset-2 focus:ring-offset-background"
@@ -186,7 +194,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64 bg-[rgb(20,22,30)] border-[rgb(30,32,40)] text-white">
+              <DropdownMenuContent align="end" className="w-64 bg-[rgb(20,22,30)] border-[rgb(30,32,40)] text-white" onCloseAutoFocus={(e) => e.preventDefault()}>
                 <div className="flex flex-col items-center justify-center py-6 px-4 border-b border-[rgb(30,32,40)]">
                   <Avatar className="h-16 w-16 border-2 border-[rgb(214,251,65)] mb-3">
                     <AvatarImage 
