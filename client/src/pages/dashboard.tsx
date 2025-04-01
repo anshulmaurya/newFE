@@ -776,26 +776,12 @@ export default function Dashboard() {
                   value={language}
                   onValueChange={setLanguage}
                 >
-                  <SelectTrigger 
-                    className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs"
-                  >
+                  <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
                     <SelectValue placeholder="Language" />
                   </SelectTrigger>
-                  <SelectContent 
-                    className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs"
-                  >
-                    <SelectItem 
-                      value="c" 
-                      className="text-gray-200 focus:bg-[rgb(45,45,50)]"
-                    >
-                      C
-                    </SelectItem>
-                    <SelectItem 
-                      value="cpp" 
-                      className="text-gray-200 focus:bg-[rgb(45,45,50)]"
-                    >
-                      C++
-                    </SelectItem>
+                  <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
+                    <SelectItem value="c" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C</SelectItem>
+                    <SelectItem value="cpp" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C++</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
