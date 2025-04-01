@@ -195,10 +195,10 @@ export default function ActivityHeatmap() {
   
   // Function to get color based on count
   const getColorForCount = (count: number) => {
-    if (count === 0) return '#161b22';
-    if (count >= 1 && count <= 4) return '#0e4429';
-    if (count >= 5 && count <= 9) return '#26a641';
-    return '#39d353'; // 10+
+    if (count === 0) return '#1a1a1e'; // Darker background that matches our UI
+    if (count >= 1 && count <= 4) return '#124429'; // Slight green tint
+    if (count >= 5 && count <= 9) return '#26a641'; // Medium green
+    return '#89D54A'; // Bright green (close to our lime green)
   };
   
   // Create calendar grid
@@ -302,10 +302,10 @@ export default function ActivityHeatmap() {
         <div className="flex items-center justify-end mt-3 text-xs text-gray-400">
           <span>Less</span>
           <div className="flex items-center mx-2">
-            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#161b22' }}></div>
-            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#0e4429' }}></div>
+            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#1a1a1e' }}></div>
+            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#124429' }}></div>
             <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#26a641' }}></div>
-            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#39d353' }}></div>
+            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#89D54A' }}></div>
           </div>
           <span>More</span>
         </div>
@@ -335,8 +335,8 @@ export default function ActivityHeatmap() {
         </div>
       </div>
       
-      <div className="overflow-x-auto bg-[rgb(16,16,18)] p-2 rounded-md">
-        <div className="min-w-[800px] p-2">
+      <div className="overflow-x-auto bg-[rgb(18,18,20)] p-2 rounded-md">
+        <div className="min-w-[800px] p-2 bg-[rgb(18,18,20)]">
           {renderCalendar()}
         </div>
       </div>
