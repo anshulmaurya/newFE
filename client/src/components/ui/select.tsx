@@ -13,21 +13,40 @@ const SelectValue = SelectPrimitive.Value
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-      className
-    )}
-    {...props}
-  >
-    {children}
-    <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
-    </SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
-))
+>(({ className, children, ...props }, ref) => {
+  // Capture click positions to prevent scroll jumps
+  const handleTriggerClick = (e: React.MouseEvent) => {
+    // Save scroll position on trigger click
+    if (typeof window !== 'undefined') {
+      // Store current scroll position as data attribute
+      const scrollY = window.scrollY;
+      document.body.setAttribute('data-scroll-lock', scrollY.toString());
+      
+      // Prevent default browser behavior
+      e.preventDefault();
+      
+      // We don't need to call e.currentTarget.click() - the Select component
+      // will handle the click event naturally
+    }
+  };
+  
+  return (
+    <SelectPrimitive.Trigger
+      ref={ref}
+      className={cn(
+        "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+        className
+      )}
+      onMouseDown={handleTriggerClick}
+      {...props}
+    >
+      {children}
+      <SelectPrimitive.Icon asChild>
+        <ChevronDown className="h-4 w-4 opacity-50" />
+      </SelectPrimitive.Icon>
+    </SelectPrimitive.Trigger>
+  );
+})
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
 
 const SelectScrollUpButton = React.forwardRef<
@@ -69,45 +88,45 @@ const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
 >(({ className, children, position = "popper", ...props }, ref) => {
-  // Create a reference to track the scroll position
-  const scrollPosRef = React.useRef<number>(0);
-  
-  // Save the current scroll position when the dropdown is about to open
+  // Store the scroll position when the component is mounted
+  const scrollRef = React.useRef(typeof window !== 'undefined' ? window.scrollY : 0);
+
+  // Handle component mounting - store the initial scroll position
   React.useEffect(() => {
-    // Save scroll position when component mounts
-    scrollPosRef.current = window.scrollY;
-    
-    // Prevent default scroll behavior
     const handleScroll = () => {
-      if (window.scrollY !== scrollPosRef.current) {
-        window.scrollTo(0, scrollPosRef.current);
-      }
+      // Do nothing when scrolling - we're just preventing the default behavior
     };
     
-    // Add scroll listener to prevent position changes
-    window.addEventListener('scroll', handleScroll);
+    // Add a listener to prevent automatic scrolling
+    window.addEventListener('scroll', handleScroll, { passive: false });
     
-    // Cleanup
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
+  
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         ref={ref}
+        onCloseAutoFocus={(event) => {
+          // Prevent focusing when the dropdown closes
+          event.preventDefault();
+          
+          // Restore scroll position
+          if (typeof window !== 'undefined') {
+            window.scrollTo({
+              top: scrollRef.current,
+              behavior: 'auto'
+            });
+          }
+        }}
         className={cn(
-          "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
-          // Remove animations that might cause scroll position to change
+          "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md select-none",
           className
         )}
-        position={position}
-        // Prevent focus which causes scroll jumps
-        onCloseAutoFocus={(event) => event.preventDefault()}
-        // Important: disable all positioning side effects
-        sticky="always"
-        sideOffset={0}
+        position="popper" 
+        sideOffset={4}
         {...props}
       >
         <SelectScrollUpButton />
@@ -117,6 +136,8 @@ const SelectContent = React.forwardRef<
             position === "popper" &&
               "w-full min-w-[var(--radix-select-trigger-width)]"
           )}
+          // Prevent mousedown events (which can cause focus changes)
+          onMouseDown={(e) => e.preventDefault()}
         >
           {children}
         </SelectPrimitive.Viewport>

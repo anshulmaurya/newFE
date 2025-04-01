@@ -48,28 +48,74 @@ import {
   FileText,
 } from 'lucide-react';
 
-// Add a scoped style element to fix dropdown scroll behavior
-const NoScrollDropdownStyles = () => {
+// Custom hook to prevent scroll issues with dropdowns
+const usePreventScrollJump = () => {
   React.useEffect(() => {
-    // Create a style element to prevent scroll jumps when select dropdowns open
+    // Create a style element to override select component positioning
     const styleEl = document.createElement('style');
     styleEl.textContent = `
-      [data-radix-select-content] {
+      [data-radix-select-content],
+      [data-radix-dropdown-menu-content] {
         position: fixed !important;
         transform: none !important;
       }
+      
+      /* Fix body styles that might interfere with scrolling */
       body[style*="overflow: hidden"] {
         overflow: auto !important;
         padding-right: 0 !important;
       }
+      
+      /* Ensure body scroll position is maintained */
       body {
         scroll-behavior: auto !important;
+      }
+      
+      /* Remove all animations that might cause scroll position to change */
+      .select-dropdown-animate-out,
+      .select-dropdown-animate-in {
+        animation: none !important;
+        transition: none !important;
       }
     `;
     document.head.appendChild(styleEl);
     
+    // Function to detect and maintain scroll position
+    const handleSelectionStart = () => {
+      // Store scroll position on selection start
+      const currentScrollY = window.scrollY;
+      const scrollListener = () => {
+        // If scroll position changes during selection, reset it
+        if (window.scrollY !== currentScrollY) {
+          window.scrollTo(0, currentScrollY);
+        }
+      };
+      
+      // Add a temporary listener for the duration of select operations
+      window.addEventListener('scroll', scrollListener);
+      
+      // Remove the listener after a short delay
+      setTimeout(() => {
+        window.removeEventListener('scroll', scrollListener);
+      }, 300);
+    };
+    
+    // Add a global mousedown handler instead of trying to attach to specific elements
+    const globalMouseDownHandler = (e: Event) => {
+      // Check if the clicked element is a select trigger
+      if (e.target instanceof Element && 
+          (e.target.closest('[aria-haspopup="listbox"]') || 
+           e.target.closest('[data-state="closed"]'))) {
+        handleSelectionStart();
+      }
+    };
+    
+    document.addEventListener('mousedown', globalMouseDownHandler);
+    
+    // Clean up on unmount
     return () => {
       document.head.removeChild(styleEl);
+      document.removeEventListener('mousedown', globalMouseDownHandler);
     };
   }, []);
   
@@ -418,11 +464,11 @@ export default function Dashboard() {
     setupCodebaseMutation.mutate({ problemId, questionId, language });
   };
 
+  // Apply the scroll jump prevention hook
+  usePreventScrollJump();
+  
   return (
     <div className="bg-[rgb(14,14,16)] text-white h-full overflow-hidden">
-      {/* Apply the dropdown scroll fix styles */}
-      <NoScrollDropdownStyles />
-      
       {/* Header */}
       <Header 
         onNavigateFeatures={handleNavigateFeatures}
