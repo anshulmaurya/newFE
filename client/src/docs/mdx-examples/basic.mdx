@@ -1,0 +1,59 @@
+# Basic MDX Example
+
+This is a simple MDX document that demonstrates some basic features.
+
+## Using JSX in Markdown
+
+MDX allows you to use JSX directly in your markdown:
+
+<div style={{ padding: '20px', backgroundColor: '#f0f0f0', borderRadius: '5px' }}>
+  <h3>This is a custom component</h3>
+  <p>You can style it directly with inline styles.</p>
+</div>
+
+## Import and Use React Components
+
+In a real implementation, you could import and use React components:
+
+```jsx
+import { Button } from '@/components/ui/button'
+
+<Button variant="primary">Click Me</Button>
+```
+
+## Math Equations with KaTeX
+
+MDX can be extended to support mathematical equations:
+
+$$
+\frac{d}{dx}\left( \int_{0}^{x} f(u)\,du\right)=f(x)
+$$
+
+## Interactive Code Examples
+
+You could create interactive code examples:
+
+```c live
+#include <stdio.h>
+
+int main() {
+  printf("Hello, MDX World!\n");
+  return 0;
+}
+```
+
+## Using Variables and Expressions
+
+You can use JavaScript expressions directly:
+
+{2 + 3 === 5 ? 'Math still works!' : 'Uh oh, math is broken!'}
+
+## Custom Callouts
+
+> **Note:** This is a special callout that could be styled differently.
+
+> **Warning:** This is a warning callout that could be highlighted in red.
+
+## Tabs and Other Interactive Elements
+
+You can create tabbed interfaces for showing different code examples or content sections.

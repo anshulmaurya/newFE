@@ -9,6 +9,7 @@ import {
   Code,
   ChevronDown,
   ChevronRight,
+  FileCode,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -100,6 +101,14 @@ export function DocsSidebar() {
         { title: "Debugging Tools", path: "/docs/debugging-techniques/tools" },
         { title: "Common Bugs", path: "/docs/debugging-techniques/common-bugs" },
         { title: "Optimization", path: "/docs/debugging-techniques/optimization" },
+      ],
+    },
+    {
+      name: "mdx-examples",
+      title: "MDX Examples",
+      icon: <FileCode className="h-5 w-5" />,
+      docs: [
+        { title: "Basic MDX", path: "/docs/mdx-examples/basic" },
       ],
     },
   ];

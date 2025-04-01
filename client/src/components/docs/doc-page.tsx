@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "wouter";
-import { loadDocContent } from "@/utils/docs-loader";
+import { loadDocContent, isDocMdx } from "@/utils/docs-loader";
 import { MarkdownRenderer } from "./markdown-renderer";
+import { MDXRenderer } from "./mdx-renderer";
 import { Loader2 } from "lucide-react";
 
 interface DocPageProps {
@@ -49,17 +50,38 @@ export function DocPage({ category, slug }: DocPageProps) {
     );
   }
 
+  // Determine if the content is MDX or Markdown based on the document metadata
+  const mdxDocument = isDocMdx(category, slug);
+  
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <MarkdownRenderer content={content} />
+      {mdxDocument ? (
+        <MDXRenderer content={content} />
+      ) : (
+        <MarkdownRenderer content={content} />
+      )}
     </div>
   );
 }
 
 export function DocPageWithParams() {
-  const params = useParams();
-  const category = params.category || "getting-started";
-  const slug = params.slug || "intro";
+  const params = useParams<{ rest: string }>();
+  
+  // Default values
+  let category = "getting-started";
+  let slug = "intro";
+  
+  // Parse the rest parameter (which contains the full path after /docs/)
+  if (params.rest) {
+    const parts = params.rest.split('/');
+    if (parts.length >= 1) {
+      category = parts[0];
+    }
+    if (parts.length >= 2) {
+      slug = parts[1];
+    }
+  }
 
+  console.log(`Loading doc: category=${category}, slug=${slug}`);
   return <DocPage category={category} slug={slug} />;
 }
