@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useLocation } from "wouter";
 
 interface HeroProps {
   onScrollToFeatures: () => void;
@@ -13,6 +14,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
   const [activeFile, setActiveFile] = useState<FileType>("main.c");
   const [activeTestCase, setActiveTestCase] = useState<TestCaseType>("Case 1");
   const [isTyping, setIsTyping] = useState(false);
+  const [, setLocation] = useLocation();
 
   // File content mapping for FreeRTOS codebase
   const fileContents = {
@@ -767,7 +769,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                 Join Discord
               </a>
               <button
-                onClick={onScrollToFeatures}
+                onClick={() => setLocation("/dashboard")}
                 className="px-6 py-3 border border-[rgb(214,251,65)]/50 text-[rgb(214,251,65)] hover:bg-[rgb(214,251,65)]/10 rounded-lg transition-all w-full sm:w-auto"
               >
                 Get Started
