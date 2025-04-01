@@ -650,10 +650,10 @@ export default function Dashboard() {
                   onValueChange={setDifficulty}
                 >
                   <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
-                    <SelectValue placeholder="All Difficulties" />
+                    <SelectValue placeholder="Difficulty" />
                   </SelectTrigger>
                   <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
-                    <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">All Difficulties</SelectItem>
+                    <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Difficulty</SelectItem>
                     <SelectItem value="easy" className="text-green-500 focus:bg-[rgb(45,45,50)]">Easy</SelectItem>
                     <SelectItem value="medium" className="text-yellow-500 focus:bg-[rgb(45,45,50)]">Medium</SelectItem>
                     <SelectItem value="hard" className="text-red-500 focus:bg-[rgb(45,45,50)]">Hard</SelectItem>
@@ -667,10 +667,10 @@ export default function Dashboard() {
                   onValueChange={setCategory}
                 >
                   <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
-                    <SelectValue placeholder="All Categories" />
+                    <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
-                    <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">All Categories</SelectItem>
+                    <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Category</SelectItem>
                     <SelectItem value="Memory Management" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Memory Management</SelectItem>
                     <SelectItem value="Multithreading" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Multithreading</SelectItem>
                     <SelectItem value="Data Structures" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Data Structures</SelectItem>
@@ -688,10 +688,10 @@ export default function Dashboard() {
                   onValueChange={setStatus}
                 >
                   <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
-                    <SelectValue placeholder="All Status" />
+                    <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
-                    <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">All Status</SelectItem>
+                    <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Status</SelectItem>
                     <SelectItem value="Solved" className="text-green-500 focus:bg-[rgb(45,45,50)]">Solved</SelectItem>
                     <SelectItem value="Attempted" className="text-yellow-500 focus:bg-[rgb(45,45,50)]">Attempted</SelectItem>
                     <SelectItem value="Not Started" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Not Started</SelectItem>
