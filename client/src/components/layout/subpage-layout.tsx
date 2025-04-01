@@ -246,7 +246,7 @@ export default function SubpageLayout({ title, children }: SubpageLayoutProps) {
         </div>
             
         {/* Main content - scrollable */}
-        <div className="w-full lg:ml-56 overflow-y-auto px-4 lg:px-8 py-6 bg-[rgb(14,14,16)]">
+        <div className="w-full lg:ml-56 overflow-y-auto px-4 lg:px-8 py-6 pb-10 bg-[rgb(14,14,16)]">
           <div className="max-w-5xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">{title}</h1>
             {children || (

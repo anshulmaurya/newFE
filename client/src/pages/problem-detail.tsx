@@ -161,7 +161,7 @@ export default function ProblemDetail() {
 
   return (
     <SubpageLayout title="Problem">
-      <div className="py-4 max-w-6xl mx-auto">
+      <div className="py-4 pb-10 max-w-6xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="lg:w-3/4">
             <Card className="border-[rgb(35,35,40)] bg-[rgb(18,18,20)]">
