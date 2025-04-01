@@ -50,12 +50,6 @@ const notesTopics: TopicSection[] = [
         label: "Communication Protocols",
         icon: <GitBranch className="h-4 w-4 mr-2" />,
         path: "/notes/communication-protocols",
-      },
-      {
-        id: "protocols-list",
-        label: "Protocols",
-        icon: <FileText className="h-4 w-4 mr-2" />,
-        path: "/notes/communication-protocols",
         expandable: true,
         expanded: true,
         subsections: [
@@ -76,12 +70,6 @@ const notesTopics: TopicSection[] = [
         id: "data-structures-main",
         label: "Data Structures",
         icon: <Database className="h-4 w-4 mr-2" />,
-        path: "/notes/data-structures",
-      },
-      {
-        id: "data-structures-list",
-        label: "Common Structures",
-        icon: <Grid3X3 className="h-4 w-4 mr-2" />,
         path: "/notes/data-structures",
         expandable: true,
         expanded: true,
@@ -284,7 +272,95 @@ export default function Notes() {
         {/* Main content */}
         <div className="flex-grow px-6 pb-10 mt-0 overflow-auto">
           <div className="max-w-4xl mx-auto pt-8">
-            {selectedTopic === "getting-started" && (
+            {currentPath === "/notes" && (
+              <>
+                <div className="flex items-center mb-1 text-gray-500 text-sm">
+                  <span>Docs</span>
+                </div>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Welcome to DSPCoder Documentation</h1>
+
+                <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
+                  <p className="lead">
+                    Explore our comprehensive documentation to master embedded systems programming with DSPCoder.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div className={`${themeClasses.card} p-5 border rounded-lg`}>
+                      <div className="flex items-center mb-2">
+                        <Zap className="h-5 w-5 mr-2 text-lime-500" />
+                        <h2 className="text-lg font-semibold m-0">Getting Started</h2>
+                      </div>
+                      <p className="text-sm mb-3">Learn how to set up your DSPCoder environment and get coding quickly.</p>
+                      <button 
+                        onClick={() => setLocation("/notes/getting-started")}
+                        className="text-xs px-3 py-1.5 rounded-md bg-lime-500 text-black font-medium hover:bg-lime-600 transition-colors"
+                      >
+                        View Guide
+                      </button>
+                    </div>
+
+                    <div className={`${themeClasses.card} p-5 border rounded-lg`}>
+                      <div className="flex items-center mb-2">
+                        <GitBranch className="h-5 w-5 mr-2 text-lime-500" />
+                        <h2 className="text-lg font-semibold m-0">Communication Protocols</h2>
+                      </div>
+                      <p className="text-sm mb-3">Explore common embedded communication protocols like SPI, I2C, and UART.</p>
+                      <button 
+                        onClick={() => setLocation("/notes/communication-protocols")}
+                        className="text-xs px-3 py-1.5 rounded-md bg-lime-500 text-black font-medium hover:bg-lime-600 transition-colors"
+                      >
+                        Explore Protocols
+                      </button>
+                    </div>
+
+                    <div className={`${themeClasses.card} p-5 border rounded-lg`}>
+                      <div className="flex items-center mb-2">
+                        <Database className="h-5 w-5 mr-2 text-lime-500" />
+                        <h2 className="text-lg font-semibold m-0">Data Structures</h2>
+                      </div>
+                      <p className="text-sm mb-3">Learn about efficient data structures for resource-constrained embedded systems.</p>
+                      <button 
+                        onClick={() => setLocation("/notes/data-structures")}
+                        className="text-xs px-3 py-1.5 rounded-md bg-lime-500 text-black font-medium hover:bg-lime-600 transition-colors"
+                      >
+                        View Data Structures
+                      </button>
+                    </div>
+
+                    <div className={`${themeClasses.card} p-5 border rounded-lg`}>
+                      <div className="flex items-center mb-2">
+                        <Code className="h-5 w-5 mr-2 text-lime-500" />
+                        <h2 className="text-lg font-semibold m-0">Coding Environment</h2>
+                      </div>
+                      <p className="text-sm mb-3">Get familiar with our VS Code-based coding environment for solving embedded challenges.</p>
+                      <button 
+                        onClick={() => setLocation("/coding-environment")}
+                        className="text-xs px-3 py-1.5 rounded-md bg-lime-500 text-black font-medium hover:bg-lime-600 transition-colors"
+                      >
+                        Try Coding Environment
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-8`}>
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <svg className={`h-5 w-5 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>Need Help?</h3>
+                        <div className={`text-sm ${themeClasses.infoText}`}>
+                          <p>Join our <a href="#" className="underline hover:no-underline">Discord community</a> to connect with other DSPCoder users and get direct support from our team.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+            {selectedTopic === "getting-started" && currentPath !== "/notes" && (
               <>
                 <div className="flex items-center mb-1 text-gray-500 text-sm">
                   <span>Docs</span>
