@@ -254,16 +254,8 @@ export default function CodingEnvironment() {
     }
   };
   
-  const goBack = () => {
-    // Go back to problem detail page if we have a problem ID, otherwise to dashboard
-    if (problemId) {
-      setLocation(`/problems/${problemId}`);
-    } else {
-      setLocation('/dashboard');
-    }
-  };
-
   const goHome = () => {
+    // Always go back to dashboard
     setLocation('/dashboard');
   };
 
@@ -304,25 +296,6 @@ export default function CodingEnvironment() {
               </TooltipTrigger>
               <TooltipContent side="right">
                 <p>Home</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-
-          {/* Back button */}
-          <div className="mb-4">
-            <Tooltip delayDuration={300}>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={goBack}
-                  className="h-12 w-12 rounded-xl hover:bg-[#2D2D30]"
-                >
-                  <ArrowLeft className="h-5 w-5 text-gray-400" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Go Back</p>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -1195,7 +1168,7 @@ export default function CodingEnvironment() {
                 </AlertDescription>
               </Alert>
               
-              <Button onClick={goBack} className="gap-2">
+              <Button onClick={goHome} className="gap-2">
                 <ArrowLeft className="h-4 w-4" />
                 Return to Dashboard
               </Button>
