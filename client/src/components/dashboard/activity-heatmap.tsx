@@ -299,7 +299,7 @@ export default function ActivityHeatmap() {
         </div>
         
         {/* Legend */}
-        <div className="flex items-center justify-end mt-3 text-xs text-gray-400">
+        <div className="flex items-center justify-end mt-2 text-xs text-gray-400">
           <span>Less</span>
           <div className="flex items-center mx-2">
             <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#1a1a1e' }}></div>
@@ -314,7 +314,7 @@ export default function ActivityHeatmap() {
   };
   
   return (
-    <div className="rounded-lg bg-[rgb(24,24,27)] p-4 mb-4">
+    <div className="rounded-lg bg-[rgb(24,24,27)] p-3 mb-2">
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-white font-medium">{totalSolved} problems solved in {selectedYear}</h2>
         
@@ -336,7 +336,7 @@ export default function ActivityHeatmap() {
       </div>
       
       <div className="overflow-x-hidden bg-[rgb(18,18,20)] p-2 rounded-md">
-        <div className="w-full p-2 bg-[rgb(18,18,20)]">
+        <div className="w-full py-1 px-2 bg-[rgb(18,18,20)]">
           {renderCalendar()}
         </div>
       </div>

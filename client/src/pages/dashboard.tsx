@@ -579,16 +579,16 @@ export default function Dashboard() {
         </div>
             
         {/* Main content - scrollable */}
-        <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-4">
+        <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-4 pb-0">
           {/* Main content area */}
-          <div className="flex-grow pt-0 pb-2 px-2 space-y-4 overflow-x-hidden">
+          <div className="flex-grow pt-0 pb-0 px-2 space-y-2 overflow-x-hidden overflow-y-hidden">
             
             {/* Activity Heatmap */}
             <ActivityHeatmap />
 
             {/* Selected Bundle Details */}
             {selectedBundle && bundles[selectedBundle as keyof typeof bundles] && (
-              <div className="bg-[rgb(20,20,22)] rounded-lg p-4 border border-[rgb(35,35,40)] mb-4">
+              <div className="bg-[rgb(20,20,22)] rounded-lg p-3 border border-[rgb(35,35,40)] mb-2">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="flex-shrink-0">
@@ -697,7 +697,7 @@ export default function Dashboard() {
             </div>
             
             {/* Problem list */}
-            <div className="bg-[rgb(16,16,18)] border border-[rgb(45,45,50)] rounded-lg overflow-hidden shadow-lg mt-0 w-full">
+            <div className="bg-[rgb(16,16,18)] border border-[rgb(45,45,50)] rounded-lg overflow-hidden shadow-lg mt-0 w-full mb-0">
               <table className="w-full border-collapse table-fixed overflow-hidden">
                 <thead>
                   <tr className="bg-gradient-to-r from-[rgb(21,21,24)] to-[rgb(25,25,28)] text-gray-300 border-b border-[rgb(45,45,50)]">
@@ -712,7 +712,7 @@ export default function Dashboard() {
                 <tbody className="divide-y divide-[rgb(35,35,40)]">
                   {isLoadingExternal ? (
                     <tr className="bg-[rgb(20,20,22)]">
-                      <td colSpan={6} className="px-4 py-12 text-center">
+                      <td colSpan={6} className="px-4 py-8 text-center">
                         <div className="flex flex-col items-center">
                           <Loader2 className="h-6 w-6 animate-spin text-[rgb(214,251,65)]" />
                           <p className="mt-2 text-gray-400 text-xs">Loading problems...</p>
@@ -882,7 +882,7 @@ export default function Dashboard() {
                     })
                   ) : (
                     <tr className="bg-[rgb(20,20,22)] border-b border-[rgb(35,35,40)]">
-                      <td colSpan={6} className="px-4 py-12 text-center text-gray-400 text-xs">
+                      <td colSpan={6} className="px-4 py-8 text-center text-gray-400 text-xs">
                         No problems found matching your criteria.
                       </td>
                     </tr>
