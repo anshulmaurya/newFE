@@ -976,7 +976,10 @@ export default function Dashboard() {
                 </div>
               </div>
               
-
+              {/* Progress Stats */}
+              <div className="mb-6">
+                <ProgressStats />
+              </div>
               
               {/* Skill Badges */}
               <div className="mb-6">
