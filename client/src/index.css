@@ -75,6 +75,19 @@
     @apply block h-0.5 w-0 bg-[rgb(86,182,255)] transition-all duration-300;
   }
   
+  /* Fixed position for dashboard content area to prevent scroll jumps */
+  .dashboard-content-area {
+    scroll-behavior: auto !important;
+  }
+  
+  /* Prevent scroll jumps when dropdown selects are active */
+  html.select-open,
+  body.select-open {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+  }
+  
   .code-block::-webkit-scrollbar {
     width: 8px;
     height: 8px;

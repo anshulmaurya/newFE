@@ -14,22 +14,33 @@ const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
 >(({ className, children, ...props }, ref) => {
-  // Capture click positions to prevent scroll jumps
-  const handleTriggerClick = (e: React.MouseEvent) => {
-    // Save scroll position on trigger click
+  // Completely overhauled approach to prevent scrolling
+  const preventScrollHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Record the current scroll position
     if (typeof window !== 'undefined') {
-      // Store current scroll position as data attribute
-      const scrollY = window.scrollY;
-      document.body.setAttribute('data-scroll-lock', scrollY.toString());
+      const currentScrollY = window.scrollY;
       
-      // Prevent default browser behavior
-      e.preventDefault();
+      // Add classes to both html and body to lock scrolling
+      document.documentElement.classList.add('select-open');
+      document.body.classList.add('select-open');
       
-      // We don't need to call e.currentTarget.click() - the Select component
-      // will handle the click event naturally
+      // Set data attribute to help with cleanup later
+      document.body.setAttribute('data-scroll-position', currentScrollY.toString());
+      
+      // To fix the position of the content, add a CSS rule that accounts for the current scroll position
+      const styleEl = document.createElement('style');
+      styleEl.innerHTML = `
+        body.select-open {
+          top: -${currentScrollY}px;
+          height: 100vh;
+        }
+      `;
+      styleEl.setAttribute('data-scroll-lock', 'true');
+      document.head.appendChild(styleEl);
     }
   };
   
+  // Render the trigger with our enhancements
   return (
     <SelectPrimitive.Trigger
       ref={ref}
@@ -37,7 +48,7 @@ const SelectTrigger = React.forwardRef<
         "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
         className
       )}
-      onMouseDown={handleTriggerClick}
+      onMouseDown={preventScrollHandler}
       {...props}
     >
       {children}
@@ -88,20 +99,49 @@ const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
 >(({ className, children, position = "popper", ...props }, ref) => {
-  // Store the scroll position when the component is mounted
-  const scrollRef = React.useRef(typeof window !== 'undefined' ? window.scrollY : 0);
-
-  // Handle component mounting - store the initial scroll position
+  // Handle mounting and clean up scroll lock
   React.useEffect(() => {
-    const handleScroll = () => {
-      // Do nothing when scrolling - we're just preventing the default behavior
+    // Function to restore body styles and scroll position
+    const restoreBodyScroll = () => {
+      if (typeof window !== 'undefined') {
+        // Remove class-based scroll locking
+        document.documentElement.classList.remove('select-open');
+        document.body.classList.remove('select-open');
+        
+        // Remove any scroll lock style elements
+        const scrollLockStyle = document.querySelector('style[data-scroll-lock="true"]');
+        if (scrollLockStyle && scrollLockStyle.parentNode) {
+          scrollLockStyle.parentNode.removeChild(scrollLockStyle);
+        }
+        
+        // Get the saved scroll position
+        const scrollPosition = document.body.getAttribute('data-scroll-position');
+        if (scrollPosition) {
+          // Restore scroll position
+          window.scrollTo({
+            top: parseInt(scrollPosition, 10),
+            behavior: 'auto'
+          });
+          
+          // Clean up data attribute
+          document.body.removeAttribute('data-scroll-position');
+        }
+      }
     };
     
-    // Add a listener to prevent automatic scrolling
-    window.addEventListener('scroll', handleScroll, { passive: false });
+    // Listen for escape key to restore scroll
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        restoreBodyScroll();
+      }
+    };
     
+    window.addEventListener('keydown', handleKeyDown);
+    
+    // Clean up function for when the component unmounts
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      restoreBodyScroll();
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
   
@@ -113,12 +153,27 @@ const SelectContent = React.forwardRef<
           // Prevent focusing when the dropdown closes
           event.preventDefault();
           
-          // Restore scroll position
-          if (typeof window !== 'undefined') {
+          // Remove class-based scroll locking
+          document.documentElement.classList.remove('select-open');
+          document.body.classList.remove('select-open');
+          
+          // Remove any scroll lock style elements
+          const scrollLockStyle = document.querySelector('style[data-scroll-lock="true"]');
+          if (scrollLockStyle && scrollLockStyle.parentNode) {
+            scrollLockStyle.parentNode.removeChild(scrollLockStyle);
+          }
+          
+          // Get the saved scroll position
+          const scrollPosition = document.body.getAttribute('data-scroll-position');
+          if (scrollPosition) {
+            // Restore scroll position
             window.scrollTo({
-              top: scrollRef.current,
+              top: parseInt(scrollPosition, 10),
               behavior: 'auto'
             });
+            
+            // Clean up data attribute
+            document.body.removeAttribute('data-scroll-position');
           }
         }}
         className={cn(
