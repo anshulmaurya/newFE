@@ -81,6 +81,7 @@ export default function Dashboard() {
   const [category, setCategory] = useState<string>('all');
   const [difficulty, setDifficulty] = useState<string>('all');
   const [status, setStatus] = useState<string>('all');
+  const [language, setLanguage] = useState<string>('c'); // Default language is C
   const [search, setSearch] = useState<string>('');
   const [showTags, setShowTags] = useState(true);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
@@ -324,11 +325,12 @@ export default function Dashboard() {
   
   // Setup codebase mutation
   const setupCodebaseMutation = useMutation({
-    mutationFn: async ({ problemId, questionId }: { problemId: string, questionId?: string }) => {
+    mutationFn: async ({ problemId, questionId, language }: { problemId: string, questionId?: string, language: string }) => {
       if (!questionId) throw new Error("Question ID is missing");
       
       const res = await apiRequest("POST", "/api/setup-codebase", { 
-        questionId: questionId 
+        questionId: questionId,
+        language: language 
       });
       return await res.json();
     },
@@ -343,8 +345,12 @@ export default function Dashboard() {
         const questionIdParam = variables.questionId ? 
           `&questionId=${encodeURIComponent(variables.questionId)}` : '';
         
+        // Include the language parameter
+        const languageParam = variables.language ? 
+          `&language=${encodeURIComponent(variables.language)}` : '';
+        
         // Redirect to the coding environment page
-        setLocation(`/coding-environment?containerUrl=${encodedUrl}&problemId=${variables.problemId}${questionIdParam}&title=${encodedTitle}`);
+        setLocation(`/coding-environment?containerUrl=${encodedUrl}&problemId=${variables.problemId}${questionIdParam}${languageParam}&title=${encodedTitle}`);
       } else {
         toast({
           title: "Missing container URL",
@@ -380,8 +386,8 @@ export default function Dashboard() {
       description: "Please wait while we prepare your environment...",
     });
     
-    // Call the mutation with the problem ID and question ID
-    setupCodebaseMutation.mutate({ problemId, questionId });
+    // Call the mutation with the problem ID, question ID, and selected language
+    setupCodebaseMutation.mutate({ problemId, questionId, language });
   };
 
   return (
@@ -761,6 +767,21 @@ export default function Dashboard() {
                     <SelectItem value="Solved" className="text-green-500 focus:bg-[rgb(45,45,50)]">Solved</SelectItem>
                     <SelectItem value="Attempted" className="text-yellow-500 focus:bg-[rgb(45,45,50)]">Attempted</SelectItem>
                     <SelectItem value="Not Started" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Not Started</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="w-1/3 md:w-auto">
+                <Select
+                  value={language}
+                  onValueChange={setLanguage}
+                >
+                  <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                    <SelectValue placeholder="Language" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
+                    <SelectItem value="c" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C</SelectItem>
+                    <SelectItem value="cpp" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C++</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

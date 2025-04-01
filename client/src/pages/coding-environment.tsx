@@ -162,6 +162,7 @@ export default function CodingEnvironment() {
   const [containerUrl, setContainerUrl] = useState<string | null>(null);
   const [problemId, setProblemId] = useState<string | null>(null);
   const [questionId, setQuestionId] = useState<string | null>(null);
+  const [language, setLanguage] = useState<string>("c"); // Default to C
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<'description' | 'solution' | 'discussion' | 'submissions'>('description');
@@ -180,6 +181,7 @@ export default function CodingEnvironment() {
     const urlParam = queryParams.get('containerUrl');
     const idParam = queryParams.get('problemId');
     const qIdParam = queryParams.get('questionId');
+    const langParam = queryParams.get('language');
     
     if (urlParam) {
       setContainerUrl(decodeURIComponent(urlParam));
@@ -191,6 +193,10 @@ export default function CodingEnvironment() {
 
     if (qIdParam) {
       setQuestionId(qIdParam);
+    }
+    
+    if (langParam) {
+      setLanguage(langParam);
     }
   }, []);
   
@@ -486,6 +492,14 @@ export default function CodingEnvironment() {
                     <div>
                       {/* Problem metadata section - streamlined with no separate box */}
                       <div className="mb-5 space-y-4">
+                        {/* Language */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">Language:</span>
+                          <Badge variant="outline" className="bg-[#3E3E42] text-[#c2ee4a] border-[#c2ee4a]">
+                            {language === "c" ? "C" : language === "cpp" ? "C++" : language}
+                          </Badge>
+                        </div>
+                        
                         {/* Acceptance rate */}
                         {problem.acceptance_rate && (
                           <div className="flex items-center gap-2">
@@ -1003,10 +1017,13 @@ export default function CodingEnvironment() {
         <div className="flex-1 flex flex-col relative">
           {/* Optional title bar in fullscreen mode */}
           {isFullscreen && !isDescriptionOpen && (
-            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-[#252526] rounded-md text-white z-10 flex items-center">
+            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-[#252526] rounded-md text-white z-10 flex items-center gap-2">
               <span className="text-sm font-medium truncate max-w-md">
                 {problem?.title || "Coding Environment"}
               </span>
+              <Badge variant="outline" className="bg-[#3E3E42] text-[#c2ee4a] border-[#c2ee4a] text-xs uppercase">
+                {language === "c" ? "C" : language === "cpp" ? "C++" : language}
+              </Badge>
             </div>
           )}
           
@@ -1041,7 +1058,7 @@ export default function CodingEnvironment() {
                         body: JSON.stringify({
                           username: user.username,
                           question_id: questionId,
-                          lang: 'c',
+                          lang: language,
                           profile: 'False'
                         })
                       });
@@ -1101,7 +1118,7 @@ export default function CodingEnvironment() {
                         body: JSON.stringify({
                           username: user.username,
                           question_id: questionId,
-                          lang: 'c',
+                          lang: language,
                           profile: 'False'
                         })
                       });

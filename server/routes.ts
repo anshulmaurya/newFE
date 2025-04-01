@@ -504,7 +504,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "User not found or username missing" });
       }
       
-      const { questionId } = req.body;
+      const { questionId, language = "c" } = req.body;
       if (!questionId) {
         return res.status(400).json({ error: "Question ID is required" });
       }
@@ -537,8 +537,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Continue with the original questionId
       }
       
-      // Call the external API to setup the codebase using the question_id from MongoDB
-      const result = await setupUserCodebase(user.username, mongoDbQuestionId.toString());
+      // Call the external API to setup the codebase using the question_id from MongoDB and language
+      const result = await setupUserCodebase(user.username, mongoDbQuestionId.toString(), language);
       
       // Record the attempt in user progress
       try {
