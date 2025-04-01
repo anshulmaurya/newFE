@@ -32,116 +32,64 @@ const notesTopics: TopicSection[] = [
     category: true,
     subsections: [
       {
-        id: "gitbook-documentation",
-        label: "GitBook Documentation",
-        icon: <BookOpen className="h-4 w-4 mr-2" />,
-        path: "/notes/gitbook-documentation",
-      },
-      {
-        id: "quickstart", 
-        label: "Quickstart",
+        id: "getting-started-main",
+        label: "Getting Started",
         icon: <Zap className="h-4 w-4 mr-2" />,
-        path: "/notes/quickstart",
-      },
-      {
-        id: "importing-content",
-        label: "Importing content",
-        icon: <Upload className="h-4 w-4 mr-2" />,
         path: "/notes/getting-started",
-      },
+      }
+    ]
+  },
+  { 
+    id: "communication-protocols", 
+    label: "COMMUNICATION PROTOCOLS",
+    path: "/notes/communication-protocols",
+    category: true,
+    subsections: [
       {
-        id: "github-gitlab-sync",
-        label: "GitHub & GitLab Sync",
+        id: "comm-protocols-main",
+        label: "Communication Protocols",
         icon: <GitBranch className="h-4 w-4 mr-2" />,
         path: "/notes/communication-protocols",
+      },
+      {
+        id: "protocols-list",
+        label: "Protocols",
+        icon: <FileText className="h-4 w-4 mr-2" />,
+        path: "/notes/communication-protocols",
         expandable: true,
-        expanded: false,
+        expanded: true,
         subsections: [
-          { id: "enabling-github-sync", label: "Enabling GitHub Sync", path: "/notes/communication-protocols/spi" },
-          { id: "enabling-gitlab-sync", label: "Enabling GitLab Sync", path: "/notes/communication-protocols/i2c" },
-          { id: "content-configuration", label: "Content configuration", path: "/notes/communication-protocols/uart" },
-          { id: "github-pull-request", label: "GitHub pull request preview", path: "/notes/communication-protocols/uart" },
-          { id: "commit-messages", label: "Commit messages & Autolink", path: "/notes/communication-protocols/uart" },
-          { id: "monorepos", label: "Monorepos", path: "/notes/communication-protocols/uart" },
-          { id: "troubleshooting", label: "Troubleshooting", path: "/notes/communication-protocols/uart" }
+          { id: "spi", label: "SPI", path: "/notes/communication-protocols/spi" },
+          { id: "i2c", label: "I2C", path: "/notes/communication-protocols/i2c" },
+          { id: "uart", label: "UART", path: "/notes/communication-protocols/uart" }
         ]
       }
     ]
   },
   { 
-    id: "creating-content", 
-    label: "CREATING CONTENT",
-    path: "/notes/communication-protocols",
-    category: true,
-    subsections: [
-      {
-        id: "formatting-content",
-        label: "Formatting your content",
-        icon: <Pencil className="h-4 w-4 mr-2" />,
-        path: "/notes/communication-protocols",
-        expandable: true
-      },
-      {
-        id: "content-structure",
-        label: "Content structure",
-        icon: <Grid3X3 className="h-4 w-4 mr-2" />,
-        path: "/notes/communication-protocols",
-        expandable: true
-      },
-      {
-        id: "blocks",
-        label: "Blocks",
-        icon: <Puzzle className="h-4 w-4 mr-2" />,
-        path: "/notes/communication-protocols",
-        expandable: true
-      },
-      {
-        id: "reusable-content",
-        label: "Reusable content",
-        icon: <FileCode className="h-4 w-4 mr-2" />,
-        path: "/notes/data-structures",
-      },
-      {
-        id: "broken-links",
-        label: "Broken links",
-        icon: <LinkIcon className="h-4 w-4 mr-2" />,
-        path: "/notes/data-structures",
-      },
-      {
-        id: "searching-content",
-        label: "Searching content",
-        icon: <SearchIcon className="h-4 w-4 mr-2" />,
-        path: "/notes/data-structures",
-        expandable: true
-      },
-      {
-        id: "openapi",
-        label: "OpenAPI",
-        icon: <Terminal className="h-4 w-4 mr-2" />,
-        path: "/notes/data-structures",
-        expandable: true
-      }
-    ]
-  },
-  { 
-    id: "publishing-documentation", 
-    label: "PUBLISHING DOCUMENTATION",
+    id: "data-structures", 
+    label: "DATA STRUCTURES",
     path: "/notes/data-structures",
     category: true,
     subsections: [
       {
-        id: "publish-docs-site",
-        label: "Publish a docs site",
-        icon: <Globe className="h-4 w-4 mr-2" />,
+        id: "data-structures-main",
+        label: "Data Structures",
+        icon: <Database className="h-4 w-4 mr-2" />,
         path: "/notes/data-structures",
-        expandable: true
       },
       {
-        id: "site-structure",
-        label: "Site structure",
-        icon: <LayoutGrid className="h-4 w-4 mr-2" />,
+        id: "data-structures-list",
+        label: "Common Structures",
+        icon: <Grid3X3 className="h-4 w-4 mr-2" />,
         path: "/notes/data-structures",
-        expandable: true
+        expandable: true,
+        expanded: true,
+        subsections: [
+          { id: "linked-list", label: "Linked List", path: "/notes/data-structures/linked-list" },
+          { id: "array", label: "Array", path: "/notes/data-structures/array" },
+          { id: "string", label: "String", path: "/notes/data-structures/string" }
+        ]
       }
     ]
   }
