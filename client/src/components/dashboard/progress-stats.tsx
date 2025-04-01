@@ -27,19 +27,22 @@ export default function ProgressStats() {
 
   if (isLoading) {
     return (
-      <div className="bg-[rgb(20,20,22)] rounded-md border border-[rgb(35,35,40)]">
-        <div className="px-3 py-3">
-          <h3 className="text-sm font-bold mb-3">Progress Stats</h3>
+      <Card>
+        <CardHeader>
+          <CardTitle>Progress Statistics</CardTitle>
+          <CardDescription>
+            Loading your problem-solving statistics...
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
           <div className="space-y-4">
-            <div className="flex justify-between gap-2">
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-            </div>
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-full" />
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -66,69 +69,71 @@ export default function ProgressStats() {
   const percentageHard = Math.round((userStats.hardSolved / hardTotal) * 100);
 
   return (
-    <div className="bg-[rgb(20,20,22)] rounded-md border border-[rgb(35,35,40)]">
-      <div className="px-3 py-3">
-        <h3 className="text-sm font-bold mb-3">Progress Stats</h3>
-        <div className="space-y-4">
+    <Card>
+      <CardContent className="pt-6">
+        <div className="space-y-6">
 
-          {/* Easy, Medium, Hard Problems - all on one line */}
-          <div className="flex justify-between gap-2">
-            {/* Easy */}
-            <div className="flex-1">
-              <div className="flex justify-between items-center mb-1">
-                <div className="flex items-center gap-1">
-                  <CircleDashed className="h-3 w-3 text-green-500" />
-                  <span className="text-xs font-medium">Easy</span>
-                </div>
-                <span className="text-xs text-gray-400">
-                  {userStats.easySolved}/{easyTotal}
-                </span>
+          {/* Easy Problems */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <CircleDashed className="h-5 w-5 text-green-500" />
+                <span className="text-sm font-medium">Easy</span>
               </div>
-              <Progress value={percentageEasy} className="h-1.5" />
+              <span className="text-sm font-medium">
+                {userStats.easySolved} / {easyTotal}
+              </span>
             </div>
-            
-            {/* Medium */}
-            <div className="flex-1">
-              <div className="flex justify-between items-center mb-1">
-                <div className="flex items-center gap-1">
-                  <BarChart className="h-3 w-3 text-yellow-500" />
-                  <span className="text-xs font-medium">Medium</span>
-                </div>
-                <span className="text-xs text-gray-400">
-                  {userStats.mediumSolved}/{mediumTotal}
-                </span>
-              </div>
-              <Progress value={percentageMedium} className="h-1.5" />
-            </div>
-            
-            {/* Hard */}
-            <div className="flex-1">
-              <div className="flex justify-between items-center mb-1">
-                <div className="flex items-center gap-1">
-                  <BarChart className="h-3 w-3 text-red-500" />
-                  <span className="text-xs font-medium">Hard</span>
-                </div>
-                <span className="text-xs text-gray-400">
-                  {userStats.hardSolved}/{hardTotal}
-                </span>
-              </div>
-              <Progress value={percentageHard} className="h-1.5" />
-            </div>
+            <Progress value={percentageEasy} className="h-2" />
           </div>
 
-          {/* Streaks */}
-          <div className="flex justify-between text-xs">
-            <div className="flex items-center gap-1">
-              <FlameIcon className="h-3 w-3 text-orange-500" />
-              <span>Current: <span className="font-bold">{userStats.currentStreak}d</span></span>
+          {/* Medium Problems */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <BarChart className="h-5 w-5 text-yellow-500" />
+                <span className="text-sm font-medium">Medium</span>
+              </div>
+              <span className="text-sm font-medium">
+                {userStats.mediumSolved} / {mediumTotal}
+              </span>
             </div>
-            <div className="flex items-center gap-1">
-              <FlameIcon className="h-3 w-3 text-red-500" />
-              <span>Longest: <span className="font-bold">{userStats.longestStreak}d</span></span>
+            <Progress value={percentageMedium} className="h-2" />
+          </div>
+
+          {/* Hard Problems */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <BarChart className="h-5 w-5 text-red-500" />
+                <span className="text-sm font-medium">Hard</span>
+              </div>
+              <span className="text-sm font-medium">
+                {userStats.hardSolved} / {hardTotal}
+              </span>
             </div>
+            <Progress value={percentageHard} className="h-2" />
+          </div>
+
+          {/* Current Streak */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <FlameIcon className="h-5 w-5 text-orange-500" />
+              <span className="text-sm font-medium">Current Streak</span>
+            </div>
+            <span className="text-sm font-medium">{userStats.currentStreak} days</span>
+          </div>
+
+          {/* Longest Streak */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <FlameIcon className="h-5 w-5 text-red-500" />
+              <span className="text-sm font-medium">Longest Streak</span>
+            </div>
+            <span className="text-sm font-medium">{userStats.longestStreak} days</span>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

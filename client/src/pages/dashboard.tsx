@@ -584,10 +584,11 @@ export default function Dashboard() {
           {/* Main content area */}
           <div className="flex-grow pt-0 pb-2 px-2 space-y-4">
             
-            {/* Activity Heatmap - reduced height */}
-            <div className="max-h-48 overflow-hidden">
-              <ActivityHeatmap />
-            </div>
+            {/* Activity Heatmap */}
+            <ActivityHeatmap />
+            
+            {/* Skill Badges */}
+            <SkillBadges />
 
             {/* Selected Bundle Details */}
             {selectedBundle && bundles[selectedBundle as keyof typeof bundles] && (
@@ -903,13 +904,8 @@ export default function Dashboard() {
               
 
               
-              {/* Skill Badges - moved from main content */}
-              <div className="mb-4">
-                <SkillBadges />
-              </div>
-              
-              {/* Progress Stats - more compact */}
-              <div className="mb-4">
+              {/* Progress Stats */}
+              <div className="mb-6">
                 <ProgressStats />
               </div>
               
