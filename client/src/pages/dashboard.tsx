@@ -724,7 +724,44 @@ export default function Dashboard() {
                       </td>
                     </tr>
                   ) : externalProblems && externalProblems.length > 0 ? (
-                    externalProblems.map((problem: any, idx: number) => {
+                    // Apply filters to problems
+                    externalProblems
+                      .filter((problem: any) => {
+                        // Apply difficulty filter
+                        if (difficulty !== 'all' && problem.difficulty?.toLowerCase() !== difficulty.toLowerCase()) {
+                          return false;
+                        }
+                        
+                        // Apply category filter
+                        if (category !== 'all' && 
+                            !(problem.category?.toLowerCase() === category.toLowerCase() ||
+                              problem.type?.toLowerCase() === category.toLowerCase() ||
+                              problem.tags?.some((tag: string) => tag.toLowerCase() === category.toLowerCase()))
+                           ) {
+                          return false;
+                        }
+                        
+                        // Apply status filter
+                        if (status !== 'all') {
+                          const progressData = userProgressData?.find((p: any) => p.problemId === problem.id);
+                          const problemStatus = progressData?.status || 'Not Started';
+                          if (problemStatus !== status) {
+                            return false;
+                          }
+                        }
+                        
+                        // Apply search filter
+                        if (search && search.trim() !== '') {
+                          const searchTerm = search.toLowerCase();
+                          return problem.title?.toLowerCase().includes(searchTerm) ||
+                                 problem.description?.toLowerCase().includes(searchTerm) ||
+                                 problem.tags?.some((tag: string) => tag.toLowerCase().includes(searchTerm)) ||
+                                 problem.companies?.some((company: string) => company.toLowerCase().includes(searchTerm));
+                        }
+                        
+                        return true;
+                      })
+                      .map((problem: any, idx: number) => {
                       // Get the problem status from userProgress data if available, otherwise default to "Not Started"
                       const progressData = userProgressData?.find((p: any) => p.problemId === problem.id);
                       const problemStatus = progressData?.status || 'Not Started';
