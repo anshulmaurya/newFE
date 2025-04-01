@@ -91,11 +91,11 @@ const skillBadgesData: SkillBadge[] = [
 const BadgeIcon: React.FC<{ badge: SkillBadge, isHovered: boolean }> = ({ badge, isHovered }) => {
   return (
     <motion.div
-      className="text-3xl flex items-center justify-center select-none"
+      className="text-xl flex items-center justify-center select-none"
       animate={isHovered && badge.unlocked ? {
         scale: [1, 1.2, 1],
         rotate: [0, 10, -10, 0],
-        transition: { duration: 0.5 }
+        transition: { duration: 0.4 }
       } : {}}
     >
       {badge.icon}
@@ -110,7 +110,7 @@ const ProgressRing: React.FC<{
   isHovered: boolean,
   unlocked: boolean 
 }> = ({ progress, color, size, isHovered, unlocked }) => {
-  const strokeWidth = 4;
+  const strokeWidth = 3;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const dashOffset = circumference - (progress / 100) * circumference;
@@ -121,7 +121,7 @@ const ProgressRing: React.FC<{
       height={size}
       viewBox={`0 0 ${size} ${size}`}
       animate={isHovered && unlocked ? { rotate: 360 } : {}}
-      transition={{ duration: 3, ease: "linear", repeat: isHovered ? Infinity : 0 }}
+      transition={{ duration: 4, ease: "linear", repeat: isHovered ? Infinity : 0 }}
     >
       {/* Background circle */}
       <circle
@@ -148,30 +148,30 @@ const ProgressRing: React.FC<{
         transform={`rotate(-90 ${size / 2} ${size / 2})`}
         initial={{ strokeDashoffset: circumference }}
         animate={{ strokeDashoffset: unlocked ? dashOffset : circumference }}
-        transition={{ duration: 1, ease: "easeInOut" }}
+        transition={{ duration: 0.8, ease: "easeInOut" }}
       />
       
       {/* Badge status icon in center */}
       {unlocked && progress === 100 && (
-        <foreignObject x={size / 2 - 8} y={size / 2 - 8} width={16} height={16}>
+        <foreignObject x={size / 2 - 6} y={size / 2 - 6} width={12} height={12}>
           <motion.div
             className="text-green-500"
             animate={isHovered ? { scale: [1, 1.2, 1] } : {}}
             transition={{ duration: 0.5, repeat: isHovered ? Infinity : 0, repeatDelay: 1 }}
           >
-            <CheckCircle size={16} />
+            <CheckCircle size={12} />
           </motion.div>
         </foreignObject>
       )}
       
       {!unlocked && (
-        <foreignObject x={size / 2 - 8} y={size / 2 - 8} width={16} height={16}>
+        <foreignObject x={size / 2 - 6} y={size / 2 - 6} width={12} height={12}>
           <motion.div
             className="text-gray-500"
             animate={isHovered ? { scale: [1, 1.1, 1], rotate: [0, 10, 0] } : {}}
             transition={{ duration: 0.5 }}
           >
-            <Lock size={16} />
+            <Lock size={12} />
           </motion.div>
         </foreignObject>
       )}
@@ -184,21 +184,21 @@ const SkillBadgeCard: React.FC<{ badge: SkillBadge }> = ({ badge }) => {
   
   return (
     <motion.div
-      className={`relative rounded-lg p-3 flex flex-col items-center space-y-1 cursor-pointer ${
+      className={`relative rounded-lg p-2 flex items-center cursor-pointer ${
         badge.unlocked ? 'bg-[#1E1E24]' : 'bg-[#1A1A1E]'
       }`}
-      whileHover={{ y: -3, boxShadow: `0 8px 20px -8px ${badge.color}30` }}
+      whileHover={{ y: -2, boxShadow: `0 4px 12px -4px ${badge.color}30` }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.2 }}
     >
-      <div className="relative">
+      <div className="relative flex-shrink-0 mr-2">
         <ProgressRing 
           progress={badge.progress} 
           color={badge.color} 
-          size={60} 
+          size={36} 
           isHovered={isHovered}
           unlocked={badge.unlocked}
         />
@@ -207,38 +207,28 @@ const SkillBadgeCard: React.FC<{ badge: SkillBadge }> = ({ badge }) => {
         </div>
       </div>
 
-      <h3 
-        className="font-semibold text-center text-sm" 
-        style={{ color: badge.unlocked ? badge.color : 'gray' }}
-      >
-        {badge.name}
-      </h3>
-      
-      <Badge 
-        variant="outline" 
-        className="text-xs bg-opacity-20 px-2 py-0"
-        style={{ backgroundColor: `${badge.color}20`, borderColor: `${badge.color}50` }}
-      >
-        {badge.category}
-      </Badge>
-
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <motion.div
-              className="text-xs text-center text-gray-400"
-              animate={isHovered ? { y: [0, -3, 0] } : {}}
-              transition={{ duration: 0.5 }}
-            >
-              {badge.unlocked ? `${badge.progress}% Complete` : badge.requirements}
-            </motion.div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{badge.description}</p>
-            <p className="text-xs mt-1">{badge.requirements}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <div className="flex flex-col min-w-0">
+        <h3 
+          className="font-semibold text-xs mb-0.5 truncate" 
+          style={{ color: badge.unlocked ? badge.color : 'gray' }}
+        >
+          {badge.name}
+        </h3>
+        
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="text-xs text-gray-400 truncate">
+                {badge.unlocked ? `${badge.progress}% Complete` : badge.requirements}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{badge.description}</p>
+              <p className="text-xs mt-1">{badge.requirements}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     </motion.div>
   );
 };
@@ -259,15 +249,15 @@ const SkillBadges: React.FC = () => {
   return (
     <div className="rounded-lg bg-[rgb(24,24,27)] p-3 mb-4">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-white font-medium">Skill Badges</h2>
+        <h2 className="text-white font-medium text-sm">Skill Badges</h2>
         
-        <div className="flex flex-wrap space-x-2">
-          {categories.map(category => (
+        <div className="flex flex-wrap space-x-1">
+          {categories.slice(0, 3).map(category => (
             <Button
               key={category}
               onClick={() => setActiveCategory(category === 'All' ? null : category)}
               variant={activeCategory === category || (category === 'All' && !activeCategory) ? "default" : "outline"}
-              className={`h-7 px-2 py-1 text-xs ${
+              className={`h-6 px-2 py-0 text-xs ${
                 activeCategory === category || (category === 'All' && !activeCategory)
                   ? 'bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] text-black' 
                   : 'bg-[rgb(35,35,40)] text-gray-300 hover:bg-[rgb(45,45,50)] hover:text-white'
@@ -279,8 +269,8 @@ const SkillBadges: React.FC = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        {filteredBadges.map(badge => (
+      <div className="grid grid-cols-2 gap-2">
+        {filteredBadges.slice(0, 6).map(badge => (
           <SkillBadgeCard key={badge.id} badge={badge} />
         ))}
       </div>
