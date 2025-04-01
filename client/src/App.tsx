@@ -10,6 +10,7 @@ import Dashboard from "@/pages/dashboard";
 import AuthPage from "@/pages/auth-page";
 import ProblemDetail from "@/pages/problem-detail";
 import CodingEnvironment from "@/pages/coding-environment";
+import UserStatistics from "@/pages/user-statistics";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 
@@ -41,6 +42,7 @@ function Router() {
       <ProtectedRoute path="/problems" component={Dashboard} />
       <ProtectedRoute path="/problems/:id" component={ProblemDetail} />
       <ProtectedRoute path="/coding-environment" component={CodingEnvironment} />
+      <ProtectedRoute path="/user-statistics" component={UserStatistics} />
       <ProtectedRoute path="/jd-based" component={JDBasedPage} />
       <ProtectedRoute path="/quick-prep/blind-75" component={Blind75Page} />
       <ProtectedRoute path="/quick-prep/linux-basics" component={LinuxBasicsPage} />
