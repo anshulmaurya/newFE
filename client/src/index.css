@@ -118,6 +118,21 @@
     display: none;  /* Chrome, Safari and Opera */
   }
   
+  /* Prevent scrolling issues with selection dropdown */
+  body:has([data-state="open"]) {
+    overflow: hidden !important;
+    height: 100vh !important;
+  }
+  
+  html:has([data-state="open"]) {
+    overflow: hidden !important;
+  }
+  
+  .dashboard-content-area {
+    scroll-behavior: auto !important;
+    position: relative;
+  }
+  
   .animate-typing {
     overflow: hidden;
     white-space: nowrap;
