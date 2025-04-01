@@ -775,13 +775,43 @@ export default function Dashboard() {
                 <Select
                   value={language}
                   onValueChange={setLanguage}
+                  onOpenChange={(open) => {
+                    // Prevent scroll when the dropdown is opened or closed
+                    if (open) {
+                      document.body.style.overflow = 'hidden';
+                    } else {
+                      document.body.style.overflow = '';
+                    }
+                  }}
                 >
-                  <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                  <SelectTrigger 
+                    className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs"
+                    onClick={(e) => {
+                      // Prevent event from propagating to parent elements
+                      e.stopPropagation();
+                    }}
+                  >
                     <SelectValue placeholder="Language" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
-                    <SelectItem value="c" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C</SelectItem>
-                    <SelectItem value="cpp" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C++</SelectItem>
+                  <SelectContent 
+                    className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs"
+                    position="popper"
+                    sideOffset={5}
+                  >
+                    <SelectItem 
+                      value="c" 
+                      className="text-gray-200 focus:bg-[rgb(45,45,50)]"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      C
+                    </SelectItem>
+                    <SelectItem 
+                      value="cpp" 
+                      className="text-gray-200 focus:bg-[rgb(45,45,50)]"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      C++
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -870,7 +900,10 @@ export default function Dashboard() {
                               <span className="text-xs font-medium mr-2 text-gray-500 w-5 text-right">{idx + 1}.</span>
                               <div className="flex flex-col">
                                 <button 
-                                  onClick={() => handleSetupCodebase(problem.id, problem.question_id)} 
+                                  onClick={(e) => {
+                                    e.stopPropagation(); // Prevent event propagation
+                                    handleSetupCodebase(problem.id, problem.question_id);
+                                  }} 
                                   className="text-xs font-medium text-left hover:text-[#56B2FF] whitespace-nowrap overflow-hidden text-ellipsis transition-colors"
                                 >
                                   {problem.title || `Problem ${idx + 1}`}
