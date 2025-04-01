@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import ProgressStats from '@/components/dashboard/progress-stats';
+
 import ActivityHeatmap from '@/components/dashboard/activity-heatmap';
 import { 
   CheckCircle,
@@ -649,7 +649,7 @@ export default function Dashboard() {
         </div>
             
         {/* Main content - scrollable */}
-        <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-4 pb-8 bg-[rgb(14,14,16)]">
+        <div className="w-full lg:ml-56 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-4 pb-8 bg-[rgb(14,14,16)]">
           {/* Main content area */}
           <div className="flex-grow pt-0 pb-8 px-2 space-y-2 overflow-x-hidden">
             
@@ -959,17 +959,6 @@ export default function Dashboard() {
                   )}
                 </tbody>
               </table>
-            </div>
-          </div>
-          
-          
-          {/* Right sidebar - stats (hide on mobile) */}
-          <div className="hidden lg:block w-64 fixed right-0 top-16 bottom-0 overflow-y-auto bg-[rgb(14,14,16)] border-l border-[rgb(35,35,40)]">
-            <div className="px-4 py-4 h-full">
-              {/* Progress Stats */}
-              <div className="mb-6">
-                <ProgressStats />
-              </div>
             </div>
           </div>
         </div>
