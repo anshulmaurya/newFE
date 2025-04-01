@@ -50,8 +50,6 @@ const notesTopics: TopicSection[] = [
         label: "Communication Protocols",
         icon: <GitBranch className="h-4 w-4 mr-2" />,
         path: "/notes/communication-protocols",
-        expandable: true,
-        expanded: true,
         subsections: [
           { id: "spi", label: "SPI", path: "/notes/communication-protocols/spi" },
           { id: "i2c", label: "I2C", path: "/notes/communication-protocols/i2c" },
@@ -71,8 +69,6 @@ const notesTopics: TopicSection[] = [
         label: "Data Structures",
         icon: <Database className="h-4 w-4 mr-2" />,
         path: "/notes/data-structures",
-        expandable: true,
-        expanded: true,
         subsections: [
           { id: "linked-list", label: "Linked List", path: "/notes/data-structures/linked-list" },
           { id: "array", label: "Array", path: "/notes/data-structures/array" },
@@ -91,6 +87,10 @@ export default function Notes() {
   const [location, setLocation] = useLocation();
   const [currentPath] = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [expandedSections, setExpandedSections] = useState<{[key: string]: boolean}>({
+    "comm-protocols-main": true,
+    "data-structures-main": true
+  });
   
   // Update selected topic based on current path
   useEffect(() => {
@@ -212,13 +212,24 @@ export default function Notes() {
                     
                     {/* Main items */}
                     {topic.subsections && topic.subsections.map((section) => {
-                      const isExpanded = section.expanded || false;
+                      const isExpanded = expandedSections[section.id] || false;
                       const isActive = currentPath === section.path;
+                      const hasSubsections = section.subsections && section.subsections.length > 0;
                       
                       return (
                         <div key={section.id} className="mb-1">
                           <div 
-                            onClick={() => section.path && setLocation(section.path)}
+                            onClick={() => {
+                              if (section.path) {
+                                setLocation(section.path);
+                              }
+                              if (hasSubsections) {
+                                setExpandedSections(prev => ({
+                                  ...prev,
+                                  [section.id]: !isExpanded
+                                }));
+                              }
+                            }}
                             className={`flex items-center w-full text-left px-3 py-1.5 rounded-md text-sm cursor-pointer ${
                               isActive 
                                 ? `${themeClasses.activeItem} ${darkMode ? 'text-white' : 'text-gray-900'} font-medium` 
@@ -227,22 +238,24 @@ export default function Notes() {
                           >
                             {section.icon}
                             <span>{section.label}</span>
-                            {section.expandable && (
+                            {hasSubsections && (
                               <ChevronDown 
                                 className={`h-4 w-4 ml-auto transform transition-transform ${isExpanded ? 'rotate-180' : ''}`} 
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  section.expanded = !isExpanded;
-                                  setSelectedTopic(topic.id);
+                                  setExpandedSections(prev => ({
+                                    ...prev,
+                                    [section.id]: !isExpanded
+                                  }));
                                 }}
                               />
                             )}
                           </div>
                           
                           {/* Section subsections */}
-                          {section.expandable && section.subsections && isExpanded && (
+                          {hasSubsections && isExpanded && (
                             <div className="py-1 ml-9 space-y-1">
-                              {section.subsections.map((subsection: Subsection) => (
+                              {section.subsections!.map((subsection: Subsection) => (
                                 <div
                                   key={subsection.id}
                                   onClick={() => subsection.path && setLocation(subsection.path)}
