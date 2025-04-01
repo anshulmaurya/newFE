@@ -249,8 +249,8 @@ export default function Notes() {
       />
 
       <div className="flex flex-grow pt-0">
-        {/* Sidebar */}
-        <div className={`w-64 ${themeClasses.sidebarBg} p-4 pt-2 mt-1 flex flex-col border-r-0 shadow-md z-10`}>
+        {/* Sidebar - Fixed position */}
+        <div className={`w-64 ${themeClasses.sidebarBg} p-4 pt-2 mt-1 flex flex-col border-r-0 shadow-md z-10 fixed top-16 bottom-0 overflow-y-auto`}>
           <div className="relative mb-3">
             <Search size={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -296,8 +296,16 @@ export default function Notes() {
                                 className={`h-4 w-4 ml-auto transform transition-transform ${isExpanded ? 'rotate-180' : ''}`} 
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  section.expanded = !isExpanded;
-                                  setSelectedTopic(topic.id);
+                                  // Only update the expanded state for this section
+                                  const updatedTopics = [...notesTopics];
+                                  const topicIndex = updatedTopics.findIndex(t => t.id === topic.id);
+                                  const sectionIndex = updatedTopics[topicIndex].subsections.findIndex(s => s.id === section.id);
+                                  
+                                  if (topicIndex !== -1 && sectionIndex !== -1) {
+                                    // Toggle expanded state only for this section
+                                    updatedTopics[topicIndex].subsections[sectionIndex].expanded = !isExpanded;
+                                    setSelectedTopic(topic.id);
+                                  }
                                 }}
                               />
                             )}
@@ -333,8 +341,8 @@ export default function Notes() {
           </div>
         </div>
 
-        {/* Main content */}
-        <div className="flex-grow px-6 pb-10 mt-0 overflow-auto">
+        {/* Main content - add left margin to accommodate fixed sidebar */}
+        <div className="flex-grow px-6 pb-10 mt-0 overflow-auto ml-64">
           <div className="max-w-4xl mx-auto pt-8">
             {selectedTopic === "getting-started" && (
               <>
