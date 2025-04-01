@@ -168,7 +168,9 @@ export default function ActivityHeatmap() {
     return (
       <div className="rounded-lg bg-[rgb(24,24,27)] p-4 mb-4">
         <Skeleton className="h-6 w-48 mb-4 bg-[rgb(35,35,40)]" />
-        <Skeleton className="h-36 w-full bg-[rgb(35,35,40)]" />
+        <div className="bg-[rgb(16,16,18)] p-2 rounded-md">
+          <Skeleton className="h-36 w-full bg-[rgb(35,35,40)]" />
+        </div>
       </div>
     );
   }
@@ -238,9 +240,9 @@ export default function ActivityHeatmap() {
     }
     
     return (
-      <div className="mt-4">
+      <div className="mt-2">
         {/* Month labels */}
-        <div className="flex text-xs text-gray-400 mb-1 pl-12">
+        <div className="flex text-xs text-gray-400 mb-1 pl-12 overflow-visible">
           {months.map((month, i) => (
             <div key={month} className="flex-1 text-center">{month}</div>
           ))}
@@ -248,7 +250,7 @@ export default function ActivityHeatmap() {
         
         <div className="flex">
           {/* Calendar cells */}
-          <div className="flex-1 grid" style={{ gridTemplateColumns: 'repeat(53, minmax(0, 1fr))' , gap: '2px' }}>
+          <div className="flex-1 grid" style={{ gridTemplateColumns: 'repeat(53, minmax(0, 1fr))' , gap: '3px' }}>
             {weeks.map((week, weekIndex) => (
               <div key={weekIndex} className="flex flex-col gap-1">
                 {week.map((date, dateIndex) => {
@@ -284,7 +286,7 @@ export default function ActivityHeatmap() {
                   return (
                     <div
                       key={dateKey}
-                      className="w-3 h-3 rounded-sm cursor-pointer relative group"
+                      className="w-3 h-3 rounded-sm cursor-pointer relative group border border-[rgba(255,255,255,0.04)]"
                       style={{ backgroundColor: getColorForCount(count) }}
                       title={`${formattedDate}: ${count} questions solved`}
                     >
@@ -297,13 +299,13 @@ export default function ActivityHeatmap() {
         </div>
         
         {/* Legend */}
-        <div className="flex items-center justify-end mt-2 text-xs text-gray-400">
+        <div className="flex items-center justify-end mt-3 text-xs text-gray-400">
           <span>Less</span>
           <div className="flex items-center mx-2">
-            <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: '#161b22' }}></div>
-            <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: '#0e4429' }}></div>
-            <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: '#26a641' }}></div>
-            <div className="w-3 h-3 mx-[1px]" style={{ backgroundColor: '#39d353' }}></div>
+            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#161b22' }}></div>
+            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#0e4429' }}></div>
+            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#26a641' }}></div>
+            <div className="w-3 h-3 mx-[2px] border border-[rgba(255,255,255,0.04)]" style={{ backgroundColor: '#39d353' }}></div>
           </div>
           <span>More</span>
         </div>
@@ -313,7 +315,7 @@ export default function ActivityHeatmap() {
   
   return (
     <div className="rounded-lg bg-[rgb(24,24,27)] p-4 mb-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-2">
         <h2 className="text-white font-medium">{totalSolved} problems solved in {selectedYear}</h2>
         
         {/* Year selector */}
@@ -333,8 +335,8 @@ export default function ActivityHeatmap() {
         </div>
       </div>
       
-      <div className="overflow-x-auto">
-        <div className="min-w-[800px]">
+      <div className="overflow-x-auto bg-[rgb(16,16,18)] p-2 rounded-md">
+        <div className="min-w-[800px] p-2">
           {renderCalendar()}
         </div>
       </div>
