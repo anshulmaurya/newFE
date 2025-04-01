@@ -37,7 +37,7 @@ export default function SubpageLayout({ title, children }: SubpageLayoutProps) {
   };
 
   return (
-    <div className="bg-[rgb(14,14,16)] text-white pt-16 h-screen overflow-hidden">
+    <div className="bg-[rgb(14,14,16)] text-white h-screen overflow-hidden">
       {/* Header */}
       <Header 
         onNavigateFeatures={handleNavigateFeatures}

@@ -59,7 +59,7 @@ export default function AuthPage() {
         toggleDarkMode={toggleTheme}
       />
       
-      <div className="flex flex-1 pt-16">
+      <div className="flex flex-1">
         {/* Left side - Auth Form */}
         <div className="flex flex-col justify-center items-center w-full lg:w-1/2 p-6 md:p-10">
           <div className="w-full max-w-md">
