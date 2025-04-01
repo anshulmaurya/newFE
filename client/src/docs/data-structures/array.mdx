@@ -1,0 +1,161 @@
+# Arrays in Embedded Systems
+
+Arrays are one of the most fundamental data structures, consisting of a collection of elements stored in contiguous memory locations. In embedded systems, arrays are crucial for efficient data storage and access, but they come with considerations specific to resource-constrained environments.
+
+## Basic Array Implementation
+
+```c
+// Static array declaration
+int fixed_array[10]; // Creates an array of 10 integers
+
+// Array initialization
+int initialized_array[5] = {1, 2, 3, 4, 5};
+
+// Accessing array elements
+int value = initialized_array[2]; // Gets the value 3 (zero-indexed)
+```
+
+## Arrays in Memory
+
+In embedded systems, understanding how arrays are stored in memory is critical:
+
+- Elements are stored in contiguous memory locations
+- Arrays are accessed via base address plus an offset
+- In C, array names decay to pointers to the first element
+
+<InfoBox>
+  <h3>Memory Layout Example:</h3>
+  <p>For an array of 32-bit integers: <code>int arr[4] = {10, 20, 30, 40};</code></p>
+  <p>If the base address is 0x1000:</p>
+  <ul>
+    <li>arr[0] = 10 at address 0x1000</li>
+    <li>arr[1] = 20 at address 0x1004</li>
+    <li>arr[2] = 30 at address 0x1008</li>
+    <li>arr[3] = 40 at address 0x100C</li>
+  </ul>
+</InfoBox>
+
+## Types of Arrays in Embedded Systems
+
+### 1. Static Arrays
+
+Arrays with fixed size determined at compile time.
+
+```c
+int buffer[64]; // 64 integers allocated on the stack or in global memory
+```
+
+### 2. Dynamic Arrays
+
+Arrays whose size is determined at runtime. Be cautious with these in embedded systems due to memory fragmentation concerns.
+
+```c
+int* dynamic_array = (int*)malloc(size * sizeof(int));
+// Don't forget to free when done
+free(dynamic_array);
+```
+
+### 3. Multidimensional Arrays
+
+Arrays with multiple dimensions, useful for representing matrices or complex data structures.
+
+```c
+// 2D array (3 rows x 4 columns)
+int matrix[3][4] = {
+    {1, 2, 3, 4},
+    {5, 6, 7, 8},
+    {9, 10, 11, 12}
+};
+
+// Accessing elements
+int value = matrix[1][2]; // Gets the value 7
+```
+
+## Memory Considerations
+
+### 1. Stack vs. Static Allocation
+
+```c
+void function() {
+    // Stack allocated - exists only within function scope
+    int temp_buffer[1000];
+    
+    // Usage...
+} // temp_buffer is automatically deallocated
+
+// Statically allocated - exists for program duration
+static int persistent_buffer[1000];
+```
+
+### 2. Memory Usage Optimization
+
+- **Use appropriate data types**: Choose the smallest data type that fits your requirements
+  ```c
+  uint8_t small_values[100]; // Uses 100 bytes
+  uint32_t large_values[100]; // Uses 400 bytes
+  ```
+
+- **Consider sparse arrays**: When most elements are empty, linked structures might be more efficient
+
+## Common Array Operations
+
+### Searching
+
+Linear search is common in embedded systems for its simplicity, though binary search is more efficient for sorted arrays.
+
+```c
+// Linear search
+int find_element(int arr[], int size, int target) {
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == target) {
+            return i; // Found at index i
+        }
+    }
+    return -1; // Not found
+}
+```
+
+### Sorting
+
+Sorting algorithms like insertion sort or quicksort can be implemented, but consider memory and processing constraints.
+
+```c
+// Insertion sort (efficient for small arrays)
+void insertion_sort(int arr[], int size) {
+    for (int i = 1; i < size; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+```
+
+## Advantages and Disadvantages
+
+### Advantages
+1. **Constant-time access**: O(1) access to any element by index
+2. **Memory efficiency**: No overhead for maintaining structure
+3. **Cache-friendly**: Contiguous memory benefits from spatial locality
+4. **Predictable memory usage**: Easy to calculate exact memory requirements
+
+### Disadvantages
+1. **Fixed size**: Difficult to resize without reallocation
+2. **Wasted space**: May allocate more memory than needed
+3. **Inefficient insertions/deletions**: Requires shifting elements
+4. **No bounds checking**: Possible buffer overflows if not careful
+
+## Best Practices for Embedded Systems
+
+1. **Prefer static allocation** where possible to avoid heap fragmentation
+2. **Use const arrays** for lookup tables and configuration data
+3. **Consider placing large arrays in specific memory sections**:
+   ```c
+   uint8_t large_buffer[1024] __attribute__((section(".sdram")));
+   ```
+4. **Implement bounds checking** to prevent buffer overflows
+5. **Consider circular buffers** for streaming data processing

@@ -1,0 +1,326 @@
+# Data Structures for Embedded Systems
+
+Data structures are fundamental to embedded systems programming, but they require special consideration due to memory constraints, performance requirements, and hardware limitations.
+
+## Importance in Embedded Systems
+
+In embedded systems, the right data structure can:
+- Reduce memory usage
+- Improve execution speed
+- Enhance code reliability
+- Simplify complex operations
+
+However, choosing the wrong data structure can lead to memory leaks, stack overflows, fragmentation, or unpredictable performance.
+
+<Alert title="Resource Constraints">
+  Embedded systems often have limited RAM (sometimes just kilobytes), modest CPU power, and no virtual memory. Your data structure choices must respect these constraints.
+</Alert>
+
+## Common Data Structures
+
+Here are the key data structures used in embedded systems, with examples in C:
+
+### Arrays
+
+Fixed-size collections are the most fundamental and efficient data structure.
+
+```c
+// Static array with size known at compile time
+uint8_t sensor_readings[10] = {0};
+
+// Accessing elements
+sensor_readings[0] = read_sensor();
+```
+
+**Considerations:**
+- Fast access time (O(1))
+- Fixed size (cannot grow without reallocation)
+- Contiguous memory allocation
+- No overhead beyond the data itself
+
+### Linked Lists
+
+For dynamic collections that grow and shrink, linked lists are often used.
+
+```c
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Create a new node
+struct Node* create_node(int data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        // Handle allocation failure
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+```
+
+**Considerations:**
+- Dynamic size (can grow as needed)
+- Non-contiguous memory allocation
+- Extra memory overhead for pointers
+- Slower access time (O(n) for arbitrary access)
+- May cause heap fragmentation
+
+<Alert title="Memory Management Warning" variant="warning">
+  Using dynamic memory allocation (malloc/free) in embedded systems can be risky. Consider using static memory pools instead, or ensure you have robust memory management.
+</Alert>
+
+### Circular Buffers
+
+Ideal for producer-consumer patterns in interrupt-driven systems.
+
+```c
+#define BUFFER_SIZE 16
+
+typedef struct {
+    uint8_t data[BUFFER_SIZE];
+    uint8_t head;
+    uint8_t tail;
+    uint8_t count;
+} CircularBuffer;
+
+// Initialize buffer
+void buffer_init(CircularBuffer* buffer) {
+    buffer->head = 0;
+    buffer->tail = 0;
+    buffer->count = 0;
+}
+
+// Add item to buffer
+bool buffer_write(CircularBuffer* buffer, uint8_t data) {
+    if (buffer->count == BUFFER_SIZE) {
+        return false; // Buffer full
+    }
+    
+    buffer->data[buffer->head] = data;
+    buffer->head = (buffer->head + 1) % BUFFER_SIZE;
+    buffer->count++;
+    return true;
+}
+
+// Get item from buffer
+bool buffer_read(CircularBuffer* buffer, uint8_t* data) {
+    if (buffer->count == 0) {
+        return false; // Buffer empty
+    }
+    
+    *data = buffer->data[buffer->tail];
+    buffer->tail = (buffer->tail + 1) % BUFFER_SIZE;
+    buffer->count--;
+    return true;
+}
+```
+
+**Considerations:**
+- Fixed memory footprint
+- Efficient for FIFO operations
+- Good for interrupt-safe data passing
+- Can be implemented without dynamic memory
+
+### State Machines
+
+While not a traditional data structure, state machines are a crucial pattern in embedded systems.
+
+```c
+typedef enum {
+    STATE_IDLE,
+    STATE_READING,
+    STATE_PROCESSING,
+    STATE_TRANSMITTING,
+    STATE_ERROR
+} SystemState;
+
+typedef struct {
+    SystemState current_state;
+    uint32_t timeout_ms;
+    uint8_t retry_count;
+    // Other state data...
+} StateMachine;
+
+void state_machine_update(StateMachine* sm) {
+    switch (sm->current_state) {
+        case STATE_IDLE:
+            // Check if we should start reading
+            if (is_data_available()) {
+                sm->current_state = STATE_READING;
+                sm->timeout_ms = get_current_time_ms() + READING_TIMEOUT;
+            }
+            break;
+            
+        case STATE_READING:
+            // Read data or handle timeout
+            if (get_current_time_ms() > sm->timeout_ms) {
+                // Handle timeout
+                sm->current_state = STATE_ERROR;
+            } else if (is_reading_complete()) {
+                sm->current_state = STATE_PROCESSING;
+            }
+            break;
+            
+        // Other states...
+    }
+}
+```
+
+**Considerations:**
+- Predictable behavior and timing
+- Easy to debug and verify
+- Maps well to embedded control problems
+- Can be static and deterministic
+
+## Specialized Data Structures
+
+### Memory Pools
+
+For safe dynamic allocation without fragmentation:
+
+```c
+#define BLOCK_SIZE 32
+#define NUM_BLOCKS 16
+
+typedef struct {
+    uint8_t pool[NUM_BLOCKS][BLOCK_SIZE];
+    bool used[NUM_BLOCKS];
+} MemoryPool;
+
+void pool_init(MemoryPool* pool) {
+    for (int i = 0; i < NUM_BLOCKS; i++) {
+        pool->used[i] = false;
+    }
+}
+
+void* pool_alloc(MemoryPool* pool) {
+    for (int i = 0; i < NUM_BLOCKS; i++) {
+        if (!pool->used[i]) {
+            pool->used[i] = true;
+            return pool->pool[i];
+        }
+    }
+    return NULL; // No free blocks
+}
+
+void pool_free(MemoryPool* pool, void* ptr) {
+    for (int i = 0; i < NUM_BLOCKS; i++) {
+        if (pool->pool[i] == ptr) {
+            pool->used[i] = false;
+            return;
+        }
+    }
+}
+```
+
+### Static Hash Tables
+
+For fast lookups with fixed memory usage:
+
+```c
+#define TABLE_SIZE 32
+
+typedef struct {
+    bool occupied;
+    uint32_t key;
+    uint32_t value;
+} HashEntry;
+
+typedef struct {
+    HashEntry entries[TABLE_SIZE];
+} HashTable;
+
+void hash_table_init(HashTable* table) {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        table->entries[i].occupied = false;
+    }
+}
+
+uint32_t hash_function(uint32_t key) {
+    // Simple hash function
+    return key % TABLE_SIZE;
+}
+
+bool hash_table_insert(HashTable* table, uint32_t key, uint32_t value) {
+    uint32_t index = hash_function(key);
+    uint32_t original_index = index;
+    
+    do {
+        if (!table->entries[index].occupied) {
+            table->entries[index].occupied = true;
+            table->entries[index].key = key;
+            table->entries[index].value = value;
+            return true;
+        }
+        
+        if (table->entries[index].key == key) {
+            table->entries[index].value = value; // Update existing key
+            return true;
+        }
+        
+        index = (index + 1) % TABLE_SIZE; // Linear probing
+    } while (index != original_index);
+    
+    return false; // Table full
+}
+```
+
+## Data Structure Selection Guidelines
+
+When choosing a data structure for an embedded system, consider:
+
+1. **Memory Usage**: How much RAM will it require? Is it fixed or variable?
+2. **Access Patterns**: Do you need random access or sequential access?
+3. **Growth Requirements**: Will the data size change at runtime?
+4. **Real-time Constraints**: Are operations time-critical?
+5. **Power Consumption**: Will this structure cause excessive CPU activity?
+
+<Card title="Common Embedded Data Structure Patterns">
+  | Requirement | Recommended Structure |
+  |-------------|----------------------|
+  | Fixed-size buffer | Static array |
+  | Queue or FIFO | Circular buffer |
+  | Dynamic collection | Static pool + linked list |
+  | Fast lookup | Static hash table |
+  | State tracking | Enum + struct |
+  | Event handling | Message queue |
+</Card>
+
+## Interview Practice
+
+Common embedded data structure interview questions:
+
+1. **How would you implement a circular buffer that is safe to use between an interrupt and main code?**
+   - Use volatile variables for indices
+   - Consider atomic operations or disabling interrupts during updates
+   - Use separate read/write pointers with overflow protection
+
+2. **Explain how you would manage memory in a system without dynamic allocation**
+   - Static memory pools
+   - Object recycling
+   - Fixed-size allocations
+   - Resource reservation patterns
+
+3. **How would you detect and handle buffer overflow?**
+   - Boundary checks before writes
+   - Sentinel values or canaries
+   - Static analysis tools
+   - Hardware memory protection if available
+
+4. **Implement a linked list that doesn't use dynamic memory allocation**
+   - Pre-allocate node arrays
+   - Use indices instead of pointers
+   - Implement a node pool with free list
+
+## Further Learning
+
+Explore specific data structures:
+
+- [Linked Lists](/docs/data-structures/linked-list)
+- [Arrays](/docs/data-structures/array)
+- [Strings](/docs/data-structures/string)
+
+Or return to the [Getting Started](/docs/getting-started) guide.

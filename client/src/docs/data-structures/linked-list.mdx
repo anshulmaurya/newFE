@@ -1,0 +1,151 @@
+# Linked Lists
+
+Linked lists are sequences of data elements, where each element points to the next one in the sequence.
+They're useful when the size of the collection may change dynamically.
+
+## Types of Linked Lists
+
+- **Singly Linked Lists**: Each node points to the next node
+- **Doubly Linked Lists**: Each node points to both the next and previous nodes
+- **Circular Linked Lists**: The last node points back to the first node
+
+## Basic Implementation
+
+```c
+// Simple singly linked list implementation
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+// Create a new node
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode) {
+        newNode->data = data;
+        newNode->next = NULL;
+    }
+    return newNode;
+}
+
+// Insert at beginning
+void insertAtBeginning(Node** head, int data) {
+    Node* newNode = createNode(data);
+    newNode->next = *head;
+    *head = newNode;
+}
+
+// Insert at end
+void insertAtEnd(Node** head, int data) {
+    Node* newNode = createNode(data);
+    
+    // If list is empty, new node becomes head
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    
+    // Find the last node
+    Node* last = *head;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    
+    // Insert new node at the end
+    last->next = newNode;
+}
+
+// Delete a node with given value
+void deleteNode(Node** head, int key) {
+    Node* temp = *head;
+    Node* prev = NULL;
+    
+    // If head node itself holds the key
+    if (temp != NULL && temp->data == key) {
+        *head = temp->next;
+        free(temp);
+        return;
+    }
+    
+    // Search for the key to be deleted
+    while (temp != NULL && temp->data != key) {
+        prev = temp;
+        temp = temp->next;
+    }
+    
+    // If key was not present in list
+    if (temp == NULL) return;
+    
+    // Unlink the node from linked list
+    prev->next = temp->next;
+    free(temp);
+}
+```
+
+## Advantages in Embedded Systems
+
+1. **Dynamic Size**: Unlike arrays, linked lists can grow or shrink during program execution
+2. **Efficient Insertions/Deletions**: Adding or removing elements can be done in O(1) time if position is known
+3. **No Contiguous Memory Required**: Nodes can be allocated in fragmented memory spaces
+4. **Memory Efficiency**: Only allocate what's needed (no pre-allocation)
+
+## Disadvantages in Embedded Systems
+
+1. **Memory Overhead**: Each node requires extra memory for pointer(s)
+2. **No Random Access**: Accessing elements requires traversal (O(n) operation)
+3. **Cache Unfriendly**: Non-contiguous memory allocation can lead to cache misses
+4. **Memory Fragmentation**: Dynamic allocation can lead to memory fragmentation over time
+5. **Extra Complexity**: Managing pointers introduces potential for errors
+
+## Optimization for Embedded Systems
+
+1. **Use Static Allocation**: Pre-allocate node pools to avoid dynamic memory allocation
+2. **Memory Alignment**: Ensure proper alignment for efficient access
+3. **Minimize Pointer Size**: Use 16-bit pointers if addressing space allows
+4. **Implement Free Lists**: Recycle deleted nodes to reduce fragmentation
+5. **Consider Intrusive Lists**: Embed list pointers directly in data structures
+
+## Example: Memory-Efficient Linked List with Node Pool
+
+```c
+#define MAX_NODES 32
+
+typedef struct Node {
+    int data;
+    uint8_t next_idx; // Index of next node, 0xFF represents NULL
+} Node;
+
+// Static node pool
+static Node node_pool[MAX_NODES];
+static uint8_t free_idx;
+
+// Initialize the node pool
+void initNodePool(void) {
+    for (uint8_t i = 0; i < MAX_NODES - 1; i++) {
+        node_pool[i].next_idx = i + 1;
+    }
+    node_pool[MAX_NODES - 1].next_idx = 0xFF; // End of free list
+    free_idx = 0; // First free node
+}
+
+// Allocate a node from the pool
+uint8_t allocNode(int data) {
+    if (free_idx == 0xFF) return 0xFF; // No free nodes
+    
+    uint8_t new_idx = free_idx;
+    free_idx = node_pool[free_idx].next_idx;
+    
+    node_pool[new_idx].data = data;
+    node_pool[new_idx].next_idx = 0xFF;
+    
+    return new_idx;
+}
+
+// Free a node back to the pool
+void freeNode(uint8_t idx) {
+    node_pool[idx].next_idx = free_idx;
+    free_idx = idx;
+}
+```
+
+This index-based implementation uses 8-bit indices instead of full pointers, saving memory in systems with limited RAM. It also eliminates the need for dynamic memory allocation, which is often avoided in embedded systems.

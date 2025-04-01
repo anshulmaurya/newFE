@@ -1,0 +1,114 @@
+# Communication Protocols
+
+Communication protocols are standardized methods that allow different devices or components within an embedded system to exchange information. They define the rules for data transmission, including how data is formatted, transmitted, received, and acknowledged.
+
+## Why Communication Protocols Matter
+
+In embedded systems, components rarely operate in isolation. Microcontrollers need to communicate with sensors, displays, memory devices, and other peripherals. Effective communication requires agreed-upon protocols that both the sender and receiver understand.
+
+<Alert variant="warning" title="Important Consideration">
+  Choosing the right communication protocol for your application is critical. Factors to consider include speed requirements, distance between devices, power consumption, and the number of devices that need to communicate.
+</Alert>
+
+## Common Embedded Communication Protocols
+
+The following are the most commonly used communication protocols in embedded systems:
+
+### Serial Communication Protocols
+
+<Card title="UART/USART">
+  **Universal Asynchronous Receiver/Transmitter** is one of the simplest serial communication methods, using just two wires for bi-directional communication.
+  
+  [Learn more about UART →](/docs/communication-protocols/uart)
+</Card>
+
+<Card title="SPI">
+  **Serial Peripheral Interface** is a synchronous serial communication protocol that provides full-duplex communication using a master-slave architecture.
+  
+  [Learn more about SPI →](/docs/communication-protocols/spi)
+</Card>
+
+<Card title="I²C">
+  **Inter-Integrated Circuit** combines features of UART and SPI, using just two wires to connect multiple devices in a master-slave configuration.
+  
+  [Learn more about I²C →](/docs/communication-protocols/i2c)
+</Card>
+
+### Other Important Protocols
+
+- **CAN (Controller Area Network)** - Robust protocol designed for automotive applications
+- **Ethernet** - High-speed networking protocol for local area networks
+- **USB (Universal Serial Bus)** - Popular protocol for connecting peripherals to computers
+- **Bluetooth** - Wireless protocol for short-range communication
+- **Wi-Fi** - Wireless networking protocol based on IEEE 802.11 standards
+
+## Protocol Comparison
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Protocol</TableHead>
+      <TableHead>Speed</TableHead>
+      <TableHead>Distance</TableHead>
+      <TableHead>Wires</TableHead>
+      <TableHead>Complexity</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>UART</TableCell>
+      <TableCell>Low to Medium (up to 1 Mbps)</TableCell>
+      <TableCell>Short</TableCell>
+      <TableCell>2</TableCell>
+      <TableCell>Low</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>SPI</TableCell>
+      <TableCell>High (up to 50 Mbps)</TableCell>
+      <TableCell>Very Short</TableCell>
+      <TableCell>3+</TableCell>
+      <TableCell>Medium</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>I²C</TableCell>
+      <TableCell>Medium (up to 3.4 Mbps)</TableCell>
+      <TableCell>Short</TableCell>
+      <TableCell>2</TableCell>
+      <TableCell>Medium</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>CAN</TableCell>
+      <TableCell>Medium (up to 1 Mbps)</TableCell>
+      <TableCell>Long</TableCell>
+      <TableCell>2</TableCell>
+      <TableCell>High</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Choosing the Right Protocol
+
+The best protocol for your application depends on your specific requirements:
+
+<Tabs defaultValue="speed">
+  <TabsList>
+    <TabsTrigger value="speed">Speed Priority</TabsTrigger>
+    <TabsTrigger value="multiple-devices">Multiple Devices</TabsTrigger>
+    <TabsTrigger value="simplicity">Simplicity</TabsTrigger>
+  </TabsList>
+  <TabsContent value="speed">
+    If speed is your primary concern, SPI is generally the fastest option, followed by I²C and then UART.
+  </TabsContent>
+  <TabsContent value="multiple-devices">
+    For connecting multiple devices with minimal wiring, I²C is ideal as it uses only two wires regardless of the number of devices.
+  </TabsContent>
+  <TabsContent value="simplicity">
+    UART is the simplest to implement both in hardware and software, making it ideal for straightforward, point-to-point communication.
+  </TabsContent>
+</Tabs>
+
+## Related Topics
+
+- [Microcontrollers](/docs/microcontrollers) - Learn about the devices that implement these protocols
+- [Debugging Techniques](/docs/debugging) - Troubleshooting communication issues
+- [Coding Standards](/docs/coding-standards) - Best practices for implementing communication protocols
