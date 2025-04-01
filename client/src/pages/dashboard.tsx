@@ -579,7 +579,7 @@ export default function Dashboard() {
         </div>
             
         {/* Main content - scrollable */}
-        <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-4 pb-0">
+        <div className="w-full lg:ml-56 lg:mr-64 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-4 pb-0 bg-[rgb(14,14,16)]">
           {/* Main content area */}
           <div className="flex-grow pt-0 pb-0 px-2 space-y-2 overflow-x-hidden overflow-y-hidden">
             
