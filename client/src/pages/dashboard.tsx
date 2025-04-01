@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/select';
 import ProgressStats from '@/components/dashboard/progress-stats';
 import ActivityHeatmap from '@/components/dashboard/activity-heatmap';
-import SkillBadges from '@/components/dashboard/skill-badges';
 import { 
   CheckCircle,
   Circle, 
@@ -897,93 +896,9 @@ export default function Dashboard() {
           {/* Right sidebar - stats (hide on mobile) */}
           <div className="hidden lg:block w-64 fixed right-0 top-16 bottom-0 overflow-y-auto bg-[rgb(14,14,16)] border-l border-[rgb(35,35,40)]">
             <div className="px-4 py-4 h-full">
-              {/* Session stats */}
-              <div className="mb-6">
-                <div className="bg-[rgb(24,24,27)] rounded-lg p-4">
-                  <h2 className="text-white text-xl font-medium mb-3">Session</h2>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-400">Anonymous</span>
-                    <button className="bg-[rgb(35,35,40)] p-1 rounded-md">
-                      <Settings className="h-5 w-5 text-gray-400" />
-                    </button>
-                  </div>
-                  
-                  {/* Circle progress */}
-                  <div className="relative flex flex-col items-center justify-center mb-4">
-                    <div className="text-center">
-                      <div className="w-28 h-28 rounded-full border-8 border-gray-700 flex items-center justify-center mb-1">
-                        <div className="text-center">
-                          <div className="text-white text-4xl font-bold">322</div>
-                          <div className="text-gray-500 text-sm">3506</div>
-                        </div>
-                      </div>
-                      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-28 h-28">
-                        <svg viewBox="0 0 100 100" className="w-full h-full">
-                          <circle 
-                            cx="50" 
-                            cy="50" 
-                            r="40" 
-                            fill="transparent" 
-                            stroke="#00A67E" 
-                            strokeWidth="4" 
-                            strokeDasharray="20 250"
-                            strokeDashoffset="0" 
-                            transform="rotate(-90 50 50)"
-                          />
-                          <circle 
-                            cx="50" 
-                            cy="50" 
-                            r="40" 
-                            fill="transparent" 
-                            stroke="#F9BF3B" 
-                            strokeWidth="4" 
-                            strokeDasharray="40 250"
-                            strokeDashoffset="-20" 
-                            transform="rotate(-90 50 50)"
-                          />
-                          <circle 
-                            cx="50" 
-                            cy="50" 
-                            r="40" 
-                            fill="transparent" 
-                            stroke="#EC644B" 
-                            strokeWidth="4" 
-                            strokeDasharray="10 250"
-                            strokeDashoffset="-60" 
-                            transform="rotate(-90 50 50)"
-                          />
-                        </svg>
-                      </div>
-                      <div className="text-gray-500 text-xs mt-1">All</div>
-                    </div>
-                  </div>
-                  
-                  {/* Difficulty stats */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-green-500 font-medium">Easy</span>
-                      <span className="text-white">101 <span className="text-gray-500">/870</span></span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-yellow-500 font-medium">Medium</span>
-                      <span className="text-white">208 <span className="text-gray-500">/1819</span></span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-red-500 font-medium">Hard</span>
-                      <span className="text-white">13 <span className="text-gray-500">/817</span></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
               {/* Progress Stats */}
               <div className="mb-6">
                 <ProgressStats />
-              </div>
-              
-              {/* Skill Badges */}
-              <div className="mb-6">
-                <SkillBadges />
               </div>
             </div>
           </div>
