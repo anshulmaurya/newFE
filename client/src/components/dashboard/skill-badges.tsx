@@ -257,32 +257,71 @@ const SkillBadges: React.FC = () => {
     : skillBadgesData;
     
   return (
-    <div className="rounded-lg bg-[rgb(24,24,27)] p-3 mb-4">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-white font-medium">Skill Badges</h2>
+    <div className="bg-[rgb(20,20,22)] rounded-md border border-[rgb(35,35,40)]">
+      <div className="px-3 py-3">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-bold">Skill Badges</h3>
+          
+          <div className="flex overflow-x-auto gap-1 hide-scrollbar">
+            {categories.map(category => (
+              <Button
+                key={category}
+                onClick={() => setActiveCategory(category === 'All' ? null : category)}
+                variant={activeCategory === category || (category === 'All' && !activeCategory) ? "default" : "outline"}
+                className={`h-6 px-2 py-0 text-xs whitespace-nowrap ${
+                  activeCategory === category || (category === 'All' && !activeCategory)
+                    ? 'bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] text-black' 
+                    : 'bg-[rgb(35,35,40)] text-gray-300 hover:bg-[rgb(45,45,50)] hover:text-white'
+                }`}
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
+        </div>
         
-        <div className="flex flex-wrap space-x-2">
-          {categories.map(category => (
-            <Button
-              key={category}
-              onClick={() => setActiveCategory(category === 'All' ? null : category)}
-              variant={activeCategory === category || (category === 'All' && !activeCategory) ? "default" : "outline"}
-              className={`h-7 px-2 py-1 text-xs ${
-                activeCategory === category || (category === 'All' && !activeCategory)
-                  ? 'bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] text-black' 
-                  : 'bg-[rgb(35,35,40)] text-gray-300 hover:bg-[rgb(45,45,50)] hover:text-white'
-              }`}
-            >
-              {category}
-            </Button>
+        <div className="grid grid-cols-3 gap-2">
+          {filteredBadges.slice(0, 6).map(badge => (
+            <TooltipProvider key={badge.id}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <motion.div
+                    className="relative rounded-md p-2 flex flex-col items-center cursor-pointer"
+                    whileHover={{ scale: 1.05 }}
+                    style={{ 
+                      backgroundColor: badge.unlocked ? `${badge.color}15` : 'rgb(30,30,34)',
+                      borderColor: badge.unlocked ? badge.color : 'transparent',
+                      borderWidth: 1
+                    }}
+                  >
+                    <div className="text-xl mb-1">{badge.icon}</div>
+                    <div className="w-full rounded-full h-1 bg-gray-800 mb-1">
+                      <div 
+                        className="h-1 rounded-full" 
+                        style={{ 
+                          width: `${badge.progress}%`, 
+                          backgroundColor: badge.unlocked ? badge.color : '#555' 
+                        }}
+                      ></div>
+                    </div>
+                    {!badge.unlocked && (
+                      <div className="absolute right-1 top-1">
+                        <Lock size={10} className="text-gray-500" />
+                      </div>
+                    )}
+                  </motion.div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="font-bold">{badge.name}</p>
+                  <p className="text-xs mt-1">{badge.category}</p>
+                  <p className="text-xs mt-1">{badge.description}</p>
+                  <p className="text-xs mt-1 text-gray-400">{badge.requirements}</p>
+                  <p className="text-xs mt-1 font-semibold">{badge.progress}% Complete</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           ))}
         </div>
-      </div>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        {filteredBadges.map(badge => (
-          <SkillBadgeCard key={badge.id} badge={badge} />
-        ))}
       </div>
     </div>
   );
