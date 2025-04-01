@@ -39,6 +39,25 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
     
     return () => window.removeEventListener("scroll", updatePosition);
   }, []);
+  
+  // Handle click outside to close user dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const dropdown = document.getElementById('user-dropdown');
+      const avatarButton = document.getElementById('user-avatar-button');
+      
+      if (dropdown && !dropdown.classList.contains('hidden') && 
+          avatarButton && !avatarButton.contains(event.target as Node) && 
+          !dropdown.contains(event.target as Node)) {
+        dropdown.classList.add('hidden');
+      }
+    };
+    
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -168,33 +187,29 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           </button>
           
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild onClick={(e) => {
-                e.preventDefault();
-                // Prevent default scroll behavior
-                e.stopPropagation();
-                // Store current scroll position
-                const scrollPos = window.scrollY;
-                // Add a small delay to allow dropdown to open before restoring scroll
-                setTimeout(() => window.scrollTo(0, scrollPos), 0);
-              }}>
-                <button 
-                  type="button" 
-                  className="ml-2 rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-[rgb(214,251,65)] focus:ring-offset-2 focus:ring-offset-background"
-                  onMouseDown={(e) => e.preventDefault()} // Prevent focus behavior
-                >
-                  <Avatar className="h-8 w-8 border-2 border-[rgb(214,251,65)]">
-                    <AvatarImage 
-                      src={user.avatarUrl || "https://github.com/identicons/app/oauth_app/1234"} 
-                      alt={user.username || "User"}
-                    />
-                    <AvatarFallback className="bg-[rgb(36,36,38)] text-[rgb(214,251,65)]">
-                      {user.username ? user.username.substring(0, 2).toUpperCase() : "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64 bg-[rgb(20,22,30)] border-[rgb(30,32,40)] text-white" onCloseAutoFocus={(e) => e.preventDefault()}>
+            <div className="relative ml-2">
+              <button
+                id="user-avatar-button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  document.getElementById('user-dropdown')?.classList.toggle('hidden');
+                }}
+                className="rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-[rgb(214,251,65)] focus:ring-offset-2 focus:ring-offset-background"
+                onMouseDown={(e) => e.preventDefault()}
+              >
+                <Avatar className="h-8 w-8 border-2 border-[rgb(214,251,65)]">
+                  <AvatarImage 
+                    src={user.avatarUrl || "https://github.com/identicons/app/oauth_app/1234"} 
+                    alt={user.username || "User"}
+                  />
+                  <AvatarFallback className="bg-[rgb(36,36,38)] text-[rgb(214,251,65)]">
+                    {user.username ? user.username.substring(0, 2).toUpperCase() : "U"}
+                  </AvatarFallback>
+                </Avatar>
+              </button>
+              
+              <div id="user-dropdown" className="hidden absolute right-0 mt-2 w-64 bg-[rgb(20,22,30)] border border-[rgb(30,32,40)] rounded-md shadow-lg z-50 text-white overflow-hidden">
                 <div className="flex flex-col items-center justify-center py-6 px-4 border-b border-[rgb(30,32,40)]">
                   <Avatar className="h-16 w-16 border-2 border-[rgb(214,251,65)] mb-3">
                     <AvatarImage 
@@ -214,8 +229,8 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                 </div>
 
                 <div className="p-1">
-                  <DropdownMenuItem 
-                    className="flex items-center py-3 px-3 focus:bg-[rgb(30,32,40)] text-white hover:bg-[rgb(30,32,40)]"
+                  <button 
+                    className="flex w-full items-center py-3 px-3 focus:bg-[rgb(30,32,40)] text-white hover:bg-[rgb(30,32,40)] rounded-sm"
                     onClick={(e) => {
                       e.preventDefault();
                       setLocation("/user-statistics");
@@ -225,42 +240,42 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                       <BarChart3 className="mr-3 h-5 w-5 text-[rgb(214,251,65)]" />
                       <span>My Statistics</span>
                     </div>
-                  </DropdownMenuItem>
+                  </button>
                   
-                  <DropdownMenuItem className="cursor-not-allowed flex items-center justify-between py-3 px-3 focus:bg-[rgb(30,32,40)] text-gray-300">
+                  <div className="cursor-not-allowed flex items-center justify-between py-3 px-3 focus:bg-[rgb(30,32,40)] text-gray-300">
                     <div className="flex items-center">
                       <User className="mr-3 h-5 w-5 text-gray-500" />
                       <span>Profile</span>
                     </div>
                     <Clock className="h-4 w-4 text-gray-500" />
-                  </DropdownMenuItem>
+                  </div>
                   
-                  <DropdownMenuItem className="cursor-not-allowed flex items-center justify-between py-3 px-3 focus:bg-[rgb(30,32,40)] text-gray-300">
+                  <div className="cursor-not-allowed flex items-center justify-between py-3 px-3 focus:bg-[rgb(30,32,40)] text-gray-300">
                     <div className="flex items-center">
                       <Settings className="mr-3 h-5 w-5 text-gray-500" />
                       <span>Settings</span>
                     </div>
                     <Clock className="h-4 w-4 text-gray-500" />
-                  </DropdownMenuItem>
+                  </div>
                   
-                  <DropdownMenuItem className="cursor-not-allowed flex items-center justify-between py-3 px-3 focus:bg-[rgb(30,32,40)] text-gray-300">
+                  <div className="cursor-not-allowed flex items-center justify-between py-3 px-3 focus:bg-[rgb(30,32,40)] text-gray-300">
                     <div className="flex items-center">
                       <Bell className="mr-3 h-5 w-5 text-gray-500" />
                       <span>Notifications</span>
                     </div>
                     <Clock className="h-4 w-4 text-gray-500" />
-                  </DropdownMenuItem>
+                  </div>
                   
                   <div className="my-2 p-3 border border-[rgb(30,35,45)] rounded-md bg-[rgb(18,20,28)] text-center text-sm text-gray-400">
                     Additional features are currently in development and will be available soon.
                   </div>
                 </div>
                 
-                <DropdownMenuSeparator className="bg-[rgb(30,32,40)]" />
+                <div className="border-t border-[rgb(30,32,40)] my-1"></div>
                 
                 <div className="p-1">
-                  <DropdownMenuItem 
-                    className="cursor-pointer text-red-400 flex items-center py-3 px-3 focus:bg-[rgb(30,32,40)]"
+                  <button 
+                    className="cursor-pointer w-full text-red-400 flex items-center py-3 px-3 focus:bg-[rgb(30,32,40)] hover:bg-[rgb(30,32,40)] rounded-sm"
                     onClick={(e) => {
                       e.preventDefault();
                       logoutMutation.mutate();
@@ -268,10 +283,10 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                   >
                     <LogOut className="mr-3 h-5 w-5" />
                     <span>Logout</span>
-                  </DropdownMenuItem>
+                  </button>
                 </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </div>
+            </div>
           ) : (
             <a 
               href="/api/auth/github" 
