@@ -10,8 +10,10 @@ import Dashboard from "@/pages/dashboard";
 import AuthPage from "@/pages/auth-page";
 import ProblemDetail from "@/pages/problem-detail";
 import CodingEnvironment from "@/pages/coding-environment";
+import Documentation from "@/pages/documentation";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
+import { DarkModeProvider } from "@/hooks/use-dark-mode";
 
 // Import components directly
 import Blind75Page from '@/pages/quick-prep/blind-75';
@@ -63,6 +65,10 @@ function Router() {
       <Route path="/notes/data-structures/array" component={ArrayPage} />
       <Route path="/notes/data-structures/string" component={StringPage} />
       
+      {/* New Documentation with Markdown */}
+      <Route path="/docs" component={Documentation} />
+      <Route path="/docs/:rest*" component={Documentation} />
+      
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
@@ -73,8 +79,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router />
-        <Toaster />
+        <DarkModeProvider>
+          <Router />
+          <Toaster />
+        </DarkModeProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
