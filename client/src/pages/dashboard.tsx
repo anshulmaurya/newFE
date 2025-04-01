@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -44,7 +47,7 @@ import {
   X,
   FileText,
 } from 'lucide-react';
-import { apiRequest } from '@/lib/queryClient';
+
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import Header from '@/components/layout/header';
@@ -312,6 +315,73 @@ export default function Dashboard() {
       }
       return section;
     });
+  };
+  
+  // Get current user
+  const { user } = useAuth();
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
+  
+  // Setup codebase mutation
+  const setupCodebaseMutation = useMutation({
+    mutationFn: async ({ problemId, questionId }: { problemId: string, questionId?: string }) => {
+      if (!questionId) throw new Error("Question ID is missing");
+      
+      const res = await apiRequest("POST", "/api/setup-codebase", { 
+        questionId: questionId 
+      });
+      return await res.json();
+    },
+    onSuccess: (data, variables) => {
+      // After successful setup, redirect to coding environment
+      if (data && data.containerUrl) {
+        // Encode the URL to pass it as a query parameter
+        const encodedUrl = encodeURIComponent(data.containerUrl);
+        const encodedTitle = encodeURIComponent(variables.problemId || 'Coding Problem');
+        
+        // Include the question_id if available for direct API call
+        const questionIdParam = variables.questionId ? 
+          `&questionId=${encodeURIComponent(variables.questionId)}` : '';
+        
+        // Redirect to the coding environment page
+        setLocation(`/coding-environment?containerUrl=${encodedUrl}&problemId=${variables.problemId}${questionIdParam}&title=${encodedTitle}`);
+      } else {
+        toast({
+          title: "Missing container URL",
+          description: "There was an issue setting up your coding environment. Please try again.",
+          variant: "destructive",
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed to set up coding environment",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      });
+    }
+  });
+  
+  // Handle setup codebase (direct from dashboard)
+  const handleSetupCodebase = (problemId: string, questionId?: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to start coding",
+        variant: "destructive",
+      });
+      setLocation("/auth");
+      return;
+    }
+    
+    // Set loading state
+    toast({
+      title: "Setting up coding environment",
+      description: "Please wait while we prepare your environment...",
+    });
+    
+    // Call the mutation with the problem ID and question ID
+    setupCodebaseMutation.mutate({ problemId, questionId });
   };
 
   return (
@@ -778,12 +848,12 @@ export default function Dashboard() {
                             <div className="flex items-center">
                               <span className="text-xs font-medium mr-2 text-gray-500 w-5 text-right">{idx + 1}.</span>
                               <div className="flex flex-col">
-                                <a 
-                                  href={`/problems/${problem.id}`} 
-                                  className="text-xs font-medium hover:text-[#56B2FF] whitespace-nowrap overflow-hidden text-ellipsis transition-colors"
+                                <button 
+                                  onClick={() => handleSetupCodebase(problem.id, problem.question_id)} 
+                                  className="text-xs font-medium text-left hover:text-[#56B2FF] whitespace-nowrap overflow-hidden text-ellipsis transition-colors"
                                 >
                                   {problem.title || `Problem ${idx + 1}`}
-                                </a>
+                                </button>
                                 
                                 {/* No tags here anymore since we moved them to a separate column */}
                               </div>
