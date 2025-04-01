@@ -291,54 +291,68 @@ export default function Notes() {
                   <span className="mx-2">›</span>
                   <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Getting Started</span>
                 </div>
-                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Getting Started with Embedded Systems</h1>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Getting Started with DSPCoder</h1>
 
                 <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
                   <p className="lead">
-                    Embedded systems are specialized computing systems designed to perform dedicated functions within a larger system. 
-                    This guide will help you take your first steps in this exciting and rapidly growing field.
+                    Welcome to DSPCoder, the ultimate platform for solving embedded systems questions directly in VS Code! Follow this guide to set up your environment and start coding.
                   </p>
 
-                  <h2 id="what-are-embedded-systems">What Are Embedded Systems?</h2>
+                  <h2 id="step-1-install-vs-code">🚀 Step 1: Install VS Code</h2>
                   <p>
-                    Embedded systems are computer systems with dedicated functions within a larger mechanical or electrical system.
-                    They're found in everything from simple devices like digital watches to complex systems like automotive control units,
-                    medical equipment, industrial machines, and aerospace applications.
+                    Make sure you have Visual Studio Code installed on your system. If not, <a href="https://code.visualstudio.com/download" target="_blank" rel="noopener noreferrer">download it from here</a>.
                   </p>
 
-                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
-                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Key Characteristics:</h3>
+                  <h2 id="step-2-install-dspcoder-extension">🔌 Step 2: Install DSPCoder Extension</h2>
+                  <ol>
+                    <li>Open VS Code.</li>
+                    <li>Go to the Extensions Marketplace (Ctrl + Shift + X / Cmd + Shift + X on Mac).</li>
+                    <li>Search for DSPCoder.</li>
+                    <li>Click Install to add the DSPCoder extension.</li>
+                  </ol>
+
+                  <h2 id="step-3-setup-workspace">📂 Step 3: Set Up Your Workspace</h2>
+                  <ol>
+                    <li>Open a new folder in VS Code where you want to store your code.</li>
+                    <li>Click on DSPCoder from the sidebar and sign in with your account.</li>
+                    <li>Select an embedded systems problem from the problem list.</li>
+                    <li>The extension will set up the necessary project structure automatically.</li>
+                  </ol>
+
+                  <h2 id="step-4-select-environment">🛠 Step 4: Select a Target Environment</h2>
+                  <p>
+                    DSPCoder supports multiple embedded system environments. Choose one:
+                  </p>
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-4`}>
                     <ul className="list-disc pl-5 space-y-1">
-                      <li>Dedicated to specific tasks rather than general-purpose computing</li>
-                      <li>Real-time operation requirements</li>
-                      <li>Resource constraints (memory, processing power, energy)</li>
-                      <li>Long-term reliability and robustness</li>
-                      <li>Often interact directly with physical environment through sensors and actuators</li>
+                      <li>Bare Metal (C/C++)</li>
+                      <li>FreeRTOS</li>
+                      <li>ARM Cortex Emulation (via QEMU)</li>
+                      <li>Renode Simulation</li>
                     </ul>
                   </div>
 
-                  <h2 id="essential-skills">Essential Skills for Embedded Development</h2>
-                  <p>
-                    Successful embedded systems developers need a diverse set of skills spanning hardware, software, and system design:
-                  </p>
-
-                  <ul>
-                    <li><strong>Programming Languages</strong>: C/C++ remain the dominant languages in embedded development</li>
-                    <li><strong>Hardware Understanding</strong>: Knowledge of microcontrollers, peripherals, and interfaces</li>
-                    <li><strong>Digital Electronics</strong>: Understanding of basic electronics principles</li>
-                    <li><strong>Operating Systems</strong>: Familiarity with real-time operating systems (RTOS)</li>
-                    <li><strong>Debugging Skills</strong>: Proficiency with debugging tools and techniques</li>
-                    <li><strong>Communication Protocols</strong>: Understanding of common interfaces like SPI, I2C, UART</li>
-                  </ul>
-
-                  <h2 id="getting-started-steps">Getting Started Steps</h2>
+                  <h2 id="step-5-write-run-code">📝 Step 5: Write & Run Code</h2>
                   <ol>
-                    <li><strong>Choose a Development Platform</strong>: Start with beginner-friendly platforms like Arduino, STM32 Nucleo, or ESP32</li>
-                    <li><strong>Set Up Development Environment</strong>: Install the necessary toolchain, IDE, and debugging tools</li>
-                    <li><strong>Learn the Basics</strong>: Understand microcontroller architecture and peripheral interfacing</li>
-                    <li><strong>Start Small</strong>: Begin with simple projects like LED blinking, button interfaces, and sensor reading</li>
-                    <li><strong>Advance Gradually</strong>: Progress to more complex projects involving multiple peripherals and real-time constraints</li>
+                    <li>Open the generated main.c or main.cpp file.</li>
+                    <li>Write your solution using the provided template.</li>
+                    <li>Click Run to execute your code in the simulated environment.</li>
+                    <li>View the console output and memory profiling results.</li>
                   </ol>
+
+                  <h2 id="step-6-submit-solution">✅ Step 6: Submit Your Solution</h2>
+                  <ol>
+                    <li>Once your code runs successfully, click Submit.</li>
+                    <li>Your solution will be evaluated for correctness, memory usage, and performance.</li>
+                    <li>Track your progress on the DSPCoder dashboard.</li>
+                  </ol>
+
+                  <h2 id="bonus-debugging-profiling">🎯 Bonus: Debugging & Profiling</h2>
+                  <ul>
+                    <li>Use Valgrind integration for memory leak detection.</li>
+                    <li>Step through your code using the built-in debugger.</li>
+                    <li>Optimize code with compiler feedback & performance metrics.</li>
+                  </ul>
 
                   <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
                     <div className="flex">
@@ -348,9 +362,10 @@ export default function Notes() {
                         </svg>
                       </div>
                       <div className="ml-3">
-                        <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>Beginner Tip</h3>
+                        <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>🎉 You're All Set!</h3>
                         <div className={`text-sm ${themeClasses.infoText}`}>
-                          <p>Don't try to learn everything at once. Focus on mastering one microcontroller platform before branching out to others. The fundamentals you learn will transfer across platforms.</p>
+                          <p>Start solving embedded systems problems efficiently with DSPCoder & VS Code. 🚀<br /><br />
+                          For more details, visit <a href="#" className="underline hover:no-underline">DSPCoder Docs</a> or reach out to <a href="mailto:support@dspcoder.com" className="underline hover:no-underline">support@dspcoder.com</a>.</p>
                         </div>
                       </div>
                     </div>
