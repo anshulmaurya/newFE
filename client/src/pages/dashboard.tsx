@@ -54,10 +54,12 @@ const usePreventScrollJump = () => {
     // Create a style element to override select component positioning
     const styleEl = document.createElement('style');
     styleEl.textContent = `
+      /* Force all dropdowns to use fixed positioning */
       [data-radix-select-content],
       [data-radix-dropdown-menu-content] {
         position: fixed !important;
         transform: none !important;
+        z-index: 100 !important;
       }
       
       /* Fix body styles that might interfere with scrolling */
@@ -77,45 +79,85 @@ const usePreventScrollJump = () => {
         animation: none !important;
         transition: none !important;
       }
+      
+      /* Fix for the main content area to ensure proper overflow behavior */
+      .dashboard-content-area {
+        overflow-y: auto !important;
+        position: relative !important;
+      }
     `;
     document.head.appendChild(styleEl);
     
-    // Function to detect and maintain scroll position
-    const handleSelectionStart = () => {
-      // Store scroll position on selection start
-      const currentScrollY = window.scrollY;
-      const scrollListener = () => {
-        // If scroll position changes during selection, reset it
-        if (window.scrollY !== currentScrollY) {
-          window.scrollTo(0, currentScrollY);
-        }
-      };
-      
-      // Add a temporary listener for the duration of select operations
-      window.addEventListener('scroll', scrollListener);
-      
-      // Remove the listener after a short delay
-      setTimeout(() => {
-        window.removeEventListener('scroll', scrollListener);
-      }, 300);
+    // Store initial scroll position when page loads
+    let savedScrollPosition = window.scrollY;
+    
+    // Lock scroll position before any select operation
+    const lockScroll = () => {
+      savedScrollPosition = window.scrollY;
+      // Apply data attribute to body to mark the scroll as locked
+      document.body.setAttribute('data-scroll-locked', 'true');
     };
     
-    // Add a global mousedown handler instead of trying to attach to specific elements
-    const globalMouseDownHandler = (e: Event) => {
-      // Check if the clicked element is a select trigger
-      if (e.target instanceof Element && 
-          (e.target.closest('[aria-haspopup="listbox"]') || 
-           e.target.closest('[data-state="closed"]'))) {
-        handleSelectionStart();
+    // Restore scroll position after select operation
+    const restoreScroll = () => {
+      if (document.body.hasAttribute('data-scroll-locked')) {
+        window.scrollTo(0, savedScrollPosition);
+        document.body.removeAttribute('data-scroll-locked');
       }
     };
     
-    document.addEventListener('mousedown', globalMouseDownHandler);
+    // Handle select triggers - prevent default behavior that might cause scroll jumps
+    const handleSelectTrigger = (e: MouseEvent) => {
+      if (e.target instanceof Element) {
+        const isTrigger = e.target.closest('[aria-haspopup="listbox"]') || 
+                          e.target.closest('[data-state="closed"]');
+        
+        if (isTrigger) {
+          lockScroll();
+        }
+      }
+    };
+    
+    // Handle content clicks - restore scroll when clicking select items
+    const handleContentClick = (e: MouseEvent) => {
+      if (e.target instanceof Element) {
+        const isSelectContent = e.target.closest('[role="listbox"]') || 
+                               e.target.closest('[role="option"]');
+        
+        if (isSelectContent) {
+          // Small delay to allow select to close first
+          setTimeout(restoreScroll, 10);
+        }
+      }
+    };
+    
+    // Handle scroll events that might occur during select operations
+    const handleScroll = () => {
+      if (document.body.hasAttribute('data-scroll-locked')) {
+        window.scrollTo(0, savedScrollPosition);
+      }
+    };
+    
+    // Add event listeners
+    document.addEventListener('mousedown', handleSelectTrigger, { capture: true });
+    document.addEventListener('click', handleContentClick, { capture: true });
+    document.addEventListener('scroll', handleScroll);
+    
+    // Watch for focus state changes and restore scroll
+    const handleFocusChange = () => {
+      // After a short delay to let selection complete
+      setTimeout(restoreScroll, 50);
+    };
+    
+    document.addEventListener('focusout', handleFocusChange);
     
     // Clean up on unmount
     return () => {
       document.head.removeChild(styleEl);
-      document.removeEventListener('mousedown', globalMouseDownHandler);
+      document.removeEventListener('mousedown', handleSelectTrigger, { capture: true });
+      document.removeEventListener('click', handleContentClick, { capture: true });
+      document.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('focusout', handleFocusChange);
     };
   }, []);
   
@@ -732,8 +774,8 @@ export default function Dashboard() {
         </div>
             
         {/* Main content - scrollable */}
-        <div className="w-full lg:ml-56 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-4 pb-8 bg-[rgb(14,14,16)]">
-          {/* Main content area */}
+        <div className="w-full lg:ml-56 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-4 pb-8 bg-[rgb(14,14,16)] dashboard-content-area">
+          {/* Main content area - added dashboard-content-area class for our scroll fixes */}
           <div className="flex-grow pt-0 pb-8 px-2 space-y-2 overflow-x-hidden">
             
             {/* Activity Heatmap */}
@@ -779,7 +821,8 @@ export default function Dashboard() {
             )}
             
             {/* Filters */}
-            <div className="flex flex-wrap md:flex-nowrap gap-2 mb-2 items-center sticky top-0 z-10 bg-[rgb(14,14,16)] pt-0 pb-2 -mx-2 px-2 shadow-md">
+            <div className="flex flex-wrap md:flex-nowrap gap-2 mb-2 items-center bg-[rgb(14,14,16)] pt-0 pb-2 -mx-2 px-2 shadow-md">
+              {/* Note: Removed sticky positioning which caused dropdown issues */}
               <div className="w-full md:w-auto">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-3.5 w-3.5" />
