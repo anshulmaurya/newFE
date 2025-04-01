@@ -315,7 +315,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="bg-[rgb(14,14,16)] text-white h-screen overflow-hidden">
+    <div className="bg-[rgb(14,14,16)] text-white h-full overflow-hidden">
       {/* Header */}
       <Header 
         onNavigateFeatures={handleNavigateFeatures}
@@ -323,7 +323,7 @@ export default function Dashboard() {
         isScrolled={true}
       />
       
-      <div className="flex h-[calc(100vh-64px)] overflow-hidden">
+      <div className="flex h-[calc(100%-10px)] overflow-hidden">
         {/* Left sidebar - fixed */}
         <div className="hidden lg:block w-56 bg-[rgb(14,14,16)] fixed left-0 top-16 bottom-0 overflow-y-auto border-r border-[rgb(35,35,40)]">
           <div className="px-4 py-4 flex flex-col h-full">
