@@ -745,9 +745,8 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
             </h1>
 
             <p className="text-gray-300 text-lg mb-8 max-w-xl">
-              Master embedded programming with our interactive platform.
-              Practice real problems, get instant feedback, and land your dream
-              job.
+              Meet the embedded systems interview hub, designed to simplify your prep. 
+              Created by ex-interviewers from <span className="font-medium bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-green-400 to-teal-400">MAANG+</span> and top semiconductor leaders.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center sm:items-start justify-center xl:justify-start gap-4 mb-6">
