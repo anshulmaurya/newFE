@@ -25,7 +25,7 @@ export default function Pricing() {
         isScrolled={true}
       />
       
-      <main className="flex-grow container mx-auto px-4 py-12 pt-24">
+      <main className="flex-grow container mx-auto px-4 py-12 pt-24 overflow-y-auto h-screen">
         <div className="max-w-5xl mx-auto text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Simple, Transparent Pricing</h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">

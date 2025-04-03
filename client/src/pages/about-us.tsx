@@ -25,7 +25,7 @@ export default function AboutUs() {
         isScrolled={true}
       />
       
-      <main className="flex-grow pt-16">
+      <main className="flex-grow pt-16 overflow-y-auto h-screen">
         {/* Hero Section */}
         <section className="relative bg-black py-24 overflow-hidden">
           <div className="absolute inset-0 z-0">
