@@ -25,7 +25,7 @@ export default function Pricing() {
         isScrolled={true}
       />
       
-      <main className="flex-grow container mx-auto px-4 py-12 pt-24 overflow-y-auto h-screen">
+      <main className="flex-grow container mx-auto px-4 py-12 pt-24 overflow-y-auto">
         <div className="max-w-5xl mx-auto text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Simple, Transparent Pricing</h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
@@ -64,8 +64,10 @@ export default function Pricing() {
           
           {/* Pro Tier (Coming Soon) */}
           <Card className="bg-[rgb(24,24,26)] border border-gray-800 text-white shadow-xl relative overflow-hidden transform transition-all md:scale-105">
-            <div className="absolute -right-12 top-6 rotate-45 bg-[rgb(214,251,65)] text-black py-1 px-12 text-sm font-semibold shadow-lg">
-              COMING SOON
+            <div className="absolute top-4 right-4">
+              <Badge className="bg-[rgba(214,251,65,0.15)] text-[rgb(214,251,65)] border border-[rgb(214,251,65)]/30 py-1 px-3">
+                COMING SOON
+              </Badge>
             </div>
             <CardHeader className="pb-4">
               <CardTitle className="text-2xl font-bold">Pro</CardTitle>
@@ -92,7 +94,12 @@ export default function Pricing() {
           </Card>
           
           {/* Team Tier (Coming Soon) */}
-          <Card className="bg-[rgb(24,24,26)] border border-gray-800 text-white shadow-xl">
+          <Card className="bg-[rgb(24,24,26)] border border-gray-800 text-white shadow-xl relative overflow-hidden">
+            <div className="absolute top-4 right-4">
+              <Badge className="bg-[rgba(214,251,65,0.15)] text-[rgb(214,251,65)] border border-[rgb(214,251,65)]/30 py-1 px-3">
+                COMING SOON
+              </Badge>
+            </div>
             <CardHeader className="pb-4">
               <CardTitle className="text-2xl font-bold">Team</CardTitle>
               <div className="mt-4">
