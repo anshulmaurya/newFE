@@ -115,9 +115,8 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                 </g>
               </svg>
             </div>
-            <h1 className="font-display font-bold tracking-tight flex flex-col sm:flex-row sm:items-center sm:gap-1">
-              <span className="text-white text-lg">dspcoder:</span>
-              <span className="text-[rgb(214,251,65)] text-sm">Help you crack Embedded System Interview</span>
+            <h1 className="font-display font-bold text-xl tracking-tight">
+              <span className="text-white">dsp</span><span className="text-[rgb(214,251,65)]">coder.com</span>
             </h1>
           </button>
           
