@@ -680,9 +680,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { token } = req.params;
       
+      // Check if user is authenticated
+      if (!req.userId) {
+        // Store the requested URL to redirect back after login
+        req.session.returnTo = req.originalUrl;
+        
+        // Return a specialized 401 response for the container redirect
+        return res.status(401).json({ 
+          error: "Authentication required", 
+          redirectToLogin: true,
+          message: "Please log in to access this coding environment" 
+        });
+      }
+      
       // Check if the token exists in the session map
       if (!containerSessions.has(token)) {
-        return res.status(404).json({ error: "Container session not found or expired" });
+        return res.status(404).json({ 
+          error: "Not Found",
+          message: "The requested coding environment session was not found or has expired" 
+        });
       }
       
       // Get the container session
@@ -691,19 +707,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if the session is expired
       if (session.expiresAt < new Date()) {
         containerSessions.delete(token);
-        return res.status(401).json({ error: "Container session has expired" });
+        return res.status(401).json({ 
+          error: "Session Expired",
+          message: "This coding environment session has expired" 
+        });
       }
       
       // Check if the user ID matches the session (to prevent unauthorized access)
       if (session.userId !== req.userId) {
-        return res.status(403).json({ error: "Unauthorized access to container" });
+        // Log the security event
+        console.warn(`Security alert: User ${req.userId} attempted to access container session belonging to user ${session.userId}`);
+        
+        return res.status(403).json({ 
+          error: "Access Denied",
+          message: "You don't have permission to access this coding environment" 
+        });
       }
       
       // Redirect to the actual container URL
       return res.redirect(session.containerUrl);
     } catch (error) {
       console.error("Error redirecting to container:", error);
-      return res.status(500).json({ error: "Server error" });
+      return res.status(500).json({ 
+        error: "Server Error",
+        message: "An unexpected error occurred while processing your request" 
+      });
     }
   });
 

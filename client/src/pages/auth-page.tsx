@@ -25,10 +25,24 @@ export default function AuthPage() {
     }
   }, []);
   
-  // Redirect to dashboard if already logged in
-  if (!isLoading && user) {
-    return <Redirect to="/dashboard" />;
-  }
+  // Redirect to dashboard or returnTo URL if already logged in
+  useEffect(() => {
+    if (!isLoading && user) {
+      // Check if there's a returnTo URL in sessionStorage
+      const returnTo = sessionStorage.getItem('returnTo');
+      if (returnTo) {
+        // Clear the returnTo URL from sessionStorage
+        sessionStorage.removeItem('returnTo');
+        // Redirect to the returnTo URL
+        window.location.href = returnTo;
+      } else {
+        // Default redirect to dashboard
+        setLocation('/dashboard');
+      }
+    }
+  }, [isLoading, user, setLocation]);
+  
+  // If still loading or not logged in, continue with the component
   
   const handleGitHubLogin = () => {
     window.location.href = "/api/auth/github";

@@ -197,15 +197,65 @@ export default function CodingEnvironment() {
       (async () => {
         try {
           // Call the redirect endpoint to get the URL
-          const redirectUrl = `/api/container-redirect/${tokenParam}`;
-          setContainerUrl(redirectUrl);
+          const response = await fetch(`/api/container-redirect/${tokenParam}`);
+          
+          if (!response.ok) {
+            // Handle error responses based on status code
+            const errorData = await response.json();
+            
+            // Handle authentication error
+            if (response.status === 401 && errorData.redirectToLogin) {
+              toast({
+                title: "Authentication Required",
+                description: "Please log in to access this coding environment",
+                variant: "destructive",
+              });
+              
+              // Redirect to auth page and store current URL for redirect back
+              sessionStorage.setItem('returnTo', window.location.href);
+              setLocation('/auth');
+              return;
+            }
+            
+            // Handle forbidden access (wrong user)
+            if (response.status === 403) {
+              toast({
+                title: "Access Denied",
+                description: errorData.message || "You don't have permission to access this coding environment",
+                variant: "destructive",
+              });
+              // Redirect to dashboard after a delay
+              setTimeout(() => setLocation('/dashboard'), 2000);
+              return;
+            }
+            
+            // Handle expired or not found session
+            if (response.status === 404 || (response.status === 401 && !errorData.redirectToLogin)) {
+              toast({
+                title: errorData.error || "Session Error",
+                description: errorData.message || "The coding environment session was not found or has expired",
+                variant: "destructive",
+              });
+              // Redirect to dashboard after a delay
+              setTimeout(() => setLocation('/dashboard'), 2000);
+              return;
+            }
+            
+            // Generic error handling
+            throw new Error(errorData.message || "Failed to access coding environment");
+          }
+          
+          // Use the redirect URL from the successful response
+          setContainerUrl(`/api/container-redirect/${tokenParam}`);
         } catch (error) {
           console.error("Error resolving container token:", error);
           toast({
             title: "Error",
-            description: "Failed to access coding environment",
+            description: error instanceof Error ? error.message : "Failed to access coding environment",
             variant: "destructive",
           });
+          // Redirect to dashboard after error
+          setTimeout(() => setLocation('/dashboard'), 2000);
         }
       })();
     }
