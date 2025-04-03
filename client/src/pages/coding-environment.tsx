@@ -160,6 +160,7 @@ const SAMPLE_COMMENTS: Comment[] = [
 export default function CodingEnvironment() {
   const [, setLocation] = useLocation();
   const [containerUrl, setContainerUrl] = useState<string | null>(null);
+  const [containerToken, setContainerToken] = useState<string | null>(null);
   const [problemId, setProblemId] = useState<string | null>(null);
   const [questionId, setQuestionId] = useState<string | null>(null);
   const [language, setLanguage] = useState<string>("c"); // Default to C
@@ -179,12 +180,34 @@ export default function CodingEnvironment() {
     const queryParams = new URLSearchParams(window.location.search);
     
     const urlParam = queryParams.get('containerUrl');
+    const tokenParam = queryParams.get('containerToken');
     const idParam = queryParams.get('problemId');
     const qIdParam = queryParams.get('questionId');
     const langParam = queryParams.get('language');
     
+    // Handle direct URL (legacy support)
     if (urlParam) {
       setContainerUrl(decodeURIComponent(urlParam));
+    }
+    
+    // Handle token-based system (preferred)
+    if (tokenParam) {
+      setContainerToken(tokenParam);
+      // Convert token to URL through API
+      (async () => {
+        try {
+          // Call the redirect endpoint to get the URL
+          const redirectUrl = `/api/container-redirect/${tokenParam}`;
+          setContainerUrl(redirectUrl);
+        } catch (error) {
+          console.error("Error resolving container token:", error);
+          toast({
+            title: "Error",
+            description: "Failed to access coding environment",
+            variant: "destructive",
+          });
+        }
+      })();
     }
     
     if (idParam) {
@@ -198,7 +221,7 @@ export default function CodingEnvironment() {
     if (langParam) {
       setLanguage(langParam);
     }
-  }, []);
+  }, [toast]);
   
   // Fetch problem description from the external API
   const { data: problemDescription, isLoading: isLoadingDescription } = useQuery<ProblemDescriptionResponse>({

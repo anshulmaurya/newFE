@@ -12,6 +12,36 @@ import { z } from "zod";
 import { setupAuth } from "./auth";
 import { setupUserCodebase } from "./container-api";
 import { connectToMongoDB, getProblemsCollection } from "./mongodb";
+import crypto from 'crypto';
+
+// Container session storage for secure access
+interface ContainerSession {
+  containerUrl: string;
+  userId: number;
+  createdAt: Date;
+  expiresAt: Date; // Session expires after a certain time
+}
+
+// Map to store container sessions by token
+const containerSessions = new Map<string, ContainerSession>();
+
+// Function to generate a secure random token
+function generateSecureToken(): string {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+// Function to clean up expired container sessions (called periodically)
+function cleanupExpiredSessions(): void {
+  const now = new Date();
+  containerSessions.forEach((session, token) => {
+    if (session.expiresAt < now) {
+      containerSessions.delete(token);
+    }
+  });
+}
+
+// Set up a cleanup interval (every hour)
+setInterval(cleanupExpiredSessions, 60 * 60 * 1000);
 
 // Add userId to Request type
 declare global {
@@ -575,11 +605,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Don't fail the request if this part has an error
       }
       
-      // Always return a success to the frontend, even if there might be issues
-      // Since our container-api.ts now handles failures more gracefully
+      // Generate a secure token for the container URL
+      const token = generateSecureToken();
+      
+      // Create an expiration date (24 hours from now)
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 24);
+      
+      // Store the container URL in the session map
+      containerSessions.set(token, {
+        containerUrl: result.containerUrl,
+        userId: req.userId,
+        createdAt: new Date(),
+        expiresAt: expiresAt
+      });
+      
+      // Return only the token to the client, not the actual container URL
       return res.status(200).json({
-        ...result,
-        trackingId: `${user.username}-${questionId}-${Date.now()}` // Add tracking ID for frontend reference
+        status: result.status,
+        message: result.message,
+        containerToken: token, // Send token instead of direct URL
+        trackingId: `${user.username}-${questionId}-${Date.now()}`
       });
     } catch (err: unknown) {
       console.error("Error setting up user codebase:", err);
@@ -600,14 +646,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Could not get username for container URL:", userErr);
       }
       
-      // Even if there's an error, return a more graceful response
-      // to allow the user to proceed with coding
+      // Even if there's an error, return a more graceful response with a token
+      // Generate a fallback container URL
+      const fallbackContainerUrl = `https://${containerUsername}.ambitiousfield-760fb695.eastus.azurecontainerapps.io`;
+      
+      // Generate a secure token for the fallback container URL
+      const token = generateSecureToken();
+      
+      // Create an expiration date (24 hours from now)
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 24);
+      
+      // Store the fallback container URL in the session map
+      containerSessions.set(token, {
+        containerUrl: fallbackContainerUrl,
+        userId: req.userId || 0, // Use 0 as a fallback user ID
+        createdAt: new Date(),
+        expiresAt: expiresAt
+      });
+      
+      // Return a response with the token
       return res.status(200).json({
         status: "pending",
         message: "Codebase setup initiated with some issues. You can still begin coding, but some features may be limited.",
-        containerUrl: `https://${containerUsername}.ambitiousfield-760fb695.eastus.azurecontainerapps.io`,
+        containerToken: token,
         error: errorMessage
       });
+    }
+  });
+
+  // Container redirect endpoint for secure access
+  apiRouter.get("/container-redirect/:token", getUserId, async (req: Request, res: Response) => {
+    try {
+      const { token } = req.params;
+      
+      // Check if the token exists in the session map
+      if (!containerSessions.has(token)) {
+        return res.status(404).json({ error: "Container session not found or expired" });
+      }
+      
+      // Get the container session
+      const session = containerSessions.get(token)!;
+      
+      // Check if the session is expired
+      if (session.expiresAt < new Date()) {
+        containerSessions.delete(token);
+        return res.status(401).json({ error: "Container session has expired" });
+      }
+      
+      // Check if the user ID matches the session (to prevent unauthorized access)
+      if (session.userId !== req.userId) {
+        return res.status(403).json({ error: "Unauthorized access to container" });
+      }
+      
+      // Redirect to the actual container URL
+      return res.redirect(session.containerUrl);
+    } catch (error) {
+      console.error("Error redirecting to container:", error);
+      return res.status(500).json({ error: "Server error" });
     }
   });
 

@@ -441,17 +441,16 @@ export default function Dashboard() {
     },
     onSuccess: (data, variables) => {
       // After successful setup, redirect to coding environment
-      if (data && data.containerUrl) {
-        // Encode the URL to pass it as a query parameter
-        const encodedUrl = encodeURIComponent(data.containerUrl);
+      if (data && data.containerToken) {
+        // Use the token instead of direct container URL
         const encodedTitle = encodeURIComponent(variables.problemId || 'Coding Problem');
         
         // Include the question_id if available for direct API call
         const questionIdParam = variables.questionId ? 
           `&questionId=${encodeURIComponent(variables.questionId)}` : '';
         
-        // Navigate to the IDE page with the container URL
-        window.location.href = `/coding-environment?containerUrl=${encodedUrl}&title=${encodedTitle}${questionIdParam}`;
+        // Navigate to the IDE page with the container token
+        window.location.href = `/coding-environment?containerToken=${data.containerToken}&title=${encodedTitle}${questionIdParam}`;
       } else {
         toast({
           title: "Error",
