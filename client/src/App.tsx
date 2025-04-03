@@ -19,6 +19,12 @@ import Blind75Page from '@/pages/quick-prep/blind-75';
 import LinuxBasicsPage from '@/pages/quick-prep/linux-basics';
 import JDBasedPage from '@/pages/jd-based';
 
+// Import footer pages
+import TermsOfService from '@/pages/terms-of-service';
+import PrivacyPolicy from '@/pages/privacy-policy';
+import Pricing from '@/pages/pricing';
+import AboutUs from '@/pages/about-us';
+
 // Import notes pages
 import GettingStarted from '@/pages/notes/getting-started';
 import GitbookDocumentation from '@/pages/notes/gitbook-documentation';
@@ -47,6 +53,12 @@ function Router() {
       <ProtectedRoute path="/quick-prep/linux-basics" component={LinuxBasicsPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/coming-soon" component={ComingSoon} />
+      
+      {/* Footer pages - accessible to all */}
+      <Route path="/terms-of-service" component={TermsOfService} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/about-us" component={AboutUs} />
       
       {/* Protected Notes routes */}
       <ProtectedRoute path="/notes" component={Notes} />
