@@ -25,7 +25,7 @@ export default function AboutUs() {
         isScrolled={true}
       />
       
-      <main className="flex-grow pt-24">
+      <main className="flex-grow pt-24 pb-40">
         <div className="container mx-auto px-4 pt-4">
           <Button 
             variant="ghost" 

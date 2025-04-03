@@ -25,7 +25,7 @@ export default function Pricing() {
         isScrolled={true}
       />
       
-      <main className="flex-grow container mx-auto px-4 py-12 pt-24 overflow-y-auto">
+      <main className="flex-grow container mx-auto px-4 py-12 pt-24 pb-40">
         <div className="flex justify-start max-w-5xl mx-auto mb-4">
           <Button 
             variant="ghost" 

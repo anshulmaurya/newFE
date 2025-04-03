@@ -25,7 +25,7 @@ export default function TermsOfService() {
         isScrolled={true}
       />
       
-      <main className="flex-grow container mx-auto px-4 py-12 pt-24">
+      <main className="flex-grow container mx-auto px-4 py-12 pt-24 pb-40">
         <div className="max-w-4xl mx-auto">
           <Button 
             variant="ghost" 
@@ -43,7 +43,7 @@ export default function TermsOfService() {
               
               <Separator className="my-6 bg-gray-700/30" />
               
-              <div className="space-y-8 text-gray-300 mb-20">
+              <div className="space-y-8 text-gray-300 mb-40">
                 <section>
                   <h2 className="text-xl font-semibold text-white mb-4">1. Acceptance of Terms</h2>
                   <p className="mb-4">
