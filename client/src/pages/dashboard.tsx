@@ -420,6 +420,17 @@ export default function Dashboard() {
   
   // Handle bundle selection
   const handleBundleSelect = (bundleId: string) => {
+    // Check if authentication is required for certain features
+    if (!user && bundleId !== 'blind-75' && bundleId !== 'embedded-essentials') {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to access this feature",
+        variant: "destructive",
+      });
+      setLocation("/auth");
+      return;
+    }
+    
     setSelectedBundle(bundleId);
     // Could add additional logic here to filter problems by bundle
   };
@@ -505,6 +516,14 @@ export default function Dashboard() {
     // Call the mutation with the problem ID, question ID, and selected language
     setupCodebaseMutation.mutate({ problemId, questionId, language });
   };
+  
+  // Check if a sidebar item should be disabled (all except Dashboard)
+  const isSidebarItemDisabled = (itemName: string) => {
+    // Dashboard is always accessible
+    if (itemName === 'dashboard') return false;
+    // All other items should be disabled for non-authenticated users
+    return !user;
+  };
 
   // Apply the scroll jump prevention hook
   usePreventScrollJump();
@@ -546,7 +565,7 @@ export default function Dashboard() {
                   </button>
                   
                   <button 
-                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className={`text-gray-400 ${!user ? 'opacity-50 cursor-not-allowed' : 'hover:text-white'} py-2 px-3 text-xs rounded-md w-full text-left`}
                     onClick={() => handleBundleSelect('linux-basics')}
                   >
                     Linux Basics
@@ -575,7 +594,7 @@ export default function Dashboard() {
               {expandedSection === 'target-companies' && (
                 <div className="mt-1 pl-3">
                   <button 
-                    className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
+                    className={`text-gray-400 ${!user ? 'opacity-50 cursor-not-allowed' : 'hover:text-white'} py-2 px-3 text-xs rounded-md w-full text-left`}
                     onClick={() => handleBundleSelect('arm')}
                   >
                     ARM
@@ -644,8 +663,19 @@ export default function Dashboard() {
                         View Recommended Questions
                       </button>
                       <button 
-                        className="text-gray-400 hover:text-white py-2 px-3 text-xs rounded-md w-full text-left"
-                        onClick={() => window.location.href = '/notes'}
+                        className={`text-gray-400 ${!user ? 'opacity-50 cursor-not-allowed' : 'hover:text-white'} py-2 px-3 text-xs rounded-md w-full text-left`}
+                        onClick={() => {
+                          if (!user) {
+                            toast({
+                              title: "Authentication required",
+                              description: "Please log in to view study notes",
+                              variant: "destructive",
+                            });
+                            setLocation("/auth");
+                            return;
+                          }
+                          window.location.href = '/notes';
+                        }}
                       >
                         View Study Notes
                       </button>
@@ -803,6 +833,18 @@ export default function Dashboard() {
                   <div className="flex items-center space-x-2">
                     <Button 
                       className="bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] text-black text-xs py-1 px-3 h-8 rounded-md"
+                      onClick={() => {
+                        if (!user) {
+                          toast({
+                            title: "Authentication required",
+                            description: "Please log in to start this bundle",
+                            variant: "destructive",
+                          });
+                          setLocation("/auth");
+                          return;
+                        }
+                        // Implement bundle start logic here
+                      }}
                     >
                       Start Now
                     </Button>
