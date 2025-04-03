@@ -43,7 +43,7 @@ export default function PrivacyPolicy() {
               
               <Separator className="my-6 bg-gray-700/30" />
               
-              <div className="space-y-8 text-gray-300">
+              <div className="space-y-8 text-gray-300 mb-20">
                   <section>
                     <h2 className="text-xl font-semibold text-white mb-4">1. Introduction</h2>
                     <p className="mb-4">

@@ -25,7 +25,7 @@ export default function AboutUs() {
         isScrolled={true}
       />
       
-      <main className="flex-grow pt-16 overflow-y-auto h-screen">
+      <main className="flex-grow pt-24">
         <div className="container mx-auto px-4 pt-4">
           <Button 
             variant="ghost" 
@@ -201,6 +201,8 @@ export default function AboutUs() {
           </div>
         </section>
       </main>
+      
+      <Footer />
     </div>
   );
 }
