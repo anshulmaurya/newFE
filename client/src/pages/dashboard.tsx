@@ -481,7 +481,14 @@ export default function Dashboard() {
       return;
     }
     
-    // Call the mutation with the problem ID, question ID, and selected language
+    // Immediately redirect to coding environment with loading state
+    const encodedTitle = encodeURIComponent(problemId || 'Coding Problem');
+    const questionIdParam = questionId ? `&questionId=${encodeURIComponent(questionId)}` : '';
+    
+    // Redirect with loading=true parameter to indicate environment is being set up
+    window.location.href = `/coding-environment?title=${encodedTitle}${questionIdParam}&loading=true`;
+    
+    // Also call the mutation to start the container setup process in the background
     setupCodebaseMutation.mutate({ problemId, questionId, language });
   };
   
