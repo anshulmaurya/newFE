@@ -31,6 +31,15 @@ const getUserId = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
+// Optional authentication middleware - doesn't reject unauthenticated users
+// but adds user ID to request if authenticated
+const optionalAuth = (req: Request, res: Response, next: NextFunction) => {
+  if (req.isAuthenticated()) {
+    req.userId = req.user?.id;
+  }
+  next();
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
   setupAuth(app);
@@ -47,8 +56,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // External API proxy for problems
-  apiRouter.get("/problems-proxy", async (_req: Request, res: Response) => {
+  // External API proxy for problems (accessible without authentication)
+  apiRouter.get("/problems-proxy", optionalAuth, async (_req: Request, res: Response) => {
     try {
       const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/get_problems');
       const problems = await response.json();
@@ -86,8 +95,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Problem routes - fetch from external API
-  apiRouter.get("/problems", async (req: Request, res: Response) => {
+  // Problem routes - fetch from external API (accessible without authentication)
+  apiRouter.get("/problems", optionalAuth, async (req: Request, res: Response) => {
     try {
       const { 
         category, 
@@ -160,7 +169,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  apiRouter.get("/problems/:id", async (req: Request, res: Response) => {
+  apiRouter.get("/problems/:id", optionalAuth, async (req: Request, res: Response) => {
     try {
       const problemId = req.params.id;
       
