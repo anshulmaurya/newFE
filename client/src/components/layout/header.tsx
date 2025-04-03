@@ -186,14 +186,6 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
             <span className={`font-medium text-sm ${location.includes("/dashboard") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} transition-colors`}>Problems</span>
           </button>
           
-          <a 
-            href="https://discord.gg/HxAqXd8Xwt" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="nav-link group px-2 py-1"
-          >
-            <span className="font-medium text-sm text-gray-300 hover:text-white transition-colors">Discord</span>
-          </a>
           
           {user ? (
             <div className="relative ml-2">
@@ -376,15 +368,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           >
             Problems
           </button>
-          <a 
-            href="https://discord.gg/HxAqXd8Xwt" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="py-1.5 border-b border-gray-700/30 text-sm text-gray-300 hover:text-white"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Discord
-          </a>
+
           <button 
             onClick={(e) => { 
               e.preventDefault();
