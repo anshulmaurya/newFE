@@ -1,6 +1,8 @@
 import { Twitter, Linkedin, Github, MessageSquare } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function Footer() {
+  const [_, navigate] = useLocation();
   return (
     <footer className="py-10 relative bg-[rgb(24,24,26)]">
       <div className="circuit-lines absolute inset-0 z-0 pointer-events-none"></div>
@@ -49,11 +51,11 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-medium mb-4">Platform</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Features</a></li>
+              <li><a href="#features" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Features</a></li>
               <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Problem Categories</a></li>
               <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Learning Paths</a></li>
               <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Community</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Pricing</a></li>
+              <li><a onClick={() => navigate("/pricing")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">Pricing</a></li>
             </ul>
           </div>
           
@@ -71,11 +73,11 @@ export default function Footer() {
           <div>
             <h3 className="text-white font-medium mb-4">Company</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">About Us</a></li>
+              <li><a onClick={() => navigate("/about-us")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">About Us</a></li>
               <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Careers</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Contact</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Terms of Service</a></li>
+              <li><a href="mailto:contact@dspcoder.com" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Contact</a></li>
+              <li><a onClick={() => navigate("/privacy-policy")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">Privacy Policy</a></li>
+              <li><a onClick={() => navigate("/terms-of-service")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">Terms of Service</a></li>
             </ul>
           </div>
         </div>
