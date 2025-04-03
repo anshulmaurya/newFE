@@ -36,12 +36,15 @@ async function hashPassword(password: string) {
   return `${buf.toString("hex")}.${salt}`;
 }
 
-async function comparePasswords(supplied: string, stored: string | null | undefined): Promise<boolean> {
+async function comparePasswords(
+  supplied: string,
+  stored: string | null | undefined,
+): Promise<boolean> {
   if (!stored) return false;
-  
+
   const [hashed, salt] = stored.split(".");
   if (!hashed || !salt) return false;
-  
+
   const hashedBuf = Buffer.from(hashed, "hex");
   const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
   return timingSafeEqual(hashedBuf, suppliedBuf);
@@ -57,12 +60,13 @@ export function setupAuth(app: Express) {
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       secure: process.env.NODE_ENV === "production",
-    }
+    },
   };
-  
+
   // Use the exact callback URL configured in GitHub OAuth settings
-  const callbackURL = "https://97332a4d-a72c-4bed-9d97-03b0350ae447-00-2lw03c0sn2pc2.kirk.replit.dev/api/auth/github/callback";
-  
+  const callbackURL =
+    "https://97332a4d-a72c-4bed-9d97-03b0350ae447-00-2lw03c0sn2pc2.kirk.replit.dev/api/auth/github/callback";
+
   console.log("GitHub Auth Callback URL:", callbackURL);
 
   app.set("trust proxy", 1);
@@ -79,17 +83,17 @@ export function setupAuth(app: Express) {
         callbackURL: callbackURL,
         scope: ["user:email", "read:user"],
       },
-      async function(
-        accessToken: string, 
-        _refreshToken: string, 
-        profile: { 
+      async function (
+        accessToken: string,
+        _refreshToken: string,
+        profile: {
           id: string;
           username?: string;
           displayName?: string;
-          emails?: { value: string; }[];
-          photos?: { value: string; }[];
-        }, 
-        done: (error: Error | null, user?: any) => void
+          emails?: { value: string }[];
+          photos?: { value: string }[];
+        },
+        done: (error: Error | null, user?: any) => void,
       ) {
         try {
           console.log("GitHub profile received:", {
@@ -97,13 +101,13 @@ export function setupAuth(app: Express) {
             username: profile.username,
             displayName: profile.displayName,
             emails: profile.emails,
-            photos: profile.photos
+            photos: profile.photos,
           });
-          
+
           // Check if user exists
           let user = await storage.getUserByGithubId(profile.id);
           console.log("Existing user found:", user);
-          
+
           if (!user) {
             console.log("Creating new user for GitHub id:", profile.id);
             // Create new user if not found
@@ -113,11 +117,13 @@ export function setupAuth(app: Express) {
                 githubId: profile.id,
                 displayName: profile.displayName || profile.username,
                 avatarUrl: profile.photos?.[0]?.value,
-                email: profile.emails?.[0]?.value || `github_${profile.id}@example.com`, // Provide fallback email
+                email:
+                  profile.emails?.[0]?.value ||
+                  `github_${profile.id}@example.com`, // Provide fallback email
                 password: await hashPassword(randomBytes(16).toString("hex")), // Random password for GitHub users
               });
               console.log("New user created:", user);
-              
+
               // Initialize user stats
               await storage.createUserStats({
                 userId: user.id,
@@ -128,7 +134,7 @@ export function setupAuth(app: Express) {
                 hardSolved: 0,
                 totalAttempted: 0,
                 currentStreak: 0,
-                longestStreak: 0
+                longestStreak: 0,
               });
             } catch (createError) {
               console.error("Error creating user:", createError);
@@ -136,22 +142,28 @@ export function setupAuth(app: Express) {
             }
           } else {
             // Update user's displayName and avatar if they've changed
-            if (profile.displayName && (!user.displayName || user.displayName !== profile.displayName)) {
+            if (
+              profile.displayName &&
+              (!user.displayName || user.displayName !== profile.displayName)
+            ) {
               try {
-                await storage.updateUser(user.id, { 
-                  displayName: profile.displayName
+                await storage.updateUser(user.id, {
+                  displayName: profile.displayName,
                 });
                 user.displayName = profile.displayName;
               } catch (updateError) {
                 console.error("Error updating user displayName:", updateError);
               }
             }
-            
+
             // Update avatar if available
-            if (profile.photos?.[0]?.value && profile.photos[0].value !== user.avatarUrl) {
+            if (
+              profile.photos?.[0]?.value &&
+              profile.photos[0].value !== user.avatarUrl
+            ) {
               try {
-                await storage.updateUser(user.id, { 
-                  avatarUrl: profile.photos[0].value
+                await storage.updateUser(user.id, {
+                  avatarUrl: profile.photos[0].value,
                 });
                 user.avatarUrl = profile.photos[0].value;
               } catch (updateError) {
@@ -159,14 +171,14 @@ export function setupAuth(app: Express) {
               }
             }
           }
-          
+
           return done(null, user);
         } catch (error) {
           console.error("Error in GitHub strategy:", error);
           return done(error as Error);
         }
-      }
-    )
+      },
+    ),
   );
 
   // Local authentication strategy (optional - for username/password login)
@@ -174,16 +186,20 @@ export function setupAuth(app: Express) {
     new LocalStrategy(async (username, password, done) => {
       try {
         const user = await storage.getUserByUsername(username);
-        
-        if (!user || !user.password || !(await comparePasswords(password, user.password))) {
+
+        if (
+          !user ||
+          !user.password ||
+          !(await comparePasswords(password, user.password))
+        ) {
           return done(null, false, { message: "Invalid username or password" });
         }
-        
+
         return done(null, user);
       } catch (error) {
         return done(error as Error);
       }
-    })
+    }),
   );
 
   // Serialize and deserialize user
@@ -201,31 +217,34 @@ export function setupAuth(app: Express) {
   });
 
   // Auth routes
-  app.get("/api/auth/github", passport.authenticate("github", { scope: ["user:email", "read:user"] }));
-  
+  app.get(
+    "/api/auth/github",
+    passport.authenticate("github", { scope: ["user:email", "read:user"] }),
+  );
+
   app.get(
     "/api/auth/github/callback",
     (req: Request, res: Response, next: NextFunction) => {
       console.log("GitHub callback received, query params:", req.query);
-      passport.authenticate("github", { 
+      passport.authenticate("github", {
         failureRedirect: "/auth",
-        failWithError: true
+        failWithError: true,
       })(req, res, next);
     },
     async (req: Request, res: Response) => {
       console.log("GitHub authentication successful, user:", req.user);
-      
+
       // Create container for user if they have a username
       if (req.user && req.user.username) {
         await createUserContainer(req.user.username);
       }
-      
+
       res.redirect("/dashboard");
     },
     (err: Error, req: Request, res: Response, next: NextFunction) => {
       console.error("GitHub authentication error:", err);
       res.redirect("/auth?error=github_auth_failed");
-    }
+    },
   );
 
   app.post("/api/login", passport.authenticate("local"), async (req, res) => {
@@ -233,22 +252,22 @@ export function setupAuth(app: Express) {
     if (req.user && req.user.username) {
       await createUserContainer(req.user.username);
     }
-    
+
     res.json(req.user);
   });
 
   app.post("/api/logout", async (req, res, next) => {
     // Store the username before logging out
     const username = req.user?.username;
-    
+
     req.logout(async (err) => {
       if (err) return next(err);
-      
+
       // Delete container for the user if they have a username
       if (username) {
         await deleteUserContainer(username);
       }
-      
+
       res.sendStatus(200);
     });
   });
@@ -257,20 +276,20 @@ export function setupAuth(app: Express) {
   app.post("/api/register", async (req, res, next) => {
     try {
       const { username, password } = req.body;
-      
+
       // Check if user already exists
       const existingUser = await storage.getUserByUsername(username);
       if (existingUser) {
         return res.status(400).json({ message: "Username already exists" });
       }
-      
+
       // Create new user
       const hashedPassword = await hashPassword(password);
       const user = await storage.createUser({
         username,
-        password: hashedPassword
+        password: hashedPassword,
       });
-      
+
       // Initialize user stats
       await storage.createUserStats({
         userId: user.id,
@@ -281,16 +300,16 @@ export function setupAuth(app: Express) {
         hardSolved: 0,
         totalAttempted: 0,
         currentStreak: 0,
-        longestStreak: 0
+        longestStreak: 0,
       });
-      
+
       // Log user in
       req.login(user, async (err) => {
         if (err) return next(err);
-        
+
         // Create container for the new user
         await createUserContainer(user.username);
-        
+
         // Return user without password
         const { password, ...userData } = user;
         return res.status(201).json(userData);

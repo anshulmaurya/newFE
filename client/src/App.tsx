@@ -47,21 +47,21 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/coming-soon" component={ComingSoon} />
       
-      {/* Notes routes */}
-      <Route path="/notes" component={Notes} />
-      <Route path="/notes/getting-started" component={GettingStarted} />
-      <Route path="/notes/gitbook-documentation" component={GitbookDocumentation} />
-      <Route path="/notes/quickstart" component={Quickstart} />
-      <Route path="/notes/communication-protocols" component={CommunicationProtocols} />
-      <Route path="/notes/data-structures" component={DataStructures} />
+      {/* Protected Notes routes */}
+      <ProtectedRoute path="/notes" component={Notes} />
+      <ProtectedRoute path="/notes/getting-started" component={GettingStarted} />
+      <ProtectedRoute path="/notes/gitbook-documentation" component={GitbookDocumentation} />
+      <ProtectedRoute path="/notes/quickstart" component={Quickstart} />
+      <ProtectedRoute path="/notes/communication-protocols" component={CommunicationProtocols} />
+      <ProtectedRoute path="/notes/data-structures" component={DataStructures} />
       
-      {/* Notes subpages */}
-      <Route path="/notes/communication-protocols/spi" component={SPI} />
-      <Route path="/notes/communication-protocols/i2c" component={I2C} />
-      <Route path="/notes/communication-protocols/uart" component={UART} />
-      <Route path="/notes/data-structures/linked-list" component={LinkedList} />
-      <Route path="/notes/data-structures/array" component={ArrayPage} />
-      <Route path="/notes/data-structures/string" component={StringPage} />
+      {/* Protected Notes subpages */}
+      <ProtectedRoute path="/notes/communication-protocols/spi" component={SPI} />
+      <ProtectedRoute path="/notes/communication-protocols/i2c" component={I2C} />
+      <ProtectedRoute path="/notes/communication-protocols/uart" component={UART} />
+      <ProtectedRoute path="/notes/data-structures/linked-list" component={LinkedList} />
+      <ProtectedRoute path="/notes/data-structures/array" component={ArrayPage} />
+      <ProtectedRoute path="/notes/data-structures/string" component={StringPage} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
