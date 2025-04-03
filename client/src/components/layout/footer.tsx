@@ -49,35 +49,26 @@ export default function Footer() {
           </div>
           
           <div>
-            <h3 className="text-white font-medium mb-4">Platform</h3>
+            <h3 className="text-white font-medium mb-4">Legal</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#features" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Features</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Problem Categories</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Learning Paths</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Community</a></li>
-              <li><a onClick={() => navigate("/pricing")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">Pricing</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-white font-medium mb-4">Resources</h3>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Documentation</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Blog</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Tutorials</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">API Reference</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Support</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-white font-medium mb-4">Company</h3>
-            <ul className="space-y-2 text-sm">
-              <li><a onClick={() => navigate("/about-us")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">About Us</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Careers</a></li>
-              <li><a href="mailto:contact@dspcoder.com" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Contact</a></li>
-              <li><a onClick={() => navigate("/privacy-policy")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">Privacy Policy</a></li>
               <li><a onClick={() => navigate("/terms-of-service")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">Terms of Service</a></li>
+              <li><a onClick={() => navigate("/privacy-policy")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">Privacy Policy</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="text-white font-medium mb-4">Site</h3>
+            <ul className="space-y-2 text-sm">
+              <li><a onClick={() => navigate("/pricing")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">Pricing</a></li>
+              <li><a onClick={() => navigate("/about-us")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">About Us</a></li>
+              <li><a href="mailto:contact@dspcoder.com" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Contact</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="text-white font-medium mb-4">&nbsp;</h3>
+            <ul className="space-y-2 text-sm">
+              <li>&nbsp;</li>
             </ul>
           </div>
         </div>
