@@ -451,7 +451,7 @@ export default function Dashboard() {
           `&questionId=${encodeURIComponent(variables.questionId)}` : '';
         
         // Navigate to the IDE page with the container URL
-        window.location.href = `/ide?containerUrl=${encodedUrl}&title=${encodedTitle}${questionIdParam}`;
+        window.location.href = `/coding-environment?containerUrl=${encodedUrl}&title=${encodedTitle}${questionIdParam}`;
       } else {
         toast({
           title: "Error",
