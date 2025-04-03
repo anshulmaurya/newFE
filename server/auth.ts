@@ -239,16 +239,7 @@ export function setupAuth(app: Express) {
         await createUserContainer(req.user.username);
       }
 
-      // Check if there's a returnTo URL in the session (for container redirects)
-      const returnTo = req.session.returnTo;
-      if (returnTo) {
-        // Clear the returnTo URL from the session
-        delete req.session.returnTo;
-        res.redirect(returnTo);
-      } else {
-        // Default redirect to dashboard
-        res.redirect("/dashboard");
-      }
+      res.redirect("/dashboard");
     },
     (err: Error, req: Request, res: Response, next: NextFunction) => {
       console.error("GitHub authentication error:", err);
@@ -262,20 +253,7 @@ export function setupAuth(app: Express) {
       await createUserContainer(req.user.username);
     }
 
-    // Check if there's a returnTo URL in the session (for container redirects)
-    const returnTo = req.session.returnTo;
-    if (returnTo) {
-      // Clear the returnTo URL from the session
-      delete req.session.returnTo;
-      // For AJAX login, return the redirect URL instead of performing the redirect
-      res.json({ 
-        ...req.user, 
-        redirect: returnTo 
-      });
-    } else {
-      // Normal response without redirect
-      res.json(req.user);
-    }
+    res.json(req.user);
   });
 
   app.post("/api/logout", async (req, res, next) => {
