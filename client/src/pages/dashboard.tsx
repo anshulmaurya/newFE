@@ -808,7 +808,7 @@ export default function Dashboard() {
         </div>
             
         {/* Main content - scrollable */}
-        <div className="w-full lg:ml-56 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-4 pb-8 bg-[rgb(14,14,16)] dashboard-content-area">
+        <div className="w-full lg:ml-56 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-16 pb-8 bg-[rgb(14,14,16)] dashboard-content-area">
           {/* Main content area - added dashboard-content-area class for our scroll fixes */}
           <div className="flex-grow pt-0 pb-8 px-2 space-y-2 overflow-x-hidden">
             
