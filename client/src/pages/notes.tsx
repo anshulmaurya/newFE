@@ -175,7 +175,7 @@ export default function Notes() {
   };
 
   return (
-    <div className={`flex flex-col h-full ${themeClasses.bg} ${themeClasses.text} transition-colors duration-200`}>
+    <div className={`flex flex-col h-full ${themeClasses.bg} ${themeClasses.text} transition-colors duration-200 app-container`}>
       <Header 
         onNavigateFeatures={navigateToFeatures} 
         onNavigateProblems={navigateToProblems}
@@ -184,7 +184,7 @@ export default function Notes() {
         toggleDarkMode={toggleTheme}
       />
 
-      <div className="flex flex-grow pt-0">
+      <div className="flex flex-grow pt-0 scrollable-content">
         {/* Sidebar */}
         <div className={`w-64 ${themeClasses.sidebarBg} p-4 pt-2 mt-1 flex flex-col border-r-0 shadow-md z-10`}>
           <div className="relative mb-3">
