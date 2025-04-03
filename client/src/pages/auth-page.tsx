@@ -1,10 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SiGithub } from "react-icons/si";
 import { useAuth } from "@/hooks/use-auth";
 import { Redirect, useLocation } from "wouter";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Lock } from "lucide-react";
+import { AlertCircle, ChevronLeft, Code, LockKeyhole } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function AuthPage() {
@@ -40,42 +39,104 @@ export default function AuthPage() {
   };
   
   return (
-    <div className="fixed inset-0 bg-[rgb(24,24,26)] text-white flex items-center justify-center">
-      <Card className="border-gray-800 bg-[rgb(30,30,32)] w-full max-w-md mx-4 shadow-xl">
-        <CardHeader className="flex flex-col items-center text-center pb-2">
-          <Lock className="h-10 w-10 text-primary mb-1" />
-          <CardTitle className="text-xl font-bold text-white">
-            Sign in to access DSPCoder
-          </CardTitle>
-        </CardHeader>
-        
-        <CardContent className="space-y-4 pt-2">
-          <p className="text-gray-400 text-center text-xs">
-            Login with GitHub to access interactive features, track your progress, and start coding.
-          </p>
+    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[#131314] via-[#1E1E20] to-[#131314] text-white overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] right-[-10%] bottom-[-10%] opacity-30 z-0">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div 
+              key={i}
+              className="absolute rounded-full"
+              style={{
+                width: `${Math.random() * 400 + 100}px`,
+                height: `${Math.random() * 400 + 100}px`,
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                background: 'radial-gradient(circle, rgba(0,200,255,0.1) 0%, rgba(0,200,255,0) 70%)',
+                transform: `scale(${Math.random() * 0.8 + 0.6})`,
+                animation: `float ${Math.random() * 10 + 15}s ease-in-out infinite`,
+                animationDelay: `${Math.random() * 5}s`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+      
+      {/* Back to dashboard button */}
+      <button 
+        onClick={handleBackToDashboard}
+        className="absolute top-5 left-5 flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
+      >
+        <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+        <span>Back to Dashboard</span>
+      </button>
+      
+      {/* Main content */}
+      <div className="relative z-10 w-full max-w-md px-4">
+        <div className="relative bg-[rgba(30,30,32,0.7)] backdrop-blur-xl rounded-2xl border border-[rgba(255,255,255,0.1)] shadow-2xl overflow-hidden">
+          {/* Top design accent */}
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#0070F3] to-[#00C2FF]"></div>
           
+          {/* Logo and title */}
+          <div className="pt-8 pb-4 px-8 text-center">
+            <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-gradient-to-br from-[#0070F3] to-[#00C2FF] flex items-center justify-center">
+              <Code className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold mb-1">Welcome to DSPCoder</h1>
+            <p className="text-gray-400 text-sm">
+              Sign in to access personalized exercises and track your progress
+            </p>
+          </div>
+          
+          {/* Error alert */}
           {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
+            <div className="px-8 pb-4">
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            </div>
           )}
           
-          <Button 
-            className="w-full py-4" 
-            onClick={handleGitHubLogin}
-          >
-            <SiGithub className="mr-2 h-4 w-4" />
-            <span>Continue with GitHub</span>
-          </Button>
-          
-          <div className="text-center">
-            <Button variant="link" onClick={handleBackToDashboard} className="text-sm h-8 px-2">
-              Back to Dashboard
+          {/* Login button */}
+          <div className="px-8 pb-6">
+            <Button 
+              className="w-full py-6 bg-gradient-to-r from-[#0070F3] to-[#00C2FF] hover:from-[#0080FF] hover:to-[#00D2FF] border-0 transition-all hover:shadow-lg hover:shadow-blue-500/20"
+              onClick={handleGitHubLogin}
+            >
+              <SiGithub className="mr-2 h-5 w-5" />
+              <span className="font-medium">Continue with GitHub</span>
             </Button>
           </div>
-        </CardContent>
-      </Card>
+          
+          {/* Footer */}
+          <div className="bg-[rgba(20,20,22,0.5)] py-4 px-8 text-xs text-center text-gray-500">
+            <div className="flex items-center justify-center gap-2">
+              <LockKeyhole className="w-3 h-3" />
+              <span>Secure login via GitHub's OAuth</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Floating code blocks - decorative */}
+      <div className="absolute top-[15%] left-[10%] opacity-20 blur-[1px] transform -rotate-6 hidden md:block">
+        <pre className="text-blue-300 text-xs">
+          {`struct Node {
+  int data;
+  Node* next;
+};`}
+        </pre>
+      </div>
+      
+      <div className="absolute bottom-[20%] right-[10%] opacity-20 blur-[1px] transform rotate-3 hidden md:block">
+        <pre className="text-green-300 text-xs">
+          {`void* thread_func(void* arg) {
+  sem_wait(&mutex);
+  // Critical section
+  sem_post(&mutex);
+}`}
+        </pre>
+      </div>
     </div>
   );
 }
