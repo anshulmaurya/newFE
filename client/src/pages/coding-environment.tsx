@@ -245,8 +245,10 @@ export default function CodingEnvironment() {
             throw new Error(errorData.message || "Failed to access coding environment");
           }
           
-          // Use the redirect URL from the successful response
-          setContainerUrl(`/api/container-redirect/${tokenParam}`);
+          // The redirect response should automatically redirect to the Azure container
+          // We need to use the full URL here including protocol, not just the relative path
+          const redirectUrl = window.location.origin + `/api/container-redirect/${tokenParam}`;
+          setContainerUrl(redirectUrl);
         } catch (error) {
           console.error("Error resolving container token:", error);
           toast({
