@@ -12,31 +12,34 @@ export default function Companies() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="font-display font-medium text-2xl md:text-3xl mb-4 text-white">
-            Trusted by engineers from leading companies
+            Engineers working and interviewed at
           </h2>
         </motion.div>
         
         <motion.div 
-          className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70"
+          className="flex flex-wrap justify-center items-center gap-8 md:gap-16"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <div className="h-8 flex items-center">
-            <span className="text-2xl font-bold text-gray-400">TESLA</span>
+          <div className="h-10 flex items-center">
+            <span className="text-2xl font-bold text-[#00B4EF]">QUALCOMM</span>
           </div>
-          <div className="h-8 flex items-center">
-            <span className="text-2xl font-bold text-gray-400">SAMSUNG</span>
+          <div className="h-10 flex items-center">
+            <span className="text-2xl font-bold text-[#76B900]">NVIDIA</span>
           </div>
-          <div className="h-8 flex items-center">
-            <span className="text-2xl font-bold text-gray-400">BOSCH</span>
+          <div className="h-10 flex items-center">
+            <span className="text-2xl font-bold text-[#A2AAAD]">APPLE</span>
           </div>
-          <div className="h-8 flex items-center">
-            <span className="text-2xl font-bold text-gray-400">ARM</span>
+          <div className="h-10 flex items-center">
+            <span className="text-2xl font-bold text-[#E82127]">TESLA</span>
           </div>
-          <div className="h-8 flex items-center">
-            <span className="text-2xl font-bold text-gray-400">INTEL</span>
+          <div className="h-10 flex items-center">
+            <span className="text-2xl font-bold text-[#00A4EF]">MICROSOFT</span>
+          </div>
+          <div className="h-10 flex items-center">
+            <span className="text-2xl font-bold text-[#0668E1]">META</span>
           </div>
         </motion.div>
       </div>
