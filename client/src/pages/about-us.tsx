@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Github, Linkedin, MessageSquare } from "lucide-react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 
 export default function AboutUs() {
   const [_, setLocation] = useLocation();
@@ -147,12 +147,16 @@ export default function AboutUs() {
                   We're just getting started, and we'd love to have you be part of our journey. Sign up today to get early access to all our features.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button className="py-6 text-black font-medium bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)]">
-                    Get Started for Free
-                  </Button>
-                  <Button className="py-6 font-medium" variant="outline">
-                    Join Our Discord
-                  </Button>
+                  <Link href="/auth">
+                    <Button className="py-6 text-black font-medium bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)]">
+                      Get Started for Free
+                    </Button>
+                  </Link>
+                  <a href="https://discord.gg/embedded-systems" target="_blank" rel="noopener noreferrer">
+                    <Button className="py-6 font-medium" variant="outline">
+                      Join Our Discord
+                    </Button>
+                  </a>
                 </div>
               </div>
             </div>
@@ -186,8 +190,6 @@ export default function AboutUs() {
           </div>
         </section>
       </main>
-      
-      <Footer />
     </div>
   );
 }

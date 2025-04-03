@@ -768,7 +768,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                 Join Discord
               </a>
               <button
-                onClick={() => setLocation("/dashboard")}
+                onClick={() => setLocation("/auth")}
                 className="px-6 py-3 border border-[rgb(214,251,65)]/50 text-[rgb(214,251,65)] hover:bg-[rgb(214,251,65)]/10 rounded-lg transition-all w-full sm:w-auto"
               >
                 Get Started
