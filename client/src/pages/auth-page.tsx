@@ -40,17 +40,17 @@ export default function AuthPage() {
   };
   
   return (
-    <div className="bg-[rgb(24,24,26)] text-white h-screen flex items-center justify-center overflow-hidden">
-      <Card className="border-gray-800 bg-[rgb(30,30,32)] w-full max-w-md mx-4">
-        <CardHeader className="flex flex-col items-center text-center pb-4">
-          <Lock className="h-12 w-12 text-primary mb-2" />
-          <CardTitle className="text-2xl font-bold text-white">
+    <div className="fixed inset-0 bg-[rgb(24,24,26)] text-white flex items-center justify-center">
+      <Card className="border-gray-800 bg-[rgb(30,30,32)] w-full max-w-md mx-4 shadow-xl">
+        <CardHeader className="flex flex-col items-center text-center pb-2">
+          <Lock className="h-10 w-10 text-primary mb-1" />
+          <CardTitle className="text-xl font-bold text-white">
             Sign in to access DSPCoder
           </CardTitle>
         </CardHeader>
         
-        <CardContent className="space-y-5">
-          <p className="text-gray-400 text-center text-sm">
+        <CardContent className="space-y-4 pt-2">
+          <p className="text-gray-400 text-center text-xs">
             Login with GitHub to access interactive features, track your progress, and start coding.
           </p>
           
@@ -62,15 +62,15 @@ export default function AuthPage() {
           )}
           
           <Button 
-            className="w-full py-5" 
+            className="w-full py-4" 
             onClick={handleGitHubLogin}
           >
-            <SiGithub className="mr-2 h-5 w-5" />
+            <SiGithub className="mr-2 h-4 w-4" />
             <span>Continue with GitHub</span>
           </Button>
           
           <div className="text-center">
-            <Button variant="link" onClick={handleBackToDashboard}>
+            <Button variant="link" onClick={handleBackToDashboard} className="text-sm h-8 px-2">
               Back to Dashboard
             </Button>
           </div>
