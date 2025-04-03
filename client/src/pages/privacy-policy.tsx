@@ -43,8 +43,7 @@ export default function PrivacyPolicy() {
               
               <Separator className="my-6 bg-gray-700/30" />
               
-              <ScrollArea className="pr-4 h-[60vh] md:h-[65vh] overflow-y-auto">
-                <div className="space-y-8 text-gray-300">
+              <div className="space-y-8 text-gray-300">
                   <section>
                     <h2 className="text-xl font-semibold text-white mb-4">1. Introduction</h2>
                     <p className="mb-4">
@@ -146,7 +145,6 @@ export default function PrivacyPolicy() {
                     </p>
                   </section>
                 </div>
-              </ScrollArea>
             </div>
           </div>
         </div>
