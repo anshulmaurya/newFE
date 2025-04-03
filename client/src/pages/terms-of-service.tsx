@@ -23,7 +23,7 @@ export default function TermsOfService() {
         isScrolled={true}
       />
       
-      <main className="flex-grow container mx-auto px-4 py-12">
+      <main className="flex-grow container mx-auto px-4 py-12 pt-24">
         <div className="max-w-4xl mx-auto bg-[rgb(24,24,26)] rounded-xl shadow-xl overflow-hidden">
           <div className="p-6 md:p-10">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Terms of Service</h1>
