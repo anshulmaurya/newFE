@@ -74,16 +74,16 @@ export default function AuthPage() {
       <div className="relative z-10 w-full max-w-md px-4">
         <div className="relative bg-[rgba(30,30,32,0.7)] backdrop-blur-xl rounded-2xl border border-[rgba(255,255,255,0.1)] shadow-2xl overflow-hidden">
           {/* Top design accent */}
-          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#0070F3] to-[#00C2FF]"></div>
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#FFB800] to-[#FFDA3D]"></div>
           
           {/* Logo and title */}
           <div className="pt-8 pb-4 px-8 text-center">
-            <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-gradient-to-br from-[#0070F3] to-[#00C2FF] flex items-center justify-center">
+            <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-gradient-to-br from-[#FFB800] to-[#FFDA3D] flex items-center justify-center">
               <Code className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold mb-1">Welcome to DSPCoder</h1>
             <p className="text-gray-400 text-sm">
-              Sign in to access personalized exercises and track your progress
+              Sign in to access interview prep resources of Embedded Systems
             </p>
           </div>
           
@@ -100,7 +100,7 @@ export default function AuthPage() {
           {/* Login button */}
           <div className="px-8 pb-6">
             <Button 
-              className="w-full py-6 bg-gradient-to-r from-[#0070F3] to-[#00C2FF] hover:from-[#0080FF] hover:to-[#00D2FF] border-0 transition-all hover:shadow-lg hover:shadow-blue-500/20"
+              className="w-full py-6 bg-gradient-to-r from-[#FFB800] to-[#FFDA3D] hover:from-[#FFCC00] hover:to-[#FFE260] border-0 transition-all hover:shadow-lg hover:shadow-yellow-500/20 text-black"
               onClick={handleGitHubLogin}
             >
               <SiGithub className="mr-2 h-5 w-5" />
