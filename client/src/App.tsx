@@ -46,7 +46,7 @@ function Router() {
       <Route path="/" component={Home}/>
       <PublicRoute path="/dashboard" component={Dashboard} />
       <PublicRoute path="/problems" component={Dashboard} />
-      <PublicRoute path="/coding-environment" component={CodingEnvironment} />
+      <ProtectedRoute path="/coding-environment" component={CodingEnvironment} />
       <ProtectedRoute path="/user-statistics" component={UserStatistics} />
       <ProtectedRoute path="/jd-based" component={JDBasedPage} />
       <ProtectedRoute path="/quick-prep/blind-75" component={Blind75Page} />

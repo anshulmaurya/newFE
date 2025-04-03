@@ -26,10 +26,8 @@ import {
   Database,
   AlertCircle,
   CheckCircle2,
-  XCircle,
-  Loader2
+  XCircle
 } from 'lucide-react';
-import LoadingAnimation from '@/components/coding/loading-animation';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -172,8 +170,6 @@ export default function CodingEnvironment() {
   const [comments, setComments] = useState<Comment[]>(SAMPLE_COMMENTS);
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
   const [activeTab, setActiveTab] = useState<'test-results' | 'memory-profile' | 'cache-profile'>('test-results');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [problemTitle, setProblemTitle] = useState<string>('');
   const { user } = useAuth();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
@@ -186,23 +182,9 @@ export default function CodingEnvironment() {
     const idParam = queryParams.get('problemId');
     const qIdParam = queryParams.get('questionId');
     const langParam = queryParams.get('language');
-    const titleParam = queryParams.get('title');
-    const loadingParam = queryParams.get('loading');
-    
-    // Set the loading state if specified
-    if (loadingParam === 'true') {
-      setIsLoading(true);
-    }
-    
-    // Set the problem title if available
-    if (titleParam) {
-      setProblemTitle(decodeURIComponent(titleParam));
-    }
     
     if (urlParam) {
       setContainerUrl(decodeURIComponent(urlParam));
-      // Once we have the container URL, we're no longer loading
-      setIsLoading(false);
     }
     
     if (idParam) {
@@ -384,6 +366,7 @@ export default function CodingEnvironment() {
             </Tooltip>
           </div>
 
+
           
           {/* Discussion button */}
           <div className="my-2">
@@ -472,68 +455,744 @@ export default function CodingEnvironment() {
       {/* Code execution buttons will be rendered inside the iframe */}
       
       {/* Main content area */}
-      {isLoading ? (
-        <div className="flex-1">
-          <LoadingAnimation title={problemTitle} />
-        </div>
-      ) : (
-        <div className="flex flex-1 overflow-hidden">
-          {/* Left Panel - Problem Description */}
-          {isDescriptionOpen && (
-            <div className="w-2/5 min-w-[480px] max-w-2xl border-r border-[#1E1E1E] bg-[#252526] text-white">
-              {/* Panel contents... */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left Panel - Problem Description (when open) */}
+        {isDescriptionOpen && (
+          <div className="w-2/5 min-w-[480px] max-w-2xl border-r border-[#1E1E1E] bg-[#252526] text-white">
+            <div className="flex items-center justify-between p-3 border-b border-[#1E1E1E]">
+              <div className="flex items-center gap-2">
+                <Code className="h-4 w-4 text-gray-400" />
+                <h2 className="font-medium truncate">
+                  {isLoadingDescription ? (
+                    <Skeleton className="h-5 w-48" />
+                  ) : (
+                    problem?.title || "Loading problem..."
+                  )}
+                </h2>
+              </div>
+              
+              {problem && (
+                <Badge variant="outline" className={getDifficultyColor(problem.difficulty)}>
+                  {problem.difficulty}
+                </Badge>
+              )}
+            </div>
+            
+            <div className="h-full overflow-y-auto">
+              {isLoadingDescription ? (
+                <div className="p-4 space-y-4">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-20 w-full mt-6" />
+                </div>
+              ) : problem ? (
+                <div className="p-4 pb-24">
+                  {activeSection === 'description' && (
+                    <div>
+                      {/* Problem metadata section - streamlined with no separate box */}
+                      <div className="mb-5 space-y-4">
+                        {/* Language */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">Language:</span>
+                          <Badge variant="outline" className="bg-[#3E3E42] text-[#c2ee4a] border-[#c2ee4a]">
+                            {language === "c" ? "C" : language === "cpp" ? "C++" : language}
+                          </Badge>
+                        </div>
+                        
+                        {/* Acceptance rate */}
+                        {problem.acceptance_rate && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">Acceptance Rate:</span>
+                            <Badge variant="outline" className="bg-[#3E3E42]">
+                              {problem.acceptance_rate.toFixed(1)}%
+                            </Badge>
+                          </div>
+                        )}
+                        
+                        {/* Companies */}
+                        {problem.companies && problem.companies.length > 0 && (
+                          <div>
+                            <span className="text-sm font-medium block mb-2">Companies:</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {problem.companies.map((company, idx) => (
+                                <Badge key={idx} variant="outline" className="bg-[#2D2D30] text-white">
+                                  {company}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Tags */}
+                        {problem.tags && problem.tags.length > 0 && (
+                          <div>
+                            <span className="text-sm font-medium block mb-2">Tags:</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {problem.tags.map((tag, idx) => (
+                                <Badge key={idx} variant="outline" className="bg-[#3E3E42] text-white">
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Problem description */}
+                      <div className="prose prose-sm prose-invert max-w-none">
+                        <ReactMarkdown components={{
+                          p: ({node, ...props}) => <p {...props} />,
+                          h1: ({node, ...props}) => <h1 {...props} />,
+                          h2: ({node, ...props}) => <h2 {...props} />,
+                          h3: ({node, ...props}) => <h3 {...props} />,
+                          ul: ({node, ...props}) => <ul {...props} />,
+                          ol: ({node, ...props}) => <ol {...props} />,
+                          li: ({node, ...props}) => <li {...props} />,
+                          code: ({node, ...props}) => <code {...props} />,
+                          pre: ({node, ...props}) => <pre {...props} />
+                        }}>
+                          {problem.readme || "No description available."}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {activeSection === 'solution' && (
+                    <div className="prose prose-sm prose-invert max-w-none">
+                      <ReactMarkdown components={{
+                        p: ({node, ...props}) => <p {...props} />,
+                        h1: ({node, ...props}) => <h1 {...props} />,
+                        h2: ({node, ...props}) => <h2 {...props} />,
+                        h3: ({node, ...props}) => <h3 {...props} />,
+                        ul: ({node, ...props}) => <ul {...props} />,
+                        ol: ({node, ...props}) => <ol {...props} />,
+                        li: ({node, ...props}) => <li {...props} />,
+                        code: ({node, ...props}) => <code {...props} />,
+                        pre: ({node, ...props}) => <pre {...props} />
+                      }}>
+                        {problem.solution || "Solution is not available yet."}
+                      </ReactMarkdown>
+                    </div>
+                  )}
+                  
+
+                  
+                  {activeSection === 'submissions' && submissionResult && (
+                    <div className="space-y-6">
+                      <div className="bg-[#1E1E1E] rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-1">
+                          <h2 className="text-xl font-bold">Submission Result</h2>
+                          <Badge 
+                            variant="outline"
+                            className={submissionResult.output.metadata.overall_status === "PASS" ? "bg-green-600" : "bg-red-600"}
+                          >
+                            {submissionResult.output.metadata.overall_status}
+                          </Badge>
+                        </div>
+                        <p className="text-gray-400 mb-4">Execution completed in {submissionResult.output.metadata.Total_Time.toFixed(2)}ms</p>
+                        
+                        <div className="grid grid-cols-3 gap-4 mb-6">
+                          <div className="flex items-center gap-2">
+                            <div className="rounded-full bg-[#2D2D30] p-2">
+                              <Clock className="h-5 w-5 text-blue-400" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-400">Runtime</p>
+                              <p className="font-semibold">{submissionResult.output.metadata.Total_Time.toFixed(2)}ms</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <div className="rounded-full bg-[#2D2D30] p-2">
+                              <Database className="h-5 w-5 text-purple-400" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-400">Memory</p>
+                              <p className="font-semibold">{(submissionResult.output.metadata.mem_stat.footprint.total_ram / 1024).toFixed(2)} KB</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <div className="rounded-full bg-[#2D2D30] p-2">
+                              <AlertCircle className="h-5 w-5 text-yellow-400" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-400">Memory Leaks</p>
+                              <p className="font-semibold">{submissionResult.output.metadata.mem_stat.memory_leak.definitely_lost} bytes</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Test case summary */}
+                        <div className="mb-6">
+                          <div className="flex justify-between items-center mb-2">
+                            <h3 className="font-medium">Test Cases: {Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length}/{Object.keys(submissionResult.output.test_cases).length} passed</h3>
+                            <p className="text-sm text-gray-400">
+                              {((Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length / Object.keys(submissionResult.output.test_cases).length) * 100).toFixed(1)}%
+                            </p>
+                          </div>
+                          <div className="w-full bg-[#2D2D30] rounded-full h-2.5">
+                            <div 
+                              className="bg-green-600 h-2.5 rounded-full" 
+                              style={{ 
+                                width: `${(Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length / Object.keys(submissionResult.output.test_cases).length) * 100}%` 
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                        
+                        {/* Tab buttons for test results, memory profile, etc. */}
+                        <div className="border-b border-[#3E3E42] mb-6">
+                          <div className="flex space-x-4">
+                            <button 
+                              className={`pb-2 px-1 ${activeTab === 'test-results' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
+                              onClick={() => setActiveTab('test-results')}
+                            >
+                              Test Results
+                            </button>
+                            <button 
+                              className={`pb-2 px-1 ${activeTab === 'memory-profile' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
+                              onClick={() => setActiveTab('memory-profile')}
+                            >
+                              Memory Profile
+                            </button>
+                            <button 
+                              className={`pb-2 px-1 ${activeTab === 'cache-profile' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
+                              onClick={() => setActiveTab('cache-profile')}
+                            >
+                              Cache Profile
+                            </button>
+                          </div>
+                        </div>
+                        
+                        {/* Tab content */}
+                        {activeTab === 'test-results' && (
+                          <div className="space-y-4">
+                            <h3 className="font-medium text-lg">Test Case Results</h3>
+                            <p className="text-sm text-gray-400 mb-4">
+                              {Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "PASS").length} passed, {Object.values(submissionResult.output.test_cases).filter(tc => tc.status === "FAIL").length} failed
+                            </p>
+                            
+                            <div className="space-y-4">
+                              {Object.entries(submissionResult.output.test_cases).map(([testName, testCase]) => (
+                                <div key={testName} className="flex items-start justify-between border-b border-[#3E3E42] pb-4">
+                                  <div className="flex items-center gap-2">
+                                    {testCase.status === "PASS" ? (
+                                      <CheckCircle2 className="h-5 w-5 text-green-500" />
+                                    ) : (
+                                      <XCircle className="h-5 w-5 text-red-500" />
+                                    )}
+                                    <span className="font-mono text-sm">{testName}</span>
+                                  </div>
+                                  <Badge 
+                                    variant={testCase.status === "PASS" ? "outline" : "destructive"}
+                                    className={testCase.status === "PASS" ? "bg-green-500/10 text-green-500 border-green-500/20" : ""}
+                                  >
+                                    {testCase.status}
+                                  </Badge>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {activeTab === 'memory-profile' && (
+                          <div className="space-y-4">
+                            <h3 className="font-medium text-lg">Memory Profile</h3>
+                            
+                            <div className="bg-[#2D2D30] p-4 rounded-md">
+                              <h4 className="text-sm font-medium mb-2">Memory Footprint</h4>
+                              <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                  <p className="text-xs text-gray-400">Heap Usage</p>
+                                  <p className="font-mono">{(submissionResult.output.metadata.mem_stat.footprint.heap_usage / 1024).toFixed(2)} KB</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">Stack Usage</p>
+                                  <p className="font-mono">{(submissionResult.output.metadata.mem_stat.footprint.stack_usage / 1024).toFixed(2)} KB</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">Total RAM</p>
+                                  <p className="font-mono">{(submissionResult.output.metadata.mem_stat.footprint.total_ram / 1024).toFixed(2)} KB</p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="bg-[#2D2D30] p-4 rounded-md">
+                              <h4 className="text-sm font-medium mb-2">Memory Leaks</h4>
+                              <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                  <p className="text-xs text-gray-400">Definitely Lost</p>
+                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.memory_leak.definitely_lost} bytes</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">Indirectly Lost</p>
+                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.memory_leak.indirectly_lost} bytes</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">Possibly Lost</p>
+                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.memory_leak.possibly_lost} bytes</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {activeTab === 'cache-profile' && (
+                          <div className="space-y-4">
+                            <h3 className="font-medium text-lg">Cache Profile</h3>
+                            
+                            <div className="bg-[#2D2D30] p-4 rounded-md">
+                              <h4 className="text-sm font-medium mb-2">Cache Misses</h4>
+                              <div className="grid grid-cols-3 gap-4">
+                                <div>
+                                  <p className="text-xs text-gray-400">L1 Cache Misses</p>
+                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.cache_profile.l1_miss}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">L2 Cache Misses</p>
+                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.cache_profile.l2_miss}</p>
+                                </div>
+                                <div>
+                                  <p className="text-xs text-gray-400">Branch Misses</p>
+                                  <p className="font-mono">{submissionResult.output.metadata.mem_stat.cache_profile.branch_miss}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {activeSection === 'discussion' && (
+                    <div className="space-y-6">
+                      <h3 className="font-medium text-lg">Discussion Forum</h3>
+                      
+                      {/* Comment form */}
+                      <div className="bg-[#2D2D30] p-3 rounded-md">
+                        <h4 className="text-sm font-medium mb-2">Add your thoughts</h4>
+                        <Textarea 
+                          placeholder="Share your solution approach, tips, or ask questions..." 
+                          className="resize-none bg-[#1E1E1E] border-[#3E3E42]" 
+                          value={commentText}
+                          onChange={(e) => setCommentText(e.target.value)}
+                          rows={4}
+                        />
+                        <div className="flex justify-end mt-2">
+                          <Button 
+                            size="sm" 
+                            className="gap-1"
+                            disabled={!commentText.trim() || !user}
+                            onClick={() => {
+                              if (!problemId || !user) return;
+
+                              // In a real app, this would be an API call
+                              const newComment: Comment = {
+                                id: comments.length + 1,
+                                problemId: problemId,
+                                userId: user.id,
+                                username: user.username,
+                                avatarUrl: user.avatarUrl || undefined,
+                                content: commentText,
+                                createdAt: new Date().toISOString(),
+                                upvotes: 0,
+                                downvotes: 0,
+                              };
+
+                              setComments([...comments, newComment]);
+                              setCommentText('');
+                              toast({
+                                title: 'Comment added',
+                                description: 'Your comment has been posted successfully',
+                              });
+                            }}
+                          >
+                            <Send className="h-3.5 w-3.5" />
+                            Post
+                          </Button>
+                        </div>
+                        {!user && (
+                          <p className="text-xs text-gray-400 mt-1 text-center">
+                            You need to be logged in to post comments.
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Comments list */}
+                      <div className="space-y-4">
+                        {/* Sort comments by upvotes and put user's comments at the top */}
+                        {comments
+                          .slice()
+                          .sort((a, b) => {
+                            // First put user's comments at the top
+                            if (user && a.userId === user.id && b.userId !== user.id) return -1;
+                            if (user && a.userId !== user.id && b.userId === user.id) return 1;
+                            // Then sort by upvotes
+                            return (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes);
+                          })
+                          .map((comment) => (
+                          <div 
+                            key={comment.id} 
+                            className={cn(
+                              "p-3 rounded-md",
+                              user && comment.userId === user.id 
+                                ? "bg-gradient-to-r from-[#2D2D30] to-[#2D3340] border border-blue-700/20" 
+                                : "bg-[#2D2D30]"
+                            )}>
+                            <div className="flex justify-between items-start">
+                              <div className="flex items-center gap-2">
+                                <Avatar className="h-8 w-8">
+                                  <AvatarImage src={comment.avatarUrl} />
+                                  <AvatarFallback>{comment.username.charAt(0).toUpperCase()}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <p className="text-sm font-medium">{comment.username}</p>
+                                  <p className="text-xs text-gray-400">
+                                    {format(new Date(comment.createdAt), 'MMM d, yyyy')}
+                                  </p>
+                                </div>
+                              </div>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      // This would be an API call in a real app
+                                      navigator.clipboard.writeText(comment.content);
+                                      toast({
+                                        title: 'Comment copied',
+                                        description: 'Comment text copied to clipboard',
+                                      });
+                                    }}
+                                  >
+                                    Copy text
+                                  </DropdownMenuItem>
+                                  {user && comment.userId === user.id && (
+                                    <DropdownMenuItem
+                                      onClick={() => {
+                                        // This would be an API call in a real app
+                                        setComments(comments.filter(c => c.id !== comment.id));
+                                        toast({
+                                          title: 'Comment deleted',
+                                          description: 'Your comment has been deleted',
+                                        });
+                                      }}
+                                      className="text-red-500"
+                                    >
+                                      Delete
+                                    </DropdownMenuItem>
+                                  )}
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                            <div className="mt-2 text-sm">
+                              {comment.content}
+                            </div>
+                            <div className="mt-3 flex items-center gap-2">
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                className="h-7 px-2 text-xs gap-1 text-gray-400 hover:text-white"
+                                onClick={() => {
+                                  // This would be an API call in a real app
+                                  const updatedComments = comments.map(c => {
+                                    if (c.id === comment.id) {
+                                      // If already upvoted, remove upvote
+                                      if (c.userVote === 'upvote') {
+                                        return { 
+                                          ...c, 
+                                          upvotes: c.upvotes - 1,
+                                          userVote: null as ('upvote' | 'downvote' | null)
+                                        };
+                                      } 
+                                      // If downvoted, switch to upvote
+                                      else if (c.userVote === 'downvote') {
+                                        return { 
+                                          ...c, 
+                                          upvotes: c.upvotes + 1,
+                                          downvotes: c.downvotes - 1,
+                                          userVote: 'upvote' as ('upvote' | 'downvote' | null)
+                                        };
+                                      } 
+                                      // If no vote, add upvote
+                                      else {
+                                        return { 
+                                          ...c, 
+                                          upvotes: c.upvotes + 1,
+                                          userVote: 'upvote' as ('upvote' | 'downvote' | null)
+                                        };
+                                      }
+                                    }
+                                    return c;
+                                  });
+                                  setComments(updatedComments as Comment[]);
+                                }}
+                              >
+                                <ThumbsUp className={cn(
+                                  "h-3.5 w-3.5",
+                                  comment.userVote === 'upvote' && "fill-current text-blue-500"
+                                )} />
+                                {comment.upvotes > 0 && <span>{comment.upvotes}</span>}
+                              </Button>
+                              
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                className="h-7 px-2 text-xs gap-1 text-gray-400 hover:text-white"
+                                onClick={() => {
+                                  // This would be an API call in a real app
+                                  const updatedComments = comments.map(c => {
+                                    if (c.id === comment.id) {
+                                      // If already downvoted, remove downvote
+                                      if (c.userVote === 'downvote') {
+                                        return { 
+                                          ...c, 
+                                          downvotes: c.downvotes - 1,
+                                          userVote: null as ('upvote' | 'downvote' | null)
+                                        };
+                                      } 
+                                      // If upvoted, switch to downvote
+                                      else if (c.userVote === 'upvote') {
+                                        return { 
+                                          ...c, 
+                                          upvotes: c.upvotes - 1,
+                                          downvotes: c.downvotes + 1,
+                                          userVote: 'downvote' as ('upvote' | 'downvote' | null)
+                                        };
+                                      } 
+                                      // If no vote, add downvote
+                                      else {
+                                        return { 
+                                          ...c, 
+                                          downvotes: c.downvotes + 1,
+                                          userVote: 'downvote' as ('upvote' | 'downvote' | null)
+                                        };
+                                      }
+                                    }
+                                    return c;
+                                  });
+                                  setComments(updatedComments as Comment[]);
+                                }}
+                              >
+                                <ThumbsDown className={cn(
+                                  "h-3.5 w-3.5",
+                                  comment.userVote === 'downvote' && "fill-current text-red-500"
+                                )} />
+                                {comment.downvotes > 0 && <span>{comment.downvotes}</span>}
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+
+                        {comments.length === 0 && (
+                          <div className="text-center py-8">
+                            <MessagesSquare className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                            <p className="text-gray-400">No comments yet. Be the first to share your thoughts!</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="p-4 text-center flex flex-col items-center justify-center h-full">
+                  <Info className="h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium mb-2">Problem description not available</h3>
+                  <p className="text-gray-400 max-w-md">
+                    We couldn't load the problem description. Please try again or go back to the problem page.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        
+        {/* Right Panel - Code Editor */}
+        <div className="flex-1 flex flex-col relative">
+          {/* Optional title bar in fullscreen mode */}
+          {isFullscreen && !isDescriptionOpen && (
+            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-[#252526] rounded-md text-white z-10 flex items-center gap-2">
+              <span className="text-sm font-medium truncate max-w-md">
+                {problem?.title || "Coding Environment"}
+              </span>
+              <Badge variant="outline" className="bg-[#3E3E42] text-[#c2ee4a] border-[#c2ee4a] text-xs uppercase">
+                {language === "c" ? "C" : language === "cpp" ? "C++" : language}
+              </Badge>
             </div>
           )}
           
-          {/* Main Panel - Coding Iframe */}
-          <div className="flex-1 flex flex-col relative">
-            {/* Display iframe or error message */}
-            {containerUrl ? (
-              <div className="relative flex-grow w-full">
-                {/* Action buttons overlay */}
-                <div className="absolute top-1 left-[95px] z-10 flex items-center space-x-2">
-                  <Button 
-                    variant="default"
-                    size="sm"
-                    className="bg-[#c2ee4a] hover:bg-[#b2de3a] text-black"
-                    onClick={() => {
+          {containerUrl ? (
+            <div className="relative flex-grow w-full">
+              {/* Action buttons overlay */}
+              <div className="absolute top-1 left-[95px] z-10 flex items-center space-x-2">
+                <Button 
+                  variant="default"
+                  className="h-6 px-3 text-xs bg-[#c2ee4a] hover:bg-[#b2de3a] text-black border-none rounded-full"
+                  onClick={async () => {
+                    if (!questionId || !user) {
                       toast({
-                        title: "Submitting solution...",
-                        description: "Running tests and checking your solution",
+                        title: 'Error',
+                        description: 'Problem ID or user information is missing.',
+                        variant: 'destructive'
                       });
-                    }}
-                  >
-                    <Send className="h-3 w-3 mr-1" />
-                    Submit
-                  </Button>
-                </div>
-                <iframe 
-                  ref={iframeRef}
-                  src={containerUrl} 
-                  className="w-full h-full border-0"
-                  title="Coding Environment"
-                  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
-                  loading="eager"
-                />
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full p-8 text-white">
-                <Alert variant="destructive" className="mb-6 max-w-md">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
-                    Container URL not found. Please go back and try setting up the codebase again.
-                  </AlertDescription>
-                </Alert>
-                
-                <Button onClick={goHome} className="gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  Return to Dashboard
+                      return;
+                    }
+                    
+                    toast({
+                      title: 'Run Code',
+                      description: 'Running your code...',
+                    });
+                    
+                    try {
+                      const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/build_and_run_question', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          username: user.username,
+                          question_id: questionId,
+                          lang: language,
+                          profile: 'False'
+                        })
+                      });
+                      
+                      const data = await response.json();
+                      
+                      if (response.ok) {
+                        toast({
+                          title: 'Success',
+                          description: 'Code ran successfully!',
+                        });
+                        console.log('Run result:', data);
+                      } else {
+                        toast({
+                          title: 'Error',
+                          description: data.message || 'Failed to run code.',
+                          variant: 'destructive'
+                        });
+                      }
+                    } catch (error) {
+                      console.error('Error running code:', error);
+                      toast({
+                        title: 'Error',
+                        description: 'Failed to run code. Please try again.',
+                        variant: 'destructive'
+                      });
+                    }
+                  }}
+                >
+                  <Play className="h-3 w-3 mr-1" />
+                  Run
+                </Button>
+                <Button 
+                  variant="default"
+                  className="h-6 px-3 text-xs bg-[#c2ee4a] hover:bg-[#b2de3a] text-black border-none rounded-full"
+                  onClick={async () => {
+                    if (!questionId || !user) {
+                      toast({
+                        title: 'Error',
+                        description: 'Problem ID or user information is missing.',
+                        variant: 'destructive'
+                      });
+                      return;
+                    }
+                    
+                    toast({
+                      title: 'Submit Solution',
+                      description: 'Submitting your solution for evaluation...',
+                    });
+                    
+                    try {
+                      const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/submit_question', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          username: user.username,
+                          question_id: questionId,
+                          lang: language,
+                          profile: 'False'
+                        })
+                      });
+                      
+                      const data = await response.json();
+                      
+                      if (response.ok) {
+                        // Store the submission result
+                        if (data.response && data.response.status) {
+                          setSubmissionResult(data.response);
+                          
+                          // Make sure the submissions panel is open
+                          // We need to ensure this doesn't toggle off if already open
+                          setIsDescriptionOpen(true);
+                          setActiveSection('submissions');
+                          
+                          toast({
+                            title: 'Success',
+                            description: 'Solution submitted successfully!',
+                          });
+                          console.log('Submit result:', data);
+                        } else {
+                          toast({
+                            title: 'Success',
+                            description: 'Solution submitted, but no detailed results available.',
+                          });
+                        }
+                      } else {
+                        toast({
+                          title: 'Error',
+                          description: data.message || 'Failed to submit solution.',
+                          variant: 'destructive'
+                        });
+                      }
+                    } catch (error) {
+                      console.error('Error submitting solution:', error);
+                      toast({
+                        title: 'Error',
+                        description: 'Failed to submit solution. Please try again.',
+                        variant: 'destructive'
+                      });
+                    }
+                  }}
+                >
+                  <Send className="h-3 w-3 mr-1" />
+                  Submit
                 </Button>
               </div>
-            )}
-          </div>
+              <iframe 
+                ref={iframeRef}
+                src={containerUrl} 
+                className="w-full h-full border-0"
+                title="Coding Environment"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
+                loading="eager"
+              />
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full p-8 text-white">
+              <Alert variant="destructive" className="mb-6 max-w-md">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  Container URL not found. Please go back and try setting up the codebase again.
+                </AlertDescription>
+              </Alert>
+              
+              <Button onClick={goHome} className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Return to Dashboard
+              </Button>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </motion.div>
   );
 }
