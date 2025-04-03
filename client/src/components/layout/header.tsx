@@ -187,7 +187,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           </button>
           
           <a 
-            href="https://discord.gg/embedded-systems" 
+            href="https://discord.gg/HxAqXd8Xwt" 
             target="_blank" 
             rel="noopener noreferrer"
             className="nav-link group px-2 py-1"
@@ -377,7 +377,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
             Problems
           </button>
           <a 
-            href="https://discord.gg/embedded-systems" 
+            href="https://discord.gg/HxAqXd8Xwt" 
             target="_blank" 
             rel="noopener noreferrer"
             className="py-1.5 border-b border-gray-700/30 text-sm text-gray-300 hover:text-white"

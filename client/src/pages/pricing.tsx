@@ -3,7 +3,7 @@ import Footer from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check } from "lucide-react";
+import { Check, ArrowLeft } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function Pricing() {
@@ -26,6 +26,17 @@ export default function Pricing() {
       />
       
       <main className="flex-grow container mx-auto px-4 py-12 pt-24 overflow-y-auto">
+        <div className="flex justify-start max-w-5xl mx-auto mb-4">
+          <Button 
+            variant="ghost" 
+            className="text-gray-400 hover:text-white"
+            onClick={() => setLocation("/")}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </Button>
+        </div>
+        
         <div className="max-w-5xl mx-auto text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Simple, Transparent Pricing</h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">

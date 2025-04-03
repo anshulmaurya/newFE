@@ -3,7 +3,7 @@ import Footer from "@/components/layout/footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Github, Linkedin, MessageSquare } from "lucide-react";
+import { Github, Linkedin, MessageSquare, ArrowLeft } from "lucide-react";
 import { useLocation, Link } from "wouter";
 
 export default function AboutUs() {
@@ -26,8 +26,19 @@ export default function AboutUs() {
       />
       
       <main className="flex-grow pt-16 overflow-y-auto h-screen">
+        <div className="container mx-auto px-4 pt-4">
+          <Button 
+            variant="ghost" 
+            className="mb-2 text-gray-400 hover:text-white"
+            onClick={() => setLocation("/")}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </Button>
+        </div>
+        
         {/* Hero Section */}
-        <section className="relative bg-black py-24 overflow-hidden">
+        <section className="relative bg-black py-16 overflow-hidden">
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0.8)] to-black z-10"></div>
             <div className="grid grid-cols-12 grid-rows-6 gap-1 opacity-20 w-full h-full absolute">
@@ -152,7 +163,7 @@ export default function AboutUs() {
                       Get Started for Free
                     </Button>
                   </Link>
-                  <a href="https://discord.gg/embedded-systems" target="_blank" rel="noopener noreferrer">
+                  <a href="https://discord.gg/HxAqXd8Xwt" target="_blank" rel="noopener noreferrer">
                     <Button className="py-6 font-medium" variant="outline">
                       Join Our Discord
                     </Button>
