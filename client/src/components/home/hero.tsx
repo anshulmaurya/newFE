@@ -745,7 +745,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
             </h1>
 
             <p className="text-gray-300 text-lg mb-8 max-w-xl">
-              Meet the embedded systems interview hub, designed to simplify your prep. 
+              Meet the <span className="font-bold text-white">embedded systems interview</span> hub, designed to simplify your prep. 
               Created by ex-interviewers from <span className="font-medium bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-green-400 to-teal-400">MAANG+</span> and top semiconductor leaders.
             </p>
 
