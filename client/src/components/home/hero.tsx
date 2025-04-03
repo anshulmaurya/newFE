@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useLocation } from "wouter";
+import BlurText from "../ui/blur-text";
 
 interface HeroProps {
   onScrollToFeatures: () => void;
@@ -715,9 +716,9 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                 }}
               >
                 <span className="gradient-text relative inline-block">
-                  Cracking
+                  Ace Embedded Systems
                   <br />
-                  Embedded Interviews
+                  Interview 
                   <motion.span
                     className="absolute -bottom-2 left-0 w-full h-1 bg-primary"
                     initial={{ width: 0 }}
@@ -740,7 +741,11 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                   ease: [0.22, 1, 0.36, 1],
                 }}
               >
-                <span className="gradient-text">Simplified.</span>
+                <BlurText 
+                  text="with ease" 
+                  className="gradient-text"
+                  delay={150}
+                />
               </motion.div>
             </h1>
 
