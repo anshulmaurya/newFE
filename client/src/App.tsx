@@ -12,6 +12,7 @@ import CodingEnvironment from "@/pages/coding-environment";
 import UserStatistics from "@/pages/user-statistics";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
+import { PublicRoute } from "./lib/public-route";
 
 // Import components directly
 import Blind75Page from '@/pages/quick-prep/blind-75';
@@ -37,8 +38,8 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home}/>
-      <ProtectedRoute path="/dashboard" component={Dashboard} />
-      <ProtectedRoute path="/problems" component={Dashboard} />
+      <PublicRoute path="/dashboard" component={Dashboard} />
+      <PublicRoute path="/problems" component={Dashboard} />
       <ProtectedRoute path="/coding-environment" component={CodingEnvironment} />
       <ProtectedRoute path="/user-statistics" component={UserStatistics} />
       <ProtectedRoute path="/jd-based" component={JDBasedPage} />
