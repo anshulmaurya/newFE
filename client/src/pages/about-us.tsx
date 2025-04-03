@@ -18,14 +18,14 @@ export default function AboutUs() {
   };
   
   return (
-    <div className="min-h-screen flex flex-col bg-black">
+    <div className="min-h-screen flex flex-col bg-black app-container">
       <Header 
         onNavigateFeatures={navigateToFeatures}
         onNavigateProblems={navigateToProblems}
         isScrolled={true}
       />
       
-      <main className="flex-grow pt-24 pb-40">
+      <main className="flex-grow pt-24 pb-40 scrollable-content">
         <div className="container mx-auto px-4 pt-4">
           <Button 
             variant="ghost" 

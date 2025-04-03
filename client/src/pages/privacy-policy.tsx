@@ -18,14 +18,14 @@ export default function PrivacyPolicy() {
   };
   
   return (
-    <div className="min-h-screen flex flex-col bg-black">
+    <div className="min-h-screen flex flex-col bg-black app-container">
       <Header 
         onNavigateFeatures={navigateToFeatures}
         onNavigateProblems={navigateToProblems}
         isScrolled={true}
       />
       
-      <main className="flex-grow container mx-auto px-4 py-12 pt-24 pb-40">
+      <main className="flex-grow container mx-auto px-4 py-12 pt-24 pb-40 scrollable-content">
         <div className="max-w-4xl mx-auto">
           <Button 
             variant="ghost" 
