@@ -40,17 +40,17 @@ export default function AuthPage() {
   };
   
   return (
-    <div className="bg-[rgb(24,24,26)] text-white min-h-screen flex items-center justify-center p-4">
-      <Card className="border-gray-800 bg-[rgb(30,30,32)] w-full max-w-md">
-        <CardHeader className="flex flex-col items-center space-y-2 text-center">
+    <div className="bg-[rgb(24,24,26)] text-white h-screen flex items-center justify-center overflow-hidden">
+      <Card className="border-gray-800 bg-[rgb(30,30,32)] w-full max-w-md mx-4">
+        <CardHeader className="flex flex-col items-center text-center pb-4">
           <Lock className="h-12 w-12 text-primary mb-2" />
           <CardTitle className="text-2xl font-bold text-white">
             Sign in to access DSPCoder
           </CardTitle>
         </CardHeader>
         
-        <CardContent className="space-y-6">
-          <p className="text-gray-400 text-center">
+        <CardContent className="space-y-5">
+          <p className="text-gray-400 text-center text-sm">
             Login with GitHub to access interactive features, track your progress, and start coding.
           </p>
           
@@ -62,7 +62,7 @@ export default function AuthPage() {
           )}
           
           <Button 
-            className="w-full py-6" 
+            className="w-full py-5" 
             onClick={handleGitHubLogin}
           >
             <SiGithub className="mr-2 h-5 w-5" />
