@@ -1,5 +1,4 @@
 import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useLocation } from "wouter";
@@ -143,8 +142,6 @@ export default function TermsOfService() {
           </div>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 }
