@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/use-auth';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import { Loader2, Clock, BookOpen, Zap } from 'lucide-react';
 import { SiTesla } from 'react-icons/si';
+import { useSetupCodebase } from '@/hooks/use-setup-codebase';
 
 // Define types for API responses
 type Problem = {
@@ -61,7 +62,9 @@ const TeslaPage: React.FC = () => {
     enabled: !!user,
   });
 
-  // Setup codebase for a problem
+  // Setup codebase for a problem with immediate feedback
+  const { setupCodebase } = useSetupCodebase();
+  
   const handleSetupCodebase = (problemId: string, questionId?: string) => {
     if (!user) {
       toast({
@@ -73,8 +76,12 @@ const TeslaPage: React.FC = () => {
       return;
     }
     
-    // Navigate to the problem detail or coding page
-    setLocation(`/coding-environment?id=${problemId}${questionId ? `&questionId=${questionId}` : ''}`);
+    // Use our hook to both navigate and trigger the API call in the background
+    setupCodebase({
+      problemId,
+      questionId,
+      language
+    });
   };
 
   return (

@@ -26,7 +26,8 @@ import {
   Database,
   AlertCircle,
   CheckCircle2,
-  XCircle
+  XCircle,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -181,7 +182,7 @@ export default function CodingEnvironment() {
     
     const urlParam = queryParams.get('containerUrl');
     const tokenParam = queryParams.get('containerToken');
-    const idParam = queryParams.get('problemId');
+    const idParam = queryParams.get('id') || queryParams.get('problemId');
     const qIdParam = queryParams.get('questionId');
     const langParam = queryParams.get('language');
     
@@ -221,7 +222,44 @@ export default function CodingEnvironment() {
     if (langParam) {
       setLanguage(langParam);
     }
-  }, [toast]);
+    
+    // Setup codebase if we have a problem ID and question ID but no container URL yet
+    if (idParam && qIdParam && !containerUrl && !containerToken && user?.username) {
+      // Make the API call to set up the codebase
+      (async () => {
+        try {
+          const res = await fetch('/api/setup-codebase', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              questionId: qIdParam,
+              language: langParam || 'c',
+            }),
+          });
+          
+          const data = await res.json();
+          
+          if (data.containerToken) {
+            setContainerToken(data.containerToken);
+            const redirectUrl = `/api/container-redirect/${data.containerToken}`;
+            setContainerUrl(redirectUrl);
+          } else if (data.containerUrl) {
+            // Legacy support
+            setContainerUrl(data.containerUrl);
+          }
+        } catch (error) {
+          console.error("Error setting up codebase:", error);
+          toast({
+            title: "Background setup error",
+            description: "Environment setup encountered an issue. Please try again.",
+            variant: "destructive",
+          });
+        }
+      })();
+    }
+  }, [toast, user]);
   
   // Fetch problem description from the external API
   const { data: problemDescription, isLoading: isLoadingDescription } = useQuery<ProblemDescriptionResponse>({
@@ -1201,14 +1239,16 @@ export default function CodingEnvironment() {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full p-8 text-white">
-              <Alert variant="destructive" className="mb-6 max-w-md">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Container URL not found. Please go back and try setting up the codebase again.
-                </AlertDescription>
-              </Alert>
+              <div className="flex flex-col items-center justify-center mb-6">
+                <Loader2 className="h-12 w-12 text-[#c2ee4a] animate-spin mb-4" />
+                <h2 className="text-xl font-semibold mb-2">Setting up your coding environment...</h2>
+                <p className="text-gray-400 text-center max-w-md">
+                  We're preparing your container with the necessary code files and development environment.
+                  This may take a few moments.
+                </p>
+              </div>
               
-              <Button onClick={goHome} className="gap-2">
+              <Button onClick={goHome} variant="outline" className="gap-2 mt-4">
                 <ArrowLeft className="h-4 w-4" />
                 Return to Dashboard
               </Button>
