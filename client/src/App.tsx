@@ -31,6 +31,7 @@ import GitbookDocumentation from '@/pages/notes/gitbook-documentation';
 import Quickstart from '@/pages/notes/quickstart';
 import CommunicationProtocols from '@/pages/notes/communication-protocols';
 import DataStructures from '@/pages/notes/data-structures';
+import Multithreading from '@/pages/notes/multithreading';
 
 // Import notes subpages
 import SPI from '@/pages/notes/communication-protocols/spi';
@@ -39,6 +40,9 @@ import UART from '@/pages/notes/communication-protocols/uart';
 import LinkedList from '@/pages/notes/data-structures/linked-list';
 import ArrayPage from '@/pages/notes/data-structures/array';
 import StringPage from '@/pages/notes/data-structures/string';
+import MultithreadingIntroduction from '@/pages/notes/multithreading/introduction';
+import MultithreadingKeyConcepts from '@/pages/notes/multithreading/key-concepts';
+import MultithreadingInterviewTips from '@/pages/notes/multithreading/interview-tips';
 
 function Router() {
   return (
@@ -67,6 +71,7 @@ function Router() {
       <ProtectedRoute path="/notes/quickstart" component={Quickstart} />
       <ProtectedRoute path="/notes/communication-protocols" component={CommunicationProtocols} />
       <ProtectedRoute path="/notes/data-structures" component={DataStructures} />
+      <ProtectedRoute path="/notes/multithreading" component={Multithreading} />
       
       {/* Protected Notes subpages */}
       <ProtectedRoute path="/notes/communication-protocols/spi" component={SPI} />
@@ -75,6 +80,9 @@ function Router() {
       <ProtectedRoute path="/notes/data-structures/linked-list" component={LinkedList} />
       <ProtectedRoute path="/notes/data-structures/array" component={ArrayPage} />
       <ProtectedRoute path="/notes/data-structures/string" component={StringPage} />
+      <ProtectedRoute path="/notes/multithreading/introduction" component={MultithreadingIntroduction} />
+      <ProtectedRoute path="/notes/multithreading/key-concepts" component={MultithreadingKeyConcepts} />
+      <ProtectedRoute path="/notes/multithreading/interview-tips" component={MultithreadingInterviewTips} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />

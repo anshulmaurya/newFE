@@ -38,66 +38,32 @@ const notesTopics: TopicSection[] = [
     ]
   },
   { 
-    id: "practice-questions", 
-    label: "Practice questions",
+    id: "multithreading", 
+    label: "Multithreading",
     subsections: [
       {
-        id: "practice-questions-main",
-        label: "Practice questions",
+        id: "multithreading-main",
+        label: "Multithreading",
         icon: <FileCode className="h-4 w-4 mr-2" />,
-        path: "/notes/practice-questions",
+        path: "/notes/multithreading",
         expandable: true,
         subsections: [
-          { id: "all-practice", label: "All practice questions", icon: <LayoutGrid className="h-4 w-4 mr-2" />, path: "/notes/practice-questions/all" },
-          { id: "frameworks", label: "Frameworks / languages", icon: <Grid3X3 className="h-4 w-4 mr-2" />, path: "/notes/practice-questions/frameworks" },
-          { id: "formats", label: "Question formats", icon: <Code className="h-4 w-4 mr-2" />, path: "/notes/practice-questions/formats" }
+          { id: "introduction", label: "Introduction", icon: <LayoutGrid className="h-4 w-4 mr-2" />, path: "/notes/multithreading/introduction" },
+          { id: "key-concepts", label: "Key Concepts", icon: <Grid3X3 className="h-4 w-4 mr-2" />, path: "/notes/multithreading/key-concepts" },
+          { id: "interview-tips", label: "Interview Tips", icon: <Code className="h-4 w-4 mr-2" />, path: "/notes/multithreading/interview-tips" }
         ]
       }
     ]
   },
   { 
-    id: "recommended-strategy", 
-    label: "Recommended strategy",
+    id: "data-structures", 
+    label: "Data Structures",
     subsections: [
       {
-        id: "recommended-strategy-main",
-        label: "Recommended strategy",
-        icon: <Puzzle className="h-4 w-4 mr-2" />,
-        path: "/notes/strategy",
-        expandable: true,
-        subsections: [
-          { id: "beginners", label: "For beginners", path: "/notes/strategy/beginners" },
-          { id: "experienced", label: "For experienced", path: "/notes/strategy/experienced" }
-        ]
-      }
-    ]
-  },
-  { 
-    id: "time-savers", 
-    label: "Time-savers",
-    subsections: [
-      {
-        id: "time-savers-main",
-        label: "Time-savers",
-        icon: <GitBranch className="h-4 w-4 mr-2" />,
-        path: "/notes/time-savers",
-        expandable: true,
-        subsections: [
-          { id: "shortcuts", label: "Keyboard shortcuts", path: "/notes/time-savers/shortcuts" },
-          { id: "templates", label: "Code templates", path: "/notes/time-savers/templates" }
-        ]
-      }
-    ]
-  },
-  { 
-    id: "guides", 
-    label: "Guides",
-    subsections: [
-      {
-        id: "guides-main",
-        label: "Guides",
+        id: "data-structures-main",
+        label: "Data Structures",
         icon: <Database className="h-4 w-4 mr-2" />,
-        path: "/notes/guides",
+        path: "/notes/data-structures",
         expandable: true,
         subsections: [
           { id: "spi", label: "SPI Protocol", path: "/notes/guides/spi" },
@@ -121,10 +87,8 @@ export default function Notes() {
   const [currentPath] = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
   const [expandedSections, setExpandedSections] = useState<{[key: string]: boolean}>({
-    "practice-questions-main": false,
-    "recommended-strategy-main": false,
-    "time-savers-main": false,
-    "guides-main": false
+    "multithreading-main": false,
+    "data-structures-main": false
   });
   
   // Update selected topic based on current path
@@ -523,6 +487,643 @@ export default function Notes() {
               </>
             )}
 
+            {selectedTopic === "multithreading" && (
+              <>
+                <div className="flex items-center mb-1 text-gray-500 text-sm">
+                  <span>Docs</span>
+                  <span className="mx-2">›</span>
+                  <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Multithreading</span>
+                </div>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Multithreading in Embedded Systems</h1>
+
+                <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
+                  <p className="lead">
+                    Multithreading is a powerful technique for embedded systems that enables concurrent execution of multiple tasks. 
+                    This guide covers fundamental concepts, implementation strategies, and common pitfalls in multithreaded embedded applications.
+                  </p>
+
+                  <h2 id="multithreading-overview">Multithreading Overview</h2>
+                  <p>
+                    In embedded systems, multithreading allows a single processor to execute multiple code sequences (threads) quasi-simultaneously by rapidly switching between them.
+                    This can significantly improve responsiveness and resource utilization in real-time applications.
+                  </p>
+
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
+                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Key Benefits of Multithreading:</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>Improved system responsiveness for real-time applications</li>
+                      <li>Better resource utilization and throughput</li>
+                      <li>Simplified program structure for complex systems</li>
+                      <li>Ability to prioritize critical tasks</li>
+                      <li>Isolation of system functions for better reliability</li>
+                    </ul>
+                  </div>
+
+                  <h2 id="threads-vs-processes">Threads vs. Processes</h2>
+                  <p>
+                    In embedded systems, understanding the distinction between threads and processes is crucial for efficient design:
+                  </p>
+                  
+                  <table className="min-w-full border border-gray-300 my-4">
+                    <thead className={darkMode ? "bg-gray-800" : "bg-gray-100"}>
+                      <tr>
+                        <th className="px-4 py-2 border-b text-left">Characteristic</th>
+                        <th className="px-4 py-2 border-b text-left">Threads</th>
+                        <th className="px-4 py-2 border-b text-left">Processes</th>
+                      </tr>
+                    </thead>
+                    <tbody className={darkMode ? "bg-gray-900" : "bg-white"}>
+                      <tr>
+                        <td className="px-4 py-2 border-b">Memory Space</td>
+                        <td className="px-4 py-2 border-b">Shared within process</td>
+                        <td className="px-4 py-2 border-b">Separate, isolated</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2 border-b">Resource Consumption</td>
+                        <td className="px-4 py-2 border-b">Lightweight</td>
+                        <td className="px-4 py-2 border-b">Heavyweight</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2 border-b">Communication</td>
+                        <td className="px-4 py-2 border-b">Direct (shared variables)</td>
+                        <td className="px-4 py-2 border-b">IPC mechanisms needed</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2 border-b">Context Switch Cost</td>
+                        <td className="px-4 py-2 border-b">Low</td>
+                        <td className="px-4 py-2 border-b">High</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2 border-b">Failure Isolation</td>
+                        <td className="px-4 py-2 border-b">Poor (thread failure affects process)</td>
+                        <td className="px-4 py-2 border-b">Good (process failure is isolated)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <p>
+                    In resource-constrained embedded systems, threads are often preferred due to their lower overhead,
+                    but proper synchronization becomes essential to prevent data corruption and race conditions.
+                  </p>
+
+                  <h2 id="common-challenges">Common Multithreading Challenges</h2>
+                  <ul>
+                    <li><strong>Race Conditions</strong>: When multiple threads access shared data concurrently</li>
+                    <li><strong>Deadlocks</strong>: When threads are waiting indefinitely for resources held by each other</li>
+                    <li><strong>Priority Inversion</strong>: When a high-priority thread waits for a low-priority thread</li>
+                    <li><strong>Resource Contention</strong>: When multiple threads compete for limited resources</li>
+                    <li><strong>Synchronization Overhead</strong>: When excessive locking degrades performance</li>
+                  </ul>
+
+                  <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <svg className={`h-5 w-5 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>Essential RTOS Knowledge</h3>
+                        <div className={`text-sm ${themeClasses.infoText}`}>
+                          <p>For multithreaded embedded applications, familiarity with a Real-Time Operating System (RTOS) like FreeRTOS or RTX is crucial. 
+                          These provide task management, synchronization primitives, and deterministic scheduling capabilities critical for reliable operation.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h2 id="explore-subtopics">Explore Multithreading Subtopics</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+                    <a href="/notes/multithreading/introduction" className={`${themeClasses.card} p-4 rounded-md block border no-underline hover:no-underline`}>
+                      <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'} mb-1`}>Introduction</h3>
+                      <p className={`text-sm ${themeClasses.textDark}`}>Basic concepts and benefits of threading in embedded systems</p>
+                    </a>
+                    <a href="/notes/multithreading/key-concepts" className={`${themeClasses.card} p-4 rounded-md block border no-underline hover:no-underline`}>
+                      <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'} mb-1`}>Key Concepts</h3>
+                      <p className={`text-sm ${themeClasses.textDark}`}>Synchronization primitives, scheduling, and thread safety</p>
+                    </a>
+                    <a href="/notes/multithreading/interview-tips" className={`${themeClasses.card} p-4 rounded-md block border no-underline hover:no-underline`}>
+                      <h3 className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'} mb-1`}>Interview Tips</h3>
+                      <p className={`text-sm ${themeClasses.textDark}`}>Common interview questions and effective answering strategies</p>
+                    </a>
+                  </div>
+                </div>
+              </>
+            )}
+            
+            {currentPath === "/notes/multithreading/introduction" && (
+              <>
+                <div className="flex items-center mb-1 text-gray-500 text-sm">
+                  <span>Docs</span>
+                  <span className="mx-2">›</span>
+                  <span className="mx-2"><Link href="/notes/multithreading" className="hover:underline">Multithreading</Link></span>
+                  <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Introduction</span>
+                </div>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Introduction to Multithreading</h1>
+
+                <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
+                  <p className="lead">
+                    Multithreading enables concurrent execution paths within a single program, allowing embedded systems
+                    to handle multiple tasks efficiently. This introduction explains the fundamental concepts and benefits.
+                  </p>
+
+                  <h2 id="what-is-multithreading">What is Multithreading?</h2>
+                  <p>
+                    Multithreading is a programming technique that allows a single program to have multiple execution 
+                    paths (threads) running concurrently. Each thread maintains its own set of CPU registers, stack 
+                    pointer, and stack memory, but shares the same code, data, and file resources with other threads in the same process.
+                  </p>
+
+                  <p>
+                    In embedded systems, multithreading is especially valuable for:
+                  </p>
+                  <ul>
+                    <li>Handling multiple sensors or interfaces simultaneously</li>
+                    <li>Processing background tasks while maintaining UI responsiveness</li>
+                    <li>Managing time-critical operations alongside regular processing</li>
+                    <li>Simplifying complex state machines by dedicating threads to specific functions</li>
+                  </ul>
+
+                  <h2 id="single-vs-multithreaded">Single-Threaded vs. Multi-Threaded Execution</h2>
+                  <p>
+                    Traditional single-threaded programs execute instructions sequentially, which can lead to 
+                    inefficiencies when operations block or when the CPU could otherwise be doing useful work:
+                  </p>
+
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
+                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Single-Threaded Limitations:</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>Long operations block the entire program</li>
+                      <li>Poor utilization of processor time during I/O waits</li>
+                      <li>Complex state machines required to handle multiple tasks</li>
+                      <li>Difficult to prioritize critical operations</li>
+                    </ul>
+                  </div>
+
+                  <p>
+                    In contrast, multithreaded programs can:
+                  </p>
+                  <ul>
+                    <li>Continue execution in other threads when one thread is blocked</li>
+                    <li>Take advantage of multi-core processors (true parallelism)</li>
+                    <li>Assign different priorities to different tasks</li>
+                    <li>Simplify program structure by dedicating threads to specific tasks</li>
+                  </ul>
+
+                  <h2 id="thread-states">Thread States and Lifecycle</h2>
+                  <p>
+                    In embedded RTOS environments, threads typically transition through several states:
+                  </p>
+                  
+                  <ol>
+                    <li><strong>Created</strong>: Thread is initialized but not yet ready to run</li>
+                    <li><strong>Ready</strong>: Thread is ready to run but waiting for CPU time</li>
+                    <li><strong>Running</strong>: Thread is currently executing on the CPU</li>
+                    <li><strong>Blocked/Waiting</strong>: Thread is waiting for a resource or event</li>
+                    <li><strong>Terminated</strong>: Thread has completed execution</li>
+                  </ol>
+
+                  <pre className={`${themeClasses.codeBlock} p-4 rounded-md overflow-x-auto`}>
+                    <code className="language-c">
+{`// Basic thread creation in FreeRTOS
+TaskHandle_t taskHandle;
+
+void exampleTask(void *pvParameters) {
+    // Task code goes here
+    while(1) {
+        // Task operations
+        vTaskDelay(pdMS_TO_TICKS(100)); // Sleep for 100ms
+    }
+}
+
+// Create a thread (task)
+xTaskCreate(
+    exampleTask,       // Task function
+    "ExampleTask",     // Task name
+    configMINIMAL_STACK_SIZE, // Stack size
+    NULL,              // Parameters
+    tskIDLE_PRIORITY + 1,  // Priority
+    &taskHandle        // Task handle
+);`}
+                    </code>
+                  </pre>
+
+                  <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <svg className={`h-5 w-5 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>RTOS vs. Bare Metal</h3>
+                        <div className={`text-sm ${themeClasses.infoText}`}>
+                          <p>While bare-metal systems can implement cooperative multitasking through state machines, 
+                          an RTOS provides preemptive multithreading with deterministic scheduling, making it the preferred 
+                          choice for complex embedded applications with real-time requirements.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h2 id="multithreading-cost">The Cost of Multithreading</h2>
+                  <p>
+                    While multithreading offers significant benefits, it comes with costs that must be considered in embedded systems:
+                  </p>
+                  <ul>
+                    <li><strong>Memory Overhead</strong>: Each thread requires its own stack and control structures</li>
+                    <li><strong>Context Switching</strong>: CPU time is spent saving and restoring thread state</li>
+                    <li><strong>Synchronization Overhead</strong>: Mutexes and semaphores consume resources</li>
+                    <li><strong>Increased Complexity</strong>: Thread interactions can be difficult to debug</li>
+                    <li><strong>Determinism Challenges</strong>: Thread timing can affect real-time behavior</li>
+                  </ul>
+                </div>
+              </>
+            )}
+            
+            {currentPath === "/notes/multithreading/key-concepts" && (
+              <>
+                <div className="flex items-center mb-1 text-gray-500 text-sm">
+                  <span>Docs</span>
+                  <span className="mx-2">›</span>
+                  <span className="mx-2"><Link href="/notes/multithreading" className="hover:underline">Multithreading</Link></span>
+                  <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Key Concepts</span>
+                </div>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Multithreading Key Concepts</h1>
+
+                <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
+                  <p className="lead">
+                    Mastering multithreading requires understanding several core concepts that form the foundation
+                    of reliable multithreaded applications. This guide explores these essential principles.
+                  </p>
+
+                  <h2 id="thread-safety">Thread Safety</h2>
+                  <p>
+                    Thread safety refers to code that functions correctly during simultaneous execution by multiple threads.
+                    Achieving thread safety typically involves one or more of these techniques:
+                  </p>
+
+                  <ul>
+                    <li><strong>Immutable Objects</strong>: Objects that cannot be modified after creation are inherently thread-safe</li>
+                    <li><strong>Synchronization</strong>: Using locks and other mechanisms to control thread access to shared resources</li>
+                    <li><strong>Thread Local Storage</strong>: Giving each thread its own private copy of variables</li>
+                    <li><strong>Atomic Operations</strong>: Operations that complete in a single step without interruption</li>
+                    <li><strong>Re-entrancy</strong>: Ensuring functions can be interrupted and resumed without corruption</li>
+                  </ul>
+
+                  <pre className={`${themeClasses.codeBlock} p-4 rounded-md overflow-x-auto`}>
+                    <code className="language-c">
+{`// Thread-unsafe code
+int counter = 0;
+
+void incrementCounter() {
+    counter++;  // This is not atomic!
+}
+
+// Thread-safe version with mutex
+int counter = 0;
+SemaphoreHandle_t mutex;
+
+void initMutex() {
+    mutex = xSemaphoreCreateMutex();
+}
+
+void incrementCounter() {
+    if (xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE) {
+        counter++;
+        xSemaphoreGive(mutex);
+    }
+}`}
+                    </code>
+                  </pre>
+
+                  <h2 id="synchronization">Synchronization Primitives</h2>
+                  <p>
+                    Synchronization primitives are tools that help coordinate the execution of multiple threads. 
+                    The most common primitives in embedded systems include:
+                  </p>
+
+                  <h3>Mutex (Mutual Exclusion)</h3>
+                  <p>
+                    A mutex protects shared resources by ensuring exclusive access. Only one thread can hold the mutex at a time.
+                  </p>
+
+                  <h3>Semaphore</h3>
+                  <p>
+                    Semaphores control access to a resource with a counter. Binary semaphores (count of 0 or 1) can function 
+                    similar to mutexes, while counting semaphores can track multiple available resources.
+                  </p>
+
+                  <h3>Event Flags</h3>
+                  <p>
+                    Event flags allow threads to signal each other about specific events. A thread can wait for one or more events before proceeding.
+                  </p>
+
+                  <h3>Message Queues</h3>
+                  <p>
+                    Message queues provide a thread-safe way to exchange data between threads, with built-in synchronization.
+                  </p>
+
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
+                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>When to Use Each Primitive:</h3>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li><strong>Mutex</strong>: When multiple threads need access to a shared resource</li>
+                      <li><strong>Semaphore</strong>: When controlling access to a pool of resources</li>
+                      <li><strong>Event Flags</strong>: When one thread needs to wait for events from multiple sources</li>
+                      <li><strong>Message Queue</strong>: When data needs to be passed between threads</li>
+                    </ul>
+                  </div>
+
+                  <h2 id="critical-sections">Critical Sections</h2>
+                  <p>
+                    A critical section is a segment of code that accesses shared resources and must not be executed concurrently by more than one thread.
+                    Properly identifying and protecting critical sections is essential for thread safety.
+                  </p>
+
+                  <pre className={`${themeClasses.codeBlock} p-4 rounded-md overflow-x-auto`}>
+                    <code className="language-c">
+{`// Critical section example
+void updateSharedResource() {
+    // Enter critical section
+    taskENTER_CRITICAL();
+    
+    // Code that must not be interrupted
+    sharedResource++;
+    if (sharedResource > MAX_VALUE) {
+        sharedResource = 0;
+    }
+    
+    // Exit critical section
+    taskEXIT_CRITICAL();
+}`}
+                    </code>
+                  </pre>
+
+                  <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <svg className={`h-5 w-5 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>Caution</h3>
+                        <div className={`text-sm ${themeClasses.infoText}`}>
+                          <p>Critical sections should be kept as short as possible. Long critical sections can block other threads
+                          and defeat the purpose of multithreading. In FreeRTOS, taskENTER_CRITICAL() disables all interrupts below
+                          configMAX_SYSCALL_INTERRUPT_PRIORITY, which can affect system responsiveness.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h2 id="deadlocks">Deadlocks and How to Avoid Them</h2>
+                  <p>
+                    A deadlock occurs when two or more threads are blocked forever, each waiting for the other to release a resource.
+                    Deadlocks typically arise when these four conditions are met:
+                  </p>
+
+                  <ol>
+                    <li><strong>Mutual Exclusion</strong>: At least one resource must be held in non-sharable mode</li>
+                    <li><strong>Hold and Wait</strong>: A thread holds at least one resource while waiting for others</li>
+                    <li><strong>No Preemption</strong>: Resources cannot be forcibly taken from a thread</li>
+                    <li><strong>Circular Wait</strong>: A circular chain of threads, each waiting for a resource held by the next</li>
+                  </ol>
+
+                  <p>
+                    Preventing deadlocks requires breaking at least one of these conditions:
+                  </p>
+
+                  <ul>
+                    <li>Acquire all resources at once (prevent hold and wait)</li>
+                    <li>Use a consistent ordering for resource acquisition (prevent circular wait)</li>
+                    <li>Use timeouts when acquiring resources (add preemption)</li>
+                    <li>Implement deadlock detection and recovery mechanisms</li>
+                  </ul>
+
+                  <h2 id="priority-inversion">Priority Inversion and Priority Inheritance</h2>
+                  <p>
+                    Priority inversion occurs when a high-priority thread is blocked waiting for a resource held by a low-priority thread,
+                    which itself is preempted by a medium-priority thread. This effectively inverts the intended priority relationship.
+                  </p>
+
+                  <p>
+                    <strong>Priority inheritance</strong> is a mitigation technique where a low-priority thread temporarily inherits
+                    the priority of the highest-priority thread waiting for a resource it holds. This prevents medium-priority threads
+                    from indefinitely delaying the high-priority thread.
+                  </p>
+
+                  <h2 id="scheduling">Thread Scheduling in Embedded Systems</h2>
+                  <p>
+                    RTOS scheduling algorithms determine which thread runs when. Common scheduling approaches include:
+                  </p>
+
+                  <ul>
+                    <li><strong>Priority-Based Preemptive Scheduling</strong>: Higher priority threads preempt lower ones</li>
+                    <li><strong>Round-Robin</strong>: Equal-priority threads get equal time slices in rotation</li>
+                    <li><strong>Time Slicing</strong>: Threads run for a fixed time slice before being switched</li>
+                    <li><strong>Rate Monotonic</strong>: Priorities assigned based on frequency (higher frequency = higher priority)</li>
+                  </ul>
+                </div>
+              </>
+            )}
+            
+            {currentPath === "/notes/multithreading/interview-tips" && (
+              <>
+                <div className="flex items-center mb-1 text-gray-500 text-sm">
+                  <span>Docs</span>
+                  <span className="mx-2">›</span>
+                  <span className="mx-2"><Link href="/notes/multithreading" className="hover:underline">Multithreading</Link></span>
+                  <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Interview Tips</span>
+                </div>
+                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Multithreading Interview Tips</h1>
+
+                <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
+                  <p className="lead">
+                    Multithreading is a common topic in embedded systems interviews. This guide provides strategies for answering
+                    common questions and demonstrating your expertise in concurrent programming.
+                  </p>
+
+                  <h2 id="common-questions">Common Interview Questions</h2>
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
+                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Conceptual Questions:</h3>
+                    <ol className="list-decimal pl-5 space-y-3">
+                      <li>
+                        <strong>What is the difference between a process and a thread?</strong>
+                        <p className="mt-1 text-sm">
+                          Focus on memory space (shared vs. separate), resource overhead, and isolation characteristics.
+                          Mention that threads are lightweight with shared memory, while processes are isolated with higher overhead.
+                        </p>
+                      </li>
+                      <li>
+                        <strong>Explain mutex vs. semaphore and when to use each.</strong>
+                        <p className="mt-1 text-sm">
+                          Describe mutex as ownership-based (one owner at a time) and semaphores as signaling mechanisms (potentially multiple resources).
+                          Give concrete examples: mutex for shared data protection, semaphore for producer-consumer problems.
+                        </p>
+                      </li>
+                      <li>
+                        <strong>What is a race condition and how do you prevent it?</strong>
+                        <p className="mt-1 text-sm">
+                          Define race conditions as timing-dependent bugs where outcome depends on thread execution order.
+                          Discuss synchronization mechanisms, atomic operations, and proper design as prevention strategies.
+                        </p>
+                      </li>
+                      <li>
+                        <strong>Explain priority inversion and how to address it.</strong>
+                        <p className="mt-1 text-sm">
+                          Describe the classic scenario (high, medium, low priority threads) and explain priority inheritance
+                          as a solution implemented in most RTOS.
+                        </p>
+                      </li>
+                    </ol>
+                  </div>
+
+                  <div className={`${themeClasses.card} p-4 border rounded-md my-6`}>
+                    <h3 className={`font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>Practical Questions:</h3>
+                    <ol className="list-decimal pl-5 space-y-3">
+                      <li>
+                        <strong>Implement a thread-safe queue for a producer-consumer scenario.</strong>
+                        <p className="mt-1 text-sm">
+                          Be prepared to write code using mutexes and semaphores to protect the queue and signal availability.
+                          Discuss thread wake-up strategies and overflow/underflow protection.
+                        </p>
+                      </li>
+                      <li>
+                        <strong>How would you design a multithreaded embedded system for a specific application?</strong>
+                        <p className="mt-1 text-sm">
+                          Discuss thread partitioning strategy, priority assignment, synchronization needs,
+                          and resource allocation. Consider real-time requirements and failure modes.
+                        </p>
+                      </li>
+                      <li>
+                        <strong>Identify and fix the thread safety issue in this code.</strong>
+                        <p className="mt-1 text-sm">
+                          Look for shared variables without protection, potential deadlocks from incorrect mutex usage,
+                          or non-atomic operations that could be interrupted.
+                        </p>
+                      </li>
+                    </ol>
+                  </div>
+
+                  <h2 id="answering-strategies">Effective Answering Strategies</h2>
+                  <p>
+                    Follow these guidelines to structure clear, comprehensive answers:
+                  </p>
+
+                  <h3>1. Start with Basics, Then Add Depth</h3>
+                  <p>
+                    Begin with a clear definition or basic explanation, then progressively add more technical details.
+                    This demonstrates both fundamental understanding and advanced knowledge.
+                  </p>
+
+                  <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <svg className={`h-5 w-5 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>Example Answer Structure</h3>
+                        <div className={`text-sm ${themeClasses.infoText}`}>
+                          <p><strong>Question:</strong> "What is a mutex and when would you use it?"</p>
+                          <p><strong>Answer:</strong> "A mutex is a synchronization primitive that provides exclusive access to a shared resource. It works like a lock that only one thread can hold at a time. [Basic definition]</p>
+                          <p>When a thread acquires a mutex, other threads attempting to acquire the same mutex will be blocked until the owner releases it. [How it works]</p>
+                          <p>I would use a mutex when multiple threads need to access a shared resource that can't be safely accessed concurrently, such as a global data structure or hardware peripheral. For example, in an embedded system controlling multiple sensors, I'd use a mutex to protect access to a shared I2C bus. [Specific application]</p>
+                          <p>It's important to keep mutex-protected sections as short as possible to minimize blocking time, and to be careful about the order of mutex acquisition to prevent deadlocks." [Advanced considerations]</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h3>2. Use Real-World Examples</h3>
+                  <p>
+                    Always connect theoretical concepts to practical applications in embedded systems. 
+                    Draw from your experience or common embedded scenarios to illustrate your points.
+                  </p>
+
+                  <h3>3. Address Performance and Resource Considerations</h3>
+                  <p>
+                    For embedded systems, always discuss the resource implications (memory, CPU, power) of your approach.
+                    This demonstrates your understanding of embedded constraints.
+                  </p>
+
+                  <h3>4. Explain Trade-offs</h3>
+                  <p>
+                    When discussing a solution, mention the advantages and disadvantages. 
+                    There's rarely a perfect approach in embedded systems—showing you understand the trade-offs demonstrates expertise.
+                  </p>
+
+                  <h2 id="code-examples">Prepare Code Examples</h2>
+                  <p>
+                    Be ready to write or explain code for common multithreading patterns:
+                  </p>
+
+                  <pre className={`${themeClasses.codeBlock} p-4 rounded-md overflow-x-auto`}>
+                    <code className="language-c">
+{`// Producer-Consumer with FreeRTOS
+QueueHandle_t dataQueue;
+SemaphoreHandle_t mutex;
+
+void producerTask(void *pvParameters) {
+    int data = 0;
+    while(1) {
+        // Produce new item
+        data++;
+        
+        // Send to queue with timeout
+        if (xQueueSend(dataQueue, &data, pdMS_TO_TICKS(100)) != pdPASS) {
+            // Handle queue full
+        }
+        
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+}
+
+void consumerTask(void *pvParameters) {
+    int receivedData;
+    while(1) {
+        // Wait for item with timeout
+        if (xQueueReceive(dataQueue, &receivedData, pdMS_TO_TICKS(200)) == pdPASS) {
+            // Process data
+            if (xSemaphoreTake(mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+                // Update shared resource with received data
+                xSemaphoreGive(mutex);
+            }
+        }
+    }
+}`}
+                    </code>
+                  </pre>
+
+                  <h2 id="system-design">Be Ready for System Design Questions</h2>
+                  <p>
+                    Senior-level interviews often include designing multithreaded embedded systems. Prepare by:
+                  </p>
+                  <ul>
+                    <li>Practicing thread/task decomposition for different applications</li>
+                    <li>Considering priority assignments based on real-time requirements</li>
+                    <li>Identifying potential synchronization points and shared resources</li>
+                    <li>Planning for error handling and recovery in multithreaded contexts</li>
+                    <li>Addressing memory constraints and stack sizing</li>
+                  </ul>
+
+                  <h2 id="rtos-knowledge">RTOS Knowledge Is Critical</h2>
+                  <p>
+                    Be familiar with at least one real-time operating system (FreeRTOS, RTX, ThreadX, etc.) and its:
+                  </p>
+                  <ul>
+                    <li>Task management functions (creation, deletion, suspension)</li>
+                    <li>Synchronization primitives (mutex, semaphore, event groups)</li>
+                    <li>Communication mechanisms (queues, message buffers)</li>
+                    <li>Memory management and protection features</li>
+                    <li>Scheduling algorithms and priority handling</li>
+                  </ul>
+                </div>
+              </>
+            )}
+            
             {selectedTopic === "data-structures" && (
               <>
                 <div className="flex items-center mb-1 text-gray-500 text-sm">
