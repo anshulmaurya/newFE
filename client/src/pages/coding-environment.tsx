@@ -181,7 +181,7 @@ export default function CodingEnvironment() {
   // Subscribe to container status updates via WebSocket
   const containerStatus = useContainerStatus(containerToken || undefined);
   
-  // Update loading state based on container status
+  // Update loading state based on container status - With NO toasts
   useEffect(() => {
     if (containerStatus) {
       console.log('Container status update received:', containerStatus);
@@ -201,23 +201,20 @@ export default function CodingEnvironment() {
         setIsLoading(false);
         // When container is ready, update the URL if available
         if (containerStatus.containerUrl) {
-          setContainerUrl(containerStatus.containerUrl);
-          // No toast notification for ready environment
+          // Only update URL if it actually changed to prevent iframe reloads
+          if (containerStatus.containerUrl !== containerUrl) {
+            setContainerUrl(containerStatus.containerUrl);
+          }
         }
       } else if (containerStatus.status === 'creating') {
         setIsLoading(true);
-        // No toast notifications for environment creation
       } else if (containerStatus.status === 'error') {
         setIsLoading(false);
-        // Only show error notifications for critical issues
-        toast({
-          title: "Environment Error",
-          description: containerStatus.message || "Failed to set up coding environment",
-          variant: "destructive",
-        });
+        // No toast notifications for errors either
+        console.error("Environment Error:", containerStatus.message);
       }
     }
-  }, [containerStatus, toast, containerToken]);
+  }, [containerStatus, containerToken, containerUrl]);
 
   useEffect(() => {
     // Extract params from URL
@@ -243,8 +240,6 @@ export default function CodingEnvironment() {
         console.log('Using temporary token, waiting for real token via WebSocket:', tokenParam);
         // Show loading indicator immediately to improve UX
         setIsLoading(true);
-        // No toast notification for temporary token
-        // No need to call redirect API for temporary tokens
       } else {
         // For real tokens, convert token to URL through API
         (async () => {
@@ -254,11 +249,7 @@ export default function CodingEnvironment() {
             setContainerUrl(redirectUrl);
           } catch (error) {
             console.error("Error resolving container token:", error);
-            toast({
-              title: "Error",
-              description: "Failed to access coding environment",
-              variant: "destructive",
-            });
+            // No toast notification for this error either
           }
         })();
       }
@@ -304,11 +295,7 @@ export default function CodingEnvironment() {
           }
         } catch (error) {
           console.error("Error setting up codebase:", error);
-          toast({
-            title: "Background setup error",
-            description: "Environment setup encountered an issue. Please try again.",
-            variant: "destructive",
-          });
+          // No toast notification for this error
         }
       })();
     }
