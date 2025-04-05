@@ -464,7 +464,7 @@ export default function Dashboard() {
   return (
     <DashboardLayout darkMode={darkMode} toggleTheme={toggleTheme}>
       <div className="lg:ml-56 pt-14 pb-8 bg-[rgb(12,12,14)]">
-        <div className="px-4 lg:px-6 mx-auto relative">
+        <div className="pl-4 pr-4 relative">
           <div className="flex">
             <div className="flex-1 space-y-4 w-full">
               {/* Activity Heatmap */}

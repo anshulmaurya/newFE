@@ -314,7 +314,7 @@ export default function ActivityHeatmap() {
   };
   
   return (
-    <div className="rounded-lg bg-[rgb(24,24,27)] p-3 mb-2">
+    <div className="rounded-lg bg-[rgb(18,18,20)] p-3 mb-2 border border-[rgb(35,35,40)]">
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-white font-medium">{totalSolved} problems solved in {selectedYear}</h2>
         
@@ -327,7 +327,7 @@ export default function ActivityHeatmap() {
               variant={selectedYear === year ? "default" : "outline"}
               className={`h-7 px-2 py-1 text-xs ${selectedYear === year 
                 ? 'bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] text-black' 
-                : 'bg-[rgb(35,35,40)] text-gray-300 hover:bg-[rgb(45,45,50)] hover:text-white'}`}
+                : 'bg-[rgb(24,24,27)] text-gray-300 hover:bg-[rgb(45,45,50)] hover:text-white'}`}
             >
               {year}
             </Button>
@@ -335,8 +335,8 @@ export default function ActivityHeatmap() {
         </div>
       </div>
       
-      <div className="overflow-x-hidden bg-[rgb(18,18,20)] p-2 rounded-md">
-        <div className="w-full py-1 px-2 bg-[rgb(18,18,20)]">
+      <div className="overflow-x-hidden bg-[rgb(12,12,14)] p-2 rounded-md">
+        <div className="w-full py-1 px-2 bg-[rgb(12,12,14)]">
           {renderCalendar()}
         </div>
       </div>

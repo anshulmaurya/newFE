@@ -293,7 +293,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, darkMode, t
         </div>
 
         {/* Main content */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 md:px-8 scrollable-content">
+        <div className="flex-1 overflow-y-auto px-0 py-4 scrollable-content">
           {children}
         </div>
       </div>
