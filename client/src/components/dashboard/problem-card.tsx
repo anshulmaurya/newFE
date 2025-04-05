@@ -16,33 +16,33 @@ interface ProblemCardProps {
 }
 
 export default function ProblemCard({ problem, index = 0, statusIcon, handleSetupCodebase, onClick }: ProblemCardProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const { setupCodebase } = useSetupCodebase();
   const { toast } = useToast();
   
   // Default language preference
   const language = 'c';
   
-  // Enhanced setup codebase function with loading state
+  // Enhanced setup codebase function with immediate navigation
   const handleSolveClick = () => {
     if (onClick) {
       onClick();
       return;
     }
     
-    setIsLoading(true);
+    // Show a toast notification about environment setup
+    toast({
+      title: "Setting up environment",
+      description: "Preparing your workspace in the background...",
+      variant: "default",
+    });
     
     if (handleSetupCodebase) {
-      // Use the parent's provided function
+      // Use the parent's provided function without setting loading state
+      // This ensures immediate navigation as implemented in dashboard.tsx
       handleSetupCodebase(problem.id, problem.question_id);
     } else {
       // Use our own implementation with the setupCodebase hook
-      toast({
-        title: "Setting up environment",
-        description: "Preparing your workspace. You'll be redirected shortly...",
-        variant: "default",
-      });
-      
+      // This also provides immediate navigation
       setupCodebase({
         problemId: problem.id,
         questionId: problem.question_id,
@@ -50,8 +50,8 @@ export default function ProblemCard({ problem, index = 0, statusIcon, handleSetu
       });
     }
     
-    // The loading state will be maintained until navigation occurs
-    // Navigation will be handled by the hook or parent's function
+    // We don't set loading state anymore, as we want immediate navigation
+    // The loading indicator will be shown on the coding environment page instead
   };
   
   return (
@@ -139,23 +139,10 @@ export default function ProblemCard({ problem, index = 0, statusIcon, handleSetu
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className={cn(
-                      "text-xs h-8 bg-[rgb(30,30,36)] hover:bg-[rgb(40,40,50)] border-[rgb(60,60,70)] text-gray-200",
-                      isLoading && "opacity-90 cursor-not-allowed"
-                    )}
+                    className="text-xs h-8 bg-[rgb(30,30,36)] hover:bg-[rgb(40,40,50)] border-[rgb(60,60,70)] text-gray-200"
                     onClick={handleSolveClick}
-                    disabled={isLoading}
                   >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                        Setting up...
-                      </>
-                    ) : (
-                      <>
-                        Solve <ArrowRight className="h-3 w-3 ml-1" />
-                      </>
-                    )}
+                    Solve <ArrowRight className="h-3 w-3 ml-1" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="left">

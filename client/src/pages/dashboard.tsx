@@ -443,6 +443,7 @@ export default function Dashboard() {
   });
   
   // We're using useSetupCodebase hook for improved navigation
+  const { setupCodebase } = useSetupCodebase();
   
   // Handle codebase setup for a problem - now using the improved hook for immediate navigation
   const handleSetupCodebase = (problemId: string, questionId?: string) => {
