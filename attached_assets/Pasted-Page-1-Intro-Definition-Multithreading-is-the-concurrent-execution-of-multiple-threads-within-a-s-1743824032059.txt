@@ -1,0 +1,82 @@
+Page 1: Intro
+
+Definition:
+Multithreading is the concurrent execution of multiple threads within a single process, where each thread shares the same memory space. This approach enables efficient utilization of CPU resources.
+Purpose:
+Boosts performance by leveraging multiple CPU cores.
+Enhances responsiveness in applications (e.g., maintaining interactive UIs while processing background tasks).
+Use Cases:
+Real-time systems, web servers, gaming, and other applications that require concurrent operations.
+Page 2: Key Concepts
+
+Thread vs. Process:
+Process: Independent execution unit with its own memory space.
+Thread: Lightweight unit within a process sharing memory, making context switches faster.
+Concurrency vs. Parallelism:
+Concurrency: Overlapping execution of tasks (may be interleaved on a single CPU core).
+Parallelism: Simultaneous execution on multiple cores.
+Thread Life Cycle:
+Creation: Threads are spawned.
+Execution: Threads run concurrently.
+Synchronization: Threads coordinate access to shared resources.
+Termination: Threads complete and exit.
+Synchronization Techniques:
+Mutexes, semaphores, locks, and condition variables are used to prevent race conditions and ensure thread safety.
+Practical Example with pthread:
+Below is a simple C code example using the pthread library. It demonstrates creating multiple threads that print a message and then exit.
+
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+// Thread function that prints a message
+void* threadFunction(void* arg) {
+    int threadNum = *((int*)arg);
+    printf("Hello from thread %d\n", threadNum);
+    pthread_exit(NULL);
+}
+
+int main() {
+    int numThreads = 5;
+    pthread_t threads[numThreads];
+    int threadArgs[numThreads];
+
+    // Create threads
+    for (int i = 0; i < numThreads; i++) {
+        threadArgs[i] = i;
+        int rc = pthread_create(&threads[i], NULL, threadFunction, (void*)&threadArgs[i]);
+        if (rc) {
+            printf("ERROR: pthread_create returned %d\n", rc);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    // Wait for threads to finish
+    for (int i = 0; i < numThreads; i++) {
+        pthread_join(threads[i], NULL);
+    }
+
+    return 0;
+}
+Explanation:
+
+pthread_create: Spawns a new thread running threadFunction.
+pthread_join: Waits for each thread to complete before the program exits.
+Thread Safety: In more complex applications, ensure shared resources are properly synchronized to avoid race conditions.
+Page 3: Interview Tips
+
+Understand the Basics:
+Be prepared to explain what multithreading is, its benefits, and its challenges.
+Discuss Common Problems:
+Explain issues like race conditions, deadlocks, and thread starvation.
+Highlight how synchronization mechanisms (mutexes, semaphores) are used to address these issues.
+Practical Examples:
+Discuss scenarios where multithreading improves application performance or responsiveness.
+Reference code examples (like the pthread example above) to illustrate thread creation and synchronization.
+Thread Management:
+Understand how threads are created, managed, and terminated in your language of choice.
+Familiarize yourself with debugging and performance tuning of multithreaded applications.
+Best Practices:
+Write thread-safe code, minimize shared resource usage, and design with scalability in mind.
+Stay Updated:
+Know the threading libraries and frameworks specific to the languages you use, such as pthreads in C/C++.
