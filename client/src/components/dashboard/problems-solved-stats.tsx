@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, CircleDashed, BarChart3, Flame, Trophy } from "lucide-react";
+import { useState, useEffect } from "react";
 
 type UserStats = {
   totalSolved: number;
@@ -33,13 +34,48 @@ type UserStatsData = {
 export default function ProblemsSolvedStats() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [isRenderSafe, setIsRenderSafe] = useState(false);
 
-  const { data: stats, isLoading } = useQuery<UserStats>({
+  // Default stats values
+  const defaultStats: UserStats = {
+    totalSolved: 0,
+    totalAttempted: 0,
+    easySolved: 0,
+    mediumSolved: 0,
+    hardSolved: 0,
+    currentStreak: 0,
+    longestStreak: 0,
+  };
+
+  // First query - get user stats record
+  const { 
+    data: stats, 
+    isLoading: isStatsLoading, 
+    isError: isStatsError 
+  } = useQuery<UserStats>({
     queryKey: ["/api/user-stats-record"],
     enabled: !!user,
+    retry: 1
   });
 
-  if (isLoading) {
+  // Second query - get problem counts by difficulty
+  const { 
+    data: statsData, 
+    isLoading: isStatsDataLoading, 
+    isError: isStatsDataError 
+  } = useQuery<UserStatsData>({
+    queryKey: ["/api/user-stats"],
+    enabled: !!user,
+    retry: 1
+  });
+
+  // Delay rendering until component is mounted to avoid hydration issues
+  useEffect(() => {
+    setIsRenderSafe(true);
+  }, []);
+
+  // Loading or error state
+  if (!isRenderSafe || isStatsLoading || isStatsDataLoading || isStatsError || isStatsDataError) {
     return (
       <Card className="border border-[rgb(35,35,40)]">
         <CardHeader className="pb-2">
@@ -56,25 +92,8 @@ export default function ProblemsSolvedStats() {
     );
   }
 
-  // Default stats if none exist yet
-  const userStats = stats || {
-    totalSolved: 0,
-    totalAttempted: 0,
-    easySolved: 0,
-    mediumSolved: 0,
-    hardSolved: 0,
-    currentStreak: 0,
-    longestStreak: 0,
-  };
-
-  // Calculate percentages - use real data when available
-  const fetchedStats = useQuery<UserStatsData>({
-    queryKey: ["/api/user-stats"],
-    enabled: !!user,
-  });
-
-  // Get actual totals by difficulty from fetched stats or use fallbacks
-  const statsData: UserStatsData = fetchedStats.data || {};
+  // Use fetched stats or default to empty stats
+  const userStats = stats || defaultStats;
   
   // Safe access to optional properties with default values
   const easyTotal = statsData?.easyProblems?.total ?? 50;
@@ -82,6 +101,7 @@ export default function ProblemsSolvedStats() {
   const hardTotal = statsData?.hardProblems?.total ?? 20;
   const totalProblems = easyTotal + mediumTotal + hardTotal;
 
+  // Calculate percentages safely with fallbacks to prevent NaN
   const percentageEasy = Math.round((userStats.easySolved / easyTotal) * 100) || 0;
   const percentageMedium = Math.round((userStats.mediumSolved / mediumTotal) * 100) || 0;
   const percentageHard = Math.round((userStats.hardSolved / hardTotal) * 100) || 0;
@@ -130,7 +150,7 @@ export default function ProblemsSolvedStats() {
           <div>
             <div className="flex justify-between items-center mb-1">
               <div className="flex items-center gap-2">
-                <BarChart3 className="h-4 w-4 text-red-500" />
+                <Flame className="h-4 w-4 text-red-500" />
                 <span className="text-xs font-medium text-gray-300">Hard</span>
               </div>
               <span className="text-xs font-medium text-gray-300">

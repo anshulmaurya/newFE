@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Flame, Trophy } from "lucide-react";
+import { useState, useEffect } from "react";
 
 type StreakStats = {
   current: number;
@@ -11,13 +12,24 @@ type StreakStats = {
 
 export default function StreakCard() {
   const { user } = useAuth();
+  const [isRenderSafe, setIsRenderSafe] = useState(false);
 
-  const { data: streak, isLoading } = useQuery<StreakStats>({
+  // Delay rendering until component is mounted to avoid hydration issues
+  useEffect(() => {
+    setIsRenderSafe(true);
+  }, []);
+
+  const { 
+    data: streak, 
+    isLoading, 
+    isError 
+  } = useQuery<StreakStats>({
     queryKey: ["/api/user-streak"],
     enabled: !!user,
+    retry: 1
   });
 
-  if (isLoading) {
+  if (!isRenderSafe || isLoading || isError) {
     return (
       <Card className="border border-[rgb(35,35,40)]">
         <CardHeader className="pb-2">

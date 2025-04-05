@@ -475,13 +475,13 @@ export default function Dashboard() {
         <div className="pl-4 pr-4 relative">
           <div className="flex">
             <div className="flex-1 space-y-4 w-full">
-              {/* WeeklyHeatmap works fine */}
+              {/* Weekly Activity Heatmap */}
               <WeeklyHeatmap />
               
-              {/* Testing ProblemsSolvedStats component */}
+              {/* Add Stats Components */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <ProblemsSolvedStats />
-                {/* StreakCard will be tested later */}
+                <StreakCard />
               </div>
 
               {/* Selected Bundle Details */}
