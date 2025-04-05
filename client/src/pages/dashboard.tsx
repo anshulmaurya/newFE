@@ -164,6 +164,7 @@ const usePreventScrollJump = () => {
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import DashboardLayout from '@/components/layout/dashboard-layout';
+import { useSetupCodebase } from '@/hooks/use-setup-codebase';
 
 // Define types for API responses
 type Problem = {
@@ -441,7 +442,9 @@ export default function Dashboard() {
     }
   });
   
-  // Handle codebase setup for a problem
+  // We're using useSetupCodebase hook for improved navigation
+  
+  // Handle codebase setup for a problem - now using the improved hook for immediate navigation
   const handleSetupCodebase = (problemId: string, questionId?: string) => {
     if (!user) {
       toast({
@@ -453,8 +456,13 @@ export default function Dashboard() {
       return;
     }
     
-    // Call the mutation with the problem ID, question ID, and selected language
-    setupCodebaseMutation.mutate({ problemId, questionId, language });
+    // Use the improved setupCodebase hook instead of the mutation
+    // This will navigate immediately and handle the setup in the background
+    setupCodebase({
+      problemId,
+      questionId,
+      language
+    });
   };
 
   return (
