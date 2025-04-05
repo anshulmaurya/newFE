@@ -167,6 +167,7 @@ const usePreventScrollJump = () => {
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import Header from '@/components/layout/header';
+import DashboardLayout from '@/components/layout/dashboard-layout';
 
 // Define types for API responses
 type Problem = {
@@ -495,7 +496,15 @@ export default function Dashboard() {
   // Apply the scroll jump prevention hook
   usePreventScrollJump();
   
-  return (
+  // State for darkMode - add dark mode toggle functionality
+  const [darkMode, setDarkMode] = useState(true);
+  
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+  };
+  
+  // Dashboard content to be rendered inside the layout
+  const dashboardContent = (
     <div className="bg-[rgb(14,14,16)] text-white h-full overflow-hidden">
       {/* Header */}
       <Header 
@@ -1052,5 +1061,12 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+  );
+  
+  // Return the dashboard content wrapped in the DashboardLayout
+  return (
+    <DashboardLayout darkMode={darkMode} toggleTheme={toggleTheme}>
+      {dashboardContent}
+    </DashboardLayout>
   );
 }
