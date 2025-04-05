@@ -113,7 +113,7 @@ const notesTopics: TopicSection[] = [
 ];
 
 export default function Notes() {
-  const [selectedTopic, setSelectedTopic] = useState("communication-protocols");
+  const [selectedTopic, setSelectedTopic] = useState("getting-started");
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
@@ -421,7 +421,7 @@ export default function Notes() {
                 </div>
               </>
             )}
-            {selectedTopic === "getting-started" && currentPath !== "/notes" && (
+            {selectedTopic === "getting-started" && (
               <>
                 <div className="flex items-center mb-1 text-gray-500 text-sm">
                   <span>Docs</span>
@@ -429,91 +429,64 @@ export default function Notes() {
                   <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Getting Started</span>
                 </div>
                 
-                <div className={`bg-[#111] p-6 rounded-lg mb-8 border border-gray-800`}>
+                <div className="bg-[#111] p-6 rounded-lg mb-8 border border-gray-800">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center">
                       <BookOpen className="h-5 w-5 mr-3 text-gray-300" />
                       <h1 className="text-2xl font-bold text-white m-0">Embedded Systems Interview Playbook</h1>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <button className="text-xs px-3 py-1 rounded bg-transparent border border-gray-700 text-gray-300 hover:bg-gray-800">Copy link</button>
-                      <button className="text-xs px-3 py-1 rounded bg-transparent border border-gray-700 text-gray-300 hover:bg-gray-800">Share</button>
-                    </div>
                   </div>
                   
                   <p className="text-gray-400 mb-6">The definitive guide to embedded systems interviews.</p>
                   
-                  <div className="flex flex-wrap gap-4 mb-8">
-                    <div className="flex items-center">
-                      <BookText className="h-4 w-4 mr-2 text-gray-400" />
-                      <span className="text-xs text-gray-300">End-to-end guide</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Lightbulb className="h-4 w-4 mr-2 text-gray-400" />
-                      <span className="text-xs text-gray-300">Tips for all question types</span>
-                    </div>
-                    <div className="flex items-center">
-                      <CheckCircle className="h-4 w-4 mr-2 text-gray-400" />
-                      <span className="text-xs text-gray-300">500+ practice questions</span>
+                  <div className="mb-8 p-6 bg-gray-900 border border-gray-800 rounded-lg">
+                    <h3 className="text-xl text-lime-400 mb-4">Notes Section</h3>
+                    <p className="text-gray-300 mb-2">
+                      Use these notes as <strong>quick refreshers just before your interviews</strong>. The content here is structured in easily digestible sections to help you review key concepts quickly.
+                    </p>
+                    <div className="flex mt-4">
+                      <a href="/notes/communication-protocols" className="mr-3 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md text-sm">
+                        Communication Protocols
+                      </a>
+                      <a href="/notes/data-structures" className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md text-sm">
+                        Data Structures
+                      </a>
                     </div>
                   </div>
-                  
-                  <p className="text-gray-300 mb-6">
-                    Welcome to dspcoder.com! This platform is designed to help you prepare for embedded systems interviews with confidence.
-                  </p>
-                  
-                  <h2 className="text-xl font-bold text-white mb-4">Introduction</h2>
-                  
-                  <div className={`prose prose-invert max-w-none`}>
-                    <p>
-                      <span className="text-lg font-bold text-lime-400">Welcome to dspcoder.com!</span> This platform is designed to help you prepare for embedded systems interviews with confidence.
-                    </p>
                     
-                    <p>
-                      <strong className="text-lime-400">Notes Section:</strong> Use these notes as <strong>quick refreshers just before your interviews</strong>. The content here is structured in easily digestible sections, perfect for last-minute review of key concepts you might face in your interview.
+                  <div className="mb-8 p-6 bg-gray-900 border border-lime-800 rounded-lg">
+                    <h3 className="text-xl text-lime-400 mb-4">Problem Dashboard</h3>
+                    <p className="text-gray-300 mb-2">
+                      Head over to the <a href="/dashboard" className="text-lime-400 hover:underline font-bold">Problems Dashboard</a> to practice solving questions. You'll find embedded systems coding challenges organized by difficulty, topic, and company.
                     </p>
+                    <a href="/dashboard" className="inline-block mt-4 px-4 py-2 bg-lime-700 hover:bg-lime-600 text-white rounded-md text-sm">
+                      Go to Problem Dashboard
+                    </a>
+                  </div>
                     
-                    <p>
-                      <strong className="text-lime-400">Problem Practice:</strong> To practice solving actual embedded systems problems, head over to the <a href="/dashboard" className="text-blue-400 hover:underline font-bold">Problems Dashboard</a>. There you'll find a comprehensive collection of embedded systems coding challenges organized by difficulty, topic, and company.
+                  <div className="p-6 bg-gray-900 border border-blue-800 rounded-lg">
+                    <h3 className="text-xl text-blue-400 mb-4">VS Code Environment</h3>
+                    <p className="text-gray-300 mb-4">
+                      When you select a problem from the dashboard, our VS Code-based editor will open automatically. You just have to:
                     </p>
-                    
-                    <h3 className="text-white">How to Use the Coding Environment</h3>
-                    <p>
-                      When you select a problem from the dashboard, our VS Code-based editor will open automatically. You simply need to:
-                    </p>
-                    <ol className="space-y-2">
-                      <li><strong className="text-lime-400">Step 1:</strong> Read the problem description in the left panel</li>
-                      <li><strong className="text-lime-400">Step 2:</strong> Fill in your solution in the provided function (no need to write everything from scratch)</li>
-                      <li><strong className="text-lime-400">Step 3:</strong> Click the "Run" button to test your code against our test cases</li>
-                      <li><strong className="text-lime-400">Step 4:</strong> Submit your solution when you're confident</li>
+                    <ol className="space-y-3 mb-4 text-gray-300">
+                      <li className="flex items-start">
+                        <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-blue-900 text-blue-300 text-xs mr-3 mt-0.5">1</span>
+                        <span>Fill in your answer in the function provided (no need to write everything from scratch)</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-blue-900 text-blue-300 text-xs mr-3 mt-0.5">2</span>
+                        <span>Click the "Run" button to test your code against our test cases</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-blue-900 text-blue-300 text-xs mr-3 mt-0.5">3</span>
+                        <span>Review the test results and memory analysis</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-blue-900 text-blue-300 text-xs mr-3 mt-0.5">4</span>
+                        <span>Submit your solution when you're confident</span>
+                      </li>
                     </ol>
-                    
-                    <p>
-                      Our system automatically runs test cases against your solution and performs memory analysis to simulate real-world embedded constraints. This helps you practice writing efficient, memory-safe code that would work in actual embedded systems.
-                    </p>
-                    
-                    <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
-                      <div className="flex">
-                        <div className="flex-shrink-0">
-                          <svg className={`h-5 w-5 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
-                          </svg>
-                        </div>
-                        <div className="ml-3">
-                          <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>💡 Pro Tip</h3>
-                          <div className={`text-sm ${themeClasses.infoText}`}>
-                            <p>For best results, follow this study workflow:</p>
-                            <ol className="mt-2 ml-4 list-decimal">
-                              <li className="mb-1">Review relevant notes in this section for key concepts</li>
-                              <li className="mb-1">Head to the <a href="/dashboard" className="underline hover:no-underline">Problem Dashboard</a> to practice solving questions</li>
-                              <li className="mb-1">Use the VS Code environment to implement your solutions</li>
-                              <li className="mb-1">Review memory analysis to optimize your code</li>
-                            </ol>
-                            <p className="mt-2">Consistency is key! Try to solve at least one problem daily to build your embedded systems proficiency.</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </>
