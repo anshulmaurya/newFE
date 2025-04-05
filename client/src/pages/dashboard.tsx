@@ -445,9 +445,10 @@ export default function Dashboard() {
   // We're using useSetupCodebase hook for improved navigation
   const { setupCodebase } = useSetupCodebase();
   
-  // Handle codebase setup for a problem - now using the improved hook for immediate navigation
+  // Handle codebase setup for a problem with immediate navigation (no popups)
   const handleSetupCodebase = (problemId: string, questionId?: string) => {
     if (!user) {
+      // Still need to show auth errors
       toast({
         title: "Authentication required",
         description: "Please log in to access the coding environment",
@@ -457,8 +458,7 @@ export default function Dashboard() {
       return;
     }
     
-    // Use the improved setupCodebase hook instead of the mutation
-    // This will navigate immediately and handle the setup in the background
+    // Use the improved setupCodebase hook - no toast notifications
     setupCodebase({
       problemId,
       questionId,

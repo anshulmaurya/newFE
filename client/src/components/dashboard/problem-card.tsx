@@ -22,27 +22,20 @@ export default function ProblemCard({ problem, index = 0, statusIcon, handleSetu
   // Default language preference
   const language = 'c';
   
-  // Enhanced setup codebase function with immediate navigation
+  // Enhanced setup codebase function with immediate navigation (no popups)
   const handleSolveClick = () => {
     if (onClick) {
       onClick();
       return;
     }
     
-    // Show a toast notification about environment setup
-    toast({
-      title: "Setting up environment",
-      description: "Preparing your workspace in the background...",
-      variant: "default",
-    });
+    // No toast notification anymore as requested by user
     
     if (handleSetupCodebase) {
-      // Use the parent's provided function without setting loading state
-      // This ensures immediate navigation as implemented in dashboard.tsx
+      // Use the parent's provided function for immediate navigation
       handleSetupCodebase(problem.id, problem.question_id);
     } else {
       // Use our own implementation with the setupCodebase hook
-      // This also provides immediate navigation
       setupCodebase({
         problemId: problem.id,
         questionId: problem.question_id,
@@ -50,8 +43,8 @@ export default function ProblemCard({ problem, index = 0, statusIcon, handleSetu
       });
     }
     
-    // We don't set loading state anymore, as we want immediate navigation
-    // The loading indicator will be shown on the coding environment page instead
+    // We navigate immediately to the coding environment page
+    // and handle the setup in the background
   };
   
   return (

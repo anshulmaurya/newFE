@@ -38,12 +38,8 @@ export function useSetupCodebase() {
       }
     },
     onError: (error) => {
-      // Show error toast but don't redirect - user is already on coding page
-      toast({
-        title: "Background setup error",
-        description: "Environment setup encountered an issue: " + (error as Error).message,
-        variant: "destructive",
-      });
+      // Log error but don't show toast - user requested no popups
+      console.error("Background setup error:", (error as Error).message);
     }
   });
 
@@ -54,12 +50,8 @@ export function useSetupCodebase() {
       // Generate a temporary container token for immediate navigation
       const tempToken = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
-      // Show a toast notification to inform the user that their environment is being prepared
-      toast({
-        title: "Setting up your environment",
-        description: "Your coding environment is being prepared. Please wait...",
-        duration: 5000, // Show for 5 seconds
-      });
+      // No toast notifications as per user request
+      // We'll just navigate immediately and handle setup in the background
       
       // IMPORTANT: Navigate immediately to the coding environment
       // with the temporary token to prevent UI freezing
