@@ -2,6 +2,16 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// Set NODE_ENV based on Replit environment
+// If we're running on dspcoder.replit.app, assume it's production
+if (process.env.REPL_SLUG === 'dspcoder' && process.env.REPL_OWNER) {
+  process.env.NODE_ENV = 'production';
+  console.log('Running in production mode');
+} else {
+  process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+  console.log(`Running in ${process.env.NODE_ENV} mode`);
+}
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
