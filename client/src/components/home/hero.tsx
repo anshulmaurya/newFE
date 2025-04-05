@@ -782,7 +782,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <div className="flex items-center gap-2">
-                <div className="text-[rgb(214,251,65)]">
+                <div className="text-emerald-400">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -801,7 +801,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                 <span>200+ Problems</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="text-[rgb(214,251,65)]">
+                <div className="text-blue-400">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -820,7 +820,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                 <span>C/C++/Assembly</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="text-[rgb(214,251,65)]">
+                <div className="text-purple-400">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
