@@ -689,21 +689,7 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
 
   return (
     <section className="relative overflow-hidden pt-28 md:pt-32 pb-16 bg-[rgb(24,24,26)] mt-10">
-      {/* Modern interactive background elements */}
-      <div className="absolute inset-0 z-0">
-        {/* Animated gradient orbs */}
-        <div className="absolute top-1/6 right-0 h-72 w-72 rounded-full bg-[rgb(214,251,65)]/10 blur-[80px] animate-pulse"></div>
-        <div className="absolute bottom-1/4 left-0 h-80 w-80 rounded-full bg-purple-500/10 blur-[100px] animate-pulse"></div>
-        <div className="absolute top-1/3 left-1/4 h-64 w-64 rounded-full bg-blue-500/5 blur-[120px] animate-pulse"></div>
-        
-        {/* Dynamic mesh gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[rgba(0,0,0,0.03)] via-[rgba(30,30,32,0.05)] to-[rgba(0,0,0,0.03)] opacity-30"></div>
-        
-        {/* Circuit lines pattern */}
-        <div className="absolute inset-0 circuit-lines opacity-20"></div>
-      </div>
-
-      {/* Original circuit board decorative elements */}
+      {/* Circuit board decorative elements */}
       <div className="absolute top-1/4 right-0 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
       <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-primary/5 blur-3xl"></div>
 

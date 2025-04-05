@@ -2,23 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Animation utilities */
-@keyframes pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.8; }
-}
-
-.animate-pulse {
-  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.circuit-lines {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 50px 50px;
-  background-position: -2px -2px;
-}
-
 /* Custom scrollbar styling for the entire app */
 :root {
   scrollbar-width: thin;

@@ -27,26 +27,21 @@ export default function PlatformFeatures() {
       title: "200+ Expert-Reviewed Questions",
       description: "Practice with industry-vetted problems covering the full spectrum of embedded systems topics, from memory management to RTOS concepts.",
       previewComponent: (
-        <div className="bg-gradient-to-br from-[rgb(16,16,18)] to-[rgb(20,20,22)] rounded-xl shadow-xl border border-[rgb(30,30,32)] p-6 h-full overflow-hidden">
-          <div className="flex flex-col md:flex-row justify-between items-start mb-6 gap-4">
+        <div className="bg-[rgb(16,16,18)] rounded-xl shadow-xl border border-[rgb(30,30,32)] p-6 h-full overflow-hidden">
+          <div className="flex justify-between items-start mb-6">
             <div>
-              <div className="flex items-center mb-3">
-                <div className="w-10 h-10 rounded-lg bg-emerald-400/10 flex items-center justify-center mr-3 border border-emerald-400/20">
-                  <CheckCircle className="w-5 h-5 text-emerald-400" />
-                </div>
-                <h3 className="text-xl font-semibold text-white">Problem Library</h3>
+              <div className="flex items-center mb-2">
+                <CheckCircle className="w-5 h-5 text-emerald-400 mr-2" />
+                <h3 className="text-lg font-semibold text-white">Problem Library</h3>
               </div>
-              <p className="text-gray-300 mb-5 text-base">
+              <p className="text-gray-300 mb-4">
                 Practice with industry-vetted problems covering the full spectrum of embedded systems topics, from memory management to RTOS concepts.
               </p>
-              <div className="flex flex-wrap gap-3 mb-6">
+              <div className="flex space-x-2 mb-4">
                 {["Easy", "Medium", "Hard"].map((diff) => (
-                  <motion.span 
-                    key={diff}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: diff === "Easy" ? 0.1 : diff === "Medium" ? 0.2 : 0.3 }}
-                    className={`px-4 py-1.5 text-sm font-medium rounded-full flex items-center ${
+                  <span 
+                    key={diff} 
+                    className={`px-3 py-1 text-xs font-medium rounded-full ${
                       diff === "Easy" 
                         ? "bg-emerald-400/10 text-emerald-400 border border-emerald-400/30" 
                         : diff === "Medium"
@@ -54,30 +49,26 @@ export default function PlatformFeatures() {
                           : "bg-rose-400/10 text-rose-400 border border-rose-400/30"
                     }`}
                   >
-                    <span className="w-2 h-2 rounded-full mr-2 bg-current"></span>
                     {diff}
-                  </motion.span>
+                  </span>
                 ))}
               </div>
             </div>
           </div>
           
           <div className="flex gap-3 mb-6 pb-2 overflow-x-auto hide-scrollbar">
-            {["Memory Management", "Multithreading", "Data Structures", "RTOS", "C/C++ APIs"].map((cat, index) => (
-              <motion.div 
+            {["Memory Management", "Multithreading", "Data Structures", "RTOS", "C/C++ APIs"].map((cat) => (
+              <div 
                 key={cat}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 * index }}
-                className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${
                   cat === activeCategory
-                    ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
-                    : "bg-[rgb(25,25,27)] text-slate-300 hover:bg-[rgb(30,30,32)] border border-[rgb(40,40,42)]"
+                    ? "bg-indigo-500/80 text-white"
+                    : "bg-slate-800 text-slate-300 hover:bg-slate-700"
                 }`}
                 onClick={() => setActiveCategory(cat)}
               >
                 {cat}
-              </motion.div>
+              </div>
             ))}
           </div>
           
@@ -93,51 +84,33 @@ export default function PlatformFeatures() {
               { title: "Stack vs Heap Analysis", difficulty: "Easy", time: "20 min", 
                 desc: "Analyze trade-offs between stack and heap allocation in memory-constrained systems." }
             ].map((item, i) => (
-              <motion.div 
+              <div 
                 key={i}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 * i }}
-                className="bg-gradient-to-br from-[rgb(18,18,20)] to-[rgb(14,14,16)] rounded-lg border border-[rgb(30,30,32)] p-5 
-                  hover:border-indigo-500/50 transition-all hover:shadow-lg hover:shadow-indigo-500/10 group
-                  transform hover:-translate-y-1 hover:scale-[1.02]"
+                className="bg-[rgb(14,14,16)]/90 rounded-lg border border-[rgb(30,30,32)] p-4 hover:border-indigo-500/50 transition-all hover:shadow-lg hover:shadow-indigo-500/10 group"
               >
-                <div className="flex justify-between items-start mb-3">
-                  <div className="px-3 py-1.5 text-xs font-medium rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center">
-                    <Cpu className="w-3 h-3 mr-1.5" />
-                    <span>Memory</span>
-                  </div>
-                  <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium ${
-                    item.difficulty === "Easy" 
-                      ? "text-emerald-400 bg-emerald-400/5" 
-                      : item.difficulty === "Medium" 
-                        ? "text-amber-400 bg-amber-400/5" 
-                        : "text-rose-400 bg-rose-400/5"
-                  }`}>
-                    <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
-                    {item.difficulty}
-                  </div>
+                <div className="flex justify-between items-start mb-2">
+                  <span className="px-2 py-1 text-xs font-medium rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                    Memory
+                  </span>
+                  <span className={`text-xs font-medium ${
+                    item.difficulty === "Easy" ? "text-emerald-400" : 
+                    item.difficulty === "Medium" ? "text-amber-400" : "text-rose-400"
+                  }`}>{item.difficulty}</span>
                 </div>
-                
-                <h4 className="font-medium text-white text-base mb-2 group-hover:text-indigo-400 transition-colors">
+                <h4 className="font-medium text-white mb-2 group-hover:text-indigo-400 transition-colors">
                   {item.title}
                 </h4>
-                
-                <p className="text-gray-400 text-xs leading-relaxed mb-4 line-clamp-2">
+                <p className="text-gray-400 text-xs mb-3 line-clamp-2">
                   {item.desc}
                 </p>
-                
-                <div className="flex justify-between items-center text-xs mt-auto">
-                  <div className="flex items-center text-gray-500">
-                    <Clock className="w-3 h-3 mr-1.5" />
-                    <span>{item.time}</span>
-                  </div>
-                  <button className="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 rounded-md flex items-center gap-1.5 transition-colors">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500">Est: {item.time}</span>
+                  <button className="text-indigo-400 group-hover:text-indigo-300 flex items-center space-x-1 transition-colors">
                     <span>Solve</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>
-              </motion.div>
+              </div>
             ))}
             
             {activeCategory === "Multithreading" && [
@@ -150,51 +123,33 @@ export default function PlatformFeatures() {
               { title: "Thread Priority", difficulty: "Easy", time: "25 min", 
                 desc: "Implement a priority-based thread scheduler for a real-time system." }
             ].map((item, i) => (
-              <motion.div 
+              <div 
                 key={i}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 * i }}
-                className="bg-gradient-to-br from-[rgb(18,18,20)] to-[rgb(14,14,16)] rounded-lg border border-[rgb(30,30,32)] p-5 
-                  hover:border-indigo-500/50 transition-all hover:shadow-lg hover:shadow-indigo-500/10 group
-                  transform hover:-translate-y-1 hover:scale-[1.02]"
+                className="bg-[rgb(14,14,16)]/90 rounded-lg border border-[rgb(30,30,32)] p-4 hover:border-indigo-500/50 transition-all hover:shadow-lg hover:shadow-indigo-500/10 group"
               >
-                <div className="flex justify-between items-start mb-3">
-                  <div className="px-3 py-1.5 text-xs font-medium rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center">
-                    <Code className="w-3 h-3 mr-1.5" />
-                    <span>Threading</span>
-                  </div>
-                  <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium ${
-                    item.difficulty === "Easy" 
-                      ? "text-emerald-400 bg-emerald-400/5" 
-                      : item.difficulty === "Medium" 
-                        ? "text-amber-400 bg-amber-400/5" 
-                        : "text-rose-400 bg-rose-400/5"
-                  }`}>
-                    <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
-                    {item.difficulty}
-                  </div>
+                <div className="flex justify-between items-start mb-2">
+                  <span className="px-2 py-1 text-xs font-medium rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                    Threading
+                  </span>
+                  <span className={`text-xs font-medium ${
+                    item.difficulty === "Easy" ? "text-emerald-400" : 
+                    item.difficulty === "Medium" ? "text-amber-400" : "text-rose-400"
+                  }`}>{item.difficulty}</span>
                 </div>
-                
-                <h4 className="font-medium text-white text-base mb-2 group-hover:text-indigo-400 transition-colors">
+                <h4 className="font-medium text-white mb-2 group-hover:text-indigo-400 transition-colors">
                   {item.title}
                 </h4>
-                
-                <p className="text-gray-400 text-xs leading-relaxed mb-4 line-clamp-2">
+                <p className="text-gray-400 text-xs mb-3 line-clamp-2">
                   {item.desc}
                 </p>
-                
-                <div className="flex justify-between items-center text-xs mt-auto">
-                  <div className="flex items-center text-gray-500">
-                    <Clock className="w-3 h-3 mr-1.5" />
-                    <span>{item.time}</span>
-                  </div>
-                  <button className="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 rounded-md flex items-center gap-1.5 transition-colors">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500">Est: {item.time}</span>
+                  <button className="text-indigo-400 group-hover:text-indigo-300 flex items-center space-x-1 transition-colors">
                     <span>Solve</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>
-              </motion.div>
+              </div>
             ))}
             
             {activeCategory === "Data Structures" && [
@@ -1017,44 +972,28 @@ export default function PlatformFeatures() {
   ];
 
   return (
-    <section className="py-20 md:py-28 relative overflow-hidden text-slate-50">
-      {/* Enhanced background with more dynamic elements */}
+    <section className="py-16 md:py-24 relative overflow-hidden text-slate-50">
+      {/* Dark blue background like the hero section */}
       <div className="absolute inset-0 bg-[rgb(24,24,26)] z-0"></div>
-      
-      {/* Animated grid patterns */}
       <div className="circuit-lines absolute inset-0 z-0 opacity-20"></div>
-      
-      {/* Interactive gradient orbs */}
       <div className="absolute w-full h-full z-0">
-        <div className="absolute right-0 bottom-1/3 w-96 h-96 bg-[rgb(214,251,65)]/10 rounded-full blur-[120px] animate-pulse"></div>
-        <div className="absolute left-0 top-1/3 w-80 h-80 bg-purple-500/10 rounded-full blur-[100px] animate-pulse"></div>
-        <div className="absolute top-1/4 left-1/2 w-64 h-64 bg-blue-500/10 rounded-full blur-[90px] animate-pulse"></div>
-      </div>
-      
-      {/* Digital circuit paths - decorative lines */}
-      <div className="absolute inset-0 z-0 opacity-10">
-        <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-[rgb(214,251,65)]/30 to-transparent"></div>
-        <div className="absolute top-3/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
-        <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-blue-500/30 to-transparent"></div>
-        <div className="absolute top-0 left-3/4 w-px h-full bg-gradient-to-b from-transparent via-[rgb(214,251,65)]/30 to-transparent"></div>
+        <div className="absolute right-0 bottom-1/3 w-72 h-72 bg-[rgb(214,251,65)]/5 rounded-full blur-[100px]"></div>
+        <div className="absolute left-0 top-1/3 w-72 h-72 bg-purple-500/5 rounded-full blur-[100px]"></div>
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 
-          className="text-center mb-16 overflow-x-auto pb-2"
+          className="text-center mb-12 overflow-x-auto pb-2"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="inline-block px-4 py-1 bg-[rgba(214,251,65,0.1)] rounded-full text-[rgb(214,251,65)] text-sm font-medium mb-4">
-            POWERFUL TOOLSET
-          </div>
-          <h2 className="font-display font-bold text-3xl md:text-4xl xl:text-5xl mb-6 whitespace-nowrap">
+          <h2 className="font-display font-bold text-3xl md:text-4xl xl:text-5xl mb-4 whitespace-nowrap">
             <span className="text-white">Platform</span>
             <span className="text-[rgb(214,251,65)]"> Features</span>
           </h2>
-          <p className="text-gray-300 max-w-2xl mx-auto text-lg">
+          <p className="text-gray-300 max-w-2xl mx-auto">
             Explore the powerful features that make dspcoder.com the ultimate platform for embedded systems interview preparation.
           </p>
         </motion.div>
