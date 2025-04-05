@@ -129,6 +129,12 @@ export default function Notes() {
   
   // Update selected topic based on current path
   useEffect(() => {
+    // If path is exactly /notes, redirect to getting-started
+    if (currentPath === "/notes") {
+      setLocation("/notes/getting-started");
+      return;
+    }
+    
     // Find the topic that matches the current path
     const currentTopic = notesTopics.find(topic => 
       currentPath === topic.path || currentPath.startsWith(`${topic.path}/`)
@@ -460,36 +466,30 @@ export default function Notes() {
                   
                   <div className={`prose prose-invert max-w-none`}>
                     <p>
-                      Welcome to dspcoder.com platform! This documentation section serves as your quick reference guide 
-                      for embedded systems concepts.
+                      <span className="text-lg font-bold text-lime-400">Welcome to dspcoder.com!</span> This platform is designed to help you prepare for embedded systems interviews with confidence.
                     </p>
                     
                     <p>
-                      <strong>Use these notes as short refreshers just before your interviews.</strong> The content here
-                      is structured in easily digestible sections, perfect for last-minute review of key concepts.
+                      <strong className="text-lime-400">Notes Section:</strong> Use these notes as <strong>quick refreshers just before your interviews</strong>. The content here is structured in easily digestible sections, perfect for last-minute review of key concepts you might face in your interview.
                     </p>
                     
                     <p>
-                      To practice solving actual problems, head over to the <a href="/dashboard" className="text-blue-400 hover:underline">Problems Dashboard</a>. 
-                      There you'll find a comprehensive collection of embedded systems coding challenges organized by difficulty,
-                      topic, and company.
+                      <strong className="text-lime-400">Problem Practice:</strong> To practice solving actual embedded systems problems, head over to the <a href="/dashboard" className="text-blue-400 hover:underline font-bold">Problems Dashboard</a>. There you'll find a comprehensive collection of embedded systems coding challenges organized by difficulty, topic, and company.
                     </p>
                     
-                    <h3>How to Use the Coding Environment</h3>
+                    <h3 className="text-white">How to Use the Coding Environment</h3>
                     <p>
-                      When you select a problem from the dashboard, our VS Code-based editor will open automatically. 
-                      You simply need to:
+                      When you select a problem from the dashboard, our VS Code-based editor will open automatically. You simply need to:
                     </p>
-                    <ol>
-                      <li>Read the problem description in the left panel</li>
-                      <li>Fill in your solution in the provided function</li>
-                      <li>Click the "Run" button to test your code</li>
-                      <li>Submit your solution when you're confident</li>
+                    <ol className="space-y-2">
+                      <li><strong className="text-lime-400">Step 1:</strong> Read the problem description in the left panel</li>
+                      <li><strong className="text-lime-400">Step 2:</strong> Fill in your solution in the provided function (no need to write everything from scratch)</li>
+                      <li><strong className="text-lime-400">Step 3:</strong> Click the "Run" button to test your code against our test cases</li>
+                      <li><strong className="text-lime-400">Step 4:</strong> Submit your solution when you're confident</li>
                     </ol>
                     
                     <p>
-                      Our system automatically runs test cases against your solution and performs memory analysis to 
-                      simulate real-world embedded constraints. This helps you practice writing efficient, memory-safe code.
+                      Our system automatically runs test cases against your solution and performs memory analysis to simulate real-world embedded constraints. This helps you practice writing efficient, memory-safe code that would work in actual embedded systems.
                     </p>
                     
                     <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
@@ -502,8 +502,14 @@ export default function Notes() {
                         <div className="ml-3">
                           <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>💡 Pro Tip</h3>
                           <div className={`text-sm ${themeClasses.infoText}`}>
-                            <p>Consistency is key! Set a goal to solve at least one problem daily to build your embedded systems 
-                            proficiency. Use these notes to review concepts related to problems you're struggling with.</p>
+                            <p>For best results, follow this study workflow:</p>
+                            <ol className="mt-2 ml-4 list-decimal">
+                              <li className="mb-1">Review relevant notes in this section for key concepts</li>
+                              <li className="mb-1">Head to the <a href="/dashboard" className="underline hover:no-underline">Problem Dashboard</a> to practice solving questions</li>
+                              <li className="mb-1">Use the VS Code environment to implement your solutions</li>
+                              <li className="mb-1">Review memory analysis to optimize your code</li>
+                            </ol>
+                            <p className="mt-2">Consistency is key! Try to solve at least one problem daily to build your embedded systems proficiency.</p>
                           </div>
                         </div>
                       </div>
