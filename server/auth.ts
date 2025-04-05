@@ -290,16 +290,32 @@ export function setupAuth(app: Express) {
   app.post("/api/logout", async (req, res, next) => {
     // Store the username before logging out
     const username = req.user?.username;
+    const logoutStartTime = Date.now();
+    console.log(`Logout started at: ${new Date().toISOString()} for user: ${username}`);
 
-    req.logout(async (err) => {
+    req.logout((err) => {
       if (err) return next(err);
 
-      // Delete container for the user if they have a username
-      if (username) {
-        await deleteUserContainer(username);
-      }
-
+      // Respond immediately without waiting for container deletion
       res.sendStatus(200);
+      const logoutEndTime = Date.now();
+      console.log(`Logout completed and response sent in ${logoutEndTime - logoutStartTime}ms`);
+      
+      // Delete container for the user in the background if they have a username
+      if (username) {
+        console.log(`Starting background container deletion for user: ${username}`);
+        setTimeout(() => {
+          const deletionStartTime = Date.now();
+          console.log(`Background container deletion started at: ${new Date().toISOString()}`);
+          
+          deleteUserContainer(username)
+            .then(() => {
+              const duration = Date.now() - deletionStartTime;
+              console.log(`Background container deletion completed in ${duration}ms`);
+            })
+            .catch(err => console.error("Background container deletion error:", err));
+        }, 0);
+      }
     });
   });
 
