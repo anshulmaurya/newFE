@@ -35,7 +35,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { useToast } from '@/hooks/use-toast';
+// Removed toast imports - No notifications
 import { motion } from 'framer-motion';
 import { fadeIn } from '@/lib/animation-utils';
 import { cn } from '@/lib/utils';
@@ -176,7 +176,12 @@ export default function CodingEnvironment() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const { toast } = useToast();
+  // Create a dummy toast function that just logs to console instead of showing notifications
+  const toast = (config: any) => {
+    console.log(`[SUPPRESSED TOAST] ${config.title}: ${config.description}`);
+    // This function does nothing but log to console
+    return null;
+  };
   
   // Subscribe to container status updates via WebSocket
   const containerStatus = useContainerStatus(containerToken || undefined);
@@ -299,7 +304,7 @@ export default function CodingEnvironment() {
         }
       })();
     }
-  }, [toast, user]);
+  }, [user]); // Removed toast dependency
   
   // Fetch problem description from the external API
   const { data: problemDescription, isLoading: isLoadingDescription } = useQuery<ProblemDescriptionResponse>({
@@ -330,11 +335,8 @@ export default function CodingEnvironment() {
   const refreshIframe = () => {
     if (iframeRef.current && iframeRef.current.src) {
       iframeRef.current.src = iframeRef.current.src;
-      toast({
-        title: "Refreshing workspace",
-        description: "The coding environment is being refreshed",
-        variant: "default",
-      });
+      // Removed toast notification
+      console.log("Refreshing workspace");
     }
   };
   

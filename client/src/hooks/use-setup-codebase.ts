@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
-import { useToast } from '@/hooks/use-toast';
+// Removed toast import since we're removing all notifications
 import { useLocation } from 'wouter';
 
 interface SetupCodebaseParams {
@@ -15,7 +15,7 @@ interface SetupCodebaseParams {
  * while the API call is made in the background
  */
 export function useSetupCodebase() {
-  const { toast } = useToast();
+  // No toast imports or usage - removed
   const [, navigate] = useLocation();
   
   // Setup codebase mutation

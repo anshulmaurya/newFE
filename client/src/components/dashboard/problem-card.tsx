@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useSetupCodebase } from '@/hooks/use-setup-codebase';
-import { useToast } from '@/hooks/use-toast';
+// Removed useToast import as we're not using toasts anymore
 
 interface ProblemCardProps {
   problem: any;
@@ -17,19 +17,19 @@ interface ProblemCardProps {
 
 export default function ProblemCard({ problem, index = 0, statusIcon, handleSetupCodebase, onClick }: ProblemCardProps) {
   const { setupCodebase } = useSetupCodebase();
-  const { toast } = useToast();
+  // Removed toast import - no toasts should be used
   
   // Default language preference
   const language = 'c';
   
-  // Enhanced setup codebase function with immediate navigation (no popups)
+  // Enhanced setup codebase function with immediate navigation (absolutely no popups)
   const handleSolveClick = () => {
     if (onClick) {
       onClick();
       return;
     }
     
-    // No toast notification anymore as requested by user
+    // No toast notifications at all as requested by user
     
     if (handleSetupCodebase) {
       // Use the parent's provided function for immediate navigation
