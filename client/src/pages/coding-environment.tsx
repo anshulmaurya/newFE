@@ -305,7 +305,7 @@ export default function CodingEnvironment() {
       variants={fadeIn("up")} 
       initial="hidden" 
       animate="show"
-      className="flex w-full h-screen overflow-hidden bg-[#1E1E1E] fixed inset-0"
+      className="flex w-full h-screen overflow-hidden bg-[#1E1E1E]"
     >
       {/* Vertical navbar */}
       <div className="flex flex-col w-14 bg-[#252526] text-white items-center border-r border-[#1E1E1E] py-2">

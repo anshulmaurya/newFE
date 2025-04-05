@@ -219,7 +219,7 @@ export default function Notes() {
         toggleDarkMode={toggleTheme}
       />
 
-      <div className="flex flex-grow pt-16 scrollable-content"> {/* Added padding-top to prevent navbar overlap */}
+      <div className="flex flex-grow pt-14 scrollable-content"> {/* Adjusted padding-top to prevent navbar overlap without gap */}
         {/* Sidebar */}
         <div className={`w-64 ${themeClasses.sidebarBg} p-4 flex flex-col border-r-0 shadow-md z-10`}>
           <div className="relative mb-3">

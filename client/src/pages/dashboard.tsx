@@ -667,7 +667,7 @@ export default function Dashboard() {
         </div>
             
         {/* Main content - scrollable */}
-        <div className="w-full lg:ml-56 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-16 pb-8 bg-[rgb(14,14,16)] dashboard-content-area">
+        <div className="w-full lg:ml-56 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-14 pb-8 bg-[rgb(14,14,16)] dashboard-content-area">
           {/* Main content area - flex layout with right sidebar */}
           <div className="flex">
             {/* Main content column */}
