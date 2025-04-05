@@ -752,19 +752,19 @@ export default function CodingEnvironment() {
                           <div className="border-b border-[#3E3E42] mb-6">
                             <div className="flex space-x-4">
                               <button 
-                                className={`pb-2 px-1 ${activeTab === 'test-results' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
+                                className={`pb-2 px-1 ${activeTab === 'test-results' ? 'border-b-2 border-[#c2ee4a] text-[#c2ee4a] font-medium' : 'text-gray-400'}`}
                                 onClick={() => setActiveTab('test-results')}
                               >
                                 Test Results
                               </button>
                               <button 
-                                className={`pb-2 px-1 ${activeTab === 'memory-profile' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
+                                className={`pb-2 px-1 ${activeTab === 'memory-profile' ? 'border-b-2 border-[#c2ee4a] text-[#c2ee4a] font-medium' : 'text-gray-400'}`}
                                 onClick={() => setActiveTab('memory-profile')}
                               >
                                 Memory Profile
                               </button>
                               <button 
-                                className={`pb-2 px-1 ${activeTab === 'cache-profile' ? 'border-b-2 border-[#c2ee4a] text-black font-medium' : 'text-gray-400'}`}
+                                className={`pb-2 px-1 ${activeTab === 'cache-profile' ? 'border-b-2 border-[#c2ee4a] text-[#c2ee4a] font-medium' : 'text-gray-400'}`}
                                 onClick={() => setActiveTab('cache-profile')}
                               >
                                 Cache Profile
