@@ -52,36 +52,6 @@ const notesTopics: TopicSection[] = [
         ]
       }
     ]
-  },
-  { 
-    id: "data-structures", 
-    label: "Data Structures",
-    subsections: [
-      {
-        id: "data-structures-main",
-        label: "Data Structures",
-        icon: <Database className="h-4 w-4 mr-2" />,
-        path: "/notes/data-structures",
-        expandable: true,
-        subsections: [
-          { id: "spi", label: "SPI Protocol", path: "/notes/guides/spi" },
-          { id: "i2c", label: "I2C Protocol", path: "/notes/guides/i2c" },
-          { id: "uart", label: "UART Protocol", path: "/notes/guides/uart" }
-        ]
-      }
-    ]
-  },
-  { 
-    id: "coding-environment", 
-    label: "Coding Environment",
-    subsections: [
-      {
-        id: "coding-environment-main",
-        label: "Coding Environment",
-        icon: <Code className="h-4 w-4 mr-2" />,
-        path: "/coding-environment",
-      }
-    ]
   }
 ];
 
