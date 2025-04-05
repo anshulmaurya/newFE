@@ -34,10 +34,19 @@ const containerStatusMap = new Map<string, {
   userId?: number;
 }>();
 
+// Global WebSocketServer instance to prevent multiple initialization
+let wsInstance: WebSocketServer | null = null;
+
 export function setupWebSockets(server: Server, app: Express) {
-  const wss = new WebSocketServer({ server });
+  // Only create a new WebSocketServer instance if one doesn't already exist
+  if (!wsInstance) {
+    wsInstance = new WebSocketServer({ server, path: '/ws' });
+    console.log('WebSocket server initialized');
+  } else {
+    console.log('WebSocket server already initialized, reusing existing instance');
+  }
   
-  console.log('WebSocket server initialized');
+  const wss = wsInstance;
   
   wss.on('connection', (ws: WebSocketClient, req: any) => {
     console.log('WebSocket client connected');

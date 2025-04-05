@@ -18,9 +18,10 @@ export function useContainerStatus(token?: string) {
   useEffect(() => {
     if (!token) return;
     
-    // Create WebSocket connection
+    // Create WebSocket connection with the specific path
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const wsUrl = `${protocol}://${window.location.host}`;
+    const wsUrl = `${protocol}://${window.location.host}/ws`;
+    console.log('Connecting to WebSocket at:', wsUrl);
     const socket = new WebSocket(wsUrl);
     
     socket.onopen = () => {

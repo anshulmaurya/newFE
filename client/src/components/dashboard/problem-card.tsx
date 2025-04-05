@@ -1,8 +1,11 @@
-import React from 'react';
-import { ArrowRight, CheckCircle, Circle, Clock3 } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowRight, CheckCircle, Circle, Clock3, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useSetupCodebase } from '@/hooks/use-setup-codebase';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProblemCardProps {
   problem: any;
@@ -13,6 +16,44 @@ interface ProblemCardProps {
 }
 
 export default function ProblemCard({ problem, index = 0, statusIcon, handleSetupCodebase, onClick }: ProblemCardProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const { setupCodebase } = useSetupCodebase();
+  const { toast } = useToast();
+  
+  // Default language preference
+  const language = 'c';
+  
+  // Enhanced setup codebase function with loading state
+  const handleSolveClick = () => {
+    if (onClick) {
+      onClick();
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    if (handleSetupCodebase) {
+      // Use the parent's provided function
+      handleSetupCodebase(problem.id, problem.question_id);
+    } else {
+      // Use our own implementation with the setupCodebase hook
+      toast({
+        title: "Setting up environment",
+        description: "Preparing your workspace. You'll be redirected shortly...",
+        variant: "default",
+      });
+      
+      setupCodebase({
+        problemId: problem.id,
+        questionId: problem.question_id,
+        language
+      });
+    }
+    
+    // The loading state will be maintained until navigation occurs
+    // Navigation will be handled by the hook or parent's function
+  };
+  
   return (
     <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] hover:border-[rgb(70,70,80)] transition-colors duration-150 overflow-hidden w-full">
       <div className="p-4">
@@ -92,20 +133,36 @@ export default function ProblemCard({ problem, index = 0, statusIcon, handleSetu
           </div>
           <div className="flex flex-col items-end">
             <div className="mb-2">{statusIcon}</div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="text-xs h-8 bg-[rgb(30,30,36)] hover:bg-[rgb(40,40,50)] border-[rgb(60,60,70)] text-gray-200"
-              onClick={() => {
-                if (onClick) {
-                  onClick();
-                } else if (handleSetupCodebase) {
-                  handleSetupCodebase(problem.id, problem.question_id);
-                }
-              }}
-            >
-              Solve <ArrowRight className="h-3 w-3 ml-1" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip delayDuration={300}>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className={cn(
+                      "text-xs h-8 bg-[rgb(30,30,36)] hover:bg-[rgb(40,40,50)] border-[rgb(60,60,70)] text-gray-200",
+                      isLoading && "opacity-90 cursor-not-allowed"
+                    )}
+                    onClick={handleSolveClick}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                        Setting up...
+                      </>
+                    ) : (
+                      <>
+                        Solve <ArrowRight className="h-3 w-3 ml-1" />
+                      </>
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  <p>Begin solving this problem in the coding environment</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { setupWebSockets } from "./socket";
 
 // Set NODE_ENV based on Replit environment
 // If we're running on dspcoder.replit.app, assume it's production
@@ -48,6 +49,13 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+  
+  // Set up WebSocket server and expose container status update function
+  const { updateContainerStatus } = setupWebSockets(server, app);
+  
+  // Make the update function available globally via the app object
+  (app as any).updateContainerStatus = updateContainerStatus;
+  console.log('WebSocket server and container status updates initialized');
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -75,6 +83,6 @@ app.use((req, res, next) => {
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    log(`serving on port ${port} with WebSocket support`);
   });
 })();
