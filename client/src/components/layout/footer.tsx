@@ -1,14 +1,13 @@
-import { Twitter, Linkedin, Github, MessageSquare } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function Footer() {
   const [_, navigate] = useLocation();
   return (
-    <footer className="py-10 relative bg-[rgb(24,24,26)]">
+    <footer className="py-10 relative bg-[rgb(24,24,26)] w-full">
       <div className="circuit-lines absolute inset-0 z-0 pointer-events-none"></div>
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <div className="h-8 w-8 flex items-center justify-center">
@@ -32,20 +31,7 @@ export default function Footer() {
             <p className="text-gray-400 text-sm mb-4">
               Master embedded programming with interactive practice and real-world challenges.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">
-                <Github className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">
-                <MessageSquare className="h-5 w-5" />
-              </a>
-            </div>
+            {/* Social media links removed as requested */}
           </div>
           
           <div>
@@ -62,13 +48,6 @@ export default function Footer() {
               <li><a onClick={() => navigate("/pricing")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">Pricing</a></li>
               <li><a onClick={() => navigate("/about-us")} className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors cursor-pointer">About Us</a></li>
               <li><a href="mailto:contact@dspcoder.com" className="text-gray-400 hover:text-[rgb(214,251,65)] transition-colors">Contact</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-white font-medium mb-4">&nbsp;</h3>
-            <ul className="space-y-2 text-sm">
-              <li>&nbsp;</li>
             </ul>
           </div>
         </div>

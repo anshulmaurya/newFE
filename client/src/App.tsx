@@ -86,8 +86,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router />
-        <Toaster />
+        <div className="app-container">
+          <div className="scrollable-content">
+            <Router />
+            <Toaster />
+          </div>
+        </div>
       </AuthProvider>
     </QueryClientProvider>
   );

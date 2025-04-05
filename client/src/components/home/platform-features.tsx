@@ -983,13 +983,13 @@ export default function PlatformFeatures() {
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 
-          className="text-center mb-12"
+          className="text-center mb-12 overflow-x-auto pb-2"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="font-display font-bold text-3xl md:text-4xl xl:text-5xl mb-4">
+          <h2 className="font-display font-bold text-3xl md:text-4xl xl:text-5xl mb-4 whitespace-nowrap">
             <span className="text-white">Platform</span>
             <span className="text-[rgb(214,251,65)]"> Features</span>
           </h2>
@@ -998,10 +998,36 @@ export default function PlatformFeatures() {
           </p>
         </motion.div>
 
+        {/* Mobile Feature Navigation - becomes horizontal tabs on mobile */}
+        <div className="md:hidden overflow-x-auto mb-6">
+          <div className="flex space-x-3 pb-2 min-w-max">
+            {features.map((feature) => (
+              <div
+                key={feature.id}
+                className={`px-4 py-2 rounded-lg cursor-pointer transition-all whitespace-nowrap ${
+                  activeFeature === feature.id
+                    ? "bg-[rgb(214,251,65)]/10 border border-[rgb(214,251,65)]/30 text-[rgb(214,251,65)]"
+                    : "hover:bg-[rgb(30,30,32)] border border-transparent text-white"
+                }`}
+                onClick={() => setActiveFeature(feature.id)}
+              >
+                <div className="flex items-center">
+                  <div className={`mr-2 ${activeFeature === feature.id ? "" : "text-gray-400"}`}>
+                    {feature.icon}
+                  </div>
+                  <div className="text-sm font-medium">
+                    {feature.title}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-10 gap-6">
-          {/* Feature navigation - left column (30% width) */}
+          {/* Feature navigation - left column on desktop (30% width), hidden on mobile */}
           <motion.div
-            className="md:col-span-3"
+            className="hidden md:block md:col-span-3"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -1050,7 +1076,7 @@ export default function PlatformFeatures() {
             </div>
           </motion.div>
 
-          {/* Feature content - right side (70% width) */}
+          {/* Feature content - right side on desktop (70% width), full width on mobile */}
           <motion.div
             className="md:col-span-7"
             initial={{ opacity: 0, x: 20 }}
