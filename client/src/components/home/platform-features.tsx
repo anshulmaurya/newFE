@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Link } from "wouter";
 import { 
   CheckCircle, BookOpen, Briefcase, FileText, Terminal, Users, ChevronRight, 
   ArrowRight, Clock, Award, Zap, Bookmark, Target, Cpu, Code
@@ -72,30 +73,194 @@ export default function PlatformFeatures() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[1, 2, 3, 4].map((i) => (
+            {/* Dynamic content based on selected category */}
+            {activeCategory === "Memory Management" && [
+              { title: "Memory Leak Detector", difficulty: "Medium", time: "30 min", 
+                desc: "Implement a system to detect memory leaks in an embedded application." },
+              { title: "Memory Pool Allocator", difficulty: "Hard", time: "45 min", 
+                desc: "Design a fixed-size memory pool allocator for real-time systems with no fragmentation." },
+              { title: "Zero-Copy Buffer", difficulty: "Medium", time: "35 min", 
+                desc: "Implement a zero-copy mechanism for efficient data transfer between devices." },
+              { title: "Stack vs Heap Analysis", difficulty: "Easy", time: "20 min", 
+                desc: "Analyze trade-offs between stack and heap allocation in memory-constrained systems." }
+            ].map((item, i) => (
               <div 
                 key={i}
-                className="bg-slate-800/50 rounded-lg border border-slate-700/50 p-4 hover:border-indigo-500/50 transition-all hover:shadow-lg hover:shadow-indigo-500/10 group"
+                className="bg-[rgb(14,14,16)]/90 rounded-lg border border-[rgb(30,30,32)] p-4 hover:border-indigo-500/50 transition-all hover:shadow-lg hover:shadow-indigo-500/10 group"
               >
                 <div className="flex justify-between items-start mb-2">
                   <span className="px-2 py-1 text-xs font-medium rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-                    {activeCategory.split(" ")[0]}
+                    Memory
                   </span>
-                  <span className="text-xs font-medium text-amber-400">Medium</span>
+                  <span className={`text-xs font-medium ${
+                    item.difficulty === "Easy" ? "text-emerald-400" : 
+                    item.difficulty === "Medium" ? "text-amber-400" : "text-rose-400"
+                  }`}>{item.difficulty}</span>
                 </div>
                 <h4 className="font-medium text-white mb-2 group-hover:text-indigo-400 transition-colors">
-                  {["Memory Leak Detector", "Stack Overflow Detection", "Mutex Implementation", "Circular Buffer"][i-1]}
+                  {item.title}
                 </h4>
-                <p className="text-slate-400 text-xs mb-3 line-clamp-2">
-                  {[
-                    "Implement a system to detect memory leaks in an embedded application.",
-                    "Design a function to detect stack overflows in a real-time system.",
-                    "Implement a mutex for critical section protection in a multithreaded environment.",
-                    "Implement a circular buffer for efficient producer-consumer data exchange."
-                  ][i-1]}
+                <p className="text-gray-400 text-xs mb-3 line-clamp-2">
+                  {item.desc}
                 </p>
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-slate-500">Est: 30 min</span>
+                  <span className="text-gray-500">Est: {item.time}</span>
+                  <button className="text-indigo-400 group-hover:text-indigo-300 flex items-center space-x-1 transition-colors">
+                    <span>Solve</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            
+            {activeCategory === "Multithreading" && [
+              { title: "Mutex Implementation", difficulty: "Medium", time: "35 min", 
+                desc: "Implement a mutex for critical section protection in a multithreaded environment." },
+              { title: "Producer-Consumer", difficulty: "Medium", time: "40 min", 
+                desc: "Implement a thread-safe producer-consumer pattern using semaphores." },
+              { title: "Deadlock Detection", difficulty: "Hard", time: "50 min", 
+                desc: "Design an algorithm to detect potential deadlocks in a multithreaded application." },
+              { title: "Thread Priority", difficulty: "Easy", time: "25 min", 
+                desc: "Implement a priority-based thread scheduler for a real-time system." }
+            ].map((item, i) => (
+              <div 
+                key={i}
+                className="bg-[rgb(14,14,16)]/90 rounded-lg border border-[rgb(30,30,32)] p-4 hover:border-indigo-500/50 transition-all hover:shadow-lg hover:shadow-indigo-500/10 group"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <span className="px-2 py-1 text-xs font-medium rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                    Threading
+                  </span>
+                  <span className={`text-xs font-medium ${
+                    item.difficulty === "Easy" ? "text-emerald-400" : 
+                    item.difficulty === "Medium" ? "text-amber-400" : "text-rose-400"
+                  }`}>{item.difficulty}</span>
+                </div>
+                <h4 className="font-medium text-white mb-2 group-hover:text-indigo-400 transition-colors">
+                  {item.title}
+                </h4>
+                <p className="text-gray-400 text-xs mb-3 line-clamp-2">
+                  {item.desc}
+                </p>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500">Est: {item.time}</span>
+                  <button className="text-indigo-400 group-hover:text-indigo-300 flex items-center space-x-1 transition-colors">
+                    <span>Solve</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            
+            {activeCategory === "Data Structures" && [
+              { title: "Circular Buffer", difficulty: "Medium", time: "30 min", 
+                desc: "Implement a circular buffer for efficient data exchange between processes." },
+              { title: "Lock-Free Queue", difficulty: "Hard", time: "55 min", 
+                desc: "Design a lock-free queue for high-performance inter-thread communication." },
+              { title: "Bit Field Manipulation", difficulty: "Easy", time: "25 min", 
+                desc: "Implement functions to efficiently pack and unpack bit fields for embedded protocols." },
+              { title: "Memory-Efficient Trie", difficulty: "Medium", time: "40 min", 
+                desc: "Implement a memory-efficient trie data structure for string matching in resource-constrained systems." }
+            ].map((item, i) => (
+              <div 
+                key={i}
+                className="bg-[rgb(14,14,16)]/90 rounded-lg border border-[rgb(30,30,32)] p-4 hover:border-indigo-500/50 transition-all hover:shadow-lg hover:shadow-indigo-500/10 group"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <span className="px-2 py-1 text-xs font-medium rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                    Data
+                  </span>
+                  <span className={`text-xs font-medium ${
+                    item.difficulty === "Easy" ? "text-emerald-400" : 
+                    item.difficulty === "Medium" ? "text-amber-400" : "text-rose-400"
+                  }`}>{item.difficulty}</span>
+                </div>
+                <h4 className="font-medium text-white mb-2 group-hover:text-indigo-400 transition-colors">
+                  {item.title}
+                </h4>
+                <p className="text-gray-400 text-xs mb-3 line-clamp-2">
+                  {item.desc}
+                </p>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500">Est: {item.time}</span>
+                  <button className="text-indigo-400 group-hover:text-indigo-300 flex items-center space-x-1 transition-colors">
+                    <span>Solve</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            
+            {activeCategory === "RTOS" && [
+              { title: "Task Scheduler", difficulty: "Hard", time: "60 min", 
+                desc: "Implement a preemptive priority-based task scheduler for an RTOS kernel." },
+              { title: "Stack Overflow Detection", difficulty: "Medium", time: "35 min", 
+                desc: "Design a function to detect stack overflows in a real-time system." },
+              { title: "Semaphore Implementation", difficulty: "Medium", time: "40 min", 
+                desc: "Implement a counting semaphore for synchronization between tasks." },
+              { title: "Watchdog Timer", difficulty: "Easy", time: "25 min", 
+                desc: "Design a watchdog timer system to recover from software failures in an RTOS." }
+            ].map((item, i) => (
+              <div 
+                key={i}
+                className="bg-[rgb(14,14,16)]/90 rounded-lg border border-[rgb(30,30,32)] p-4 hover:border-indigo-500/50 transition-all hover:shadow-lg hover:shadow-indigo-500/10 group"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <span className="px-2 py-1 text-xs font-medium rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                    RTOS
+                  </span>
+                  <span className={`text-xs font-medium ${
+                    item.difficulty === "Easy" ? "text-emerald-400" : 
+                    item.difficulty === "Medium" ? "text-amber-400" : "text-rose-400"
+                  }`}>{item.difficulty}</span>
+                </div>
+                <h4 className="font-medium text-white mb-2 group-hover:text-indigo-400 transition-colors">
+                  {item.title}
+                </h4>
+                <p className="text-gray-400 text-xs mb-3 line-clamp-2">
+                  {item.desc}
+                </p>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500">Est: {item.time}</span>
+                  <button className="text-indigo-400 group-hover:text-indigo-300 flex items-center space-x-1 transition-colors">
+                    <span>Solve</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            
+            {activeCategory === "C/C++ APIs" && [
+              { title: "Custom String Library", difficulty: "Medium", time: "45 min", 
+                desc: "Implement a memory-efficient string manipulation library for embedded systems." },
+              { title: "Interrupt Handler", difficulty: "Hard", time: "50 min", 
+                desc: "Design a robust interrupt handling system with priority levels and nested interrupts." },
+              { title: "Memory-Safe Functions", difficulty: "Medium", time: "40 min", 
+                desc: "Implement memory-safe alternatives to strcpy, strcat and other standard C functions." },
+              { title: "Lightweight JSON Parser", difficulty: "Easy", time: "30 min", 
+                desc: "Create a lightweight JSON parser optimized for embedded systems with limited resources." }
+            ].map((item, i) => (
+              <div 
+                key={i}
+                className="bg-[rgb(14,14,16)]/90 rounded-lg border border-[rgb(30,30,32)] p-4 hover:border-indigo-500/50 transition-all hover:shadow-lg hover:shadow-indigo-500/10 group"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <span className="px-2 py-1 text-xs font-medium rounded-md bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                    C/C++
+                  </span>
+                  <span className={`text-xs font-medium ${
+                    item.difficulty === "Easy" ? "text-emerald-400" : 
+                    item.difficulty === "Medium" ? "text-amber-400" : "text-rose-400"
+                  }`}>{item.difficulty}</span>
+                </div>
+                <h4 className="font-medium text-white mb-2 group-hover:text-indigo-400 transition-colors">
+                  {item.title}
+                </h4>
+                <p className="text-gray-400 text-xs mb-3 line-clamp-2">
+                  {item.desc}
+                </p>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500">Est: {item.time}</span>
                   <button className="text-indigo-400 group-hover:text-indigo-300 flex items-center space-x-1 transition-colors">
                     <span>Solve</span>
                     <ArrowRight className="w-3 h-3" />
@@ -106,10 +271,10 @@ export default function PlatformFeatures() {
           </div>
           
           <div className="mt-6 text-center">
-            <button className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-full text-sm font-medium inline-flex items-center space-x-2 transition-colors">
+            <a href="/dashboard" className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-full text-sm font-medium inline-flex items-center space-x-2 transition-colors">
               <span>Browse All Problems</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </a>
           </div>
         </div>
       )
@@ -195,10 +360,10 @@ export default function PlatformFeatures() {
           </div>
           
           <div className="mt-6 text-center">
-            <button className="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-full text-sm font-medium inline-flex items-center space-x-2 transition-colors">
+            <a href="/notes" className="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-full text-sm font-medium inline-flex items-center space-x-2 transition-colors">
               <span>Browse All Notes</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </a>
           </div>
         </div>
       )
@@ -239,22 +404,14 @@ export default function PlatformFeatures() {
                 <div className="text-xs text-gray-300">
                   <span className="font-medium text-gray-200">Focus Areas:</span> RTOS, DSP, 5G, Power Management
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="flex justify-between">
+                <div className="flex justify-between gap-6 text-xs">
+                  <div className="flex justify-between flex-grow">
                     <span className="text-gray-400">Questions:</span>
                     <span className="text-amber-400 font-medium">48</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Labs:</span>
-                    <span className="text-amber-400 font-medium">14</span>
-                  </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between flex-grow">
                     <span className="text-gray-400">Notes:</span>
                     <span className="text-amber-400 font-medium">12</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Interviews:</span>
-                    <span className="text-amber-400 font-medium">8</span>
                   </div>
                 </div>
               </div>
@@ -275,22 +432,70 @@ export default function PlatformFeatures() {
                 <div className="text-xs text-gray-300">
                   <span className="font-medium text-gray-200">Focus Areas:</span> GPU Architecture, CUDA, AI Accelerators
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="flex justify-between">
+                <div className="flex justify-between gap-6 text-xs">
+                  <div className="flex justify-between flex-grow">
                     <span className="text-gray-400">Questions:</span>
                     <span className="text-amber-400 font-medium">42</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Labs:</span>
-                    <span className="text-amber-400 font-medium">11</span>
-                  </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between flex-grow">
                     <span className="text-gray-400">Notes:</span>
                     <span className="text-amber-400 font-medium">9</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Interviews:</span>
-                    <span className="text-amber-400 font-medium">6</span>
+                </div>
+              </div>
+              <button className="w-full py-2 bg-[rgb(25,25,27)] hover:bg-amber-500 text-gray-300 hover:text-white rounded-md text-xs font-medium transition-all flex items-center justify-center space-x-1">
+                <span>View Study Plan</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+            
+            <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-4 hover:border-amber-500/50 transition-all group">
+              <div className="flex items-center mb-3">
+                <div className="w-10 h-10 rounded-full bg-[rgb(25,25,27)] flex items-center justify-center text-red-400 mr-3">
+                  <span className="font-bold">T</span>
+                </div>
+                <h4 className="text-white group-hover:text-amber-400 transition-colors font-medium">Tesla</h4>
+              </div>
+              <div className="space-y-2 mb-3">
+                <div className="text-xs text-gray-300">
+                  <span className="font-medium text-gray-200">Focus Areas:</span> AUTOSAR, CAN Bus, Safety Critical, Embedded C
+                </div>
+                <div className="flex justify-between gap-6 text-xs">
+                  <div className="flex justify-between flex-grow">
+                    <span className="text-gray-400">Questions:</span>
+                    <span className="text-amber-400 font-medium">38</span>
+                  </div>
+                  <div className="flex justify-between flex-grow">
+                    <span className="text-gray-400">Notes:</span>
+                    <span className="text-amber-400 font-medium">10</span>
+                  </div>
+                </div>
+              </div>
+              <button className="w-full py-2 bg-[rgb(25,25,27)] hover:bg-amber-500 text-gray-300 hover:text-white rounded-md text-xs font-medium transition-all flex items-center justify-center space-x-1">
+                <span>View Study Plan</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+            
+            <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-4 hover:border-amber-500/50 transition-all group">
+              <div className="flex items-center mb-3">
+                <div className="w-10 h-10 rounded-full bg-[rgb(25,25,27)] flex items-center justify-center text-white mr-3">
+                  <span className="font-bold">A</span>
+                </div>
+                <h4 className="text-white group-hover:text-amber-400 transition-colors font-medium">Apple</h4>
+              </div>
+              <div className="space-y-2 mb-3">
+                <div className="text-xs text-gray-300">
+                  <span className="font-medium text-gray-200">Focus Areas:</span> SoC Design, Low-Power Systems, ARM Architecture
+                </div>
+                <div className="flex justify-between gap-6 text-xs">
+                  <div className="flex justify-between flex-grow">
+                    <span className="text-gray-400">Questions:</span>
+                    <span className="text-amber-400 font-medium">45</span>
+                  </div>
+                  <div className="flex justify-between flex-grow">
+                    <span className="text-gray-400">Notes:</span>
+                    <span className="text-amber-400 font-medium">14</span>
                   </div>
                 </div>
               </div>
