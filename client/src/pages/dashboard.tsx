@@ -475,16 +475,14 @@ export default function Dashboard() {
         <div className="pl-4 pr-4 relative">
           <div className="flex">
             <div className="flex-1 space-y-4 w-full">
-              {/* Activity Heatmap - temporary fallback */}
-              <ActivityHeatmap />
+              {/* Weekly Activity Heatmap */}
+              <WeeklyHeatmap />
               
-              {/* The new components are temporarily commented due to rendering issues */}
-              {/* <WeeklyHeatmap />
-              
+              {/* Problems Solved Stats and Streak */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <ProblemsSolvedStats />
                 <StreakCard />
-              </div> */}
+              </div>
 
               {/* Selected Bundle Details */}
               {selectedBundle && bundles[selectedBundle as keyof typeof bundles] && (

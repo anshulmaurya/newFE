@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, CircleDashed, BarChart, FlameIcon } from "lucide-react";
+import { CheckCircle, CircleDashed, BarChart3, Flame } from "lucide-react";
 
 type UserStats = {
   totalSolved: number;
@@ -91,7 +91,7 @@ export default function ProgressStats() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
-                <BarChart className="h-5 w-5 text-yellow-500" />
+                <BarChart3 className="h-5 w-5 text-yellow-500" />
                 <span className="text-sm font-medium">Medium</span>
               </div>
               <span className="text-sm font-medium">
@@ -105,7 +105,7 @@ export default function ProgressStats() {
           <div>
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
-                <BarChart className="h-5 w-5 text-red-500" />
+                <BarChart3 className="h-5 w-5 text-red-500" />
                 <span className="text-sm font-medium">Hard</span>
               </div>
               <span className="text-sm font-medium">
@@ -118,7 +118,7 @@ export default function ProgressStats() {
           {/* Current Streak */}
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <FlameIcon className="h-5 w-5 text-orange-500" />
+              <Flame className="h-5 w-5 text-orange-500" />
               <span className="text-sm font-medium">Current Streak</span>
             </div>
             <span className="text-sm font-medium">{userStats.currentStreak} days</span>
@@ -127,7 +127,7 @@ export default function ProgressStats() {
           {/* Longest Streak */}
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <FlameIcon className="h-5 w-5 text-red-500" />
+              <Flame className="h-5 w-5 text-red-500" />
               <span className="text-sm font-medium">Longest Streak</span>
             </div>
             <span className="text-sm font-medium">{userStats.longestStreak} days</span>
