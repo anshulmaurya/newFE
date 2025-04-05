@@ -13,12 +13,12 @@ interface ProblemCardProps {
 
 export default function ProblemCard({ problem, index, statusIcon, handleSetupCodebase }: ProblemCardProps) {
   return (
-    <div className="bg-[rgb(20,20,22)] rounded-lg border border-[rgb(45,45,50)] hover:border-[rgb(70,70,80)] transition-colors duration-150 overflow-hidden">
+    <div className="bg-[rgb(20,20,22)] rounded-lg border border-[rgb(45,45,50)] hover:border-[rgb(70,70,80)] transition-colors duration-150 overflow-hidden w-full">
       <div className="p-4">
         <div className="flex items-start justify-between">
-          <div className="flex items-center">
+          <div className="flex items-center flex-1">
             <div className="mr-3 text-xl text-gray-500">{index + 1}</div>
-            <div>
+            <div className="flex-1">
               <h3 className="text-base font-medium text-gray-200 mb-1">
                 {problem.title || `Problem ${index + 1}`}
               </h3>

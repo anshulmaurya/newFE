@@ -463,10 +463,10 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout darkMode={darkMode} toggleTheme={toggleTheme}>
-      <div className="lg:ml-56 pt-14 pb-8 bg-[rgb(14,14,16)]">
+      <div className="lg:ml-56 pt-14 pb-8 bg-[rgb(12,12,14)]">
         <div className="px-4 lg:px-6 mx-auto relative">
           <div className="flex">
-            <div className="flex-1 mr-0 lg:mr-64 space-y-4">
+            <div className="flex-1 space-y-4 w-full">
               {/* Activity Heatmap */}
               <ActivityHeatmap />
 
@@ -670,35 +670,7 @@ export default function Dashboard() {
               )}
             </div>
             
-            {/* Right sidebar for tags */}
-            <div className="hidden lg:block w-60 fixed right-4 top-20 bottom-8 overflow-y-auto">
-              <div className="bg-[rgb(20,20,22)] rounded-lg p-4 border border-[rgb(35,35,40)]">
-                <h3 className="text-sm font-medium text-white mb-3">Popular Tags</h3>
-                <div className="space-y-2">
-                  {/* Sample tags with different colors */}
-                  <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-[#4a9eff] text-white hover:bg-[#3a8eff] cursor-pointer text-xs">RTOS</Badge>
-                    <Badge className="bg-[#ff6b6b] text-white hover:bg-[#ff5a5a] cursor-pointer text-xs">Memory Management</Badge>
-                    <Badge className="bg-[#50e3c2] text-black hover:bg-[#40d3b2] cursor-pointer text-xs">Embedded C</Badge>
-                    <Badge className="bg-[#ffc107] text-black hover:bg-[#efb100] cursor-pointer text-xs">ARM</Badge>
-                    <Badge className="bg-[#bd93f9] text-white hover:bg-[#ad83e9] cursor-pointer text-xs">MCU</Badge>
-                    <Badge className="bg-[#8bd450] text-black hover:bg-[#7bc440] cursor-pointer text-xs">Interrupts</Badge>
-                    <Badge className="bg-[#ff79c6] text-white hover:bg-[#ef69b6] cursor-pointer text-xs">UART</Badge>
-                    <Badge className="bg-[#f1fa8c] text-black hover:bg-[#e1ea7c] cursor-pointer text-xs">SPI</Badge>
-                    <Badge className="bg-[#ffb86c] text-black hover:bg-[#efaa5c] cursor-pointer text-xs">I2C</Badge>
-                    <Badge className="bg-[#8be9fd] text-black hover:bg-[#7bd9ed] cursor-pointer text-xs">GPIO</Badge>
-                    <Badge className="bg-[#ff5555] text-white hover:bg-[#ef4545] cursor-pointer text-xs">DMA</Badge>
-                    <Badge className="bg-[#50fa7b] text-black hover:bg-[#40ea6b] cursor-pointer text-xs">ADC</Badge>
-                    <Badge className="bg-[#bd93f9] text-white hover:bg-[#ad83e9] cursor-pointer text-xs">PWM</Badge>
-                    <Badge className="bg-[#f1fa8c] text-black hover:bg-[#e1ea7c] cursor-pointer text-xs">Multithreading</Badge>
-                    <Badge className="bg-[#ff79c6] text-white hover:bg-[#ef69b6] cursor-pointer text-xs">CAN</Badge>
-                    <Badge className="bg-[#4a9eff] text-white hover:bg-[#3a8eff] cursor-pointer text-xs">Ethernet</Badge>
-                    <Badge className="bg-[#ff6b6b] text-white hover:bg-[#ff5a5a] cursor-pointer text-xs">Drivers</Badge>
-                    <Badge className="bg-[#50e3c2] text-black hover:bg-[#40d3b2] cursor-pointer text-xs">Bootloader</Badge>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Right sidebar removed as requested */}
           </div>
         </div>
       </div>
