@@ -203,7 +203,7 @@ export default function Dashboard() {
   const [jdSubmitted, setJdSubmitted] = useState<boolean>(false);
   
   // Get current user information
-  const { user, darkMode, toggleDarkMode } = useAuth();
+  const { user } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   
@@ -358,10 +358,7 @@ export default function Dashboard() {
     }
   };
 
-  // Toggle theme function
-  const toggleTheme = () => {
-    toggleDarkMode();
-  };
+  // Dashboard uses fixed dark mode styling
 
   // Get difficulty color class
   const getDifficultyColor = (difficulty: string): string => {
@@ -461,7 +458,7 @@ export default function Dashboard() {
   };
 
   return (
-    <DashboardLayout darkMode={darkMode} toggleTheme={toggleTheme}>
+    <DashboardLayout darkMode={true} toggleTheme={() => {}}>
       <div className="pt-0 pb-8 bg-[rgb(12,12,14)]">
         <div className="pl-4 pr-4 relative">
           <div className="flex">
