@@ -760,39 +760,46 @@ export default function PlatformFeatures() {
                   
                   {/* Code content */}
                   <div className="py-3 px-2 bg-[#1e1e1e] text-[#e6edf3] flex-1">
-                    <div><span className="text-[#6a9955]">// PWM Generator Implementation</span></div>
-                    <div><span className="text-[#6a9955]">// Controls servo motor position via duty cycle</span></div>
-                    <div><span className="text-[#6a9955]">// Author: dspcoder.com</span></div>
+                    <div><span className="text-[#6a9955]">/**</span></div>
+                    <div><span className="text-[#6a9955]"> * PWM Generator Implementation</span></div>
+                    <div><span className="text-[#6a9955]"> * Controls servo motor position via duty cycle</span></div>
+                    <div><span className="text-[#6a9955]"> * Author: dspcoder.com</span></div>
+                    <div><span className="text-[#6a9955]"> */</span></div>
                     <div></div>
                     <div><span className="text-[#569cd6]">#include</span> <span className="text-[#ce9178]">"timer.h"</span></div>
                     <div><span className="text-[#569cd6]">#include</span> <span className="text-[#ce9178]">"gpio.h"</span></div>
                     <div></div>
-                    <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">PWM_PORT</span> <span className="text-[#d4d4d4]">GPIOA</span></div>
-                    <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">PWM_PIN</span> <span className="text-[#d4d4d4]">GPIO_PIN_5</span></div>
-                    <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">PWM_FREQUENCY</span> <span className="text-[#d4d4d4]">50</span> <span className="text-[#6a9955]">// 50Hz for typical servo motors</span></div>
+                    <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">PWM_PORT</span>      <span className="text-[#d4d4d4]">GPIOA</span></div>
+                    <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">PWM_PIN</span>       <span className="text-[#d4d4d4]">GPIO_PIN_5</span></div>
+                    <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">PWM_FREQUENCY</span> <span className="text-[#d4d4d4]">50</span>    <span className="text-[#6a9955]">// 50Hz for typical servo motors</span></div>
                     <div></div>
                     <div><span className="text-[#569cd6]">void</span> <span className="text-[#dcdcaa]">pwm_init</span><span className="text-[#d4d4d4]">(uint8_t channel, uint32_t frequency) {'{'}</span></div>
-                    <div>  <span className="text-[#dcdcaa]">timer_init</span><span className="text-[#d4d4d4]">(channel, frequency);</span></div>
-                    <div>  <span className="text-[#dcdcaa]">gpio_set_mode</span><span className="text-[#d4d4d4]">(PWM_PORT, PWM_PIN, GPIO_MODE_OUTPUT);</span></div>
+                    <div>    <span className="text-[#dcdcaa]">timer_init</span><span className="text-[#d4d4d4]">(channel, frequency);</span></div>
+                    <div>    <span className="text-[#dcdcaa]">gpio_set_mode</span><span className="text-[#d4d4d4]">(PWM_PORT, PWM_PIN, GPIO_MODE_OUTPUT);</span></div>
                     <div><span className="text-[#d4d4d4]">{'}'}</span></div>
                     <div></div>
                     <div><span className="text-[#569cd6]">void</span> <span className="text-[#dcdcaa]">pwm_set_duty</span><span className="text-[#d4d4d4]">(uint8_t channel, uint8_t duty) {'{'}</span></div>
-                    <div>  <span className="text-[#6a9955]">// Set PWM duty cycle (0-100%)</span></div>
-                    <div>  <span className="text-[#c586c0]">if</span><span className="text-[#d4d4d4]"> (duty &gt; 100) duty = 100;</span></div>
-                    <div>  <span className="text-[#dcdcaa]">timer_set_compare</span><span className="text-[#d4d4d4]">(channel, duty);</span></div>
-                    <div>  <span className="text-[#c586c0]">return</span><span className="text-[#d4d4d4]">;</span></div>
+                    <div>    <span className="text-[#6a9955]">// Set PWM duty cycle (0-100%)</span></div>
+                    <div>    <span className="text-[#c586c0]">if</span><span className="text-[#d4d4d4]"> (duty &gt; 100) {'{'}</span></div>
+                    <div>        <span className="text-[#d4d4d4]">duty = 100;</span></div>
+                    <div>    <span className="text-[#d4d4d4]">{'}'}</span></div>
+                    <div>    <span className="text-[#dcdcaa]">timer_set_compare</span><span className="text-[#d4d4d4]">(channel, duty);</span></div>
                     <div><span className="text-[#d4d4d4]">{'}'}</span></div>
                     <div></div>
                     <div><span className="text-[#569cd6]">void</span> <span className="text-[#dcdcaa]">servo_set_angle</span><span className="text-[#d4d4d4]">(uint8_t channel, uint8_t angle) {'{'}</span></div>
-                    <div>  <span className="text-[#6a9955]">// Convert angle (0-180) to duty cycle (5-10%)</span></div>
-                    <div>  <span className="text-[#569cd6]">uint8_t</span> <span className="text-[#d4d4d4]">duty = 5 + (angle * 5 / 180);</span></div>
-                    <div>  <span className="text-[#dcdcaa]">pwm_set_duty</span><span className="text-[#d4d4d4]">(channel, duty);</span></div>
+                    <div>    <span className="text-[#6a9955]">// Convert angle (0-180) to duty cycle (5-10%)</span></div>
+                    <div>    <span className="text-[#569cd6]">uint8_t</span> <span className="text-[#d4d4d4]">duty = 5 + (angle * 5 / 180);</span></div>
+                    <div>    <span className="text-[#dcdcaa]">pwm_set_duty</span><span className="text-[#d4d4d4]">(channel, duty);</span></div>
                     <div><span className="text-[#d4d4d4]">{'}'}</span></div>
                     <div></div>
-                    <div><span className="text-[#6a9955]">// Example of how to use the PWM module</span></div>
+                    <div><span className="text-[#6a9955]">/**</span></div>
+                    <div><span className="text-[#6a9955]"> * Example of how to use the PWM module</span></div>
+                    <div><span className="text-[#6a9955]"> */</span></div>
                     <div><span className="text-[#569cd6]">int</span> <span className="text-[#dcdcaa]">main</span><span className="text-[#d4d4d4]">() {'{'}</span></div>
-                    <div>  <span className="text-[#dcdcaa]">pwm_init</span><span className="text-[#d4d4d4]">(0, PWM_FREQUENCY);</span></div>
-                    <div>  <span className="text-[#dcdcaa]">servo_set_angle</span><span className="text-[#d4d4d4]">(0, 90); </span><span className="text-[#6a9955]">// Set servo to middle position</span></div>
+                    <div>    <span className="text-[#dcdcaa]">pwm_init</span><span className="text-[#d4d4d4]">(0, PWM_FREQUENCY);</span></div>
+                    <div>    <span className="text-[#dcdcaa]">servo_set_angle</span><span className="text-[#d4d4d4]">(0, 90);  </span><span className="text-[#6a9955]">// Set servo to middle position</span></div>
+                    <div>    </div>
+                    <div>    <span className="text-[#c586c0]">return</span> <span className="text-[#d4d4d4]">0;</span></div>
                     <div><span className="text-[#d4d4d4]">{'}'}</span></div>
                   </div>
                 </div>
@@ -813,7 +820,7 @@ export default function PlatformFeatures() {
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <span>Ln 8, Col 21</span>
+                    <span>Ln 24, Col 16</span>
                     <span>UTF-8</span>
                     <span>CRLF</span>
                     <span>C/C++</span>
