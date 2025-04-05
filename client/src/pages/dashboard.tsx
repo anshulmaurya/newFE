@@ -201,10 +201,9 @@ export default function Dashboard() {
   const [selectedBundle, setSelectedBundle] = useState<string | null>(null);
   const [jobDescription, setJobDescription] = useState<string>('');
   const [jdSubmitted, setJdSubmitted] = useState<boolean>(false);
-  const [darkMode, setDarkMode] = useState<boolean>(true);
   
   // Get current user information
-  const { user } = useAuth();
+  const { user, darkMode, toggleDarkMode } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   
@@ -361,7 +360,7 @@ export default function Dashboard() {
 
   // Toggle theme function
   const toggleTheme = () => {
-    setDarkMode(!darkMode);
+    toggleDarkMode();
   };
 
   // Get difficulty color class

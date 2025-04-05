@@ -10,9 +10,10 @@ import Dashboard from "@/pages/dashboard";
 import AuthPage from "@/pages/auth-page";
 import CodingEnvironment from "@/pages/coding-environment";
 import UserStatistics from "@/pages/user-statistics";
-import { AuthProvider } from "@/hooks/use-auth";
+import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
 import { PublicRoute } from "./lib/public-route";
+import { useEffect } from "react";
 
 // Import components directly
 import Blind75Page from '@/pages/quick-prep/blind-75';
@@ -95,16 +96,33 @@ function Router() {
   );
 }
 
+function AppContent() {
+  const { darkMode } = useAuth();
+  
+  // Apply dark mode class to html element
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+  
+  return (
+    <div className={`app-container ${darkMode ? 'dark' : ''}`}>
+      <div className="scrollable-content">
+        <Router />
+        <Toaster />
+      </div>
+    </div>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <div className="app-container">
-          <div className="scrollable-content">
-            <Router />
-            <Toaster />
-          </div>
-        </div>
+        <AppContent />
       </AuthProvider>
     </QueryClientProvider>
   );

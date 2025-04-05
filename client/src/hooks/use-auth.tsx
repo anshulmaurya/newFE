@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useState, useEffect } from "react";
 import {
   useQuery,
   useMutation,
@@ -14,12 +14,16 @@ type AuthContextType = {
   error: Error | null;
   logoutMutation: UseMutationResult<void, Error, void>;
   isAuthenticated: boolean;
+  darkMode: boolean;
+  toggleDarkMode: () => void;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
+  const [darkMode, setDarkMode] = useState<boolean>(true); // Default to dark mode
+  
   const {
     data: user,
     error,
@@ -28,6 +32,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+
+  // Initialize dark mode from localStorage if available
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme) {
+      setDarkMode(storedTheme === 'dark');
+    }
+  }, []);
+
+  // Toggle dark mode function
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem('theme', newDarkMode ? 'dark' : 'light');
+  };
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
@@ -57,6 +76,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error,
         logoutMutation,
         isAuthenticated: !!user,
+        darkMode,
+        toggleDarkMode,
       }}
     >
       {children}

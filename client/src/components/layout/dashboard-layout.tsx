@@ -18,6 +18,7 @@ interface TopicSection {
   category?: boolean;
   icon?: React.ReactNode;
   path?: string;
+  expandable?: boolean;
   subsections: Subsection[];
 }
 
@@ -38,6 +39,9 @@ const dashboardTopics: TopicSection[] = [
   { 
     id: "quick-prep", 
     label: "Quick Prep Bundles",
+    expandable: true,
+    icon: <Zap className="h-4 w-4 mr-2" />,
+    path: "#",
     subsections: [
       {
         id: "three-months",
@@ -62,6 +66,9 @@ const dashboardTopics: TopicSection[] = [
   { 
     id: "company-bundles", 
     label: "Company Bundles",
+    expandable: true,
+    icon: <Briefcase className="h-4 w-4 mr-2" />,
+    path: "#",
     subsections: [
       {
         id: "apple",

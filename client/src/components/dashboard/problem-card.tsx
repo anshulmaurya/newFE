@@ -6,12 +6,13 @@ import { cn } from '@/lib/utils';
 
 interface ProblemCardProps {
   problem: any;
-  index: number;
-  statusIcon: React.ReactNode;
-  handleSetupCodebase: (problemId: string, questionId?: string) => void;
+  index?: number;
+  statusIcon?: React.ReactNode;
+  handleSetupCodebase?: (problemId: string, questionId?: string) => void;
+  onClick?: () => void;
 }
 
-export default function ProblemCard({ problem, index, statusIcon, handleSetupCodebase }: ProblemCardProps) {
+export default function ProblemCard({ problem, index = 0, statusIcon, handleSetupCodebase, onClick }: ProblemCardProps) {
   return (
     <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] hover:border-[rgb(70,70,80)] transition-colors duration-150 overflow-hidden w-full">
       <div className="p-4">
@@ -95,7 +96,13 @@ export default function ProblemCard({ problem, index, statusIcon, handleSetupCod
               variant="outline" 
               size="sm" 
               className="text-xs h-8 bg-[rgb(30,30,36)] hover:bg-[rgb(40,40,50)] border-[rgb(60,60,70)] text-gray-200"
-              onClick={() => handleSetupCodebase(problem.id, problem.question_id)}
+              onClick={() => {
+                if (onClick) {
+                  onClick();
+                } else if (handleSetupCodebase) {
+                  handleSetupCodebase(problem.id, problem.question_id);
+                }
+              }}
             >
               Solve <ArrowRight className="h-3 w-3 ml-1" />
             </Button>
