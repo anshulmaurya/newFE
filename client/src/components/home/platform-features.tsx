@@ -304,9 +304,9 @@ export default function PlatformFeatures() {
           
           <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-5 mb-4">
             <div className="flex justify-between items-center mb-3">
-              <h4 className="text-base font-medium text-white">Memory-Mapped vs Port-Mapped I/O</h4>
+              <h4 className="text-base font-medium text-white">Multithreading in Embedded Systems</h4>
               <span className="px-2 py-1 text-xs font-medium rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30">
-                Architecture
+                Threading
               </span>
             </div>
             
@@ -316,20 +316,20 @@ export default function PlatformFeatures() {
                   <span className="bg-sky-400/20 p-1 rounded mr-2">
                     <Cpu className="h-4 w-4 text-sky-400" />
                   </span>
-                  Memory-Mapped I/O
+                  Mutex Fundamentals
                 </h5>
                 <ul className="space-y-2 text-sm text-gray-300">
                   <li className="flex items-start">
                     <span className="text-sky-400 mr-2">•</span>
-                    <span>I/O devices and memory share the same address space</span>
+                    <span>Provides exclusive access to shared resources</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-sky-400 mr-2">•</span>
-                    <span>Any instruction that can access memory can access I/O devices</span>
+                    <span>Prevents race conditions in critical sections</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-sky-400 mr-2">•</span>
-                    <span>Simpler programming but more complex address decoding</span>
+                    <span>Lightweight synchronization for single resource protection</span>
                   </li>
                 </ul>
               </div>
@@ -339,20 +339,20 @@ export default function PlatformFeatures() {
                   <span className="bg-sky-400/20 p-1 rounded mr-2">
                     <Cpu className="h-4 w-4 text-sky-400" />
                   </span>
-                  Port-Mapped I/O
+                  Semaphore Applications
                 </h5>
                 <ul className="space-y-2 text-sm text-gray-300">
                   <li className="flex items-start">
                     <span className="text-sky-400 mr-2">•</span>
-                    <span>Separate address spaces for memory and I/O devices</span>
+                    <span>Counting semaphores manage multiple identical resources</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-sky-400 mr-2">•</span>
-                    <span>Requires special IN/OUT instructions</span>
+                    <span>Binary semaphores function similar to mutexes</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-sky-400 mr-2">•</span>
-                    <span>More efficient addressing but special instruction handling</span>
+                    <span>Enables producer-consumer pattern implementation</span>
                   </li>
                 </ul>
               </div>
@@ -615,16 +615,16 @@ export default function PlatformFeatures() {
       description: "Practice in a familiar environment with our VS Code integration, complete with syntax highlighting and real-time feedback.",
       previewComponent: (
         <div className="bg-[rgb(16,16,18)] rounded-xl shadow-xl border border-[rgb(30,30,32)] p-6 h-full overflow-hidden">
-          <div className="flex justify-between items-start mb-6">
+          <div className="flex justify-between items-start mb-4">
             <div>
               <div className="flex items-center mb-2">
                 <Code className="w-5 h-5 text-blue-400 mr-2" />
                 <h3 className="text-lg font-semibold text-white">VS Code Integration</h3>
               </div>
-              <p className="text-gray-300 mb-3">
+              <p className="text-gray-300 mb-2 text-sm">
                 Practice in a familiar environment with our VS Code integration, complete with syntax highlighting and real-time feedback.
               </p>
-              <div className="mb-4">
+              <div className="mb-2">
                 <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
                   Seamless Experience
                 </span>
@@ -799,12 +799,7 @@ export default function PlatformFeatures() {
             </div>
           </div>
           
-          <div className="mt-6 flex justify-center">
-            <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full text-sm font-medium inline-flex items-center space-x-2 transition-colors">
-              <span>Try VS Code Integration</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+          {/* Removed Try VS Code Integration button to give more prominence to the VS Code interface */}
         </div>
       )
     },
@@ -815,7 +810,7 @@ export default function PlatformFeatures() {
       description: "Join a thriving community of embedded systems professionals and enthusiasts to share knowledge and get help.",
       previewComponent: (
         <div className="bg-[rgb(16,16,18)] rounded-xl shadow-xl border border-[rgb(30,30,32)] p-6 h-full overflow-hidden">
-          <div className="flex justify-between items-start mb-6">
+          <div className="flex justify-between items-start mb-4">
             <div>
               <div className="flex items-center mb-2">
                 <Users className="w-5 h-5 text-rose-400 mr-2" />
@@ -833,28 +828,86 @@ export default function PlatformFeatures() {
             </div>
           </div>
           
+          {/* Community feature tiles */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-3 hover:border-rose-500/30 transition-all">
+              <div className="flex items-center mb-2">
+                <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 mr-2">
+                  <Users className="w-4 h-4" />
+                </div>
+                <h4 className="text-white text-sm font-medium">Connect with Engineers</h4>
+              </div>
+              <p className="text-xs text-gray-400">
+                Network with fellow embedded systems engineers and expand your professional connections.
+              </p>
+            </div>
+            
+            <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-3 hover:border-rose-500/30 transition-all">
+              <div className="flex items-center mb-2">
+                <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 mr-2">
+                  <Zap className="w-4 h-4" />
+                </div>
+                <h4 className="text-white text-sm font-medium">Active Discussions</h4>
+              </div>
+              <p className="text-xs text-gray-400">
+                Participate in technical discussions on problems, best practices, and latest embedded trends.
+              </p>
+            </div>
+            
+            <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-3 hover:border-rose-500/30 transition-all">
+              <div className="flex items-center mb-2">
+                <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 mr-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <path d="M12 11h4"></path>
+                    <path d="M12 16h4"></path>
+                    <path d="M8 11h.01"></path>
+                    <path d="M8 16h.01"></path>
+                  </svg>
+                </div>
+                <h4 className="text-white text-sm font-medium">Mock Interviews</h4>
+              </div>
+              <p className="text-xs text-gray-400">
+                Practice with peer-to-peer mock interviews and get feedback to improve your interview skills.
+              </p>
+            </div>
+            
+            <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-3 hover:border-rose-500/30 transition-all">
+              <div className="flex items-center mb-2">
+                <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 mr-2">
+                  <Briefcase className="w-4 h-4" />
+                </div>
+                <h4 className="text-white text-sm font-medium">Find Jobs</h4>
+              </div>
+              <p className="text-xs text-gray-400">
+                Discover embedded systems job opportunities shared exclusively with our community.
+              </p>
+            </div>
+          </div>
+          
           <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-4 mb-5">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-3">
               <h4 className="text-white font-medium flex items-center">
                 <Zap className="h-4 w-4 text-amber-400 mr-2" />
-                Active Discussions
+                Latest Discussions
               </h4>
               <span className="text-xs text-gray-400">24 new today</span>
             </div>
             
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="bg-[rgb(14,14,16)]/90 p-3 rounded-lg border border-[rgb(30,30,32)] hover:border-rose-500/30 transition-all cursor-pointer group">
-                <div className="flex justify-between mb-2">
+                <div className="flex justify-between mb-1">
                   <h5 className="text-white group-hover:text-rose-400 transition-colors text-sm font-medium">Best approach for mutex implementation in FreeRTOS?</h5>
                   <span className="text-rose-400 text-xs">12m ago</span>
                 </div>
-                <div className="text-xs text-gray-400 mb-3 line-clamp-2">
-                  I'm working on a critical section that needs protection. Should I use a mutex or a semaphore for this case? The resource is...
+                <div className="text-xs text-gray-400 mb-2 line-clamp-1">
+                  I'm working on a critical section that needs protection. Should I use a mutex or a semaphore for this case?
                 </div>
                 <div className="flex justify-between items-center text-xs">
                   <div className="flex -space-x-2">
                     {[1, 2, 3].map(i => (
-                      <div key={i} className="w-6 h-6 rounded-full border-2 border-[rgb(14,14,16)] bg-[rgb(25,25,27)] flex items-center justify-center font-medium text-white">
+                      <div key={i} className="w-5 h-5 rounded-full border-2 border-[rgb(14,14,16)] bg-[rgb(25,25,27)] flex items-center justify-center font-medium text-white text-[10px]">
                         {["J", "K", "S"][i-1]}
                       </div>
                     ))}
@@ -866,30 +919,23 @@ export default function PlatformFeatures() {
                       </svg>
                       <span>14</span>
                     </span>
-                    <span className="flex items-center">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                        <polyline points="9 11 12 14 22 4"></polyline>
-                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                      </svg>
-                      <span>3</span>
-                    </span>
                   </div>
                 </div>
               </div>
               
               <div className="bg-[rgb(14,14,16)]/90 p-3 rounded-lg border border-[rgb(30,30,32)] hover:border-rose-500/30 transition-all cursor-pointer group">
-                <div className="flex justify-between mb-2">
+                <div className="flex justify-between mb-1">
                   <h5 className="text-white group-hover:text-rose-400 transition-colors text-sm font-medium">Stack overflow detection in bare-metal systems</h5>
                   <span className="text-rose-400 text-xs">1h ago</span>
                 </div>
-                <div className="text-xs text-gray-400 mb-3 line-clamp-2">
-                  What's the most efficient way to implement stack overflow detection in a resource-constrained system without an OS?
+                <div className="text-xs text-gray-400 mb-2 line-clamp-1">
+                  What's the most efficient way to implement stack overflow detection in a resource-constrained system?
                 </div>
                 <div className="flex justify-between items-center text-xs">
                   <div className="flex -space-x-2">
-                    {[1, 2, 3, 4].map(i => (
-                      <div key={i} className="w-6 h-6 rounded-full border-2 border-[rgb(14,14,16)] bg-[rgb(25,25,27)] flex items-center justify-center font-medium text-white">
-                        {["A", "R", "M", "T"][i-1]}
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="w-5 h-5 rounded-full border-2 border-[rgb(14,14,16)] bg-[rgb(25,25,27)] flex items-center justify-center font-medium text-white text-[10px]">
+                        {["A", "R", "M"][i-1]}
                       </div>
                     ))}
                   </div>
@@ -900,20 +946,13 @@ export default function PlatformFeatures() {
                       </svg>
                       <span>28</span>
                     </span>
-                    <span className="flex items-center">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                        <polyline points="9 11 12 14 22 4"></polyline>
-                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                      </svg>
-                      <span>7</span>
-                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="mt-4 text-center">
+          <div className="mt-3 text-center">
             <button className="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full text-sm font-medium inline-flex items-center space-x-2 transition-colors">
               <span>Join The Community</span>
               <ArrowRight className="w-4 h-4" />
