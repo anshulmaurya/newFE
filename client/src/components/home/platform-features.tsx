@@ -998,8 +998,8 @@ export default function PlatformFeatures() {
           </p>
         </motion.div>
 
-        {/* Mobile Feature Navigation - becomes horizontal tabs on mobile */}
-        <div className="md:hidden overflow-x-auto mb-6">
+        {/* Mobile and Tablet Feature Navigation - becomes horizontal tabs */}
+        <div className="lg:hidden overflow-x-auto mb-6">
           <div className="flex space-x-3 pb-2 min-w-max">
             {features.map((feature) => (
               <div
@@ -1024,10 +1024,10 @@ export default function PlatformFeatures() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-10 gap-6">
-          {/* Feature navigation - left column on desktop (30% width), hidden on mobile */}
+        <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
+          {/* Feature navigation - left column only on large screens (laptops and bigger), hidden on mobile and tablets */}
           <motion.div
-            className="hidden md:block md:col-span-3"
+            className="hidden lg:block lg:col-span-3"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -1076,9 +1076,9 @@ export default function PlatformFeatures() {
             </div>
           </motion.div>
 
-          {/* Feature content - right side on desktop (70% width), full width on mobile */}
+          {/* Feature content - right side on large screens (70% width), full width on mobile and tablet */}
           <motion.div
-            className="md:col-span-7"
+            className="lg:col-span-7"
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
