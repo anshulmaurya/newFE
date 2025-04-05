@@ -81,13 +81,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, darkMode, t
   // Determine theme classes
   const themeClasses = darkMode 
     ? {
-        bg: "bg-[rgb(10,10,14)]",
+        bg: "bg-[rgb(12,12,14)]",
         text: "text-gray-300",
         textDark: "text-gray-500",
-        sidebarBg: "bg-[rgb(20,20,25)]",
+        sidebarBg: "bg-[rgb(14,14,16)]",
         borderColor: "border-gray-800",
-        menuBg: "bg-[rgb(24,24,26)]",
-        card: "bg-[rgb(30,30,34)] border-gray-800",
+        menuBg: "bg-[rgb(14,14,16)]",
+        card: "bg-[rgb(18,18,20)] border-gray-800",
         activeItem: "bg-lime-600 text-white",
         infoBlock: "bg-[rgb(35,35,50)] border-blue-800",
         infoText: "text-gray-300"

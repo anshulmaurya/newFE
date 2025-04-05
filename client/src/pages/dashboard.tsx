@@ -463,7 +463,7 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout darkMode={darkMode} toggleTheme={toggleTheme}>
-      <div className="lg:ml-56 pt-14 pb-8 bg-[rgb(18,18,20)]">
+      <div className="lg:ml-56 pt-14 pb-8 bg-[rgb(12,12,14)]">
         <div className="px-4 lg:px-6 mx-auto relative">
           <div className="flex">
             <div className="flex-1 space-y-4 w-full">
@@ -472,7 +472,7 @@ export default function Dashboard() {
 
               {/* Selected Bundle Details */}
               {selectedBundle && bundles[selectedBundle as keyof typeof bundles] && (
-                <div className="bg-[rgb(20,20,22)] rounded-lg p-3 border border-[rgb(35,35,40)] mb-4">
+                <div className="bg-[rgb(18,18,20)] rounded-lg p-3 border border-[rgb(35,35,40)] mb-4">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="flex-shrink-0">

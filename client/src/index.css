@@ -67,7 +67,7 @@
 
   body {
     @apply font-sans antialiased text-foreground;
-    background-color: rgb(24, 24, 26);
+    background-color: rgb(12, 12, 14);
     margin: 0;
     /* Remove fixed position that causes page skewing */
     width: 100%;
