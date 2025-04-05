@@ -656,7 +656,7 @@ export default function PlatformFeatures() {
             </div>
             
             {/* VS Code layout */}
-            <div className="flex bg-[#1e1e1e] h-[400px]">
+            <div className="flex bg-[#1e1e1e] h-[550px]">
               {/* Explorer sidebar */}
               <div className="w-10 bg-[#252526] border-r border-[#3d3d3d] flex flex-col items-center p-2 space-y-4">
                 <div className="p-1 bg-[#0d7dec]/20 border-l-2 border-[#0d7dec] text-white">
@@ -753,7 +753,7 @@ export default function PlatformFeatures() {
                 <div className="flex font-mono text-xs flex-grow overflow-auto">
                   {/* Line numbers */}
                   <div className="text-right py-3 px-2 bg-[#1e1e1e] text-[#6e7681] select-none">
-                    {Array.from({ length: 18 }).map((_, i) => (
+                    {Array.from({ length: 24 }).map((_, i) => (
                       <div key={i} className="h-5">{i + 1}</div>
                     ))}
                   </div>
@@ -762,9 +762,14 @@ export default function PlatformFeatures() {
                   <div className="py-3 px-2 bg-[#1e1e1e] text-[#e6edf3] flex-1">
                     <div><span className="text-[#6a9955]">// PWM Generator Implementation</span></div>
                     <div><span className="text-[#6a9955]">// Controls servo motor position via duty cycle</span></div>
+                    <div><span className="text-[#6a9955]">// Author: dspcoder.com</span></div>
                     <div></div>
                     <div><span className="text-[#569cd6]">#include</span> <span className="text-[#ce9178]">"timer.h"</span></div>
                     <div><span className="text-[#569cd6]">#include</span> <span className="text-[#ce9178]">"gpio.h"</span></div>
+                    <div></div>
+                    <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">PWM_PORT</span> <span className="text-[#d4d4d4]">GPIOA</span></div>
+                    <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">PWM_PIN</span> <span className="text-[#d4d4d4]">GPIO_PIN_5</span></div>
+                    <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">PWM_FREQUENCY</span> <span className="text-[#d4d4d4]">50</span> <span className="text-[#6a9955]">// 50Hz for typical servo motors</span></div>
                     <div></div>
                     <div><span className="text-[#569cd6]">void</span> <span className="text-[#dcdcaa]">pwm_init</span><span className="text-[#d4d4d4]">(uint8_t channel, uint32_t frequency) {'{'}</span></div>
                     <div>  <span className="text-[#dcdcaa]">timer_init</span><span className="text-[#d4d4d4]">(channel, frequency);</span></div>
@@ -778,7 +783,17 @@ export default function PlatformFeatures() {
                     <div>  <span className="text-[#c586c0]">return</span><span className="text-[#d4d4d4]">;</span></div>
                     <div><span className="text-[#d4d4d4]">{'}'}</span></div>
                     <div></div>
+                    <div><span className="text-[#569cd6]">void</span> <span className="text-[#dcdcaa]">servo_set_angle</span><span className="text-[#d4d4d4]">(uint8_t channel, uint8_t angle) {'{'}</span></div>
+                    <div>  <span className="text-[#6a9955]">// Convert angle (0-180) to duty cycle (5-10%)</span></div>
+                    <div>  <span className="text-[#569cd6]">uint8_t</span> <span className="text-[#d4d4d4]">duty = 5 + (angle * 5 / 180);</span></div>
+                    <div>  <span className="text-[#dcdcaa]">pwm_set_duty</span><span className="text-[#d4d4d4]">(channel, duty);</span></div>
+                    <div><span className="text-[#d4d4d4]">{'}'}</span></div>
                     <div></div>
+                    <div><span className="text-[#6a9955]">// Example of how to use the PWM module</span></div>
+                    <div><span className="text-[#569cd6]">int</span> <span className="text-[#dcdcaa]">main</span><span className="text-[#d4d4d4]">() {'{'}</span></div>
+                    <div>  <span className="text-[#dcdcaa]">pwm_init</span><span className="text-[#d4d4d4]">(0, PWM_FREQUENCY);</span></div>
+                    <div>  <span className="text-[#dcdcaa]">servo_set_angle</span><span className="text-[#d4d4d4]">(0, 90); </span><span className="text-[#6a9955]">// Set servo to middle position</span></div>
+                    <div><span className="text-[#d4d4d4]">{'}'}</span></div>
                   </div>
                 </div>
                 
