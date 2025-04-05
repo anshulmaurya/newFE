@@ -656,246 +656,168 @@ export default function PlatformFeatures() {
             </div>
             
             {/* VS Code layout */}
-            <div className="flex flex-col bg-[#1e1e1e] h-[550px]">
-              <div className="flex flex-1 min-h-0">
-                {/* Explorer sidebar */}
-                <div className="w-10 bg-[#252526] border-r border-[#3d3d3d] flex flex-col items-center p-2 space-y-4">
-                  <button className="p-1 bg-[#0d7dec]/20 border-l-2 border-[#0d7dec] text-white rounded hover:bg-[#0d7dec]/30 transition-colors">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                      <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                    </svg>
-                  </button>
-                  <button className="p-1 text-[#858585] hover:text-white rounded hover:bg-[#383838] transition-colors">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M11 18h2"></path>
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                      <line x1="16" y1="2" x2="16" y2="6"></line>
-                      <line x1="8" y1="2" x2="8" y2="6"></line>
-                    </svg>
-                  </button>
-                  <button className="p-1 text-[#858585] hover:text-white rounded hover:bg-[#383838] transition-colors">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                      <line x1="9" y1="15" x2="15" y2="15"></line>
-                    </svg>
-                  </button>
-                  <button className="p-1 text-[#858585] hover:text-white rounded hover:bg-[#383838] transition-colors">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="12" y1="8" x2="12" y2="12"></line>
-                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
-                  </button>
+            <div className="flex bg-[#1e1e1e] h-[550px]">
+              {/* Explorer sidebar */}
+              <div className="w-10 bg-[#252526] border-r border-[#3d3d3d] flex flex-col items-center p-2 space-y-4">
+                <div className="p-1 bg-[#0d7dec]/20 border-l-2 border-[#0d7dec] text-white">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
+                <div className="p-1 text-[#858585] hover:text-white">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                  </svg>
+                </div>
+                <div className="p-1 text-[#858585] hover:text-white">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                </div>
+              </div>
+              
+              {/* Files Explorer */}
+              <div className="w-48 bg-[#252526] border-r border-[#3d3d3d] p-2 text-[#cccccc] text-xs hidden md:block">
+                <div className="font-semibold mb-2 flex items-center justify-between">
+                  <span>EXPLORER</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
                 </div>
                 
-                {/* Files Explorer */}
-                <div className="w-48 bg-[#252526] border-r border-[#3d3d3d] p-2 text-[#cccccc] text-xs hidden md:block">
-                  <div className="font-semibold mb-2 flex items-center justify-between">
-                    <span>EXPLORER</span>
-                    <button className="hover:bg-[#383838] p-0.5 rounded">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                      </svg>
-                    </button>
+                <div className="mt-4">
+                  <div className="mb-1 flex items-center cursor-pointer">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <span className="hover:text-white">src</span>
                   </div>
                   
-                  <div className="mt-4">
-                    <div className="mb-1 flex items-center cursor-pointer hover:bg-[#383838] p-0.5 rounded">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                        <polyline points="6 9 12 15 18 9"></polyline>
+                  <div className="pl-4 space-y-1">
+                    <div className="flex items-center cursor-pointer text-blue-400">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
                       </svg>
-                      <span className="hover:text-white">src</span>
+                      <span>pwm.c</span>
                     </div>
-                    
-                    <div className="pl-4 space-y-1">
-                      <div className="flex items-center cursor-pointer text-blue-400 hover:bg-[#383838] p-0.5 rounded">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                        </svg>
-                        <span>main.c</span>
-                      </div>
-                      <div className="flex items-center cursor-pointer hover:text-white hover:bg-[#383838] p-0.5 rounded">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                        </svg>
-                        <span>util.h</span>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-2 mb-1 flex items-center cursor-pointer hover:bg-[#383838] p-0.5 rounded">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                        <polyline points="6 9 12 15 18 9"></polyline>
+                    <div className="flex items-center cursor-pointer hover:text-white">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
                       </svg>
-                      <span className="hover:text-white">include</span>
+                      <span>timer.h</span>
                     </div>
-                  </div>
-                </div>
-                
-                {/* Editor area */}
-                <div className="flex-1 flex flex-col min-h-0">
-                  {/* File tabs */}
-                  <div className="flex bg-[#252526] border-b border-[#3d3d3d] text-xs overflow-x-auto">
-                    <button className="px-3 py-2 bg-[#1e1e1e] border-r border-[#3d3d3d] text-white flex items-center whitespace-nowrap hover:bg-[#2d2d2d]">
-                      <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
-                      <span>main.c</span>
-                      <span className="ml-2 text-[#858585] hover:text-white">×</span>
-                    </button>
-                    <button className="px-3 py-2 border-r border-[#3d3d3d] text-[#858585] flex items-center whitespace-nowrap hover:bg-[#2d2d2d]">
-                      <div className="w-2 h-2 rounded-full bg-[#858585] mr-2"></div>
-                      <span>util.h</span>
-                      <span className="ml-2 hover:text-white">×</span>
-                    </button>
+                    <div className="flex items-center cursor-pointer hover:text-white">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                      </svg>
+                      <span>gpio.h</span>
+                    </div>
                   </div>
                   
-                  {/* Code area - scrollable */}
-                  <div className="flex font-mono text-xs flex-1 overflow-auto">
-                    {/* Line numbers */}
-                    <div className="text-right py-3 px-2 bg-[#1e1e1e] text-[#6e7681] select-none">
-                      {Array.from({ length: 30 }).map((_, i) => (
-                        <div key={i} className="h-5">{i + 1}</div>
-                      ))}
-                    </div>
-                    
-                    {/* Code content - scrollable */}
-                    <div className="py-3 px-2 bg-[#1e1e1e] text-[#e6edf3] flex-1 overflow-auto">
-                      <div><span className="text-[#6a9955]">/**</span></div>
-                      <div><span className="text-[#6a9955]"> * Memory Aligned Malloc Implementation</span></div>
-                      <div><span className="text-[#6a9955]"> * For embedded systems with specific memory alignment requirements</span></div>
-                      <div><span className="text-[#6a9955]"> * Author: dspcoder.com</span></div>
-                      <div><span className="text-[#6a9955]"> */</span></div>
-                      <div></div>
-                      <div><span className="text-[#569cd6]">#include</span> <span className="text-[#ce9178]">&lt;stdlib.h&gt;</span></div>
-                      <div><span className="text-[#569cd6]">#include</span> <span className="text-[#ce9178]">&lt;stdint.h&gt;</span></div>
-                      <div><span className="text-[#569cd6]">#include</span> <span className="text-[#ce9178]">"util.h"</span></div>
-                      <div></div>
-                      <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">ALIGNMENT</span> <span className="text-[#d4d4d4]">16</span> <span className="text-[#6a9955]">// 16-byte alignment for SIMD instructions</span></div>
-                      <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">ALIGN_MASK</span> <span className="text-[#d4d4d4]">(ALIGNMENT - 1)</span></div>
-                      <div></div>
-                      <div><span className="text-[#6a9955]">// Structure to store original allocation pointer for proper freeing</span></div>
-                      <div><span className="text-[#569cd6]">typedef</span> <span className="text-[#569cd6]">struct</span> <span className="text-[#4fc1ff]">AlignedBlock</span> <span className="text-[#d4d4d4]">{'{'}</span></div>
-                      <div>  <span className="text-[#569cd6]">void</span><span className="text-[#d4d4d4]">* original_ptr;</span></div>
-                      <div>  <span className="text-[#569cd6]">size_t</span> <span className="text-[#d4d4d4]">size;</span></div>
-                      <div><span className="text-[#d4d4d4]">{'}'}</span> <span className="text-[#4fc1ff]">AlignedBlock</span><span className="text-[#d4d4d4]">;</span></div>
-                      <div></div>
-                      <div><span className="text-[#6a9955]">/**</span></div>
-                      <div><span className="text-[#6a9955]"> * Allocates memory with specified alignment</span></div>
-                      <div><span className="text-[#6a9955]"> * @param size The size of memory to allocate</span></div>
-                      <div><span className="text-[#6a9955]"> * @param alignment Memory alignment (must be power of 2)</span></div>
-                      <div><span className="text-[#6a9955]"> * @return Aligned memory pointer or NULL on failure</span></div>
-                      <div><span className="text-[#6a9955]"> */</span></div>
-                      <div><span className="text-[#569cd6]">void</span><span className="text-[#d4d4d4]">*</span> <span className="text-[#dcdcaa]">aligned_malloc</span><span className="text-[#d4d4d4]">(</span><span className="text-[#569cd6]">size_t</span> <span className="text-[#d4d4d4]">size, </span><span className="text-[#569cd6]">size_t</span> <span className="text-[#d4d4d4]">alignment) {'{'}</span></div>
-                      <div>  <span className="text-[#c586c0]">if</span> <span className="text-[#d4d4d4]">(alignment & (alignment - 1)) {'{'}</span></div>
-                      <div>    <span className="text-[#6a9955]">// Alignment must be a power of 2</span></div>
-                      <div>    <span className="text-[#c586c0]">return</span> <span className="text-[#d4d4d4]">NULL;</span></div>
-                      <div>  <span className="text-[#d4d4d4]">{'}'}</span></div>
-                      <div></div>
-                      <div>  <span className="text-[#569cd6]">size_t</span> <span className="text-[#d4d4d4]">header_size = </span><span className="text-[#569cd6]">sizeof</span><span className="text-[#d4d4d4]">(AlignedBlock);</span></div>
-                      <div>  <span className="text-[#569cd6]">size_t</span> <span className="text-[#d4d4d4]">total_size = size + alignment + header_size;</span></div>
-                      <div></div>
-                      <div>  <span className="text-[#569cd6]">void</span><span className="text-[#d4d4d4]">* raw_ptr = </span><span className="text-[#dcdcaa]">malloc</span><span className="text-[#d4d4d4]">(total_size);</span></div>
-                      <div>  <span className="text-[#c586c0]">if</span> <span className="text-[#d4d4d4]">(raw_ptr == NULL) {'{'}</span></div>
-                      <div>    <span className="text-[#c586c0]">return</span> <span className="text-[#d4d4d4]">NULL;</span></div>
-                      <div>  <span className="text-[#d4d4d4]">{'}'}</span></div>
-                      <div></div>
-                      <div>  <span className="text-[#6a9955]">// Calculate aligned address</span></div>
-                      <div>  <span className="text-[#569cd6]">uintptr_t</span> <span className="text-[#d4d4d4]">raw_addr = (</span><span className="text-[#569cd6]">uintptr_t</span><span className="text-[#d4d4d4]">)raw_ptr;</span></div>
-                      <div>  <span className="text-[#569cd6]">uintptr_t</span> <span className="text-[#d4d4d4]">header_addr = raw_addr + alignment - (raw_addr % alignment);</span></div>
-                      <div>  <span className="text-[#569cd6]">uintptr_t</span> <span className="text-[#d4d4d4]">aligned_addr = header_addr + header_size;</span></div>
-                      <div></div>
-                      <div>  <span className="text-[#6a9955]">// Store the header just before aligned memory</span></div>
-                      <div>  <span className="text-[#4fc1ff]">AlignedBlock</span><span className="text-[#d4d4d4]">* block = (</span><span className="text-[#4fc1ff]">AlignedBlock</span><span className="text-[#d4d4d4]">*)(header_addr);</span></div>
-                      <div>  <span className="text-[#d4d4d4]">block.original_ptr = raw_ptr;</span></div>
-                      <div>  <span className="text-[#d4d4d4]">block.size = size;</span></div>
-                      <div></div>
-                      <div>  <span className="text-[#c586c0]">return</span> <span className="text-[#d4d4d4]">(</span><span className="text-[#569cd6]">void</span><span className="text-[#d4d4d4]">*)aligned_addr;</span></div>
-                      <div><span className="text-[#d4d4d4]">{'}'}</span></div>
-                    </div>
+                  <div className="mt-2 mb-1 flex items-center cursor-pointer">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    <span className="hover:text-white">inc</span>
                   </div>
                 </div>
               </div>
               
-              {/* Terminal at bottom */}
-              <div className="flex flex-col border-t border-[#3d3d3d] h-[120px]">
-                <div className="bg-[#1e1e1e] text-white flex items-center justify-between px-2 py-1 text-xs border-b border-[#3d3d3d]">
-                  <div className="flex items-center">
-                    <span className="flex items-center p-1 bg-[#252526] rounded mr-2 cursor-pointer hover:bg-[#2d2d2d]">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="7 13 12 18 17 13"></polyline>
-                        <polyline points="7 6 12 11 17 6"></polyline>
-                      </svg>
-                      <span className="ml-1 font-medium">TERMINAL</span>
-                    </span>
-                    <span className="flex items-center p-1 cursor-pointer hover:bg-[#2d2d2d] rounded">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
-                      <span className="ml-1">bash</span>
-                    </span>
+              {/* Editor area */}
+              <div className="flex-1 flex flex-col">
+                {/* File tabs */}
+                <div className="flex bg-[#252526] border-b border-[#3d3d3d] text-xs">
+                  <div className="px-3 py-2 bg-[#1e1e1e] border-r border-[#3d3d3d] text-white flex items-center">
+                    <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
+                    <span>pwm.c</span>
+                    <span className="ml-2 text-[#858585] hover:text-white cursor-pointer">×</span>
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <button className="p-1 hover:bg-[#2d2d2d] rounded">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      </svg>
-                    </button>
-                    <button className="p-1 hover:bg-[#2d2d2d] rounded">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="8" y1="12" x2="16" y2="12"></line>
-                      </svg>
-                    </button>
-                    <button className="p-1 hover:bg-[#2d2d2d] rounded">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <polyline points="9 21 3 21 3 15"></polyline>
-                        <line x1="21" y1="3" x2="14" y2="10"></line>
-                        <line x1="3" y1="21" x2="10" y2="14"></line>
-                      </svg>
-                    </button>
+                  <div className="px-3 py-2 border-r border-[#3d3d3d] text-[#858585] flex items-center">
+                    <div className="w-2 h-2 rounded-full bg-[#858585] mr-2"></div>
+                    <span>timer.h</span>
+                    <span className="ml-2 hover:text-white cursor-pointer">×</span>
                   </div>
                 </div>
                 
-                <div className="bg-[#1e1e1e] text-white p-2 text-xs font-mono overflow-auto flex-1 h-full">
-                  <div className="text-green-400 font-bold">user@dspcoder:~/project$</div>
-                  <div className="text-white">gcc -Wall -Wextra -o aligned_malloc_test main.c -I./include</div>
-                  <div className="text-white">user@dspcoder:~/project$ ./aligned_malloc_test</div>
-                  <div className="text-white">Running memory alignment tests...</div>
-                  <div className="text-green-400">✓ Aligned allocation test passed</div>
-                  <div className="text-green-400">✓ Free aligned memory test passed</div>
-                  <div className="text-green-400">✓ All tests completed successfully</div>
-                  <div className="flex items-center mt-1">
-                    <span className="text-green-400 font-bold">user@dspcoder:~/project$</span>
-                    <span className="ml-1 animate-pulse">_</span>
+                {/* Code area */}
+                <div className="flex font-mono text-xs flex-grow overflow-auto">
+                  {/* Line numbers */}
+                  <div className="text-right py-3 px-2 bg-[#1e1e1e] text-[#6e7681] select-none">
+                    {Array.from({ length: 24 }).map((_, i) => (
+                      <div key={i} className="h-5">{i + 1}</div>
+                    ))}
+                  </div>
+                  
+                  {/* Code content */}
+                  <div className="py-3 px-2 bg-[#1e1e1e] text-[#e6edf3] flex-1">
+                    <div><span className="text-[#6a9955]">// PWM Generator Implementation</span></div>
+                    <div><span className="text-[#6a9955]">// Controls servo motor position via duty cycle</span></div>
+                    <div><span className="text-[#6a9955]">// Author: dspcoder.com</span></div>
+                    <div></div>
+                    <div><span className="text-[#569cd6]">#include</span> <span className="text-[#ce9178]">"timer.h"</span></div>
+                    <div><span className="text-[#569cd6]">#include</span> <span className="text-[#ce9178]">"gpio.h"</span></div>
+                    <div></div>
+                    <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">PWM_PORT</span> <span className="text-[#d4d4d4]">GPIOA</span></div>
+                    <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">PWM_PIN</span> <span className="text-[#d4d4d4]">GPIO_PIN_5</span></div>
+                    <div><span className="text-[#569cd6]">#define</span> <span className="text-[#4fc1ff]">PWM_FREQUENCY</span> <span className="text-[#d4d4d4]">50</span> <span className="text-[#6a9955]">// 50Hz for typical servo motors</span></div>
+                    <div></div>
+                    <div><span className="text-[#569cd6]">void</span> <span className="text-[#dcdcaa]">pwm_init</span><span className="text-[#d4d4d4]">(uint8_t channel, uint32_t frequency) {'{'}</span></div>
+                    <div>  <span className="text-[#dcdcaa]">timer_init</span><span className="text-[#d4d4d4]">(channel, frequency);</span></div>
+                    <div>  <span className="text-[#dcdcaa]">gpio_set_mode</span><span className="text-[#d4d4d4]">(PWM_PORT, PWM_PIN, GPIO_MODE_OUTPUT);</span></div>
+                    <div><span className="text-[#d4d4d4]">{'}'}</span></div>
+                    <div></div>
+                    <div><span className="text-[#569cd6]">void</span> <span className="text-[#dcdcaa]">pwm_set_duty</span><span className="text-[#d4d4d4]">(uint8_t channel, uint8_t duty) {'{'}</span></div>
+                    <div>  <span className="text-[#6a9955]">// Set PWM duty cycle (0-100%)</span></div>
+                    <div>  <span className="text-[#c586c0]">if</span><span className="text-[#d4d4d4]"> (duty &gt; 100) duty = 100;</span></div>
+                    <div>  <span className="text-[#dcdcaa]">timer_set_compare</span><span className="text-[#d4d4d4]">(channel, duty);</span></div>
+                    <div>  <span className="text-[#c586c0]">return</span><span className="text-[#d4d4d4]">;</span></div>
+                    <div><span className="text-[#d4d4d4]">{'}'}</span></div>
+                    <div></div>
+                    <div><span className="text-[#569cd6]">void</span> <span className="text-[#dcdcaa]">servo_set_angle</span><span className="text-[#d4d4d4]">(uint8_t channel, uint8_t angle) {'{'}</span></div>
+                    <div>  <span className="text-[#6a9955]">// Convert angle (0-180) to duty cycle (5-10%)</span></div>
+                    <div>  <span className="text-[#569cd6]">uint8_t</span> <span className="text-[#d4d4d4]">duty = 5 + (angle * 5 / 180);</span></div>
+                    <div>  <span className="text-[#dcdcaa]">pwm_set_duty</span><span className="text-[#d4d4d4]">(channel, duty);</span></div>
+                    <div><span className="text-[#d4d4d4]">{'}'}</span></div>
+                    <div></div>
+                    <div><span className="text-[#6a9955]">// Example of how to use the PWM module</span></div>
+                    <div><span className="text-[#569cd6]">int</span> <span className="text-[#dcdcaa]">main</span><span className="text-[#d4d4d4]">() {'{'}</span></div>
+                    <div>  <span className="text-[#dcdcaa]">pwm_init</span><span className="text-[#d4d4d4]">(0, PWM_FREQUENCY);</span></div>
+                    <div>  <span className="text-[#dcdcaa]">servo_set_angle</span><span className="text-[#d4d4d4]">(0, 90); </span><span className="text-[#6a9955]">// Set servo to middle position</span></div>
+                    <div><span className="text-[#d4d4d4]">{'}'}</span></div>
                   </div>
                 </div>
-              </div>
-              
-              {/* Status bar */}
-              <div className="bg-[#007acc] text-white flex justify-between items-center text-xs px-3 py-1">
-                <div className="flex items-center space-x-3">
-                  <span>main</span>
-                  <button className="flex items-center hover:bg-[#1c8ae3] p-0.5 rounded">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <circle cx="12" cy="12" r="4"></circle>
-                      <line x1="21.17" y1="8" x2="12" y2="8"></line>
-                      <line x1="3.95" y1="6.06" x2="8.54" y2="14"></line>
-                      <line x1="10.88" y1="21.94" x2="15.46" y2="14"></line>
-                    </svg>
-                    Live Share
-                  </button>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <span>Ln 24, Col 34</span>
-                  <span>UTF-8</span>
-                  <span>LF</span>
-                  <span>C/C++</span>
+                
+                {/* Status bar */}
+                <div className="bg-[#007acc] text-white flex justify-between items-center text-xs px-3 py-1">
+                  <div className="flex items-center space-x-3">
+                    <span>main</span>
+                    <span className="flex items-center">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <line x1="21.17" y1="8" x2="12" y2="8"></line>
+                        <line x1="3.95" y1="6.06" x2="8.54" y2="14"></line>
+                        <line x1="10.88" y1="21.94" x2="15.46" y2="14"></line>
+                      </svg>
+                      Live Share
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span>Ln 8, Col 21</span>
+                    <span>UTF-8</span>
+                    <span>CRLF</span>
+                    <span>C/C++</span>
+                  </div>
                 </div>
               </div>
             </div>
