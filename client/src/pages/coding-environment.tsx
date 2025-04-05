@@ -202,27 +202,14 @@ export default function CodingEnvironment() {
         // When container is ready, update the URL if available
         if (containerStatus.containerUrl) {
           setContainerUrl(containerStatus.containerUrl);
-          toast({
-            title: "Environment Ready",
-            description: "Your coding environment is now ready to use",
-            variant: "default",
-          });
+          // No toast notification for ready environment
         }
       } else if (containerStatus.status === 'creating') {
         setIsLoading(true);
-        // Show creating toast only if not shown recently (avoid toast spam)
-        const lastToastTime = parseInt(localStorage.getItem('lastContainerToastTime') || '0');
-        const now = Date.now();
-        if (now - lastToastTime > 3000) { // Only show toast every 3 seconds
-          toast({
-            title: "Setting up environment",
-            description: containerStatus.message || "Your coding environment is being prepared",
-            variant: "default",
-          });
-          localStorage.setItem('lastContainerToastTime', now.toString());
-        }
+        // No toast notifications for environment creation
       } else if (containerStatus.status === 'error') {
         setIsLoading(false);
+        // Only show error notifications for critical issues
         toast({
           title: "Environment Error",
           description: containerStatus.message || "Failed to set up coding environment",
@@ -256,11 +243,7 @@ export default function CodingEnvironment() {
         console.log('Using temporary token, waiting for real token via WebSocket:', tokenParam);
         // Show loading indicator immediately to improve UX
         setIsLoading(true);
-        toast({
-          title: "Loading environment",
-          description: "Your coding environment is being prepared...",
-          variant: "default",
-        });
+        // No toast notification for temporary token
         // No need to call redirect API for temporary tokens
       } else {
         // For real tokens, convert token to URL through API
