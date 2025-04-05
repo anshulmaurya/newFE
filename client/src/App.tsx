@@ -22,6 +22,13 @@ import JDBasedPage from '@/pages/jd-based';
 
 // Import quick prep pages
 import ThreeMonthsPage from '@/pages/dashboard/quick-prep/three-months';
+import OneMonthPage from '@/pages/dashboard/quick-prep/one-month';
+import OneWeekPage from '@/pages/dashboard/quick-prep/one-week';
+
+// Import company pages
+import ApplePage from '@/pages/dashboard/company/apple';
+import NvidiaPage from '@/pages/dashboard/company/nvidia';
+import TeslaPage from '@/pages/dashboard/company/tesla';
 
 // Import footer pages
 import TermsOfService from '@/pages/terms-of-service';
@@ -53,12 +60,24 @@ function Router() {
     <Switch>
       <Route path="/" component={Home}/>
       <PublicRoute path="/dashboard" component={Dashboard} />
-      <PublicRoute path="/dashboard/quick-prep/three-months" component={ThreeMonthsPage} />
-      <PublicRoute path="/dashboard/quick-prep/one-month" component={Dashboard} />
-      <PublicRoute path="/dashboard/quick-prep/one-week" component={Dashboard} />
-      <PublicRoute path="/dashboard/company/apple" component={Dashboard} />
-      <PublicRoute path="/dashboard/company/nvidia" component={Dashboard} />
-      <PublicRoute path="/dashboard/company/tesla" component={Dashboard} />
+      <Route path="/dashboard/quick-prep/three-months">
+        <ThreeMonthsPage />
+      </Route>
+      <Route path="/dashboard/quick-prep/one-month">
+        <OneMonthPage />
+      </Route>
+      <Route path="/dashboard/quick-prep/one-week">
+        <OneWeekPage />
+      </Route>
+      <Route path="/dashboard/company/apple">
+        <ApplePage />
+      </Route>
+      <Route path="/dashboard/company/nvidia">
+        <NvidiaPage />
+      </Route>
+      <Route path="/dashboard/company/tesla">
+        <TeslaPage />
+      </Route>
       <ProtectedRoute path="/coding-environment" component={CodingEnvironment} />
       <ProtectedRoute path="/user-statistics" component={UserStatistics} />
       <ProtectedRoute path="/jd-based" component={JDBasedPage} />

@@ -1,115 +1,153 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from "@/hooks/use-toast";
-import { Button } from '@/components/ui/button';
+import { apiRequest } from "@/lib/queryClient";
 import { useLocation } from 'wouter';
-import ProblemCard from '@/components/dashboard/problem-card';
+import ProblemCard, { getStatusIcon } from '@/components/dashboard/problem-card';
 import { useAuth } from '@/hooks/use-auth';
 import DashboardLayout from '@/components/layout/dashboard-layout';
+import { Loader2, Clock, BookOpen, Zap } from 'lucide-react';
 
-interface Problem {
-  id: number;
+// Define types for API responses
+type Problem = {
+  id: string;
   title: string;
-  difficulty: string;
-  category: string;
-  status?: string;
-  notes?: string;
-}
+  description?: string;
+  category?: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  acceptance_rate: number;
+  completionRate?: string;
+  estimatedTime?: string;
+  frequency?: number;
+  created_at: string | null;
+  companies?: string[];
+  tags?: string[];
+  type?: string;
+  importance?: string;
+  question_id?: string;
+};
 
 const OneMonthPage: React.FC = () => {
   const { toast } = useToast();
   const [location, setLocation] = useLocation();
   const { user, darkMode, toggleDarkMode } = useAuth();
+  const [search, setSearch] = useState<string>('');
+  const [language, setLanguage] = useState<string>('c'); // Default language is C
 
-  // Fetch problems data for One Month study plan
-  const { data: problems, error, isLoading } = useQuery<Problem[]>({
-    queryKey: ['/api/problems'],
-    enabled: true
+  // Fetch problems from external API via our server proxy
+  const { data: externalProblems, isLoading: isLoadingExternal } = useQuery({
+    queryKey: ['/api/problems-proxy'],
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/problems-proxy');
+      const data = await response.json();
+      return data.problems;
+    },
+  });
+  
+  // Fetch user progress data for problems - only if user is authenticated
+  const { data: userProgressData, isLoading: isLoadingUserProgress } = useQuery({
+    queryKey: ['/api/user-progress'],
+    queryFn: async () => {
+      try {
+        const response = await apiRequest('GET', '/api/user-progress');
+        return await response.json();
+      } catch (error) {
+        // Return empty array if not authenticated or any other error
+        return [];
+      }
+    },
+    // Only run this query if user is authenticated
+    enabled: !!user,
   });
 
-  if (error) {
-    toast({
-      title: "Error",
-      description: "Failed to load problems. Please try again later.",
-      variant: "destructive",
-    });
-  }
-
-  // Filter problems specifically for the One Month plan
-  // This would typically come from a specific API endpoint for this bundle
-  const filteredProblems = problems?.slice(0, 8) || [];
+  // Setup codebase for a problem
+  const handleSetupCodebase = (problemId: string, questionId?: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to access the coding environment",
+        variant: "destructive",
+      });
+      setLocation("/auth");
+      return;
+    }
+    
+    // Navigate to the problem detail or coding page
+    setLocation(`/coding-environment?id=${problemId}${questionId ? `&questionId=${questionId}` : ''}`);
+  };
 
   return (
     <DashboardLayout darkMode={darkMode} toggleTheme={toggleDarkMode}>
-      <div className="container mx-auto px-4 pb-12">
-        <div className="flex flex-col space-y-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">1 Month Study Plan</h1>
-          </div>
-
-          <div className="bg-[rgb(18,18,20)] p-5 rounded-lg shadow-lg border border-gray-800 mb-6">
-            <h2 className="text-lg font-semibold mb-2">Preparation Guide</h2>
-            <p className="text-gray-300 mb-4">
-              This focused 1-month plan is designed for efficient embedded systems interview preparation.
-              It covers essential topics and prioritizes the most commonly asked questions.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <h3 className="font-medium mb-1">Week 1:</h3>
-                <ul className="list-disc pl-5 text-gray-300 space-y-1">
-                  <li>Core C programming concepts</li>
-                  <li>Microcontroller basics</li>
-                  <li>Memory management in embedded systems</li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="font-medium mb-1">Week 2:</h3>
-                <ul className="list-disc pl-5 text-gray-300 space-y-1">
-                  <li>Interrupt handling fundamentals</li>
-                  <li>SPI and I2C protocols</li>
-                  <li>Basic RTOS concepts</li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="font-medium mb-1">Week 3:</h3>
-                <ul className="list-disc pl-5 text-gray-300 space-y-1">
-                  <li>Common interview problem patterns</li>
-                  <li>Debugging techniques</li>
-                  <li>Power optimization strategies</li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="font-medium mb-1">Week 4:</h3>
-                <ul className="list-disc pl-5 text-gray-300 space-y-1">
-                  <li>Mock interviews</li>
-                  <li>System design basics</li>
-                  <li>Interview Q&A preparation</li>
-                </ul>
+      <div className="pl-4 pr-4 relative pb-8 bg-[rgb(12,12,14)]">
+        <div className="flex">
+          <div className="flex-1 space-y-4 w-full">
+            {/* Header with title and description */}
+            <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] p-6 mt-4">
+              <h1 className="text-2xl font-bold text-[rgb(214,251,65)] mb-2">1 Month Preparation Bundle</h1>
+              <p className="text-gray-300 mb-4">
+                An intensive one-month preparation plan for embedded systems interviews, focusing on the most high-yield topics
+                and concepts. Perfect for candidates with upcoming interviews or limited preparation time.
+              </p>
+              
+              <div className="flex flex-wrap gap-4 text-sm">
+                <div className="flex items-center">
+                  <Clock className="h-4 w-4 text-blue-400 mr-2" />
+                  <span className="text-gray-300">Duration: 4 weeks</span>
+                </div>
+                <div className="flex items-center">
+                  <BookOpen className="h-4 w-4 text-green-400 mr-2" />
+                  <span className="text-gray-300">40+ Practice Problems</span>
+                </div>
+                <div className="flex items-center">
+                  <Zap className="h-4 w-4 text-yellow-400 mr-2" />
+                  <span className="text-gray-300">Focused Coverage</span>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4">
-            {isLoading ? (
-              <div className="flex justify-center items-center py-10">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[rgb(214,251,65)]"></div>
-              </div>
-            ) : filteredProblems.length > 0 ? (
-              filteredProblems.map((problem) => (
-                <ProblemCard 
-                  key={problem.id}
-                  problem={problem}
-                  onClick={() => {
-                    // Navigate to the problem detail or coding page
-                    setLocation(`/coding-environment?id=${problem.id}`);
-                  }}
-                />
-              ))
-            ) : (
-              <div className="text-center py-10">
-                <p className="text-gray-400">No problems found for this bundle.</p>
-              </div>
-            )}
+            
+            {/* Recommended Problems */}
+            <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] p-6">
+              <h2 className="text-xl font-bold mb-4">Recommended Problems</h2>
+              
+              {isLoadingExternal ? (
+                <div className="flex justify-center items-center py-10">
+                  <Loader2 className="h-8 w-8 text-[rgb(214,251,65)] animate-spin" />
+                  <span className="ml-2 text-gray-400">Loading problems...</span>
+                </div>
+              ) : externalProblems && externalProblems.length > 0 ? (
+                <div className="space-y-3">
+                  {externalProblems
+                    .filter((problem: any) => {
+                      // Simple search filter
+                      if (search && !problem.title?.toLowerCase().includes(search.toLowerCase())) {
+                        return false;
+                      }
+                      return true;
+                    })
+                    .slice(0, 8) // Limit to first 8 problems for this bundle
+                    .map((problem: Problem, idx: number) => {
+                      // Get the problem status from userProgress data if available
+                      const progressData = userProgressData?.find((p: any) => p.problemId === problem.id);
+                      const problemStatus = progressData?.status || 'Not Started';
+                      const statusIcon = getStatusIcon(problemStatus);
+                      
+                      return (
+                        <ProblemCard 
+                          key={problem.id}
+                          problem={problem}
+                          index={idx}
+                          statusIcon={statusIcon}
+                          handleSetupCodebase={handleSetupCodebase}
+                        />
+                      );
+                    })}
+                </div>
+              ) : (
+                <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] p-8 text-center">
+                  <p className="text-gray-400 mb-2">No problems found for this bundle.</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
