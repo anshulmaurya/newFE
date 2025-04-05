@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'wouter';
+import NotesLayout from '../../../components/layout/notes-layout';
 
 export default function MultithreadingIntroduction() {
-  const [darkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(true);
+  
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+  };
   
   // Determine theme classes
   const themeClasses = darkMode 
@@ -33,7 +38,7 @@ export default function MultithreadingIntroduction() {
         codeBlock: "bg-gray-50"
       };
 
-  return (
+  const content = (
     <>
       <div className="flex items-center mb-1 text-gray-500 text-sm">
         <span>Docs</span>
@@ -120,5 +125,11 @@ export default function MultithreadingIntroduction() {
         </ul>
       </div>
     </>
+  );
+  
+  return (
+    <NotesLayout darkMode={darkMode} toggleTheme={toggleTheme}>
+      {content}
+    </NotesLayout>
   );
 }
