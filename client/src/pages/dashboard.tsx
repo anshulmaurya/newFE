@@ -82,12 +82,6 @@ const usePreventScrollJump = () => {
         animation: none !important;
         transition: none !important;
       }
-      
-      /* Fix for the main content area to ensure proper overflow behavior */
-      .dashboard-content-area {
-        overflow-y: auto !important;
-        position: relative !important;
-      }
     `;
     document.head.appendChild(styleEl);
     
@@ -365,23 +359,6 @@ export default function Dashboard() {
     }
   };
 
-  // Function to handle navigation to different sections
-  const handleNavigateFeatures = () => {
-    // This is a placeholder function for header navigation
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
-  const handleNavigateProblems = () => {
-    // This is a placeholder function for header navigation
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
   // Toggle theme function
   const toggleTheme = () => {
     setDarkMode(!darkMode);
@@ -389,12 +366,12 @@ export default function Dashboard() {
 
   // Get difficulty color class
   const getDifficultyColor = (difficulty: string): string => {
-    switch (difficulty) {
-      case 'Easy':
+    switch (difficulty.toLowerCase()) {
+      case 'easy':
         return 'text-green-500';
-      case 'Medium':
+      case 'medium':
         return 'text-yellow-500';
-      case 'Hard':
+      case 'hard':
         return 'text-red-500';
       default:
         return 'text-gray-500';
@@ -483,254 +460,241 @@ export default function Dashboard() {
     // Call the mutation with the problem ID, question ID, and selected language
     setupCodebaseMutation.mutate({ problemId, questionId, language });
   };
-  
-  // Main dashboard content
-  const dashboardContent = (
-    <div className="min-h-screen bg-[rgb(12,12,14)] text-gray-200">
-      {/* Main content container */}
-      <div className="flex flex-col h-screen">
-        {/* Main row with sidebar and content */}
-        <div className="flex flex-1 overflow-hidden">
-            
-          {/* Main content - scrollable */}
-          <div className="w-full lg:ml-56 overflow-y-auto overflow-x-hidden px-4 lg:px-0 pt-14 pb-8 bg-[rgb(14,14,16)] dashboard-content-area">
-            {/* Main content area - flex layout with right sidebar */}
-            <div className="flex">
-              {/* Main content column */}
-              <div className="flex-grow pt-0 pb-8 px-2 space-y-2 overflow-x-hidden mr-0 lg:mr-64">
-              
-                {/* Activity Heatmap */}
-                <ActivityHeatmap />
 
-                {/* Selected Bundle Details */}
-                {selectedBundle && bundles[selectedBundle as keyof typeof bundles] && (
-                  <div className="bg-[rgb(20,20,22)] rounded-lg p-3 border border-[rgb(35,35,40)] mb-2">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="flex-shrink-0">
-                          {bundles[selectedBundle as keyof typeof bundles].icon}
-                        </div>
-                        <div>
-                          <h3 className="text-sm font-medium text-white">
-                            {bundles[selectedBundle as keyof typeof bundles].title}
-                          </h3>
-                          <p className="text-xs text-gray-400 mt-1 max-w-lg">
-                            {bundles[selectedBundle as keyof typeof bundles].description}
-                          </p>
-                        </div>
+  return (
+    <DashboardLayout darkMode={darkMode} toggleTheme={toggleTheme}>
+      <div className="lg:ml-56 pt-14 pb-8 bg-[rgb(14,14,16)]">
+        <div className="px-4 lg:px-6 mx-auto relative">
+          <div className="flex">
+            <div className="flex-1 mr-0 lg:mr-64 space-y-4">
+              {/* Activity Heatmap */}
+              <ActivityHeatmap />
+
+              {/* Selected Bundle Details */}
+              {selectedBundle && bundles[selectedBundle as keyof typeof bundles] && (
+                <div className="bg-[rgb(20,20,22)] rounded-lg p-3 border border-[rgb(35,35,40)] mb-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex-shrink-0">
+                        {bundles[selectedBundle as keyof typeof bundles].icon}
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="flex flex-col items-end">
-                          <span className="text-xs text-gray-400">Problems</span>
-                          <span className="text-sm font-medium">{bundles[selectedBundle as keyof typeof bundles].count}</span>
-                        </div>
-                        <div className="flex flex-col items-end">
-                          <span className="text-xs text-gray-400">Estimated Time</span>
-                          <span className="text-sm font-medium">{bundles[selectedBundle as keyof typeof bundles].estimatedTime}</span>
-                        </div>
-                        <div className="flex flex-col items-end">
-                          <span className="text-xs text-gray-400">Difficulty</span>
-                          <span className="text-sm font-medium">{bundles[selectedBundle as keyof typeof bundles].difficulty}</span>
-                        </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-white">
+                          {bundles[selectedBundle as keyof typeof bundles].title}
+                        </h3>
+                        <p className="text-xs text-gray-400 mt-1 max-w-lg">
+                          {bundles[selectedBundle as keyof typeof bundles].description}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <div className="flex flex-col items-end">
+                        <span className="text-xs text-gray-400">Problems</span>
+                        <span className="text-sm font-medium">{bundles[selectedBundle as keyof typeof bundles].count}</span>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="text-xs text-gray-400">Estimated Time</span>
+                        <span className="text-sm font-medium">{bundles[selectedBundle as keyof typeof bundles].estimatedTime}</span>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="text-xs text-gray-400">Difficulty</span>
+                        <span className="text-sm font-medium">{bundles[selectedBundle as keyof typeof bundles].difficulty}</span>
                       </div>
                     </div>
                   </div>
-                )}
-                
-                {/* Filter Controls */}
-                <div className="flex flex-wrap gap-2 mb-2 items-center">
-                  <div className="flex-grow">
-                    <div className="relative">
-                      <Search className="w-4 h-4 absolute left-2.5 top-2.5 text-gray-500" />
-                      <Input
-                        type="text"
-                        placeholder="Search problems..."
-                        className="h-9 py-2 pl-8 pr-4 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] text-xs"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="w-1/3 md:w-auto">
-                    <Select
-                      value={difficulty}
-                      onValueChange={setDifficulty}
-                    >
-                      <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
-                        <SelectValue placeholder="Difficulty" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
-                        <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Difficulty</SelectItem>
-                        <SelectItem value="easy" className="text-green-500 focus:bg-[rgb(45,45,50)]">Easy</SelectItem>
-                        <SelectItem value="medium" className="text-yellow-500 focus:bg-[rgb(45,45,50)]">Medium</SelectItem>
-                        <SelectItem value="hard" className="text-red-500 focus:bg-[rgb(45,45,50)]">Hard</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="w-1/3 md:w-auto">
-                    <Select
-                      value={category}
-                      onValueChange={setCategory}
-                    >
-                      <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
-                        <SelectValue placeholder="Category" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
-                        <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Category</SelectItem>
-                        <SelectItem value="Memory Management" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Memory Management</SelectItem>
-                        <SelectItem value="Multithreading" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Multithreading</SelectItem>
-                        <SelectItem value="Data Structures" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Data Structures</SelectItem>
-                        <SelectItem value="C++ API" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C++ API</SelectItem>
-                        <SelectItem value="Linux API" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Linux API</SelectItem>
-                        <SelectItem value="RTOS" className="text-gray-200 focus:bg-[rgb(45,45,50)]">RTOS</SelectItem>
-                        <SelectItem value="Power Management" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Power Management</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="w-1/3 md:w-auto">
-                    <Select
-                      value={status}
-                      onValueChange={setStatus}
-                    >
-                      <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
-                        <SelectValue placeholder="Status" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
-                        <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Status</SelectItem>
-                        <SelectItem value="Solved" className="text-green-500 focus:bg-[rgb(45,45,50)]">Solved</SelectItem>
-                        <SelectItem value="Attempted" className="text-yellow-500 focus:bg-[rgb(45,45,50)]">Attempted</SelectItem>
-                        <SelectItem value="Not Started" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Not Started</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="w-1/3 md:w-auto">
-                    <Select
-                      value={language}
-                      onValueChange={setLanguage}
-                    >
-                      <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
-                        <SelectValue placeholder="Language" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
-                        <SelectItem value="c" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C</SelectItem>
-                        <SelectItem value="cpp" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C++</SelectItem>
-                      </SelectContent>
-                    </Select>
+                </div>
+              )}
+
+              {/* Filter Controls */}
+              <div className="flex flex-wrap gap-2 mb-4 items-center">
+                <div className="flex-grow">
+                  <div className="relative">
+                    <Search className="w-4 h-4 absolute left-2.5 top-2.5 text-gray-500" />
+                    <Input
+                      type="text"
+                      placeholder="Search problems..."
+                      className="h-9 py-2 pl-8 pr-4 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] text-xs"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
                   </div>
                 </div>
                 
-                {/* Problem list - Card Based Layout */}
-                <div className="mt-0 w-full mb-0">
-                  {isLoadingExternal ? (
-                    <div className="bg-[rgb(20,20,22)] rounded-lg border border-[rgb(45,45,50)] p-8 text-center">
-                      <div className="flex flex-col items-center">
-                        <Loader2 className="h-6 w-6 animate-spin text-[rgb(214,251,65)]" />
-                        <p className="mt-2 text-gray-400 text-xs">Loading problems...</p>
-                      </div>
-                    </div>
-                  ) : externalProblems && externalProblems.length > 0 ? (
-                    <div className="space-y-3">
-                      {/* Apply filters to problems */}
-                      {externalProblems
-                        .filter((problem: any) => {
-                          // Apply difficulty filter
-                          if (difficulty !== 'all' && problem.difficulty?.toLowerCase() !== difficulty.toLowerCase()) {
-                            return false;
-                          }
-                          
-                          // Apply category filter
-                          if (category !== 'all' && 
-                              !(problem.category?.toLowerCase() === category.toLowerCase() ||
-                                problem.type?.toLowerCase() === category.toLowerCase() ||
-                                problem.tags?.some((tag: string) => tag.toLowerCase() === category.toLowerCase()))
-                             ) {
-                            return false;
-                          }
-                          
-                          // Apply status filter - only works if user is authenticated
-                          if (status !== 'all') {
-                            // If user is not authenticated, and status is not 'Not Started', don't show problems
-                            if (!user && status !== 'Not Started') {
-                              return false;
-                            } else if (user) {
-                              // For authenticated users, filter by progress data
-                              const progressData = userProgressData?.find((p: any) => p.problemId === problem.id);
-                              const problemStatus = progressData?.status || 'Not Started';
-                              if (problemStatus !== status) {
-                                return false;
-                              }
-                            }
-                          }
-                          
-                          // Apply search filter
-                          if (search && search.trim() !== '') {
-                            const searchTerm = search.toLowerCase();
-                            return problem.title?.toLowerCase().includes(searchTerm) ||
-                                  problem.description?.toLowerCase().includes(searchTerm) ||
-                                  problem.tags?.some((tag: string) => tag.toLowerCase().includes(searchTerm)) ||
-                                  problem.companies?.some((company: string) => company.toLowerCase().includes(searchTerm));
-                          }
-                          
-                          return true;
-                        })
-                        .map((problem: any, idx: number) => {
-                          // Get the problem status from userProgress data if available, otherwise default to "Not Started"
-                          const progressData = userProgressData?.find((p: any) => p.problemId === problem.id);
-                          const problemStatus = progressData?.status || 'Not Started';
-                          const statusIcon = getStatusIcon(problemStatus);
-                          
-                          return (
-                            <ProblemCard 
-                              key={problem.id}
-                              problem={problem}
-                              index={idx}
-                              statusIcon={statusIcon}
-                              handleSetupCodebase={handleSetupCodebase}
-                            />
-                          );
-                        })}
-                    </div>
-                  ) : (
-                    <div className="bg-[rgb(20,20,22)] rounded-lg border border-[rgb(45,45,50)] p-8 text-center">
-                      <div className="flex flex-col items-center">
-                        <AlertTriangle className="h-6 w-6 text-yellow-500" />
-                        <p className="mt-2 text-gray-400 text-xs">No problems found</p>
-                      </div>
-                    </div>
-                  )}
+                <div className="w-1/3 md:w-auto">
+                  <Select
+                    value={difficulty}
+                    onValueChange={setDifficulty}
+                  >
+                    <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                      <SelectValue placeholder="Difficulty" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
+                      <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Difficulty</SelectItem>
+                      <SelectItem value="easy" className="text-green-500 focus:bg-[rgb(45,45,50)]">Easy</SelectItem>
+                      <SelectItem value="medium" className="text-yellow-500 focus:bg-[rgb(45,45,50)]">Medium</SelectItem>
+                      <SelectItem value="hard" className="text-red-500 focus:bg-[rgb(45,45,50)]">Hard</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="w-1/3 md:w-auto">
+                  <Select
+                    value={category}
+                    onValueChange={setCategory}
+                  >
+                    <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
+                      <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Category</SelectItem>
+                      <SelectItem value="Memory Management" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Memory Management</SelectItem>
+                      <SelectItem value="Multithreading" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Multithreading</SelectItem>
+                      <SelectItem value="Data Structures" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Data Structures</SelectItem>
+                      <SelectItem value="C++ API" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C++ API</SelectItem>
+                      <SelectItem value="Linux API" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Linux API</SelectItem>
+                      <SelectItem value="RTOS" className="text-gray-200 focus:bg-[rgb(45,45,50)]">RTOS</SelectItem>
+                      <SelectItem value="Power Management" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Power Management</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="w-1/3 md:w-auto">
+                  <Select
+                    value={status}
+                    onValueChange={setStatus}
+                  >
+                    <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
+                      <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Status</SelectItem>
+                      <SelectItem value="Solved" className="text-green-500 focus:bg-[rgb(45,45,50)]">Solved</SelectItem>
+                      <SelectItem value="Attempted" className="text-yellow-500 focus:bg-[rgb(45,45,50)]">Attempted</SelectItem>
+                      <SelectItem value="Not Started" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Not Started</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="w-1/3 md:w-auto">
+                  <Select
+                    value={language}
+                    onValueChange={setLanguage}
+                  >
+                    <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                      <SelectValue placeholder="Language" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
+                      <SelectItem value="c" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C</SelectItem>
+                      <SelectItem value="cpp" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C++</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               
-              {/* Right sidebar for tags */}
-              <div className="hidden lg:block w-60 fixed right-4 top-20 bottom-8 overflow-y-auto">
-                <div className="bg-[rgb(20,20,22)] rounded-lg p-4 border border-[rgb(35,35,40)]">
-                  <h3 className="text-sm font-medium text-white mb-3">Popular Tags</h3>
-                  <div className="space-y-2">
-                    {/* Sample tags with different colors */}
-                    <div className="flex flex-wrap gap-2">
-                      <Badge className="bg-[#4a9eff] text-white hover:bg-[#3a8eff] cursor-pointer text-xs">RTOS</Badge>
-                      <Badge className="bg-[#ff6b6b] text-white hover:bg-[#ff5a5a] cursor-pointer text-xs">Memory Management</Badge>
-                      <Badge className="bg-[#50e3c2] text-black hover:bg-[#40d3b2] cursor-pointer text-xs">Embedded C</Badge>
-                      <Badge className="bg-[#ffc107] text-black hover:bg-[#efb100] cursor-pointer text-xs">ARM</Badge>
-                      <Badge className="bg-[#bd93f9] text-white hover:bg-[#ad83e9] cursor-pointer text-xs">MCU</Badge>
-                      <Badge className="bg-[#8bd450] text-black hover:bg-[#7bc440] cursor-pointer text-xs">Interrupts</Badge>
-                      <Badge className="bg-[#ff79c6] text-white hover:bg-[#ef69b6] cursor-pointer text-xs">UART</Badge>
-                      <Badge className="bg-[#f1fa8c] text-black hover:bg-[#e1ea7c] cursor-pointer text-xs">SPI</Badge>
-                      <Badge className="bg-[#ffb86c] text-black hover:bg-[#efaa5c] cursor-pointer text-xs">I2C</Badge>
-                      <Badge className="bg-[#8be9fd] text-black hover:bg-[#7bd9ed] cursor-pointer text-xs">GPIO</Badge>
-                      <Badge className="bg-[#ff5555] text-white hover:bg-[#ef4545] cursor-pointer text-xs">DMA</Badge>
-                      <Badge className="bg-[#50fa7b] text-black hover:bg-[#40ea6b] cursor-pointer text-xs">ADC</Badge>
-                      <Badge className="bg-[#bd93f9] text-white hover:bg-[#ad83e9] cursor-pointer text-xs">PWM</Badge>
-                      <Badge className="bg-[#f1fa8c] text-black hover:bg-[#e1ea7c] cursor-pointer text-xs">Multithreading</Badge>
-                      <Badge className="bg-[#ff79c6] text-white hover:bg-[#ef69b6] cursor-pointer text-xs">CAN</Badge>
-                      <Badge className="bg-[#4a9eff] text-white hover:bg-[#3a8eff] cursor-pointer text-xs">Ethernet</Badge>
-                      <Badge className="bg-[#ff6b6b] text-white hover:bg-[#ff5a5a] cursor-pointer text-xs">Drivers</Badge>
-                      <Badge className="bg-[#50e3c2] text-black hover:bg-[#40d3b2] cursor-pointer text-xs">Bootloader</Badge>
-                    </div>
+              {/* Problem Cards */}
+              {isLoadingExternal ? (
+                <div className="bg-[rgb(20,20,22)] rounded-lg border border-[rgb(45,45,50)] p-8 text-center">
+                  <div className="flex flex-col items-center">
+                    <Loader2 className="h-6 w-6 animate-spin text-[rgb(214,251,65)]" />
+                    <p className="mt-2 text-gray-400 text-xs">Loading problems...</p>
+                  </div>
+                </div>
+              ) : externalProblems && externalProblems.length > 0 ? (
+                <div className="space-y-3">
+                  {externalProblems
+                    .filter((problem: any) => {
+                      // Apply difficulty filter
+                      if (difficulty !== 'all' && problem.difficulty?.toLowerCase() !== difficulty.toLowerCase()) {
+                        return false;
+                      }
+                      
+                      // Apply category filter
+                      if (category !== 'all' && 
+                          !(problem.category?.toLowerCase() === category.toLowerCase() ||
+                            problem.type?.toLowerCase() === category.toLowerCase() ||
+                            problem.tags?.some((tag: string) => tag.toLowerCase() === category.toLowerCase()))
+                         ) {
+                        return false;
+                      }
+                      
+                      // Apply status filter - only works if user is authenticated
+                      if (status !== 'all') {
+                        // If user is not authenticated, and status is not 'Not Started', don't show problems
+                        if (!user && status !== 'Not Started') {
+                          return false;
+                        } else if (user) {
+                          // For authenticated users, filter by progress data
+                          const progressData = userProgressData?.find((p: any) => p.problemId === problem.id);
+                          const problemStatus = progressData?.status || 'Not Started';
+                          if (problemStatus !== status) {
+                            return false;
+                          }
+                        }
+                      }
+                      
+                      // Apply search filter
+                      if (search && search.trim() !== '') {
+                        const searchTerm = search.toLowerCase();
+                        return problem.title?.toLowerCase().includes(searchTerm) ||
+                              problem.description?.toLowerCase().includes(searchTerm) ||
+                              problem.tags?.some((tag: string) => tag.toLowerCase().includes(searchTerm)) ||
+                              problem.companies?.some((company: string) => company.toLowerCase().includes(searchTerm));
+                      }
+                      
+                      return true;
+                    })
+                    .map((problem: any, idx: number) => {
+                      // Get the problem status from userProgress data if available, otherwise default to "Not Started"
+                      const progressData = userProgressData?.find((p: any) => p.problemId === problem.id);
+                      const problemStatus = progressData?.status || 'Not Started';
+                      const statusIcon = getStatusIcon(problemStatus);
+                      
+                      return (
+                        <ProblemCard 
+                          key={problem.id}
+                          problem={problem}
+                          index={idx}
+                          statusIcon={statusIcon}
+                          handleSetupCodebase={handleSetupCodebase}
+                        />
+                      );
+                    })}
+                </div>
+              ) : (
+                <div className="bg-[rgb(20,20,22)] rounded-lg border border-[rgb(45,45,50)] p-8 text-center">
+                  <div className="flex flex-col items-center">
+                    <AlertTriangle className="h-6 w-6 text-yellow-500" />
+                    <p className="mt-2 text-gray-400 text-xs">No problems found</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Right sidebar for tags */}
+            <div className="hidden lg:block w-60 fixed right-4 top-20 bottom-8 overflow-y-auto">
+              <div className="bg-[rgb(20,20,22)] rounded-lg p-4 border border-[rgb(35,35,40)]">
+                <h3 className="text-sm font-medium text-white mb-3">Popular Tags</h3>
+                <div className="space-y-2">
+                  {/* Sample tags with different colors */}
+                  <div className="flex flex-wrap gap-2">
+                    <Badge className="bg-[#4a9eff] text-white hover:bg-[#3a8eff] cursor-pointer text-xs">RTOS</Badge>
+                    <Badge className="bg-[#ff6b6b] text-white hover:bg-[#ff5a5a] cursor-pointer text-xs">Memory Management</Badge>
+                    <Badge className="bg-[#50e3c2] text-black hover:bg-[#40d3b2] cursor-pointer text-xs">Embedded C</Badge>
+                    <Badge className="bg-[#ffc107] text-black hover:bg-[#efb100] cursor-pointer text-xs">ARM</Badge>
+                    <Badge className="bg-[#bd93f9] text-white hover:bg-[#ad83e9] cursor-pointer text-xs">MCU</Badge>
+                    <Badge className="bg-[#8bd450] text-black hover:bg-[#7bc440] cursor-pointer text-xs">Interrupts</Badge>
+                    <Badge className="bg-[#ff79c6] text-white hover:bg-[#ef69b6] cursor-pointer text-xs">UART</Badge>
+                    <Badge className="bg-[#f1fa8c] text-black hover:bg-[#e1ea7c] cursor-pointer text-xs">SPI</Badge>
+                    <Badge className="bg-[#ffb86c] text-black hover:bg-[#efaa5c] cursor-pointer text-xs">I2C</Badge>
+                    <Badge className="bg-[#8be9fd] text-black hover:bg-[#7bd9ed] cursor-pointer text-xs">GPIO</Badge>
+                    <Badge className="bg-[#ff5555] text-white hover:bg-[#ef4545] cursor-pointer text-xs">DMA</Badge>
+                    <Badge className="bg-[#50fa7b] text-black hover:bg-[#40ea6b] cursor-pointer text-xs">ADC</Badge>
+                    <Badge className="bg-[#bd93f9] text-white hover:bg-[#ad83e9] cursor-pointer text-xs">PWM</Badge>
+                    <Badge className="bg-[#f1fa8c] text-black hover:bg-[#e1ea7c] cursor-pointer text-xs">Multithreading</Badge>
+                    <Badge className="bg-[#ff79c6] text-white hover:bg-[#ef69b6] cursor-pointer text-xs">CAN</Badge>
+                    <Badge className="bg-[#4a9eff] text-white hover:bg-[#3a8eff] cursor-pointer text-xs">Ethernet</Badge>
+                    <Badge className="bg-[#ff6b6b] text-white hover:bg-[#ff5a5a] cursor-pointer text-xs">Drivers</Badge>
+                    <Badge className="bg-[#50e3c2] text-black hover:bg-[#40d3b2] cursor-pointer text-xs">Bootloader</Badge>
                   </div>
                 </div>
               </div>
@@ -738,13 +702,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    </div>
-  );
-  
-  // Return the dashboard content wrapped in the DashboardLayout
-  return (
-    <DashboardLayout darkMode={darkMode} toggleTheme={toggleTheme}>
-      {dashboardContent}
     </DashboardLayout>
   );
 }
