@@ -13,6 +13,7 @@ import { setupAuth } from "./auth";
 import { setupUserCodebase } from "./container-api";
 import { connectToMongoDB, getProblemsCollection } from "./mongodb";
 import crypto from 'crypto';
+import { setupWebSockets } from "./socket";
 
 // Container session storage for secure access
 interface ContainerSession {
@@ -576,8 +577,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Continue with the original questionId
       }
       
+      // Generate a secure token for the container URL before making the API call
+      const token = generateSecureToken();
+      
+      // Create an expiration date (24 hours from now)
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 24);
+      
+      // Send initial status update via WebSockets
+      if ((app as any).updateContainerStatus) {
+        (app as any).updateContainerStatus(
+          token, 
+          'creating', 
+          'Setting up your coding environment...', 
+          undefined, 
+          req.userId
+        );
+      }
+      
       // Call the external API to setup the codebase using the question_id from MongoDB and language
       const result = await setupUserCodebase(user.username, mongoDbQuestionId.toString(), language);
+      
+      // Send final status update via WebSockets
+      if ((app as any).updateContainerStatus) {
+        (app as any).updateContainerStatus(
+          token, 
+          'ready', 
+          'Your coding environment is ready!', 
+          result.containerUrl, 
+          req.userId
+        );
+      }
       
       // Record the attempt in user progress
       try {
@@ -605,12 +635,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Don't fail the request if this part has an error
       }
       
-      // Generate a secure token for the container URL
-      const token = generateSecureToken();
-      
-      // Create an expiration date (24 hours from now)
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + 24);
+      // The token was already generated earlier, no need to regenerate
       
       // Store the container URL in the session map
       containerSessions.set(token, {
@@ -651,25 +676,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const fallbackContainerUrl = `https://${containerUsername}.ambitiousfield-760fb695.eastus.azurecontainerapps.io`;
       
       // Generate a secure token for the fallback container URL
-      const token = generateSecureToken();
+      const errorToken = generateSecureToken();
       
       // Create an expiration date (24 hours from now)
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + 24);
+      const errorExpiresAt = new Date();
+      errorExpiresAt.setHours(errorExpiresAt.getHours() + 24);
+      
+      // Send error status update via WebSockets
+      if ((app as any).updateContainerStatus) {
+        (app as any).updateContainerStatus(
+          errorToken, 
+          'error', 
+          'Error setting up your coding environment. Please try again.', 
+          fallbackContainerUrl, 
+          req.userId || 0
+        );
+      }
       
       // Store the fallback container URL in the session map
-      containerSessions.set(token, {
+      containerSessions.set(errorToken, {
         containerUrl: fallbackContainerUrl,
         userId: req.userId || 0, // Use 0 as a fallback user ID
         createdAt: new Date(),
-        expiresAt: expiresAt
+        expiresAt: errorExpiresAt
       });
       
       // Return a response with the token
       return res.status(200).json({
-        status: "pending",
+        status: "error",
         message: "Codebase setup initiated with some issues. You can still begin coding, but some features may be limited.",
-        containerToken: token,
+        containerToken: errorToken,
         error: errorMessage
       });
     }
@@ -708,6 +744,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  
+  // Set up WebSockets
+  const { updateContainerStatus } = setupWebSockets(httpServer, app);
+  
+  // Store the updateContainerStatus function on the app for use in other places
+  (app as any).updateContainerStatus = updateContainerStatus;
 
   return httpServer;
 }

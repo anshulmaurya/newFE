@@ -8,6 +8,7 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User as UserType, insertUserStatsSchema } from "@shared/schema";
 import { createUserContainer, deleteUserContainer } from "./container-api";
+import cookie from "cookie";
 
 // Create type declaration for Express User
 declare global {
@@ -329,4 +330,68 @@ export function setupAuth(app: Express) {
       res.status(401).json({ message: "Not authenticated" });
     }
   });
+}
+
+/**
+ * Helper function to get user from a session cookie string
+ * @param cookieHeader The cookie header string from a request
+ * @returns Promise resolving to the user object or undefined if not authenticated
+ */
+export async function getUserFromSession(cookieHeader: string): Promise<Express.User | undefined> {
+  try {
+    // Parse cookies
+    const cookies = cookie.parse(cookieHeader);
+    
+    // Extract session ID - adjust cookie name if different in your app
+    const sessionCookie = cookies['connect.sid'];
+    if (!sessionCookie) {
+      return undefined;
+    }
+    
+    // Decode the signed cookie
+    const signedCookie = sessionCookie.slice(2); // Remove s: prefix
+    
+    // Fast return for invalid session cookies
+    if (!signedCookie || signedCookie.length < 10) {
+      return undefined;
+    }
+    
+    // Find session in database by session ID
+    // This uses direct database access for faster performance (avoids passport overhead)
+    try {
+      // Query the session store
+      // Note: The actual session ID might be encoded differently depending on your session store
+      const userId = await new Promise<number | undefined>((resolve) => {
+        storage.sessionStore.get(signedCookie, (err, session) => {
+          if (err || !session) {
+            resolve(undefined);
+            return;
+          }
+          
+          // TypeScript doesn't know that our sessions have a passport property
+          // Cast to any to access the property safely
+          const sessionData = session as any;
+          if (!sessionData.passport || !sessionData.passport.user) {
+            resolve(undefined);
+            return;
+          }
+          
+          resolve(sessionData.passport.user as number);
+        });
+      });
+      
+      if (!userId) {
+        return undefined;
+      }
+      
+      // Get user by ID
+      return await storage.getUser(userId);
+    } catch (err) {
+      console.error('Error getting session from store:', err);
+      return undefined;
+    }
+  } catch (err) {
+    console.error('Error parsing session cookie:', err);
+    return undefined;
+  }
 }

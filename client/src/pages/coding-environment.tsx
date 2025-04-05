@@ -29,6 +29,7 @@ import {
   XCircle,
   Loader2
 } from 'lucide-react';
+import { useContainerStatus } from '@/hooks/use-container-status';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -172,9 +173,45 @@ export default function CodingEnvironment() {
   const [comments, setComments] = useState<Comment[]>(SAMPLE_COMMENTS);
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
   const [activeTab, setActiveTab] = useState<'test-results' | 'memory-profile' | 'cache-profile'>('test-results');
+  const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
+  
+  // Subscribe to container status updates via WebSocket
+  const containerStatus = useContainerStatus(containerToken || undefined);
+  
+  // Update loading state based on container status
+  useEffect(() => {
+    if (containerStatus) {
+      if (containerStatus.status === 'ready') {
+        setIsLoading(false);
+        // When container is ready, update the URL if available
+        if (containerStatus.containerUrl) {
+          setContainerUrl(containerStatus.containerUrl);
+          toast({
+            title: "Environment Ready",
+            description: "Your coding environment is now ready to use",
+            variant: "default",
+          });
+        }
+      } else if (containerStatus.status === 'creating') {
+        setIsLoading(true);
+        toast({
+          title: "Setting up environment",
+          description: containerStatus.message || "Your coding environment is being prepared",
+          variant: "default",
+        });
+      } else if (containerStatus.status === 'error') {
+        setIsLoading(false);
+        toast({
+          title: "Environment Error",
+          description: containerStatus.message || "Failed to set up coding environment",
+          variant: "destructive",
+        });
+      }
+    }
+  }, [containerStatus, toast]);
 
   useEffect(() => {
     // Extract params from URL
@@ -1228,14 +1265,48 @@ export default function CodingEnvironment() {
                   Submit
                 </Button>
               </div>
-              <iframe 
-                ref={iframeRef}
-                src={containerUrl} 
-                className="w-full h-full border-0"
-                title="Coding Environment"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
-                loading="eager"
-              />
+              {isLoading || containerStatus?.status === 'creating' ? (
+                <div className="flex flex-col items-center justify-center w-full h-full bg-[#1E1E1E] text-white">
+                  <div className="flex flex-col items-center justify-center p-8">
+                    <div className="relative mb-4">
+                      <Loader2 className="h-10 w-10 text-[#c2ee4a] animate-spin" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">
+                      {containerStatus?.status === 'creating' ? 'Setting up your environment' : 'Loading your coding environment'}
+                    </h3>
+                    <p className="text-gray-400 text-center max-w-md">
+                      {containerStatus?.message || 'Please wait while we prepare your coding workspace. This may take a moment...'}
+                    </p>
+                  </div>
+                </div>
+              ) : containerStatus?.status === 'error' ? (
+                <div className="flex flex-col items-center justify-center w-full h-full bg-[#1E1E1E] text-white">
+                  <div className="flex flex-col items-center justify-center p-8">
+                    <AlertTriangle className="h-10 w-10 text-red-500 mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">Environment Error</h3>
+                    <p className="text-gray-400 text-center max-w-md">
+                      {containerStatus?.message || 'We encountered an error setting up your coding environment. Please try again.'}
+                    </p>
+                    <Button 
+                      variant="default" 
+                      className="mt-4"
+                      onClick={() => window.location.reload()}
+                    >
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Try Again
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <iframe 
+                  ref={iframeRef}
+                  src={containerUrl} 
+                  className="w-full h-full border-0"
+                  title="Coding Environment"
+                  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
+                  loading="eager"
+                />
+              )}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full p-8 text-white">

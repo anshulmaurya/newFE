@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { useLocation } from 'wouter';
 
 interface SetupCodebaseParams {
   problemId: string;
@@ -15,6 +16,7 @@ interface SetupCodebaseParams {
  */
 export function useSetupCodebase() {
   const { toast } = useToast();
+  const [, navigate] = useLocation();
   
   // Setup codebase mutation
   const setupCodebaseMutation = useMutation({
@@ -28,9 +30,12 @@ export function useSetupCodebase() {
       return await res.json();
     },
     onSuccess: (data) => {
-      // After successful setup, we don't need to do anything
-      // as the user is already on the coding environment page
+      // After successful setup, we store the container token in localStorage
       console.log('Codebase setup successful:', data);
+      
+      if (data.containerToken) {
+        localStorage.setItem('containerToken', data.containerToken);
+      }
     },
     onError: (error) => {
       // Show error toast but don't redirect - user is already on coding page
@@ -53,16 +58,40 @@ export function useSetupCodebase() {
         duration: 5000, // Show for 5 seconds
       });
       
-      // Navigate to the coding environment immediately
-      const encodedTitle = encodeURIComponent(problemId || 'Coding Problem');
-      const questionIdParam = questionId ? `&questionId=${encodeURIComponent(questionId)}` : '';
-      
-      // Navigate to the IDE page
-      window.location.href = `/coding-environment?id=${problemId}${questionIdParam}&language=${language}`;
-      
-      // Also trigger the API call in the background
+      // Trigger the API call first to get the container token
       if (questionId) {
-        setupCodebaseMutation.mutate({ questionId, language });
+        setupCodebaseMutation.mutate({ 
+          questionId, 
+          language 
+        }, {
+          onSuccess: (data) => {
+            if (data.containerToken) {
+              // Store the token in localStorage
+              localStorage.setItem('containerToken', data.containerToken);
+              
+              // Then navigate to the coding environment
+              const queryParams = new URLSearchParams({
+                id: problemId,
+                language: language,
+                containerToken: data.containerToken
+              });
+              
+              if (questionId) {
+                queryParams.append('questionId', questionId);
+              }
+              
+              // Use wouter navigation to avoid full page reload
+              navigate(`/coding-environment?${queryParams.toString()}`);
+            }
+          }
+        });
+      } else {
+        // No questionId, just navigate directly without setting up codebase
+        const queryParams = new URLSearchParams({
+          id: problemId,
+          language: language
+        });
+        navigate(`/coding-environment?${queryParams.toString()}`);
       }
     }
   };
