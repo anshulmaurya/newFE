@@ -36,26 +36,50 @@ const dashboardTopics: TopicSection[] = [
     ]
   },
   { 
-    id: "bundles", 
-    label: "Bundles",
+    id: "quick-prep", 
+    label: "Quick Prep Bundles",
     subsections: [
       {
-        id: "quick-prep-bundles",
-        label: "Quick Prep Bundles",
+        id: "three-months",
+        label: "3 Months",
         icon: <Zap className="h-4 w-4 mr-2" />,
-        path: "/dashboard/quick-prep-bundles",
+        path: "/dashboard/quick-prep/three-months",
       },
       {
-        id: "topic-bundles",
-        label: "Topic Bundles",
-        icon: <BookOpen className="h-4 w-4 mr-2" />,
-        path: "/dashboard/topic-bundles",
+        id: "one-month",
+        label: "1 Month",
+        icon: <Zap className="h-4 w-4 mr-2" />,
+        path: "/dashboard/quick-prep/one-month",
       },
       {
-        id: "company-bundles",
-        label: "Company Bundles",
+        id: "one-week",
+        label: "1 Week",
+        icon: <Zap className="h-4 w-4 mr-2" />,
+        path: "/dashboard/quick-prep/one-week",
+      }
+    ]
+  },
+  { 
+    id: "company-bundles", 
+    label: "Company Bundles",
+    subsections: [
+      {
+        id: "apple",
+        label: "Apple",
         icon: <Briefcase className="h-4 w-4 mr-2" />,
-        path: "/dashboard/company-bundles",
+        path: "/dashboard/company/apple",
+      },
+      {
+        id: "nvidia",
+        label: "Nvidia",
+        icon: <Briefcase className="h-4 w-4 mr-2" />,
+        path: "/dashboard/company/nvidia",
+      },
+      {
+        id: "tesla",
+        label: "Tesla",
+        icon: <Briefcase className="h-4 w-4 mr-2" />,
+        path: "/dashboard/company/tesla",
       }
     ]
   }
@@ -73,7 +97,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, darkMode, t
   const [selectedSubsection, setSelectedSubsection] = useState<string>("");
   const [scrollPosition, setScrollPosition] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const [location, setLocation] = useLocation();
   const currentPath = location;
@@ -186,18 +209,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, darkMode, t
       <div className="flex flex-grow pt-14 scrollable-content"> {/* Adjusted padding-top to prevent navbar overlap without gap */}
         {/* Sidebar */}
         <div className={`w-56 ${themeClasses.sidebarBg} p-4 flex flex-col border-r-0 shadow-md z-10 fixed left-0 bottom-0 top-14`}>
-          <div className="relative mb-3">
-            <Search size={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search problems..."
-              className={`w-full pl-8 pr-3 py-2 rounded-md border ${themeClasses.borderColor} text-sm ${darkMode ? 'bg-[rgb(36,36,38)] text-gray-200' : 'bg-white text-gray-800'}`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
+          <div className="space-y-2 mt-2">
             <div>
               <nav className="space-y-1.5">
                 {dashboardTopics.map(topic => (
@@ -213,14 +225,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, darkMode, t
                     {topic.subsections && topic.subsections.map((section) => {
                       const isExpanded = expandedSections[section.id] || false;
                       const active = selectedTopic === topic.id && (!section.subsections || !selectedSubsection);
-                      const hasMatchingSubsections = section.subsections && section.subsections.some(
-                        subsection => subsection.path.includes(searchQuery.toLowerCase())
-                      );
-                      
-                      // Skip if doesn't match search
-                      if (searchQuery && !section.label.toLowerCase().includes(searchQuery.toLowerCase()) && !hasMatchingSubsections) {
-                        return null;
-                      }
                       
                       return (
                         <div key={section.id} className="mb-1.5">
@@ -254,11 +258,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, darkMode, t
                             <div className="ml-4 pl-2 border-l space-y-1 mt-1">
                               {section.subsections.map(subsection => {
                                 const subActive = selectedSubsection === subsection.id;
-                                
-                                // Skip if doesn't match search
-                                if (searchQuery && !subsection.label.toLowerCase().includes(searchQuery.toLowerCase())) {
-                                  return null;
-                                }
                                 
                                 return (
                                   <div

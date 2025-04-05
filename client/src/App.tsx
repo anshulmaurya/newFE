@@ -49,9 +49,12 @@ function Router() {
     <Switch>
       <Route path="/" component={Home}/>
       <PublicRoute path="/dashboard" component={Dashboard} />
-      <PublicRoute path="/dashboard/quick-prep-bundles" component={Dashboard} />
-      <PublicRoute path="/dashboard/topic-bundles" component={Dashboard} />
-      <PublicRoute path="/dashboard/company-bundles" component={Dashboard} />
+      <PublicRoute path="/dashboard/quick-prep/three-months" component={Dashboard} />
+      <PublicRoute path="/dashboard/quick-prep/one-month" component={Dashboard} />
+      <PublicRoute path="/dashboard/quick-prep/one-week" component={Dashboard} />
+      <PublicRoute path="/dashboard/company/apple" component={Dashboard} />
+      <PublicRoute path="/dashboard/company/nvidia" component={Dashboard} />
+      <PublicRoute path="/dashboard/company/tesla" component={Dashboard} />
       <ProtectedRoute path="/coding-environment" component={CodingEnvironment} />
       <ProtectedRoute path="/user-statistics" component={UserStatistics} />
       <ProtectedRoute path="/jd-based" component={JDBasedPage} />
