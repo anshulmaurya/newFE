@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Moon, Sun, ChevronDown, Menu, X, BookOpen, Code, Database, FileText, Zap, Upload, GitBranch, Pencil, Grid3X3, Puzzle, Link as LinkIcon, Search as SearchIcon, Terminal, FileCode, FileBox, LayoutGrid, Globe } from "lucide-react";
+import { Search, Moon, Sun, ChevronDown, Menu, X, BookOpen, Code, Database, FileText, Zap, Upload, GitBranch, Pencil, Grid3X3, Puzzle, Link as LinkIcon, Search as SearchIcon, Terminal, FileCode, FileBox, LayoutGrid, Globe, BookText, Lightbulb, CheckCircle } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import Header from "@/components/layout/header";
 
@@ -422,81 +422,89 @@ export default function Notes() {
                   <span className="mx-2">›</span>
                   <span className={darkMode ? 'text-gray-300' : 'text-gray-800'}>Getting Started</span>
                 </div>
-                <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Getting Started with DSPCoder</h1>
-
-                <div className={`prose ${darkMode ? 'prose-invert' : 'prose-slate'} max-w-none`}>
-                  <p className="lead">
-                    Welcome to DSPCoder, the ultimate platform for solving embedded systems questions directly in VS Code! Follow this guide to set up your environment and start coding.
-                  </p>
-
-                  <h2 id="step-1-install-vs-code">🚀 Step 1: Install VS Code</h2>
-                  <p>
-                    Make sure you have Visual Studio Code installed on your system. If not, <a href="https://code.visualstudio.com/download" target="_blank" rel="noopener noreferrer">download it from here</a>.
-                  </p>
-
-                  <h2 id="step-2-install-dspcoder-extension">🔌 Step 2: Install DSPCoder Extension</h2>
-                  <ol>
-                    <li>Open VS Code.</li>
-                    <li>Go to the Extensions Marketplace (Ctrl + Shift + X / Cmd + Shift + X on Mac).</li>
-                    <li>Search for DSPCoder.</li>
-                    <li>Click Install to add the DSPCoder extension.</li>
-                  </ol>
-
-                  <h2 id="step-3-setup-workspace">📂 Step 3: Set Up Your Workspace</h2>
-                  <ol>
-                    <li>Open a new folder in VS Code where you want to store your code.</li>
-                    <li>Click on DSPCoder from the sidebar and sign in with your account.</li>
-                    <li>Select an embedded systems problem from the problem list.</li>
-                    <li>The extension will set up the necessary project structure automatically.</li>
-                  </ol>
-
-                  <h2 id="step-4-select-environment">🛠 Step 4: Select a Target Environment</h2>
-                  <p>
-                    DSPCoder supports multiple embedded system environments. Choose one:
-                  </p>
-                  <div className={`${themeClasses.card} p-4 border rounded-md my-4`}>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li>Bare Metal (C/C++)</li>
-                      <li>FreeRTOS</li>
-                      <li>ARM Cortex Emulation (via QEMU)</li>
-                      <li>Renode Simulation</li>
-                    </ul>
+                
+                <div className={`bg-[#111] p-6 rounded-lg mb-8 border border-gray-800`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center">
+                      <BookOpen className="h-5 w-5 mr-3 text-gray-300" />
+                      <h1 className="text-2xl font-bold text-white m-0">Embedded Systems Interview Playbook</h1>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <button className="text-xs px-3 py-1 rounded bg-transparent border border-gray-700 text-gray-300 hover:bg-gray-800">Copy link</button>
+                      <button className="text-xs px-3 py-1 rounded bg-transparent border border-gray-700 text-gray-300 hover:bg-gray-800">Share</button>
+                    </div>
                   </div>
-
-                  <h2 id="step-5-write-run-code">📝 Step 5: Write & Run Code</h2>
-                  <ol>
-                    <li>Open the generated main.c or main.cpp file.</li>
-                    <li>Write your solution using the provided template.</li>
-                    <li>Click Run to execute your code in the simulated environment.</li>
-                    <li>View the console output and memory profiling results.</li>
-                  </ol>
-
-                  <h2 id="step-6-submit-solution">✅ Step 6: Submit Your Solution</h2>
-                  <ol>
-                    <li>Once your code runs successfully, click Submit.</li>
-                    <li>Your solution will be evaluated for correctness, memory usage, and performance.</li>
-                    <li>Track your progress on the DSPCoder dashboard.</li>
-                  </ol>
-
-                  <h2 id="bonus-debugging-profiling">🎯 Bonus: Debugging & Profiling</h2>
-                  <ul>
-                    <li>Use Valgrind integration for memory leak detection.</li>
-                    <li>Step through your code using the built-in debugger.</li>
-                    <li>Optimize code with compiler feedback & performance metrics.</li>
-                  </ul>
-
-                  <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
-                    <div className="flex">
-                      <div className="flex-shrink-0">
-                        <svg className={`h-5 w-5 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>🎉 You're All Set!</h3>
-                        <div className={`text-sm ${themeClasses.infoText}`}>
-                          <p>Start solving embedded systems problems efficiently with DSPCoder & VS Code. 🚀<br /><br />
-                          For more details, visit <a href="#" className="underline hover:no-underline">DSPCoder Docs</a> or reach out to <a href="mailto:support@dspcoder.com" className="underline hover:no-underline">support@dspcoder.com</a>.</p>
+                  
+                  <p className="text-gray-400 mb-6">The definitive guide to embedded systems interviews.</p>
+                  
+                  <div className="flex flex-wrap gap-4 mb-8">
+                    <div className="flex items-center">
+                      <BookText className="h-4 w-4 mr-2 text-gray-400" />
+                      <span className="text-xs text-gray-300">End-to-end guide</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Lightbulb className="h-4 w-4 mr-2 text-gray-400" />
+                      <span className="text-xs text-gray-300">Tips for all question types</span>
+                    </div>
+                    <div className="flex items-center">
+                      <CheckCircle className="h-4 w-4 mr-2 text-gray-400" />
+                      <span className="text-xs text-gray-300">500+ practice questions</span>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-300 mb-6">
+                    Welcome to dspcoder.com! This platform is designed to help you prepare for embedded systems interviews with confidence.
+                  </p>
+                  
+                  <h2 className="text-xl font-bold text-white mb-4">Introduction</h2>
+                  
+                  <div className={`prose prose-invert max-w-none`}>
+                    <p>
+                      Welcome to dspcoder.com platform! This documentation section serves as your quick reference guide 
+                      for embedded systems concepts.
+                    </p>
+                    
+                    <p>
+                      <strong>Use these notes as short refreshers just before your interviews.</strong> The content here
+                      is structured in easily digestible sections, perfect for last-minute review of key concepts.
+                    </p>
+                    
+                    <p>
+                      To practice solving actual problems, head over to the <a href="/dashboard" className="text-blue-400 hover:underline">Problems Dashboard</a>. 
+                      There you'll find a comprehensive collection of embedded systems coding challenges organized by difficulty,
+                      topic, and company.
+                    </p>
+                    
+                    <h3>How to Use the Coding Environment</h3>
+                    <p>
+                      When you select a problem from the dashboard, our VS Code-based editor will open automatically. 
+                      You simply need to:
+                    </p>
+                    <ol>
+                      <li>Read the problem description in the left panel</li>
+                      <li>Fill in your solution in the provided function</li>
+                      <li>Click the "Run" button to test your code</li>
+                      <li>Submit your solution when you're confident</li>
+                    </ol>
+                    
+                    <p>
+                      Our system automatically runs test cases against your solution and performs memory analysis to 
+                      simulate real-world embedded constraints. This helps you practice writing efficient, memory-safe code.
+                    </p>
+                    
+                    <div className={`${themeClasses.infoBlock} p-5 border-l-4 rounded-r my-6`}>
+                      <div className="flex">
+                        <div className="flex-shrink-0">
+                          <svg className={`h-5 w-5 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <h3 className={`text-sm font-medium ${themeClasses.infoTextDark}`}>💡 Pro Tip</h3>
+                          <div className={`text-sm ${themeClasses.infoText}`}>
+                            <p>Consistency is key! Set a goal to solve at least one problem daily to build your embedded systems 
+                            proficiency. Use these notes to review concepts related to problems you're struggling with.</p>
+                          </div>
                         </div>
                       </div>
                     </div>
