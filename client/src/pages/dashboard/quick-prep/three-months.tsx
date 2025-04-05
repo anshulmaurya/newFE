@@ -76,33 +76,7 @@ const ThreeMonthsPage: React.FC = () => {
     setLocation(`/coding-environment?id=${problemId}${questionId ? `&questionId=${questionId}` : ''}`);
   };
 
-  // Topics to focus on in the 3-month preparation
-  const focusTopics = [
-    {
-      title: "Microcontroller Fundamentals",
-      description: "Master the core concepts of microcontroller architecture and programming",
-      icon: <Cpu className="h-5 w-5 text-blue-500" />,
-      topics: ["ARM Architecture", "Memory Types & Hierarchy", "Registers & Addressing Modes", "Instruction Pipeline"]
-    },
-    {
-      title: "Communication Protocols",
-      description: "Understand various communication protocols used in embedded systems",
-      icon: <Terminal className="h-5 w-5 text-green-500" />,
-      topics: ["SPI Implementation", "I2C Bus Protocol", "UART/USART", "CAN Bus"]
-    },
-    {
-      title: "Real-Time Operating Systems",
-      description: "Learn RTOS concepts and implementation techniques",
-      icon: <Clock className="h-5 w-5 text-yellow-500" />,
-      topics: ["Task Scheduling", "Mutex & Semaphores", "Message Queues", "Interrupt Handling"]
-    },
-    {
-      title: "C/C++ Programming",
-      description: "Deepen your knowledge of C/C++ for embedded systems",
-      icon: <Code className="h-5 w-5 text-purple-500" />,
-      topics: ["Memory Management", "Pointers & Data Structures", "Bit Manipulation", "Optimization Techniques"]
-    }
-  ];
+  // No topics array needed anymore
 
   return (
     <DashboardLayout darkMode={darkMode} toggleTheme={toggleDarkMode}>
@@ -133,33 +107,7 @@ const ThreeMonthsPage: React.FC = () => {
               </div>
             </div>
             
-            {/* Topics to focus on */}
-            <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] p-6">
-              <h2 className="text-xl font-bold mb-4">Topics to Focus On</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {focusTopics.map((topic, index) => (
-                  <div key={index} className="bg-[rgb(24,24,27)] rounded-lg p-4 border border-[rgb(55,55,60)]">
-                    <div className="flex items-start mb-3">
-                      <div className="mr-3 p-2 bg-[rgb(35,35,40)] rounded-md">
-                        {topic.icon}
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-white">{topic.title}</h3>
-                        <p className="text-sm text-gray-400">{topic.description}</p>
-                      </div>
-                    </div>
-                    <ul className="space-y-1 pl-4">
-                      {topic.topics.map((item, idx) => (
-                        <li key={idx} className="text-sm text-gray-300 flex items-center">
-                          <div className="h-1.5 w-1.5 bg-[rgb(214,251,65)] rounded-full mr-2"></div>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
+
             
             {/* Recommended Problems */}
             <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] p-6">
@@ -204,48 +152,7 @@ const ThreeMonthsPage: React.FC = () => {
                 </div>
               )}
             </div>
-            
-            {/* Week-by-week plan */}
-            <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] p-6">
-              <h2 className="text-xl font-bold mb-4">Weekly Breakdown</h2>
-              <div className="space-y-4">
-                <div className="bg-[rgb(24,24,27)] rounded-lg p-4 border border-[rgb(55,55,60)]">
-                  <h3 className="font-semibold text-white mb-2">Month 1: Building the Foundation</h3>
-                  <ul className="space-y-2">
-                    <li className="text-sm text-gray-300">
-                      <span className="font-medium text-[rgb(214,251,65)]">Week 1-2:</span> Microcontroller architecture, C programming essentials, digital electronics
-                    </li>
-                    <li className="text-sm text-gray-300">
-                      <span className="font-medium text-[rgb(214,251,65)]">Week 3-4:</span> Memory organization, peripheral interfaces, basic embedded algorithms
-                    </li>
-                  </ul>
-                </div>
-                
-                <div className="bg-[rgb(24,24,27)] rounded-lg p-4 border border-[rgb(55,55,60)]">
-                  <h3 className="font-semibold text-white mb-2">Month 2: Intermediate Concepts</h3>
-                  <ul className="space-y-2">
-                    <li className="text-sm text-gray-300">
-                      <span className="font-medium text-[rgb(214,251,65)]">Week 5-6:</span> Communication protocols (SPI, I2C, UART), interrupt handling
-                    </li>
-                    <li className="text-sm text-gray-300">
-                      <span className="font-medium text-[rgb(214,251,65)]">Week 7-8:</span> Real-time systems, memory management, state machines
-                    </li>
-                  </ul>
-                </div>
-                
-                <div className="bg-[rgb(24,24,27)] rounded-lg p-4 border border-[rgb(55,55,60)]">
-                  <h3 className="font-semibold text-white mb-2">Month 3: Advanced Applications</h3>
-                  <ul className="space-y-2">
-                    <li className="text-sm text-gray-300">
-                      <span className="font-medium text-[rgb(214,251,65)]">Week 9-10:</span> RTOS concepts, multithreading, synchronization primitives
-                    </li>
-                    <li className="text-sm text-gray-300">
-                      <span className="font-medium text-[rgb(214,251,65)]">Week 11-12:</span> Advanced debugging techniques, system design, mock interviews
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
