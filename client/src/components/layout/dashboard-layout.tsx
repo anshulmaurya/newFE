@@ -39,9 +39,7 @@ const dashboardTopics: TopicSection[] = [
   { 
     id: "quick-prep", 
     label: "Quick Prep Bundles",
-    expandable: true,
-    icon: <Zap className="h-4 w-4 mr-2" />,
-    path: "#",
+    category: true,
     subsections: [
       {
         id: "three-months",
@@ -66,9 +64,7 @@ const dashboardTopics: TopicSection[] = [
   { 
     id: "company-bundles", 
     label: "Company Bundles",
-    expandable: true,
-    icon: <Briefcase className="h-4 w-4 mr-2" />,
-    path: "#",
+    category: true,
     subsections: [
       {
         id: "apple",
@@ -221,17 +217,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, darkMode, t
               <nav className="space-y-1.5">
                 {dashboardTopics.map(topic => (
                   <div key={topic.id} className="mb-6">
-                    {/* Category Header */}
-                    {topic.category && (
-                      <div className={`text-xs font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'} mb-2 pl-1.5`}>
-                        {topic.label}
-                      </div>
-                    )}
-                    
-                    {/* Main items */}
-                    {topic.subsections && topic.subsections.map((section) => {
-                      const isExpanded = expandedSections[section.id] || false;
-                      const active = selectedTopic === topic.id && (!section.subsections || !selectedSubsection);
+                    {!topic.category && topic.subsections && topic.subsections.map((section) => {
+                      const active = currentPath === section.path;
                       
                       return (
                         <div key={section.id} className="mb-1.5">
@@ -241,56 +228,47 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, darkMode, t
                                 ? themeClasses.activeItem
                                 : `${darkMode ? 'hover:bg-[rgb(40,40,44)]' : 'hover:bg-gray-100'}`
                             }`}
-                            onClick={() => {
-                              if (section.expandable && section.subsections) {
-                                toggleSection(section.id);
-                              } else {
-                                handleNavClick(() => section.path && setLocation(section.path));
-                              }
-                            }}
+                            onClick={() => handleNavClick(() => section.path && setLocation(section.path))}
                           >
                             <div className="flex items-center">
                               {section.icon}
                               <span>{section.label}</span>
                             </div>
-                            {section.expandable && section.subsections && (
-                              <div className="flex items-center">
-                                {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                              </div>
-                            )}
                           </div>
-                          
-                          {/* Nested subsections */}
-                          {section.expandable && section.subsections && isExpanded && (
-                            <div className="ml-4 pl-2 border-l space-y-1 mt-1">
-                              {section.subsections.map(subsection => {
-                                const subActive = selectedSubsection === subsection.id;
-                                
-                                return (
-                                  <div
-                                    key={subsection.id}
-                                    className={`flex items-center rounded-md px-2 py-1.5 text-sm font-medium cursor-pointer transition-colors ${
-                                      subActive
-                                        ? themeClasses.activeItem
-                                        : `${darkMode ? 'hover:bg-[rgb(40,40,44)]' : 'hover:bg-gray-100'}`
-                                    }`}
-                                    onClick={() => {
-                                      handleNavClick(() => {
-                                        setSelectedSubsection(subsection.id);
-                                        subsection.path && setLocation(subsection.path);
-                                      });
-                                    }}
-                                  >
-                                    {subsection.icon}
-                                    <span>{subsection.label}</span>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
                         </div>
                       );
                     })}
+                    
+                    {/* Category with items */}
+                    {topic.category && (
+                      <>
+                        <div className={`text-xs font-medium ${darkMode ? 'text-gray-200' : 'text-gray-600'} mb-2 ml-1 uppercase tracking-wider`}>
+                          {topic.label}
+                        </div>
+                        <div className="space-y-1">
+                          {topic.subsections && topic.subsections.map((section) => {
+                            const active = currentPath === section.path;
+                            
+                            return (
+                              <div
+                                key={section.id}
+                                className={`flex items-center rounded-md px-2 py-1.5 text-sm font-medium cursor-pointer transition-colors ${
+                                  active
+                                    ? themeClasses.activeItem
+                                    : `${darkMode ? 'hover:bg-[rgb(40,40,44)]' : 'hover:bg-gray-100'}`
+                                }`}
+                                onClick={() => handleNavClick(() => section.path && setLocation(section.path))}
+                              >
+                                <div className="flex items-center">
+                                  {section.icon}
+                                  <span>{section.label}</span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    )}
                   </div>
                 ))}
               </nav>
