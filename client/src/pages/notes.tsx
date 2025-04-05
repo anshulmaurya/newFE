@@ -276,7 +276,7 @@ export default function Notes() {
                             <span>{section.label}</span>
                             {(hasSubsections || section.expandable) && (
                               <ChevronDown 
-                                className={`h-4 w-4 ml-auto transform transition-transform ${isExpanded ? 'rotate-180' : ''}`} 
+                                className={`h-4 w-4 ml-auto transform transition-transform duration-300 ease-in-out ${isExpanded ? 'rotate-180' : ''}`} 
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setExpandedSections(prev => ({
@@ -289,9 +289,15 @@ export default function Notes() {
                           </div>
                           
                           {/* Section subsections */}
-                          {hasSubsections && isExpanded && (
+                          <div 
+                            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                              hasSubsections && isExpanded 
+                                ? 'max-h-[500px] opacity-100 mt-1' 
+                                : 'max-h-0 opacity-0'
+                            }`}
+                          >
                             <div className="py-1 ml-9 space-y-1">
-                              {section.subsections!.map((subsection: Subsection) => (
+                              {section.subsections && section.subsections.map((subsection: Subsection) => (
                                 <div
                                   key={subsection.id}
                                   onClick={() => subsection.path && setLocation(subsection.path)}
@@ -307,7 +313,7 @@ export default function Notes() {
                                 </div>
                               ))}
                             </div>
-                          )}
+                          </div>
                         </div>
                       );
                     })}
