@@ -475,12 +475,12 @@ export default function Dashboard() {
         <div className="pl-4 pr-4 relative">
           <div className="flex">
             <div className="flex-1 space-y-4 w-full">
-              {/* Temporary fallback */}
-              <ActivityHeatmap />
+              {/* Testing WeeklyHeatmap component */}
+              <WeeklyHeatmap />
               
-              {/* Testing one component at a time */}
+              {/* Grid for other stats components */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* We'll uncomment these once we fix the issues
+                {/* These will be added later after testing
                 <ProblemsSolvedStats />
                 <StreakCard /> 
                 */}
