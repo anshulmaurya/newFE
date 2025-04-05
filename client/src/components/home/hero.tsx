@@ -732,15 +732,15 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
               </motion.div>
               <motion.div
                 className="relative mt-1"
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: -30, filter: "blur(8px)" }}
+                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                 transition={{
-                  duration: 1.2,
+                  duration: 2.5,
                   delay: 1.0,
                   ease: [0.22, 1, 0.36, 1],
                 }}
               >
-                <span className="gradient-text">Simplified.</span>
+                <span className="gradient-text">Simplified</span>
               </motion.div>
             </h1>
 
