@@ -463,7 +463,7 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout darkMode={darkMode} toggleTheme={toggleTheme}>
-      <div className="lg:ml-56 pt-14 pb-8 bg-[rgb(12,12,14)]">
+      <div className="lg:ml-56 pt-14 pb-8 bg-[rgb(18,18,20)]">
         <div className="px-4 lg:px-6 mx-auto relative">
           <div className="flex">
             <div className="flex-1 space-y-4 w-full">
@@ -593,7 +593,7 @@ export default function Dashboard() {
               
               {/* Problem Cards */}
               {isLoadingExternal ? (
-                <div className="bg-[rgb(20,20,22)] rounded-lg border border-[rgb(45,45,50)] p-8 text-center">
+                <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] p-8 text-center">
                   <div className="flex flex-col items-center">
                     <Loader2 className="h-6 w-6 animate-spin text-[rgb(214,251,65)]" />
                     <p className="mt-2 text-gray-400 text-xs">Loading problems...</p>
@@ -661,7 +661,7 @@ export default function Dashboard() {
                     })}
                 </div>
               ) : (
-                <div className="bg-[rgb(20,20,22)] rounded-lg border border-[rgb(45,45,50)] p-8 text-center">
+                <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] p-8 text-center">
                   <div className="flex flex-col items-center">
                     <AlertTriangle className="h-6 w-6 text-yellow-500" />
                     <p className="mt-2 text-gray-400 text-xs">No problems found</p>

@@ -13,7 +13,7 @@ interface ProblemCardProps {
 
 export default function ProblemCard({ problem, index, statusIcon, handleSetupCodebase }: ProblemCardProps) {
   return (
-    <div className="bg-[rgb(20,20,22)] rounded-lg border border-[rgb(45,45,50)] hover:border-[rgb(70,70,80)] transition-colors duration-150 overflow-hidden w-full">
+    <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] hover:border-[rgb(70,70,80)] transition-colors duration-150 overflow-hidden w-full">
       <div className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center flex-1">
