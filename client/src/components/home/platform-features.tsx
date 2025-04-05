@@ -26,27 +26,32 @@ export default function PlatformFeatures() {
       title: "200+ Expert-Reviewed Questions",
       description: "Practice with industry-vetted problems covering the full spectrum of embedded systems topics, from memory management to RTOS concepts.",
       previewComponent: (
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl shadow-xl border border-slate-700/50 p-6 h-full overflow-hidden">
-          <div className="flex justify-between items-center mb-6">
+        <div className="bg-[rgb(16,16,18)] rounded-xl shadow-xl border border-[rgb(30,30,32)] p-6 h-full overflow-hidden">
+          <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-1">Problem Library</h3>
-              <p className="text-slate-400 text-sm">Browse by category or difficulty</p>
-            </div>
-            <div className="flex space-x-2">
-              {["Easy", "Medium", "Hard"].map((diff) => (
-                <span 
-                  key={diff} 
-                  className={`px-3 py-1 text-xs font-medium rounded-full ${
-                    diff === "Easy" 
-                      ? "bg-emerald-400/10 text-emerald-400 border border-emerald-400/30" 
-                      : diff === "Medium"
-                        ? "bg-amber-400/10 text-amber-400 border border-amber-400/30"
-                        : "bg-rose-400/10 text-rose-400 border border-rose-400/30"
-                  }`}
-                >
-                  {diff}
-                </span>
-              ))}
+              <div className="flex items-center mb-2">
+                <CheckCircle className="w-5 h-5 text-emerald-400 mr-2" />
+                <h3 className="text-lg font-semibold text-white">Problem Library</h3>
+              </div>
+              <p className="text-gray-300 mb-4">
+                Practice with industry-vetted problems covering the full spectrum of embedded systems topics, from memory management to RTOS concepts.
+              </p>
+              <div className="flex space-x-2 mb-4">
+                {["Easy", "Medium", "Hard"].map((diff) => (
+                  <span 
+                    key={diff} 
+                    className={`px-3 py-1 text-xs font-medium rounded-full ${
+                      diff === "Easy" 
+                        ? "bg-emerald-400/10 text-emerald-400 border border-emerald-400/30" 
+                        : diff === "Medium"
+                          ? "bg-amber-400/10 text-amber-400 border border-amber-400/30"
+                          : "bg-rose-400/10 text-rose-400 border border-rose-400/30"
+                    }`}
+                  >
+                    {diff}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
           
@@ -115,19 +120,24 @@ export default function PlatformFeatures() {
       title: "Quick Revision with Short Notes",
       description: "Access concise, focused study materials for rapid review of key embedded system concepts before your interviews.",
       previewComponent: (
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl shadow-xl border border-slate-700/50 p-6 h-full overflow-hidden">
-          <div className="flex justify-between items-center mb-6">
+        <div className="bg-[rgb(16,16,18)] rounded-xl shadow-xl border border-[rgb(30,30,32)] p-6 h-full overflow-hidden">
+          <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-1">Quick Notes</h3>
-              <p className="text-slate-400 text-sm">Condensed knowledge for rapid review</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Clock className="w-4 h-4 text-sky-400" />
-              <span className="text-sm text-sky-400">5 min read</span>
+              <div className="flex items-center mb-2">
+                <Bookmark className="w-5 h-5 text-sky-400 mr-2" />
+                <h3 className="text-lg font-semibold text-white">Quick Notes</h3>
+              </div>
+              <p className="text-gray-300 mb-3">
+                Access concise, focused study materials for rapid review of key embedded system concepts before your interviews.
+              </p>
+              <div className="flex items-center mb-4 text-sm text-sky-400">
+                <Clock className="w-4 h-4 mr-2" />
+                <span>5 min read</span>
+              </div>
             </div>
           </div>
           
-          <div className="bg-slate-800/80 rounded-lg border border-slate-700/50 p-5 mb-4">
+          <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-5 mb-4">
             <div className="flex justify-between items-center mb-3">
               <h4 className="text-base font-medium text-white">Memory-Mapped vs Port-Mapped I/O</h4>
               <span className="px-2 py-1 text-xs font-medium rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30">
@@ -136,14 +146,14 @@ export default function PlatformFeatures() {
             </div>
             
             <div className="space-y-4">
-              <div className="bg-slate-900/70 rounded-lg p-4 border border-slate-700">
+              <div className="bg-[rgb(14,14,16)]/90 rounded-lg p-4 border border-[rgb(30,30,32)]">
                 <h5 className="text-sky-400 font-medium mb-2 flex items-center">
                   <span className="bg-sky-400/20 p-1 rounded mr-2">
                     <Cpu className="h-4 w-4 text-sky-400" />
                   </span>
                   Memory-Mapped I/O
                 </h5>
-                <ul className="space-y-2 text-sm text-slate-300">
+                <ul className="space-y-2 text-sm text-gray-300">
                   <li className="flex items-start">
                     <span className="text-sky-400 mr-2">•</span>
                     <span>I/O devices and memory share the same address space</span>
@@ -159,14 +169,14 @@ export default function PlatformFeatures() {
                 </ul>
               </div>
               
-              <div className="bg-slate-900/70 rounded-lg p-4 border border-slate-700">
+              <div className="bg-[rgb(14,14,16)]/90 rounded-lg p-4 border border-[rgb(30,30,32)]">
                 <h5 className="text-sky-400 font-medium mb-2 flex items-center">
                   <span className="bg-sky-400/20 p-1 rounded mr-2">
                     <Cpu className="h-4 w-4 text-sky-400" />
                   </span>
                   Port-Mapped I/O
                 </h5>
-                <ul className="space-y-2 text-sm text-slate-300">
+                <ul className="space-y-2 text-sm text-gray-300">
                   <li className="flex items-start">
                     <span className="text-sky-400 mr-2">•</span>
                     <span>Separate address spaces for memory and I/O devices</span>
@@ -199,87 +209,92 @@ export default function PlatformFeatures() {
       title: "Company-Specific Target Study Material",
       description: "Focus your preparation with tailored content for top companies like Qualcomm, NVIDIA, and Intel.",
       previewComponent: (
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl shadow-xl border border-slate-700/50 p-6 h-full overflow-hidden">
-          <div className="flex justify-between items-center mb-6">
+        <div className="bg-[rgb(16,16,18)] rounded-xl shadow-xl border border-[rgb(30,30,32)] p-6 h-full overflow-hidden">
+          <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-1">Company Focus</h3>
-              <p className="text-slate-400 text-sm">Targeted preparation for top employers</p>
-            </div>
-            <div>
-              <span className="px-3 py-1 text-xs font-medium rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                Premium Content
-              </span>
+              <div className="flex items-center mb-2">
+                <Briefcase className="w-5 h-5 text-amber-400 mr-2" />
+                <h3 className="text-lg font-semibold text-white">Company Focus</h3>
+              </div>
+              <p className="text-gray-300 mb-3">
+                Focus your preparation with tailored content for top companies like Qualcomm, NVIDIA, and Intel.
+              </p>
+              <div className="mb-4">
+                <span className="px-3 py-1 text-xs font-medium rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                  Premium Content
+                </span>
+              </div>
             </div>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <div className="bg-slate-800/80 rounded-lg border border-slate-700/50 p-4 hover:border-amber-500/50 transition-all group">
+            <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-4 hover:border-amber-500/50 transition-all group">
               <div className="flex items-center mb-3">
-                <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-amber-400 mr-3">
+                <div className="w-10 h-10 rounded-full bg-[rgb(25,25,27)] flex items-center justify-center text-amber-400 mr-3">
                   <span className="font-bold">Q</span>
                 </div>
                 <h4 className="text-white group-hover:text-amber-400 transition-colors font-medium">Qualcomm</h4>
               </div>
               <div className="space-y-2 mb-3">
-                <div className="text-xs text-slate-300">
-                  <span className="font-medium text-slate-200">Focus Areas:</span> RTOS, DSP, 5G, Power Management
+                <div className="text-xs text-gray-300">
+                  <span className="font-medium text-gray-200">Focus Areas:</span> RTOS, DSP, 5G, Power Management
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Questions:</span>
+                    <span className="text-gray-400">Questions:</span>
                     <span className="text-amber-400 font-medium">48</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Labs:</span>
+                    <span className="text-gray-400">Labs:</span>
                     <span className="text-amber-400 font-medium">14</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Notes:</span>
+                    <span className="text-gray-400">Notes:</span>
                     <span className="text-amber-400 font-medium">12</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Interviews:</span>
+                    <span className="text-gray-400">Interviews:</span>
                     <span className="text-amber-400 font-medium">8</span>
                   </div>
                 </div>
               </div>
-              <button className="w-full py-2 bg-slate-700 hover:bg-amber-500 text-slate-300 hover:text-white rounded-md text-xs font-medium transition-all flex items-center justify-center space-x-1">
+              <button className="w-full py-2 bg-[rgb(25,25,27)] hover:bg-amber-500 text-gray-300 hover:text-white rounded-md text-xs font-medium transition-all flex items-center justify-center space-x-1">
                 <span>View Study Plan</span>
                 <ArrowRight className="w-3 h-3" />
               </button>
             </div>
             
-            <div className="bg-slate-800/80 rounded-lg border border-slate-700/50 p-4 hover:border-amber-500/50 transition-all group">
+            <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-4 hover:border-amber-500/50 transition-all group">
               <div className="flex items-center mb-3">
-                <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-green-400 mr-3">
+                <div className="w-10 h-10 rounded-full bg-[rgb(25,25,27)] flex items-center justify-center text-green-400 mr-3">
                   <span className="font-bold">N</span>
                 </div>
                 <h4 className="text-white group-hover:text-amber-400 transition-colors font-medium">NVIDIA</h4>
               </div>
               <div className="space-y-2 mb-3">
-                <div className="text-xs text-slate-300">
-                  <span className="font-medium text-slate-200">Focus Areas:</span> GPU Architecture, CUDA, AI Accelerators
+                <div className="text-xs text-gray-300">
+                  <span className="font-medium text-gray-200">Focus Areas:</span> GPU Architecture, CUDA, AI Accelerators
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Questions:</span>
+                    <span className="text-gray-400">Questions:</span>
                     <span className="text-amber-400 font-medium">42</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Labs:</span>
+                    <span className="text-gray-400">Labs:</span>
                     <span className="text-amber-400 font-medium">11</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Notes:</span>
+                    <span className="text-gray-400">Notes:</span>
                     <span className="text-amber-400 font-medium">9</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Interviews:</span>
+                    <span className="text-gray-400">Interviews:</span>
                     <span className="text-amber-400 font-medium">6</span>
                   </div>
                 </div>
               </div>
-              <button className="w-full py-2 bg-slate-700 hover:bg-amber-500 text-slate-300 hover:text-white rounded-md text-xs font-medium transition-all flex items-center justify-center space-x-1">
+              <button className="w-full py-2 bg-[rgb(25,25,27)] hover:bg-amber-500 text-gray-300 hover:text-white rounded-md text-xs font-medium transition-all flex items-center justify-center space-x-1">
                 <span>View Study Plan</span>
                 <ArrowRight className="w-3 h-3" />
               </button>
@@ -301,26 +316,33 @@ export default function PlatformFeatures() {
       title: "Personalized Study Plan Based on Job Description",
       description: "Upload a job description and get a tailored study plan that focuses on exactly what you need to master.",
       previewComponent: (
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl shadow-xl border border-slate-700/50 p-6 h-full overflow-hidden">
-          <div className="flex justify-between items-center mb-6">
+        <div className="bg-[rgb(16,16,18)] rounded-xl shadow-xl border border-[rgb(30,30,32)] p-6 h-full overflow-hidden">
+          <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-1">Personalized Study Plan</h3>
-              <p className="text-slate-400 text-sm">Tailored to your target job description</p>
+              <div className="flex items-center mb-2">
+                <Target className="w-5 h-5 text-purple-400 mr-2" />
+                <h3 className="text-lg font-semibold text-white">Personalized Study Plan</h3>
+              </div>
+              <p className="text-gray-300 mb-3">
+                Upload a job description and get a tailored study plan that focuses on exactly what you need to master.
+              </p>
+              <div className="mb-4">
+                <span className="px-3 py-1 text-xs font-medium rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                  AI-Powered
+                </span>
+              </div>
             </div>
-            <span className="px-3 py-1 text-xs font-medium rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
-              AI-Powered
-            </span>
           </div>
           
-          <div className="bg-slate-800/80 rounded-lg border border-slate-700/50 p-5 mb-5">
-            <div className="bg-slate-900 rounded-lg p-4 border border-slate-700 mb-4">
+          <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-5 mb-5">
+            <div className="bg-[rgb(14,14,16)]/90 rounded-lg p-4 border border-[rgb(30,30,32)] mb-4">
               <h4 className="text-white font-medium mb-3 flex items-center">
                 <FileText className="h-4 w-4 text-purple-400 mr-2" />
                 Job Description Analysis
               </h4>
               <div className="space-y-3">
-                <div className="bg-slate-800 rounded p-3 border border-slate-700">
-                  <p className="text-xs text-slate-300 mb-2">
+                <div className="bg-[rgb(20,20,22)]/90 rounded p-3 border border-[rgb(40,40,42)]">
+                  <p className="text-xs text-gray-300 mb-2">
                     <span className="font-medium text-purple-400">Position:</span> Senior Embedded Systems Engineer at Tesla
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -338,26 +360,26 @@ export default function PlatformFeatures() {
               <h4 className="text-white font-medium mb-2">Recommended Focus Areas</h4>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="bg-slate-900/70 rounded-lg p-3 border border-slate-700">
+                <div className="bg-[rgb(14,14,16)]/90 rounded-lg p-3 border border-[rgb(30,30,32)]">
                   <div className="flex justify-between items-center mb-2">
                     <h5 className="text-purple-400 text-sm font-medium">RTOS Fundamentals</h5>
-                    <span className="text-xs text-slate-400">Priority: High</span>
+                    <span className="text-xs text-gray-400">Priority: High</span>
                   </div>
                   <div className="flex items-center">
-                    <div className="w-full bg-slate-700 rounded-full h-2 mr-2">
+                    <div className="w-full bg-[rgb(30,30,32)] rounded-full h-2 mr-2">
                       <div className="bg-purple-500 h-2 rounded-full" style={{ width: '75%' }}></div>
                     </div>
                     <span className="text-xs text-purple-400">75%</span>
                   </div>
                 </div>
                 
-                <div className="bg-slate-900/70 rounded-lg p-3 border border-slate-700">
+                <div className="bg-[rgb(14,14,16)]/90 rounded-lg p-3 border border-[rgb(30,30,32)]">
                   <div className="flex justify-between items-center mb-2">
                     <h5 className="text-purple-400 text-sm font-medium">AUTOSAR Architecture</h5>
-                    <span className="text-xs text-slate-400">Priority: High</span>
+                    <span className="text-xs text-gray-400">Priority: High</span>
                   </div>
                   <div className="flex items-center">
-                    <div className="w-full bg-slate-700 rounded-full h-2 mr-2">
+                    <div className="w-full bg-[rgb(30,30,32)] rounded-full h-2 mr-2">
                       <div className="bg-purple-500 h-2 rounded-full" style={{ width: '60%' }}></div>
                     </div>
                     <span className="text-xs text-purple-400">60%</span>
@@ -373,7 +395,7 @@ export default function PlatformFeatures() {
           </div>
           
           <div className="mt-4 text-center">
-            <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-full text-sm font-medium inline-flex items-center space-x-2 transition-colors border border-slate-700 hover:border-purple-500/50">
+            <button className="px-4 py-2 bg-[rgb(20,20,22)] hover:bg-[rgb(25,25,27)] text-white rounded-full text-sm font-medium inline-flex items-center space-x-2 transition-colors border border-[rgb(40,40,42)] hover:border-purple-500/50">
               <span>Upload New Job Description</span>
               <ArrowRight className="w-4 h-4" />
             </button>
@@ -387,18 +409,25 @@ export default function PlatformFeatures() {
       title: "Code directly in VS Code",
       description: "Practice in a familiar environment with our VS Code integration, complete with syntax highlighting and real-time feedback.",
       previewComponent: (
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl shadow-xl border border-slate-700/50 p-6 h-full overflow-hidden">
-          <div className="flex justify-between items-center mb-6">
+        <div className="bg-[rgb(16,16,18)] rounded-xl shadow-xl border border-[rgb(30,30,32)] p-6 h-full overflow-hidden">
+          <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-1">VS Code Integration</h3>
-              <p className="text-slate-400 text-sm">Code in your familiar environment</p>
+              <div className="flex items-center mb-2">
+                <Code className="w-5 h-5 text-blue-400 mr-2" />
+                <h3 className="text-lg font-semibold text-white">VS Code Integration</h3>
+              </div>
+              <p className="text-gray-300 mb-3">
+                Practice in a familiar environment with our VS Code integration, complete with syntax highlighting and real-time feedback.
+              </p>
+              <div className="mb-4">
+                <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                  Seamless Experience
+                </span>
+              </div>
             </div>
-            <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
-              Seamless Experience
-            </span>
           </div>
           
-          <div className="rounded-lg overflow-hidden border border-slate-700 shadow-lg">
+          <div className="rounded-lg overflow-hidden border border-[rgb(40,40,42)] shadow-lg">
             {/* VS Code header */}
             <div className="bg-[#1e1e1e] py-1 px-2 flex items-center border-b border-[#3d3d3d]">
               <div className="flex space-x-2 mr-4">
@@ -580,45 +609,52 @@ export default function PlatformFeatures() {
       title: "Active Community of Embedded Experts",
       description: "Join a thriving community of embedded systems professionals and enthusiasts to share knowledge and get help.",
       previewComponent: (
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl shadow-xl border border-slate-700/50 p-6 h-full overflow-hidden">
-          <div className="flex justify-between items-center mb-6">
+        <div className="bg-[rgb(16,16,18)] rounded-xl shadow-xl border border-[rgb(30,30,32)] p-6 h-full overflow-hidden">
+          <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-1">Community</h3>
-              <p className="text-slate-400 text-sm">Connect with fellow engineers and experts</p>
+              <div className="flex items-center mb-2">
+                <Users className="w-5 h-5 text-rose-400 mr-2" />
+                <h3 className="text-lg font-semibold text-white">Community</h3>
+              </div>
+              <p className="text-gray-300 mb-3">
+                Join a thriving community of embedded systems professionals and enthusiasts to share knowledge and get help.
+              </p>
+              <div className="mb-4">
+                <span className="flex items-center px-3 py-1 text-xs font-medium rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                  <Users className="w-3 h-3 mr-1" />
+                  <span>2,580+ Members</span>
+                </span>
+              </div>
             </div>
-            <span className="flex items-center px-3 py-1 text-xs font-medium rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">
-              <Users className="w-3 h-3 mr-1" />
-              <span>2,580+ Members</span>
-            </span>
           </div>
           
-          <div className="bg-slate-800/80 rounded-lg border border-slate-700/50 p-4 mb-5">
+          <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-4 mb-5">
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-white font-medium flex items-center">
                 <Zap className="h-4 w-4 text-amber-400 mr-2" />
                 Active Discussions
               </h4>
-              <span className="text-xs text-slate-400">24 new today</span>
+              <span className="text-xs text-gray-400">24 new today</span>
             </div>
             
             <div className="space-y-3">
-              <div className="bg-slate-900/70 p-3 rounded-lg border border-slate-700 hover:border-rose-500/30 transition-all cursor-pointer group">
+              <div className="bg-[rgb(14,14,16)]/90 p-3 rounded-lg border border-[rgb(30,30,32)] hover:border-rose-500/30 transition-all cursor-pointer group">
                 <div className="flex justify-between mb-2">
                   <h5 className="text-white group-hover:text-rose-400 transition-colors text-sm font-medium">Best approach for mutex implementation in FreeRTOS?</h5>
                   <span className="text-rose-400 text-xs">12m ago</span>
                 </div>
-                <div className="text-xs text-slate-400 mb-3 line-clamp-2">
+                <div className="text-xs text-gray-400 mb-3 line-clamp-2">
                   I'm working on a critical section that needs protection. Should I use a mutex or a semaphore for this case? The resource is...
                 </div>
                 <div className="flex justify-between items-center text-xs">
                   <div className="flex -space-x-2">
                     {[1, 2, 3].map(i => (
-                      <div key={i} className="w-6 h-6 rounded-full border-2 border-slate-900 bg-slate-700 flex items-center justify-center font-medium text-white">
+                      <div key={i} className="w-6 h-6 rounded-full border-2 border-[rgb(14,14,16)] bg-[rgb(25,25,27)] flex items-center justify-center font-medium text-white">
                         {["J", "K", "S"][i-1]}
                       </div>
                     ))}
                   </div>
-                  <div className="flex items-center space-x-3 text-slate-400">
+                  <div className="flex items-center space-x-3 text-gray-400">
                     <span className="flex items-center">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
@@ -636,23 +672,23 @@ export default function PlatformFeatures() {
                 </div>
               </div>
               
-              <div className="bg-slate-900/70 p-3 rounded-lg border border-slate-700 hover:border-rose-500/30 transition-all cursor-pointer group">
+              <div className="bg-[rgb(14,14,16)]/90 p-3 rounded-lg border border-[rgb(30,30,32)] hover:border-rose-500/30 transition-all cursor-pointer group">
                 <div className="flex justify-between mb-2">
                   <h5 className="text-white group-hover:text-rose-400 transition-colors text-sm font-medium">Stack overflow detection in bare-metal systems</h5>
                   <span className="text-rose-400 text-xs">1h ago</span>
                 </div>
-                <div className="text-xs text-slate-400 mb-3 line-clamp-2">
+                <div className="text-xs text-gray-400 mb-3 line-clamp-2">
                   What's the most efficient way to implement stack overflow detection in a resource-constrained system without an OS?
                 </div>
                 <div className="flex justify-between items-center text-xs">
                   <div className="flex -space-x-2">
                     {[1, 2, 3, 4].map(i => (
-                      <div key={i} className="w-6 h-6 rounded-full border-2 border-slate-900 bg-slate-700 flex items-center justify-center font-medium text-white">
+                      <div key={i} className="w-6 h-6 rounded-full border-2 border-[rgb(14,14,16)] bg-[rgb(25,25,27)] flex items-center justify-center font-medium text-white">
                         {["A", "R", "M", "T"][i-1]}
                       </div>
                     ))}
                   </div>
-                  <div className="flex items-center space-x-3 text-slate-400">
+                  <div className="flex items-center space-x-3 text-gray-400">
                     <span className="flex items-center">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
@@ -685,11 +721,12 @@ export default function PlatformFeatures() {
 
   return (
     <section className="py-16 md:py-24 relative overflow-hidden text-slate-50">
-      {/* Modern gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 z-0"></div>
+      {/* Dark blue background like the hero section */}
+      <div className="absolute inset-0 bg-[rgb(24,24,26)] z-0"></div>
+      <div className="circuit-lines absolute inset-0 z-0 opacity-20"></div>
       <div className="absolute w-full h-full z-0">
-        <div className="absolute right-0 bottom-1/4 w-72 h-72 bg-indigo-500/10 rounded-full blur-[120px]"></div>
-        <div className="absolute left-0 top-1/3 w-72 h-72 bg-blue-500/10 rounded-full blur-[100px]"></div>
+        <div className="absolute right-0 bottom-1/3 w-72 h-72 bg-[rgb(214,251,65)]/5 rounded-full blur-[100px]"></div>
+        <div className="absolute left-0 top-1/3 w-72 h-72 bg-purple-500/5 rounded-full blur-[100px]"></div>
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
@@ -701,46 +738,57 @@ export default function PlatformFeatures() {
           transition={{ duration: 0.5 }}
         >
           <h2 className="font-display font-bold text-3xl md:text-4xl xl:text-5xl mb-4">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-slate-100 to-slate-300">Platform </span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-sky-400">Features</span>
+            <span className="text-white">Platform</span>
+            <span className="text-[rgb(214,251,65)]"> Features</span>
           </h2>
-          <p className="text-slate-300 max-w-2xl mx-auto text-lg">
+          <p className="text-gray-300 max-w-2xl mx-auto">
             Explore the powerful features that make dspcoder.com the ultimate platform for embedded systems interview preparation.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Feature navigation - left column on desktop */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+          {/* Feature navigation - left column (20% width) */}
           <motion.div
-            className="lg:col-span-1"
+            className="md:col-span-2"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-6 h-full">
+            <div className="bg-[rgb(18,18,20)]/70 rounded-xl border border-[rgb(30,30,32)] p-5 h-full">
               <h3 className="text-xl font-semibold mb-6 text-white">Explore Features</h3>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {features.map((feature) => (
                   <div
                     key={feature.id}
-                    className={`p-4 rounded-xl cursor-pointer transition-all ${
+                    className={`p-4 rounded-lg cursor-pointer transition-all ${
                       activeFeature === feature.id
-                        ? "bg-indigo-500/10 border border-indigo-500/30"
-                        : "hover:bg-slate-800/80 border border-transparent"
+                        ? "bg-[rgb(214,251,65)]/10 border border-[rgb(214,251,65)]/30"
+                        : "hover:bg-[rgb(30,30,32)] border border-transparent"
                     }`}
                     onClick={() => setActiveFeature(feature.id)}
                   >
-                    <div className="flex items-center">
-                      <div className={`mr-3 ${activeFeature === feature.id ? "" : "text-slate-400"}`}>
+                    <div className="flex items-start">
+                      <div className={`mr-3 mt-0.5 ${activeFeature === feature.id ? "" : "text-gray-400"}`}>
                         {feature.icon}
                       </div>
                       <div>
-                        <h4 className={`text-sm font-medium ${activeFeature === feature.id ? "text-white" : "text-slate-300"}`}>
+                        <h4 className={`text-sm font-medium ${activeFeature === feature.id ? "text-[rgb(214,251,65)]" : "text-white"}`}>
                           {feature.title}
                         </h4>
-                        <p className="text-xs text-slate-400 mt-1 line-clamp-2">
-                          {feature.description}
+                        <p className="text-xs text-gray-400 mt-1">
+                          {feature.title === "200+ Expert-Reviewed Questions" ? 
+                            "Comprehensive exercises with expert verification" :
+                          feature.title === "Quick Revision with Short Notes" ?
+                            "Concise study materials for rapid review" :
+                          feature.title === "Company-Specific Target Study Material" ?
+                            "Tailored content for top tech companies" :
+                          feature.title === "Personalized Study Plan Based on Job Description" ?
+                            "Customized learning paths for specific roles" :
+                          feature.title === "Code directly in VS Code" ?
+                            "Familiar development environment integration" :
+                            "Connect with fellow engineers and mentors"
+                          }
                         </p>
                       </div>
                     </div>
@@ -750,9 +798,9 @@ export default function PlatformFeatures() {
             </div>
           </motion.div>
 
-          {/* Feature content - right columns on desktop */}
+          {/* Feature content - right side (60% width) */}
           <motion.div
-            className="lg:col-span-2"
+            className="md:col-span-3"
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
