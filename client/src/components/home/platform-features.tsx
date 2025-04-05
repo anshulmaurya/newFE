@@ -614,14 +614,14 @@ export default function PlatformFeatures() {
       title: "Code directly in VS Code",
       description: "Practice in a familiar environment with our VS Code integration, complete with syntax highlighting and real-time feedback.",
       previewComponent: (
-        <div className="bg-[rgb(16,16,18)] rounded-xl shadow-xl border border-[rgb(30,30,32)] p-6 h-full overflow-hidden">
-          <div className="flex justify-between items-start mb-4">
+        <div className="bg-[rgb(16,16,18)] rounded-xl shadow-xl border border-[rgb(30,30,32)] p-6 h-full overflow-hidden flex flex-col">
+          <div className="flex justify-between items-start mb-2">
             <div>
-              <div className="flex items-center mb-2">
+              <div className="flex items-center mb-1">
                 <Code className="w-5 h-5 text-blue-400 mr-2" />
                 <h3 className="text-lg font-semibold text-white">VS Code Integration</h3>
               </div>
-              <p className="text-gray-300 mb-2 text-sm">
+              <p className="text-gray-300 mb-1 text-sm">
                 Practice in a familiar environment with our VS Code integration, complete with syntax highlighting and real-time feedback.
               </p>
               <div className="mb-2">
@@ -656,7 +656,7 @@ export default function PlatformFeatures() {
             </div>
             
             {/* VS Code layout */}
-            <div className="flex bg-[#1e1e1e]">
+            <div className="flex bg-[#1e1e1e] h-[400px]">
               {/* Explorer sidebar */}
               <div className="w-10 bg-[#252526] border-r border-[#3d3d3d] flex flex-col items-center p-2 space-y-4">
                 <div className="p-1 bg-[#0d7dec]/20 border-l-2 border-[#0d7dec] text-white">
@@ -734,7 +734,7 @@ export default function PlatformFeatures() {
               </div>
               
               {/* Editor area */}
-              <div className="flex-1">
+              <div className="flex-1 flex flex-col">
                 {/* File tabs */}
                 <div className="flex bg-[#252526] border-b border-[#3d3d3d] text-xs">
                   <div className="px-3 py-2 bg-[#1e1e1e] border-r border-[#3d3d3d] text-white flex items-center">
@@ -750,10 +750,10 @@ export default function PlatformFeatures() {
                 </div>
                 
                 {/* Code area */}
-                <div className="flex font-mono text-xs">
+                <div className="flex font-mono text-xs flex-grow overflow-auto">
                   {/* Line numbers */}
                   <div className="text-right py-3 px-2 bg-[#1e1e1e] text-[#6e7681] select-none">
-                    {Array.from({ length: 10 }).map((_, i) => (
+                    {Array.from({ length: 18 }).map((_, i) => (
                       <div key={i} className="h-5">{i + 1}</div>
                     ))}
                   </div>
@@ -770,6 +770,15 @@ export default function PlatformFeatures() {
                     <div>  <span className="text-[#dcdcaa]">timer_init</span><span className="text-[#d4d4d4]">(channel, frequency);</span></div>
                     <div>  <span className="text-[#dcdcaa]">gpio_set_mode</span><span className="text-[#d4d4d4]">(PWM_PORT, PWM_PIN, GPIO_MODE_OUTPUT);</span></div>
                     <div><span className="text-[#d4d4d4]">{'}'}</span></div>
+                    <div></div>
+                    <div><span className="text-[#569cd6]">void</span> <span className="text-[#dcdcaa]">pwm_set_duty</span><span className="text-[#d4d4d4]">(uint8_t channel, uint8_t duty) {'{'}</span></div>
+                    <div>  <span className="text-[#6a9955]">// Set PWM duty cycle (0-100%)</span></div>
+                    <div>  <span className="text-[#c586c0]">if</span><span className="text-[#d4d4d4]"> (duty &gt; 100) duty = 100;</span></div>
+                    <div>  <span className="text-[#dcdcaa]">timer_set_compare</span><span className="text-[#d4d4d4]">(channel, duty);</span></div>
+                    <div>  <span className="text-[#c586c0]">return</span><span className="text-[#d4d4d4]">;</span></div>
+                    <div><span className="text-[#d4d4d4]">{'}'}</span></div>
+                    <div></div>
+                    <div></div>
                   </div>
                 </div>
                 
@@ -819,12 +828,7 @@ export default function PlatformFeatures() {
               <p className="text-gray-300 mb-3">
                 Join a thriving community of embedded systems professionals and enthusiasts to share knowledge and get help.
               </p>
-              <div className="mb-4">
-                <span className="flex items-center px-3 py-1 text-xs font-medium rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">
-                  <Users className="w-3 h-3 mr-1" />
-                  <span>2,580+ Members</span>
-                </span>
-              </div>
+              {/* Removed member count as community is still starting out */}
             </div>
           </div>
           
@@ -887,66 +891,40 @@ export default function PlatformFeatures() {
           </div>
           
           <div className="bg-[rgb(20,20,22)]/90 rounded-lg border border-[rgb(40,40,42)] p-4 mb-5">
-            <div className="flex justify-between items-center mb-3">
+            <div className="mb-3">
               <h4 className="text-white font-medium flex items-center">
                 <Zap className="h-4 w-4 text-amber-400 mr-2" />
-                Latest Discussions
+                Example Discussions
               </h4>
-              <span className="text-xs text-gray-400">24 new today</span>
+              <p className="text-xs text-gray-500 mt-1">Topics you'll be able to discuss in our community</p>
             </div>
             
             <div className="space-y-2">
               <div className="bg-[rgb(14,14,16)]/90 p-3 rounded-lg border border-[rgb(30,30,32)] hover:border-rose-500/30 transition-all cursor-pointer group">
-                <div className="flex justify-between mb-1">
-                  <h5 className="text-white group-hover:text-rose-400 transition-colors text-sm font-medium">Best approach for mutex implementation in FreeRTOS?</h5>
-                  <span className="text-rose-400 text-xs">12m ago</span>
-                </div>
-                <div className="text-xs text-gray-400 mb-2 line-clamp-1">
+                <h5 className="text-white group-hover:text-rose-400 transition-colors text-sm font-medium mb-1">Best approach for mutex implementation in FreeRTOS?</h5>
+                <div className="text-xs text-gray-400 mb-2">
                   I'm working on a critical section that needs protection. Should I use a mutex or a semaphore for this case?
                 </div>
-                <div className="flex justify-between items-center text-xs">
-                  <div className="flex -space-x-2">
-                    {[1, 2, 3].map(i => (
-                      <div key={i} className="w-5 h-5 rounded-full border-2 border-[rgb(14,14,16)] bg-[rgb(25,25,27)] flex items-center justify-center font-medium text-white text-[10px]">
-                        {["J", "K", "S"][i-1]}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex items-center space-x-3 text-gray-400">
-                    <span className="flex items-center">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                      </svg>
-                      <span>14</span>
-                    </span>
-                  </div>
+                <div className="flex items-center text-xs text-rose-400">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                  <span>Join to participate in discussions</span>
                 </div>
               </div>
               
               <div className="bg-[rgb(14,14,16)]/90 p-3 rounded-lg border border-[rgb(30,30,32)] hover:border-rose-500/30 transition-all cursor-pointer group">
-                <div className="flex justify-between mb-1">
-                  <h5 className="text-white group-hover:text-rose-400 transition-colors text-sm font-medium">Stack overflow detection in bare-metal systems</h5>
-                  <span className="text-rose-400 text-xs">1h ago</span>
-                </div>
-                <div className="text-xs text-gray-400 mb-2 line-clamp-1">
+                <h5 className="text-white group-hover:text-rose-400 transition-colors text-sm font-medium mb-1">Stack overflow detection in bare-metal systems</h5>
+                <div className="text-xs text-gray-400 mb-2">
                   What's the most efficient way to implement stack overflow detection in a resource-constrained system?
                 </div>
-                <div className="flex justify-between items-center text-xs">
-                  <div className="flex -space-x-2">
-                    {[1, 2, 3].map(i => (
-                      <div key={i} className="w-5 h-5 rounded-full border-2 border-[rgb(14,14,16)] bg-[rgb(25,25,27)] flex items-center justify-center font-medium text-white text-[10px]">
-                        {["A", "R", "M"][i-1]}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex items-center space-x-3 text-gray-400">
-                    <span className="flex items-center">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                      </svg>
-                      <span>28</span>
-                    </span>
-                  </div>
+                <div className="flex items-center text-xs text-rose-400">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                  <span>Join to participate in discussions</span>
                 </div>
               </div>
             </div>
