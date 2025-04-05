@@ -46,6 +46,13 @@ export function useSetupCodebase() {
     setupCodebase: (params: SetupCodebaseParams) => {
       const { problemId, questionId, language } = params;
       
+      // Show a toast notification to inform the user that their environment is being prepared
+      toast({
+        title: "Setting up your environment",
+        description: "Your coding environment is being prepared. Please wait...",
+        duration: 5000, // Show for 5 seconds
+      });
+      
       // Navigate to the coding environment immediately
       const encodedTitle = encodeURIComponent(problemId || 'Coding Problem');
       const questionIdParam = questionId ? `&questionId=${encodeURIComponent(questionId)}` : '';
