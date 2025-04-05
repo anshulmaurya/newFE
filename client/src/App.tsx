@@ -20,6 +20,9 @@ import Blind75Page from '@/pages/quick-prep/blind-75';
 import LinuxBasicsPage from '@/pages/quick-prep/linux-basics';
 import JDBasedPage from '@/pages/jd-based';
 
+// Import quick prep pages
+import ThreeMonthsPage from '@/pages/dashboard/quick-prep/three-months';
+
 // Import footer pages
 import TermsOfService from '@/pages/terms-of-service';
 import PrivacyPolicy from '@/pages/privacy-policy';
@@ -50,7 +53,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home}/>
       <PublicRoute path="/dashboard" component={Dashboard} />
-      <PublicRoute path="/dashboard/quick-prep/three-months" component={Dashboard} />
+      <PublicRoute path="/dashboard/quick-prep/three-months" component={ThreeMonthsPage} />
       <PublicRoute path="/dashboard/quick-prep/one-month" component={Dashboard} />
       <PublicRoute path="/dashboard/quick-prep/one-week" component={Dashboard} />
       <PublicRoute path="/dashboard/company/apple" component={Dashboard} />
