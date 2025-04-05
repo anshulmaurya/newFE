@@ -15,6 +15,9 @@ import {
 } from '@/components/ui/select';
 
 import ActivityHeatmap from '@/components/dashboard/activity-heatmap';
+import WeeklyHeatmap from '@/components/dashboard/weekly-heatmap';
+import ProblemsSolvedStats from '@/components/dashboard/problems-solved-stats';
+import StreakCard from '@/components/dashboard/streak-card';
 import ProblemCard, { getStatusIcon } from '@/components/dashboard/problem-card';
 import { 
   AlertTriangle,
@@ -472,8 +475,14 @@ export default function Dashboard() {
         <div className="pl-4 pr-4 relative">
           <div className="flex">
             <div className="flex-1 space-y-4 w-full">
-              {/* Activity Heatmap */}
-              <ActivityHeatmap />
+              {/* Weekly Activity Heatmap */}
+              <WeeklyHeatmap />
+              
+              {/* Problems Solved Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <ProblemsSolvedStats />
+                <StreakCard />
+              </div>
 
               {/* Selected Bundle Details */}
               {selectedBundle && bundles[selectedBundle as keyof typeof bundles] && (
