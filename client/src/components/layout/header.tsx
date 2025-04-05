@@ -154,16 +154,6 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-3">
-          {/* Dark mode toggle */}
-          {toggleDarkMode && (
-            <button 
-              onClick={toggleDarkMode}
-              className="p-1.5 rounded-md text-gray-300 hover:text-white hover:bg-[rgb(36,36,38)] transition-colors"
-              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {darkMode ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
-          )}
           
           <button 
             onClick={(e) => {
@@ -334,18 +324,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
             </div>
           </div>
 
-          {/* Dark mode toggle - mobile */}
-          {toggleDarkMode && (
-            <div className="flex items-center justify-between py-1.5 border-b border-gray-700/30">
-              <span className="text-sm text-gray-400">Theme</span>
-              <button 
-                onClick={toggleDarkMode}
-                className="p-1 rounded-md text-gray-300 hover:text-white hover:bg-[rgb(36,36,38)] transition-colors"
-              >
-                {darkMode ? <Sun size={16} /> : <Moon size={16} />}
-              </button>
-            </div>
-          )}
+          {/* Dark mode toggle removed */}
           
           <button 
             onClick={(e) => {
