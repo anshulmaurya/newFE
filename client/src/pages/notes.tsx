@@ -6,7 +6,7 @@ import Header from "@/components/layout/header";
 interface Subsection {
   id: string;
   label: string;
-  path: string;
+  path?: string; // Make path optional
   icon?: React.ReactNode;
   active?: boolean;
   expandable?: boolean;
@@ -23,56 +23,89 @@ interface TopicSection {
   subsections: Subsection[];
 }
 
-// Define topic sections and their subsections
+// Define topic sections and their subsections - new structure matching the design
 const notesTopics: TopicSection[] = [
   { 
     id: "getting-started", 
-    label: "GETTING STARTED",
-    path: "/notes/getting-started",
-    category: true,
+    label: "Get started",
     subsections: [
       {
         id: "getting-started-main",
-        label: "Getting Started",
+        label: "Get started",
         icon: <Zap className="h-4 w-4 mr-2" />,
         path: "/notes/getting-started",
       }
     ]
   },
   { 
-    id: "communication-protocols", 
-    label: "COMMUNICATION PROTOCOLS",
-    path: "/notes/communication-protocols",
-    category: true,
+    id: "practice-questions", 
+    label: "Practice questions",
     subsections: [
       {
-        id: "comm-protocols-main",
-        label: "Communication Protocols",
-        icon: <GitBranch className="h-4 w-4 mr-2" />,
-        path: "/notes/communication-protocols",
+        id: "practice-questions-main",
+        label: "Practice questions",
+        icon: <FileCode className="h-4 w-4 mr-2" />,
+        path: "/notes/practice-questions",
+        expandable: true,
         subsections: [
-          { id: "spi", label: "SPI", path: "/notes/communication-protocols/spi" },
-          { id: "i2c", label: "I2C", path: "/notes/communication-protocols/i2c" },
-          { id: "uart", label: "UART", path: "/notes/communication-protocols/uart" }
+          { id: "all-practice", label: "All practice questions", icon: <LayoutGrid className="h-4 w-4 mr-2" />, path: "/notes/practice-questions/all" },
+          { id: "frameworks", label: "Frameworks / languages", icon: <Grid3X3 className="h-4 w-4 mr-2" />, path: "/notes/practice-questions/frameworks" },
+          { id: "formats", label: "Question formats", icon: <Code className="h-4 w-4 mr-2" />, path: "/notes/practice-questions/formats" }
         ]
       }
     ]
   },
   { 
-    id: "data-structures", 
-    label: "DATA STRUCTURES",
-    path: "/notes/data-structures",
-    category: true,
+    id: "recommended-strategy", 
+    label: "Recommended strategy",
     subsections: [
       {
-        id: "data-structures-main",
-        label: "Data Structures",
-        icon: <Database className="h-4 w-4 mr-2" />,
-        path: "/notes/data-structures",
+        id: "recommended-strategy-main",
+        label: "Recommended strategy",
+        icon: <Puzzle className="h-4 w-4 mr-2" />,
+        path: "/notes/strategy",
+        expandable: true,
         subsections: [
-          { id: "linked-list", label: "Linked List", path: "/notes/data-structures/linked-list" },
-          { id: "array", label: "Array", path: "/notes/data-structures/array" },
-          { id: "string", label: "String", path: "/notes/data-structures/string" }
+          { id: "beginners", label: "For beginners", path: "/notes/strategy/beginners" },
+          { id: "experienced", label: "For experienced", path: "/notes/strategy/experienced" }
+        ]
+      }
+    ]
+  },
+  { 
+    id: "time-savers", 
+    label: "Time-savers",
+    subsections: [
+      {
+        id: "time-savers-main",
+        label: "Time-savers",
+        icon: <GitBranch className="h-4 w-4 mr-2" />,
+        path: "/notes/time-savers",
+        expandable: true,
+        subsections: [
+          { id: "shortcuts", label: "Keyboard shortcuts", path: "/notes/time-savers/shortcuts" },
+          { id: "templates", label: "Code templates", path: "/notes/time-savers/templates" }
+        ]
+      }
+    ]
+  },
+  { 
+    id: "guides", 
+    label: "Guides",
+    subsections: [
+      {
+        id: "guides-main",
+        label: "Guides",
+        icon: <Database className="h-4 w-4 mr-2" />,
+        path: "/notes/guides",
+        expandable: true,
+        subsections: [
+          { id: "spi", label: "SPI Protocol", path: "/notes/guides/spi" },
+          { id: "i2c", label: "I2C Protocol", path: "/notes/guides/i2c" },
+          { id: "uart", label: "UART Protocol", path: "/notes/guides/uart" },
+          { id: "linked-list", label: "Linked List", path: "/notes/guides/linked-list" },
+          { id: "array", label: "Array", path: "/notes/guides/array" },
+          { id: "string", label: "String", path: "/notes/guides/string" }
         ]
       }
     ]
@@ -88,8 +121,10 @@ export default function Notes() {
   const [currentPath] = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
   const [expandedSections, setExpandedSections] = useState<{[key: string]: boolean}>({
-    "comm-protocols-main": true,
-    "data-structures-main": true
+    "practice-questions-main": false,
+    "recommended-strategy-main": false,
+    "time-savers-main": false,
+    "guides-main": false
   });
   
   // Update selected topic based on current path
@@ -184,9 +219,9 @@ export default function Notes() {
         toggleDarkMode={toggleTheme}
       />
 
-      <div className="flex flex-grow pt-0 scrollable-content">
+      <div className="flex flex-grow pt-16 scrollable-content"> {/* Added padding-top to prevent navbar overlap */}
         {/* Sidebar */}
-        <div className={`w-64 ${themeClasses.sidebarBg} p-4 pt-2 mt-1 flex flex-col border-r-0 shadow-md z-10`}>
+        <div className={`w-64 ${themeClasses.sidebarBg} p-4 flex flex-col border-r-0 shadow-md z-10`}>
           <div className="relative mb-3">
             <Search size={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -220,14 +255,15 @@ export default function Notes() {
                         <div key={section.id} className="mb-1">
                           <div 
                             onClick={() => {
-                              if (section.path) {
-                                setLocation(section.path);
-                              }
-                              if (hasSubsections) {
+                              // If it has subsections, just toggle expansion without navigation
+                              if (hasSubsections || section.expandable) {
                                 setExpandedSections(prev => ({
                                   ...prev,
                                   [section.id]: !isExpanded
                                 }));
+                              } else if (section.path) {
+                                // Only navigate if there are no subsections
+                                setLocation(section.path);
                               }
                             }}
                             className={`flex items-center w-full text-left px-3 py-1.5 rounded-md text-sm cursor-pointer ${
@@ -238,7 +274,7 @@ export default function Notes() {
                           >
                             {section.icon}
                             <span>{section.label}</span>
-                            {hasSubsections && (
+                            {(hasSubsections || section.expandable) && (
                               <ChevronDown 
                                 className={`h-4 w-4 ml-auto transform transition-transform ${isExpanded ? 'rotate-180' : ''}`} 
                                 onClick={(e) => {
