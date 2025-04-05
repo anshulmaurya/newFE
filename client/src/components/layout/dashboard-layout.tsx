@@ -84,11 +84,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, darkMode, t
         bg: "bg-[rgb(12,12,14)]",
         text: "text-gray-300",
         textDark: "text-gray-500",
-        sidebarBg: "bg-[rgb(14,14,16)]",
+        sidebarBg: "bg-[rgb(18,18,20)]",
         borderColor: "border-gray-800",
         menuBg: "bg-[rgb(14,14,16)]",
         card: "bg-[rgb(18,18,20)] border-gray-800",
-        activeItem: "bg-lime-600 text-white",
+        activeItem: "bg-[rgb(24,24,27)] text-[rgb(214,251,65)]",
         infoBlock: "bg-[rgb(35,35,50)] border-blue-800",
         infoText: "text-gray-300"
       }
@@ -100,7 +100,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, darkMode, t
         borderColor: "border-gray-200",
         menuBg: "bg-white",
         card: "bg-white border-gray-200",
-        activeItem: "bg-lime-500 text-white",
+        activeItem: "bg-[rgb(24,24,27)] text-[rgb(214,251,65)]",
         infoBlock: "bg-blue-50 border-blue-200",
         infoText: "text-gray-600"
       };
