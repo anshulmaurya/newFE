@@ -99,12 +99,14 @@ export function setupAuth(app: Express) {
         done: (error: Error | null, user?: any) => void,
       ) {
         try {
+          const strategyStartTime = Date.now();
+          console.log(`GitHub strategy callback started at: ${new Date().toISOString()}`);
           console.log("GitHub profile received:", {
             id: profile.id,
             username: profile.username,
             displayName: profile.displayName,
-            emails: profile.emails,
-            photos: profile.photos,
+            emails: profile.emails && profile.emails.length ? 'Email present' : 'No email',
+            photos: profile.photos && profile.photos.length ? 'Avatar present' : 'No avatar',
           });
 
           // Check if user exists
@@ -175,6 +177,9 @@ export function setupAuth(app: Express) {
             }
           }
 
+          const strategyEndTime = Date.now();
+          const duration = strategyEndTime - strategyStartTime;
+          console.log(`GitHub strategy callback completed in ${duration}ms at: ${new Date().toISOString()}`);
           return done(null, user);
         } catch (error) {
           console.error("Error in GitHub strategy:", error);
@@ -236,13 +241,31 @@ export function setupAuth(app: Express) {
     },
     async (req: Request, res: Response) => {
       console.log("GitHub authentication successful, user:", req.user);
+      
+      // Add timestamp for performance measuring
+      const authCompletedTime = new Date();
+      console.log(`GitHub auth callback completed at: ${authCompletedTime.toISOString()}`);
 
-      // Create container for user if they have a username
-      if (req.user && req.user.username) {
-        await createUserContainer(req.user.username);
-      }
-
+      // Redirect the user immediately without waiting
       res.redirect("/dashboard");
+      console.log(`User redirected to dashboard at: ${new Date().toISOString()}`);
+
+      // Create container for user if they have a username (in the background)
+      if (req.user && req.user.username) {
+        // Run container creation asynchronously without blocking the login flow
+        console.log(`Starting background container creation for: ${req.user.username}`);
+        setTimeout(() => {
+          const startTime = Date.now();
+          console.log(`Background container creation started at: ${new Date().toISOString()}`);
+          
+          createUserContainer(req.user!.username)
+            .then(() => {
+              const duration = Date.now() - startTime;
+              console.log(`Background container creation completed in ${duration}ms`);
+            })
+            .catch(err => console.error("Background container creation error:", err));
+        }, 0);
+      }
     },
     (err: Error, req: Request, res: Response, next: NextFunction) => {
       console.error("GitHub authentication error:", err);
@@ -251,12 +274,17 @@ export function setupAuth(app: Express) {
   );
 
   app.post("/api/login", passport.authenticate("local"), async (req, res) => {
-    // Create container for user if they have a username
-    if (req.user && req.user.username) {
-      await createUserContainer(req.user.username);
-    }
-
+    // Respond to the user immediately
     res.json(req.user);
+    
+    // Create container for user if they have a username (in the background)
+    if (req.user && req.user.username) {
+      // Run container creation asynchronously without blocking the login flow
+      setTimeout(() => {
+        createUserContainer(req.user!.username)
+          .catch(err => console.error("Background container creation error:", err));
+      }, 0);
+    }
   });
 
   app.post("/api/logout", async (req, res, next) => {
@@ -310,12 +338,15 @@ export function setupAuth(app: Express) {
       req.login(user, async (err) => {
         if (err) return next(err);
 
-        // Create container for the new user
-        await createUserContainer(user.username);
-
-        // Return user without password
+        // Return user without password immediately
         const { password, ...userData } = user;
-        return res.status(201).json(userData);
+        res.status(201).json(userData);
+        
+        // Create container for the new user in the background
+        setTimeout(() => {
+          createUserContainer(user.username)
+            .catch(err => console.error("Background container creation error:", err));
+        }, 0);
       });
     } catch (error) {
       console.error("Registration error:", error);
