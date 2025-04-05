@@ -51,6 +51,9 @@ export function useSetupCodebase() {
     setupCodebase: (params: SetupCodebaseParams) => {
       const { problemId, questionId, language } = params;
       
+      // Generate a temporary container token for immediate navigation
+      const tempToken = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
       // Show a toast notification to inform the user that their environment is being prepared
       toast({
         title: "Setting up your environment",
@@ -58,40 +61,44 @@ export function useSetupCodebase() {
         duration: 5000, // Show for 5 seconds
       });
       
-      // Trigger the API call first to get the container token
+      // IMPORTANT: Navigate immediately to the coding environment
+      // with the temporary token to prevent UI freezing
+      const queryParams = new URLSearchParams({
+        id: problemId,
+        language: language,
+        containerToken: tempToken
+      });
+      
       if (questionId) {
-        setupCodebaseMutation.mutate({ 
-          questionId, 
-          language 
-        }, {
-          onSuccess: (data) => {
-            if (data.containerToken) {
-              // Store the token in localStorage
-              localStorage.setItem('containerToken', data.containerToken);
-              
-              // Then navigate to the coding environment
-              const queryParams = new URLSearchParams({
-                id: problemId,
-                language: language,
-                containerToken: data.containerToken
-              });
-              
-              if (questionId) {
-                queryParams.append('questionId', questionId);
+        queryParams.append('questionId', questionId);
+      }
+      
+      // Use wouter navigation to avoid full page reload - DO THIS FIRST
+      navigate(`/coding-environment?${queryParams.toString()}`);
+      
+      // THEN trigger the API call to set up the codebase in the background
+      // This will run after navigation, preventing UI freeze
+      if (questionId) {
+        // Store temporary token in localStorage until real one arrives
+        localStorage.setItem('containerToken', tempToken);
+        
+        setTimeout(() => {
+          setupCodebaseMutation.mutate({ 
+            questionId, 
+            language 
+          }, {
+            onSuccess: (data) => {
+              if (data.containerToken) {
+                // Update the token in localStorage with the real one
+                localStorage.setItem('containerToken', data.containerToken);
+                
+                // No need to navigate again, the WebSocket updates will handle
+                // updating the container status in the already-loaded coding page
+                console.log('Container setup completed in background, token:', data.containerToken);
               }
-              
-              // Use wouter navigation to avoid full page reload
-              navigate(`/coding-environment?${queryParams.toString()}`);
             }
-          }
-        });
-      } else {
-        // No questionId, just navigate directly without setting up codebase
-        const queryParams = new URLSearchParams({
-          id: problemId,
-          language: language
-        });
-        navigate(`/coding-environment?${queryParams.toString()}`);
+          });
+        }, 100); // Small delay to ensure navigation completes first
       }
     }
   };

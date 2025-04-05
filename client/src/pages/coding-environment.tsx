@@ -184,6 +184,19 @@ export default function CodingEnvironment() {
   // Update loading state based on container status
   useEffect(() => {
     if (containerStatus) {
+      console.log('Container status update received:', containerStatus);
+      
+      // Check if we need to update the token from temporary to real token
+      if (containerStatus.token && 
+          containerToken && 
+          containerToken.startsWith('temp-') && 
+          containerStatus.token !== containerToken) {
+        console.log('Updating from temporary token to real token:', containerStatus.token);
+        // Update the token in state and localStorage
+        setContainerToken(containerStatus.token);
+        localStorage.setItem('containerToken', containerStatus.token);
+      }
+      
       if (containerStatus.status === 'ready') {
         setIsLoading(false);
         // When container is ready, update the URL if available
@@ -197,11 +210,17 @@ export default function CodingEnvironment() {
         }
       } else if (containerStatus.status === 'creating') {
         setIsLoading(true);
-        toast({
-          title: "Setting up environment",
-          description: containerStatus.message || "Your coding environment is being prepared",
-          variant: "default",
-        });
+        // Show creating toast only if not shown recently (avoid toast spam)
+        const lastToastTime = parseInt(localStorage.getItem('lastContainerToastTime') || '0');
+        const now = Date.now();
+        if (now - lastToastTime > 3000) { // Only show toast every 3 seconds
+          toast({
+            title: "Setting up environment",
+            description: containerStatus.message || "Your coding environment is being prepared",
+            variant: "default",
+          });
+          localStorage.setItem('lastContainerToastTime', now.toString());
+        }
       } else if (containerStatus.status === 'error') {
         setIsLoading(false);
         toast({
@@ -211,7 +230,7 @@ export default function CodingEnvironment() {
         });
       }
     }
-  }, [containerStatus, toast]);
+  }, [containerStatus, toast, containerToken]);
 
   useEffect(() => {
     // Extract params from URL
@@ -231,21 +250,35 @@ export default function CodingEnvironment() {
     // Handle token-based system (preferred)
     if (tokenParam) {
       setContainerToken(tokenParam);
-      // Convert token to URL through API
-      (async () => {
-        try {
-          // Call the redirect endpoint to get the URL
-          const redirectUrl = `/api/container-redirect/${tokenParam}`;
-          setContainerUrl(redirectUrl);
-        } catch (error) {
-          console.error("Error resolving container token:", error);
-          toast({
-            title: "Error",
-            description: "Failed to access coding environment",
-            variant: "destructive",
-          });
-        }
-      })();
+      
+      // Check if it's a temporary token (starts with 'temp-')
+      if (tokenParam.startsWith('temp-')) {
+        console.log('Using temporary token, waiting for real token via WebSocket:', tokenParam);
+        // Show loading indicator immediately to improve UX
+        setIsLoading(true);
+        toast({
+          title: "Loading environment",
+          description: "Your coding environment is being prepared...",
+          variant: "default",
+        });
+        // No need to call redirect API for temporary tokens
+      } else {
+        // For real tokens, convert token to URL through API
+        (async () => {
+          try {
+            // Call the redirect endpoint to get the URL
+            const redirectUrl = `/api/container-redirect/${tokenParam}`;
+            setContainerUrl(redirectUrl);
+          } catch (error) {
+            console.error("Error resolving container token:", error);
+            toast({
+              title: "Error",
+              description: "Failed to access coding environment",
+              variant: "destructive",
+            });
+          }
+        })();
+      }
     }
     
     if (idParam) {

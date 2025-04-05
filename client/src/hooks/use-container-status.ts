@@ -4,6 +4,7 @@ interface ContainerStatus {
   status: 'creating' | 'ready' | 'error';
   message?: string;
   containerUrl?: string;
+  token?: string;  // Token is needed to update from temporary to real token
 }
 
 /**
@@ -38,13 +39,23 @@ export function useContainerStatus(token?: string) {
         const data = JSON.parse(event.data);
         
         // Handle container status updates
-        if (data.type === 'containerStatus' && data.token === token) {
-          console.log('Received container status update:', data);
-          setStatus({
-            status: data.status,
-            message: data.message,
-            containerUrl: data.containerUrl
-          });
+        if (data.type === 'containerStatus') {
+          // For temporary tokens, we need to accept ANY container status update
+          // that might contain our real token
+          const isTemporaryToken = token.startsWith('temp-');
+          
+          // Accept the message if:
+          // 1. The tokens match exactly, OR
+          // 2. We have a temporary token and need to catch the real token update
+          if (data.token === token || isTemporaryToken) {
+            console.log('Received container status update:', data);
+            setStatus({
+              status: data.status,
+              message: data.message,
+              containerUrl: data.containerUrl,
+              token: data.token // Include the token in the status
+            });
+          }
         }
       } catch (err) {
         console.error('Error parsing WebSocket message:', err);
