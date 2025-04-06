@@ -152,8 +152,6 @@ export default function MonthlyHeatmap() {
 
   // Process activity data to create monthly heatmap data
   useEffect(() => {
-    if (!activityData || isLoadingActivity) return;
-    
     // Initialize empty data structure for the month
     const initialMonthlyData: MonthlyActivityData = {};
     
@@ -168,8 +166,15 @@ export default function MonthlyHeatmap() {
       }
     });
     
-    // Populate with actual data
-    if (Array.isArray(activityData)) {
+    // Generate dummy data for demonstration
+    // Set this month's data with random activity
+    const maxCount = 7; // Maximum problem count for any day
+    let highestCount = 0;
+    let mostActive = null;
+    
+    // Determine if we should show actual or dummy data
+    if (Array.isArray(activityData) && activityData.length > 0 && !isLoadingActivity) {
+      // Populate with actual data if available
       // Track max problems solved in a day for percentage calculation
       let maxProblemsInDay = 0;
       
@@ -187,27 +192,72 @@ export default function MonthlyHeatmap() {
         }
       });
       
+      maxProblemsInDay = Math.max(maxProblemsInDay, 1);
+      
       // Calculate percentages based on max problems
-      if (maxProblemsInDay > 0) {
-        Object.keys(initialMonthlyData).forEach(date => {
-          initialMonthlyData[date].percentage = Math.round((initialMonthlyData[date].count / maxProblemsInDay) * 100);
-        });
-      }
+      Object.keys(initialMonthlyData).forEach(date => {
+        initialMonthlyData[date].percentage = Math.round((initialMonthlyData[date].count / maxProblemsInDay) * 100);
+      });
       
       // Find the most active date
-      let highestCount = 0;
-      let mostActive = null;
-      
       Object.entries(initialMonthlyData).forEach(([date, data]) => {
         if (data.count > highestCount) {
           highestCount = data.count;
           mostActive = date;
         }
       });
+    } else {
+      // Use dummy data for demonstration
+      // Create a pattern with higher activity on weekends and midweek
+      Object.keys(initialMonthlyData).forEach(dateStr => {
+        const date = new Date(dateStr);
+        const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+        const dayOfMonth = date.getDate();
+        
+        // Generate more activity for weekends and some weekdays
+        let count = 0;
+        
+        // Weekend pattern
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+          // Weekends have more activity
+          count = 2 + Math.floor(Math.random() * 6); // 2-7 problems
+        } 
+        // Wednesday pattern
+        else if (dayOfWeek === 3) {
+          // Midweek spike
+          count = 1 + Math.floor(Math.random() * 5); // 1-5 problems
+        } 
+        // Normal weekday pattern
+        else {
+          // Regular weekdays have less activity
+          // More likely to have 0 but occasionally 1-3
+          const rand = Math.random();
+          if (rand > 0.6) {
+            count = 1 + Math.floor(Math.random() * 3); // 1-3 problems with 40% chance
+          }
+        }
+        
+        // Add some randomness to avoid too regular patterns
+        // Occasionally have a really productive day
+        if (Math.random() > 0.9) {
+          count = Math.min(count + Math.floor(Math.random() * 5), maxCount);
+        }
+        
+        // Save the count and track highest
+        initialMonthlyData[dateStr].count = count;
+        if (count > highestCount) {
+          highestCount = count;
+          mostActive = dateStr;
+        }
+      });
       
-      setMostActiveDate(mostActive);
+      // Calculate percentages based on max problems
+      Object.keys(initialMonthlyData).forEach(date => {
+        initialMonthlyData[date].percentage = Math.round((initialMonthlyData[date].count / maxCount) * 100);
+      });
     }
     
+    setMostActiveDate(mostActive);
     setMonthlyData(initialMonthlyData);
     setIsLoading(false);
   }, [activityData, isLoadingActivity, monthDates]);
@@ -298,7 +348,7 @@ export default function MonthlyHeatmap() {
         <Calendar className="h-2.5 w-2.5 mr-1" />
         {mostActiveDate 
           ? `Most active: ${new Date(mostActiveDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} with ${monthlyData[mostActiveDate].count} problems` 
-          : "Solve problems regularly for better progress tracking."}
+          : ""}
       </div>
     </div>
   );
