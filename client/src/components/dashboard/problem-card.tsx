@@ -50,7 +50,7 @@ export default function ProblemCard({ problem, index = 0, statusIcon, handleSetu
   return (
     <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] hover:border-[rgb(70,70,80)] transition-colors duration-150 overflow-hidden w-full">
       <div className="p-4">
-        <div className="flex items-start justify-between">
+        <div className="flex items-center justify-between">
           <div className="flex items-center flex-1">
             <div className="mr-3">
               {statusIcon || <Circle className="h-5 w-5 text-gray-500 opacity-50" />}
