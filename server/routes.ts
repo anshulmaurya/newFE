@@ -532,7 +532,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get monthly activity with optional username and month parameters
-  apiRouter.get("/monthly-activity", optionalAuth, async (req: Request, res: Response) => {
+  apiRouter.get("/monthly-activity", getUserId, async (req: Request, res: Response) => {
     try {
       // Get username and month from query parameters
       const { username, month, year } = req.query;
@@ -589,7 +589,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Get progress summary with counts by difficulty and streak
-  apiRouter.get("/progress-summary", optionalAuth, async (req: Request, res: Response) => {
+  apiRouter.get("/progress-summary", getUserId, async (req: Request, res: Response) => {
     try {
       // Get username from query parameter
       const { username } = req.query;
