@@ -28,6 +28,15 @@ const getTextColorForCount = (count: number): string => {
   return count >= 4 ? 'text-gray-900' : 'text-white';
 };
 
+// Function to get text color for the count indicator
+const getCountTextColor = (count: number): string => {
+  if (count >= 3) {
+    return 'text-white';
+  } else {
+    return 'text-gray-900';
+  }
+};
+
 // Format date as YYYY-MM-DD
 const formatDate = (date: Date): string => {
   return date.toISOString().split('T')[0];
@@ -337,7 +346,7 @@ export default function MonthlyHeatmap() {
               </div>
               {currentMonth && data.count > 0 && (
                 <div className="absolute top-0.5 right-1">
-                  <span className="text-[8px] font-bold text-white">
+                  <span className={`text-[8px] font-bold ${getCountTextColor(data.count)}`}>
                     {data.count}
                   </span>
                 </div>
