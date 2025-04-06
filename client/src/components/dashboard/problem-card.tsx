@@ -52,10 +52,12 @@ export default function ProblemCard({ problem, index = 0, statusIcon, handleSetu
       <div className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center flex-1">
-            <div className="mr-3 text-xl text-gray-500">{index + 1}</div>
+            <div className="mr-3">
+              {statusIcon || <Circle className="h-5 w-5 text-gray-500 opacity-50" />}
+            </div>
             <div className="flex-1">
               <h3 className="text-base font-medium text-gray-200 mb-1">
-                {problem.title || `Problem ${index + 1}`}
+                {problem.title || `Problem`}
               </h3>
               <div className="flex flex-wrap gap-1.5 mb-2">
                 {problem.tags && problem.tags.map((tag: string, tagIdx: number) => (
@@ -125,7 +127,6 @@ export default function ProblemCard({ problem, index = 0, statusIcon, handleSetu
             </div>
           </div>
           <div className="flex flex-col items-end">
-            <div className="mb-2">{statusIcon}</div>
             <TooltipProvider>
               <Tooltip delayDuration={300}>
                 <TooltipTrigger asChild>
