@@ -147,56 +147,51 @@ export default function WeeklyHeatmap() {
 
   if (isLoading || isLoadingActivity) {
     return (
-      <Card className="border border-[rgb(35,35,40)]">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-white text-base">Weekly Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-20 w-full bg-[rgb(35,35,40)]" />
-        </CardContent>
-      </Card>
+      <div className="p-3">
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-white text-xs font-medium">Weekly Activity</h3>
+          <span className="text-xs text-gray-400">Loading activity data...</span>
+        </div>
+        <Skeleton className="h-10 w-full bg-[rgb(35,35,40)]" />
+        <Skeleton className="h-3 w-3/4 mt-2 bg-[rgb(35,35,40)]" />
+      </div>
     );
   }
 
   return (
-    <Card className="border border-[rgb(35,35,40)]">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-white text-base">Weekly Activity</CardTitle>
-        <CardDescription className="text-gray-400 text-xs">
-          Your weekly coding activity
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="grid grid-cols-7 gap-2">
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => {
-              const data = weeklyData[day] || { count: 0, percentage: 0, date: '' };
-              const bgColor = getColorForPercentage(data.percentage);
-              const textColor = getTextColorForPercentage(data.percentage);
-              
-              return (
-                <div
-                  key={day}
-                  className={`p-2 rounded-md text-center ${bgColor}`}
-                  title={`${day}: ${data.count} problems solved (${data.date})`}
-                >
-                  <div className={`text-sm font-medium ${textColor}`}>{day}</div>
-                  <div className={`text-xs ${textColor}`}>
-                    {data.percentage > 0 ? `${data.percentage}%` : '-'}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+    <div className="p-3">
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-white text-xs font-medium">Weekly Activity</h3>
+        <span className="text-xs text-gray-400">Your weekly coding activity</span>
+      </div>
+
+      <div className="grid grid-cols-7 gap-1.5">
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => {
+          const data = weeklyData[day] || { count: 0, percentage: 0, date: '' };
+          const bgColor = getColorForPercentage(data.percentage);
+          const textColor = getTextColorForPercentage(data.percentage);
           
-          <div className="text-xs text-gray-400 flex items-center">
-            <Calendar className="h-3 w-3 mr-1" />
-            {mostActiveDay 
-              ? `You're most active on ${mostActiveDay}s. Keep up the good work!` 
-              : "Try solving problems throughout the week for consistent progress."}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+          return (
+            <div
+              key={day}
+              className={`py-1 px-1.5 rounded text-center ${bgColor}`}
+              title={`${day}: ${data.count} problems solved (${data.date})`}
+            >
+              <div className={`text-xs font-medium ${textColor}`}>{day}</div>
+              <div className={`text-[10px] ${textColor}`}>
+                {data.percentage > 0 ? `${data.count}` : '-'}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      
+      <div className="mt-2 text-[10px] text-gray-400 flex items-center">
+        <Calendar className="h-2.5 w-2.5 mr-1" />
+        {mostActiveDay 
+          ? `You're most active on ${mostActiveDay}s. Keep up the good work!` 
+          : "Try solving problems throughout the week for consistent progress."}
+      </div>
+    </div>
   );
 }

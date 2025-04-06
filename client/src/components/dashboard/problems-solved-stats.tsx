@@ -108,59 +108,49 @@ export default function ProblemsSolvedStats() {
   const percentageTotal = Math.round((userStats.totalSolved / totalProblems) * 100) || 0;
 
   return (
-    <Card className="border border-[rgb(35,35,40)]">
-      <CardHeader className="pb-1 pt-2">
-        <CardTitle className="text-white text-sm">Problems Solved</CardTitle>
-        <CardDescription className="text-gray-400 text-xs flex justify-between mt-0.5">
-          <span>Your progress by difficulty</span>
-          <span className="font-medium">{userStats.totalSolved}/{totalProblems} ({percentageTotal}%)</span>
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="py-2">
-        <div className="space-y-2">
-          {/* Easy Problems */}
-          <div>
-            <div className="flex justify-between items-center mb-0.5">
-              <div className="flex items-center gap-1.5">
-                <CircleDashed className="h-3 w-3 text-green-500" />
-                <span className="text-xs font-medium text-gray-300">Easy</span>
-              </div>
-              <span className="text-xs font-medium text-gray-300">
-                {userStats.easySolved}/{easyTotal}
-              </span>
+    <div className="p-3">
+      <div className="flex justify-between items-center">
+        <h3 className="text-white text-xs font-medium">Problems Solved</h3>
+        <span className="text-xs font-medium text-gray-400">{userStats.totalSolved}/{totalProblems} ({percentageTotal}%)</span>
+      </div>
+      
+      <div className="mt-2 space-y-1.5">
+        {/* Easy Problems */}
+        <div className="flex items-center gap-2">
+          <CircleDashed className="h-2.5 w-2.5 text-green-500 flex-shrink-0" />
+          <div className="flex-grow">
+            <div className="flex justify-between items-center text-[10px] mb-0.5">
+              <span className="text-gray-300">Easy</span>
+              <span className="text-gray-300">{userStats.easySolved}/{easyTotal}</span>
             </div>
-            <Progress value={percentageEasy} className="h-1.5 bg-[rgb(35,35,40)]" />
-          </div>
-
-          {/* Medium Problems */}
-          <div>
-            <div className="flex justify-between items-center mb-0.5">
-              <div className="flex items-center gap-1.5">
-                <BarChart3 className="h-3 w-3 text-yellow-500" />
-                <span className="text-xs font-medium text-gray-300">Medium</span>
-              </div>
-              <span className="text-xs font-medium text-gray-300">
-                {userStats.mediumSolved}/{mediumTotal}
-              </span>
-            </div>
-            <Progress value={percentageMedium} className="h-1.5 bg-[rgb(35,35,40)]" />
-          </div>
-
-          {/* Hard Problems */}
-          <div>
-            <div className="flex justify-between items-center mb-0.5">
-              <div className="flex items-center gap-1.5">
-                <Flame className="h-3 w-3 text-red-500" />
-                <span className="text-xs font-medium text-gray-300">Hard</span>
-              </div>
-              <span className="text-xs font-medium text-gray-300">
-                {userStats.hardSolved}/{hardTotal}
-              </span>
-            </div>
-            <Progress value={percentageHard} className="h-1.5 bg-[rgb(35,35,40)]" />
+            <Progress value={percentageEasy} className="h-1 bg-[rgb(35,35,40)]" />
           </div>
         </div>
-      </CardContent>
-    </Card>
+
+        {/* Medium Problems */}
+        <div className="flex items-center gap-2">
+          <BarChart3 className="h-2.5 w-2.5 text-yellow-500 flex-shrink-0" />
+          <div className="flex-grow">
+            <div className="flex justify-between items-center text-[10px] mb-0.5">
+              <span className="text-gray-300">Medium</span>
+              <span className="text-gray-300">{userStats.mediumSolved}/{mediumTotal}</span>
+            </div>
+            <Progress value={percentageMedium} className="h-1 bg-[rgb(35,35,40)]" />
+          </div>
+        </div>
+
+        {/* Hard Problems */}
+        <div className="flex items-center gap-2">
+          <Flame className="h-2.5 w-2.5 text-red-500 flex-shrink-0" />
+          <div className="flex-grow">
+            <div className="flex justify-between items-center text-[10px] mb-0.5">
+              <span className="text-gray-300">Hard</span>
+              <span className="text-gray-300">{userStats.hardSolved}/{hardTotal}</span>
+            </div>
+            <Progress value={percentageHard} className="h-1 bg-[rgb(35,35,40)]" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

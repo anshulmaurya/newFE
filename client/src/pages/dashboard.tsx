@@ -475,17 +475,21 @@ export default function Dashboard() {
         <div className="pl-4 pr-4 relative">
           <div className="flex">
             <div className="flex-1 space-y-4 w-full">
-              {/* Progress tracking section - single row layout */}
-              <div className="flex flex-col md:flex-row gap-4">
-                {/* Weekly Activity Heatmap - 2/3 width */}
-                <div className="w-full md:w-2/3">
-                  <WeeklyHeatmap />
-                </div>
-                
-                {/* Stats Components stacked - 1/3 width */}
-                <div className="w-full md:w-1/3 flex flex-col gap-4">
-                  <ProblemsSolvedStats />
-                  <StreakCard />
+              {/* Integrated progress tracking section with minimal vertical space */}
+              <div className="bg-[rgb(18,18,20)] border border-[rgb(35,35,40)] rounded-lg overflow-hidden">
+                <div className="flex flex-col md:flex-row">
+                  {/* Weekly Activity Heatmap - Left side */}
+                  <div className="w-full md:w-2/3 border-b md:border-b-0 md:border-r border-[rgb(35,35,40)]">
+                    <WeeklyHeatmap />
+                  </div>
+                  
+                  {/* Integrated Stats - Right side */}
+                  <div className="w-full md:w-1/3">
+                    <ProblemsSolvedStats />
+                    <div className="border-t border-[rgb(35,35,40)]">
+                      <StreakCard />
+                    </div>
+                  </div>
                 </div>
               </div>
 
