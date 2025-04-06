@@ -66,51 +66,54 @@ export default function StreakCard() {
 
   return (
     <Card className="border border-[rgb(35,35,40)]">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-white text-base">Your Streak</CardTitle>
-        <CardDescription className="text-gray-400 text-xs">
+      <CardHeader className="pb-1 pt-2">
+        <CardTitle className="text-white text-sm">Your Streak</CardTitle>
+        <CardDescription className="text-gray-400 text-xs mt-0.5">
           Days in a row with solved problems
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="flex justify-center items-center gap-2 py-2">
+      <CardContent className="py-2">
+        <div className="space-y-2">
+          {/* Flame icons display */}
+          <div className="flex justify-center items-center gap-1.5 py-1">
             {flameCount > 0 ? (
               flames.map((_, index) => (
                 <Flame 
                   key={index} 
-                  className={`h-7 w-7 ${index === flameCount - 1 ? 'text-[rgb(255,165,0)]' : 'text-[rgb(214,251,65)]'}`}
+                  className={`h-5 w-5 ${index === flameCount - 1 ? 'text-[rgb(255,165,0)]' : 'text-[rgb(214,251,65)]'}`}
                   fill={index === flameCount - 1 ? 'rgb(255,165,0)' : 'rgb(214,251,65)'}
                 />
               ))
             ) : (
-              <div className="flex flex-col items-center py-1">
-                <Flame className="h-10 w-10 text-gray-600" />
+              <div className="flex flex-col items-center">
+                <Flame className="h-7 w-7 text-gray-600" />
               </div>
             )}
           </div>
 
+          {/* Streak counters */}
           <div className="grid grid-cols-2 gap-2 text-center">
-            <div className="bg-[rgb(24,24,26)] p-2 rounded-md">
+            <div className="bg-[rgb(24,24,26)] px-2 py-1 rounded-md">
               <div className="text-xs text-gray-400">Current</div>
               <div className="flex items-center justify-center gap-1">
-                <Flame className="h-4 w-4 text-[rgb(214,251,65)]" />
-                <span className="text-lg font-bold text-white">{userStreak.current}</span>
+                <Flame className="h-3 w-3 text-[rgb(214,251,65)]" />
+                <span className="text-sm font-bold text-white">{userStreak.current}</span>
                 <span className="text-xs text-gray-400">days</span>
               </div>
             </div>
             
-            <div className="bg-[rgb(24,24,26)] p-2 rounded-md">
+            <div className="bg-[rgb(24,24,26)] px-2 py-1 rounded-md">
               <div className="text-xs text-gray-400">Longest</div>
               <div className="flex items-center justify-center gap-1">
-                <Trophy className="h-4 w-4 text-yellow-500" />
-                <span className="text-lg font-bold text-white">{userStreak.longest}</span>
+                <Trophy className="h-3 w-3 text-yellow-500" />
+                <span className="text-sm font-bold text-white">{userStreak.longest}</span>
                 <span className="text-xs text-gray-400">days</span>
               </div>
             </div>
           </div>
           
-          <div className="text-xs text-center text-gray-400">
+          {/* Streak message */}
+          <div className="text-[10px] text-center text-gray-400">
             {streakMessage}
           </div>
         </div>
