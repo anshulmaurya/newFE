@@ -214,13 +214,7 @@ export default function ProgressVisualization() {
         </div>
       </div>
       
-      {/* Completion rate info - only shown if there are problems solved */}
-      {progress.total > 0 && (
-        <div className="mt-4 text-xs text-gray-400 flex items-center">
-          <Check className="h-3 w-3 mr-1.5 text-[rgb(63,147,96)]" />
-          You've solved {progress.total} problems. Keep going!
-        </div>
-      )}
+      {/* Removed completion rate info text as requested */}
     </div>
   );
 }

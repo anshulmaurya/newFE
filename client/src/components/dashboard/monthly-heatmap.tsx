@@ -13,17 +13,19 @@ interface MonthlyActivityData {
   };
 }
 
-// Function to get color based on count
+// Function to get color based on count - improved color gradient
 const getColorForCount = (count: number): string => {
-  if (count === 0) return 'bg-[rgb(28,28,30)]';
-  if (count < 2) return 'bg-[rgb(43,87,61)]';
-  if (count < 4) return 'bg-[rgb(63,147,96)]';
-  return 'bg-[rgb(214,251,65)]';
+  if (count === 0) return 'bg-[rgb(32,32,36)]';
+  if (count === 1) return 'bg-[rgb(44,94,112)]';
+  if (count === 2) return 'bg-[rgb(65,126,152)]';
+  if (count === 3) return 'bg-[rgb(86,157,191)]';
+  if (count === 4) return 'bg-[rgb(107,188,231)]';
+  return 'bg-[rgb(128,216,255)]';
 };
 
 // Function to get text color based on count
 const getTextColorForCount = (count: number): string => {
-  return count >= 4 ? 'text-black' : 'text-white';
+  return count >= 4 ? 'text-gray-900' : 'text-white';
 };
 
 // Format date as YYYY-MM-DD
@@ -265,77 +267,77 @@ export default function MonthlyHeatmap() {
   // Loading state
   if (isLoading || isLoadingActivity) {
     return (
-      <div className="p-3">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="text-white text-xs font-medium">Monthly Activity</h3>
-          <span className="text-xs text-gray-400">Loading activity data...</span>
+      <div className="p-4 h-full">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-white text-sm font-medium">Monthly Activity</h3>
+          <span className="text-sm text-gray-300">Loading data...</span>
         </div>
-        <Skeleton className="h-24 w-full bg-[rgb(35,35,40)]" />
+        <Skeleton className="h-32 w-full bg-[rgb(35,35,40)]" />
         <Skeleton className="h-3 w-3/4 mt-2 bg-[rgb(35,35,40)]" />
       </div>
     );
   }
 
   return (
-    <div className="p-3">
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-white text-xs font-medium">Monthly Activity</h3>
+    <div className="p-4 h-full flex flex-col">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-white text-sm font-medium">Monthly Activity</h3>
         
         <div className="flex items-center space-x-2">
           <button 
             onClick={goToPreviousMonth}
             disabled={isPrevDisabled}
-            className={`p-0.5 rounded ${isPrevDisabled ? 'text-gray-600' : 'text-gray-400 hover:text-white'}`}
+            className={`p-1 rounded-full hover:bg-gray-800 ${isPrevDisabled ? 'text-gray-600' : 'text-gray-300 hover:text-white'}`}
             title="Previous month"
           >
-            <ChevronLeft className="h-3 w-3" />
+            <ChevronLeft className="h-4 w-4" />
           </button>
           
-          <span className="text-xs text-gray-300">
+          <span className="text-sm text-gray-200 font-medium">
             {getMonthName(currentMonth)} {currentMonth.getFullYear()}
           </span>
           
           <button 
             onClick={goToNextMonth}
             disabled={isNextDisabled}
-            className={`p-0.5 rounded ${isNextDisabled ? 'text-gray-600' : 'text-gray-400 hover:text-white'}`}
+            className={`p-1 rounded-full hover:bg-gray-800 ${isNextDisabled ? 'text-gray-600' : 'text-gray-300 hover:text-white'}`}
             title="Next month"
           >
-            <ChevronRight className="h-3 w-3" />
+            <ChevronRight className="h-4 w-4" />
           </button>
         </div>
       </div>
 
-      <div className="mb-1 grid grid-cols-7 gap-0.5">
+      <div className="mb-2 grid grid-cols-7 gap-1">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
-          <div key={index} className="text-[9px] text-gray-400 text-center">
+          <div key={index} className="text-xs text-gray-400 text-center font-medium">
             {day}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-0.5">
+      <div className="grid grid-cols-7 gap-1 flex-1">
         {monthDates.map(({ date, currentMonth }, index) => {
           const dateStr = formatDate(date);
           const data = currentMonth && monthlyData[dateStr] 
             ? monthlyData[dateStr] 
             : { count: 0, percentage: 0 };
           
-          const bgColor = currentMonth ? getColorForCount(data.count) : 'bg-[rgb(22,22,24)]';
-          const textColor = currentMonth && data.count >= 4 ? 'text-black' : 'text-gray-400';
-          const opacity = currentMonth ? 'opacity-100' : 'opacity-50';
+          const bgColor = currentMonth ? getColorForCount(data.count) : 'bg-[rgb(25,25,28)]';
+          const textColor = currentMonth ? getTextColorForCount(data.count) : 'text-gray-500';
+          const opacity = currentMonth ? 'opacity-100' : 'opacity-40';
           
           return (
             <div
               key={index}
-              className={`p-0.5 w-6 h-6 ${bgColor} ${opacity} rounded flex flex-col items-center justify-center`}
+              className={`p-0.5 aspect-square ${bgColor} ${opacity} rounded-md flex flex-col items-center justify-center transition-colors`}
               title={currentMonth ? `${dateStr}: ${data.count} problems solved` : dateStr}
             >
-              <div className={`text-[9px] font-medium ${textColor}`}>
+              <div className={`text-[10px] font-medium ${textColor}`}>
                 {date.getDate()}
               </div>
               {currentMonth && data.count > 0 && (
-                <div className={`text-[7px] ${textColor}`}>
+                <div className={`text-[8px] font-medium ${textColor}`}>
                   {data.count}
                 </div>
               )}
@@ -344,12 +346,12 @@ export default function MonthlyHeatmap() {
         })}
       </div>
       
-      <div className="mt-2 text-[9px] text-gray-400 flex items-center">
-        <Calendar className="h-2.5 w-2.5 mr-1" />
-        {mostActiveDate 
-          ? `Most active: ${new Date(mostActiveDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} with ${monthlyData[mostActiveDate].count} problems` 
-          : ""}
-      </div>
+      {mostActiveDate && (
+        <div className="mt-3 text-xs text-gray-400 flex items-center">
+          <Calendar className="h-3.5 w-3.5 mr-1.5" />
+          Most active: {new Date(mostActiveDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} with {monthlyData[mostActiveDate].count} problems
+        </div>
+      )}
     </div>
   );
 }
