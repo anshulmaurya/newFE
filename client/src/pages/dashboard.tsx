@@ -475,15 +475,15 @@ export default function Dashboard() {
           <div className="flex">
             <div className="flex-1 space-y-4 w-full">
               {/* Integrated progress tracking section with minimal vertical space */}
-              <div className="bg-[rgb(18,18,20)] border border-[rgb(35,35,40)] rounded-lg overflow-hidden h-40 max-h-40">
-                <div className="flex flex-col md:flex-row h-full">
+              <div className="bg-[rgb(18,18,20)] border border-[rgb(35,35,40)] rounded-lg overflow-hidden">
+                <div className="flex flex-col md:flex-row">
                   {/* Monthly Activity Heatmap - Left side */}
-                  <div className="w-full md:w-2/3 border-b md:border-b-0 md:border-r border-[rgb(35,35,40)] h-full">
+                  <div className="w-full md:w-2/3 border-b md:border-b-0 md:border-r border-[rgb(35,35,40)]">
                     <MonthlyHeatmap />
                   </div>
                   
                   {/* Unified Progress Visualization - Right side */}
-                  <div className="w-full md:w-1/3 h-full">
+                  <div className="w-full md:w-1/3">
                     <ProgressVisualization />
                   </div>
                 </div>
