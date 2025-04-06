@@ -15,9 +15,8 @@ import {
 } from '@/components/ui/select';
 
 import ActivityHeatmap from '@/components/dashboard/activity-heatmap';
-import WeeklyHeatmap from '@/components/dashboard/weekly-heatmap';
-import ProblemsSolvedStats from '@/components/dashboard/problems-solved-stats';
-import StreakCard from '@/components/dashboard/streak-card';
+import MonthlyHeatmap from '@/components/dashboard/monthly-heatmap';
+import ProgressVisualization from '@/components/dashboard/progress-visualization';
 import ProblemCard, { getStatusIcon } from '@/components/dashboard/problem-card';
 import { 
   AlertTriangle,
@@ -478,17 +477,14 @@ export default function Dashboard() {
               {/* Integrated progress tracking section with minimal vertical space */}
               <div className="bg-[rgb(18,18,20)] border border-[rgb(35,35,40)] rounded-lg overflow-hidden">
                 <div className="flex flex-col md:flex-row">
-                  {/* Weekly Activity Heatmap - Left side */}
+                  {/* Monthly Activity Heatmap - Left side */}
                   <div className="w-full md:w-2/3 border-b md:border-b-0 md:border-r border-[rgb(35,35,40)]">
-                    <WeeklyHeatmap />
+                    <MonthlyHeatmap />
                   </div>
                   
-                  {/* Integrated Stats - Right side */}
+                  {/* Unified Progress Visualization - Right side */}
                   <div className="w-full md:w-1/3">
-                    <ProblemsSolvedStats />
-                    <div className="border-t border-[rgb(35,35,40)]">
-                      <StreakCard />
-                    </div>
+                    <ProgressVisualization />
                   </div>
                 </div>
               </div>
