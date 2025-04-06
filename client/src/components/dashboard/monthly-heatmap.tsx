@@ -336,8 +336,8 @@ export default function MonthlyHeatmap() {
                 {date.getDate()}
               </div>
               {currentMonth && data.count > 0 && (
-                <div className="absolute top-0.5 right-0.5 rounded-full w-3.5 h-3.5 flex items-center justify-center bg-zinc-900 bg-opacity-60">
-                  <span className="text-[7px] font-semibold text-white">
+                <div className="absolute top-0.5 right-1">
+                  <span className="text-[8px] font-bold text-white">
                     {data.count}
                   </span>
                 </div>
