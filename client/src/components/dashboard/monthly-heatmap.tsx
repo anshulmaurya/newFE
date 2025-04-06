@@ -332,14 +332,12 @@ export default function MonthlyHeatmap() {
               className={`h-8 w-full ${bgColor} ${opacity} rounded-[2px] flex flex-col items-center justify-center transition-colors`}
               title={currentMonth ? `${dateStr}: ${data.count} problems solved` : dateStr}
             >
-              <div className={`text-[9px] font-bold leading-none ${textColor}`}>
-                {date.getDate()}
+              <div className={`text-[10px] leading-none flex items-baseline space-x-0.5 ${textColor}`}>
+                <span className="font-medium">{date.getDate()}</span>
+                {currentMonth && data.count > 0 && (
+                  <span className="text-[7px] opacity-80 font-normal">{data.count}p</span>
+                )}
               </div>
-              {currentMonth && data.count > 0 && (
-                <div className={`text-[7px] font-medium leading-none mt-[3px] bg-black bg-opacity-20 px-1 py-0.5 rounded-sm ${textColor}`}>
-                  {data.count}
-                </div>
-              )}
             </div>
           );
         })}
