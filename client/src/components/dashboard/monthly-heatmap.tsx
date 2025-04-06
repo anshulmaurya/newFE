@@ -31,9 +31,9 @@ const getTextColorForCount = (count: number): string => {
 // Function to get text color for the count indicator
 const getCountTextColor = (count: number): string => {
   if (count >= 3) {
-    return 'text-white';
-  } else {
     return 'text-gray-900';
+  } else {
+    return 'text-white';
   }
 };
 
