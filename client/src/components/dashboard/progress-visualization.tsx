@@ -142,73 +142,73 @@ export default function ProgressVisualization() {
   
   // Calculate normalized heights (percentage of max)
   const getHeight = (value: number) => {
-    return Math.max((value / maxValue) * 45, 5); // Increased height for better visualization
+    return Math.max((value / maxValue) * 70, 8); // Significantly increased height for better visualization
   };
   
   return (
-    <div className="p-2 h-full flex flex-col">
-      <div className="flex justify-between items-center mb-1">
-        <h3 className="text-white text-sm font-semibold">Your Progress</h3>
-        <span className="text-[9px] text-gray-300">
+    <div className="p-3 h-full flex flex-col">
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-white text-base font-semibold">Your Progress</h3>
+        <span className="text-[11px] text-gray-300">
           Total Solved: {progress.total}
         </span>
       </div>
       
-      <div className="flex flex-1 items-center space-x-2">
+      <div className="flex flex-1 items-center space-x-3">
         {/* Problems by difficulty visualization */}
-        <div className="flex-1 flex items-end justify-center space-x-2 pr-3 border-r border-gray-800 h-full">
+        <div className="flex-1 flex items-end justify-center space-x-3 pr-4 border-r border-gray-700 h-full">
           {/* Easy problems */}
           <div className="flex flex-col items-center">
             <div 
-              className="bg-[rgb(63,147,96)] rounded-t-sm w-7" 
+              className="bg-[rgb(63,147,96)] rounded-t-sm w-10" 
               style={{ height: `${getHeight(progress.easy)}px` }}
             ></div>
-            <div className="text-gray-300 text-[7px] mt-0.5 font-medium leading-none">{progress.easy}</div>
-            <div className="text-gray-400 text-[6px] leading-none">EASY</div>
+            <div className="text-gray-300 text-[9px] mt-1 font-medium">{progress.easy}</div>
+            <div className="text-gray-400 text-[8px]">EASY</div>
           </div>
           
           {/* Medium problems */}
           <div className="flex flex-col items-center">
             <div 
-              className="bg-[rgb(236,180,14)] rounded-t-sm w-7" 
+              className="bg-[rgb(236,180,14)] rounded-t-sm w-10" 
               style={{ height: `${getHeight(progress.medium)}px` }}
             ></div>
-            <div className="text-gray-300 text-[7px] mt-0.5 font-medium leading-none">{progress.medium}</div>
-            <div className="text-gray-400 text-[6px] leading-none">MED</div>
+            <div className="text-gray-300 text-[9px] mt-1 font-medium">{progress.medium}</div>
+            <div className="text-gray-400 text-[8px]">MED</div>
           </div>
           
           {/* Hard problems */}
           <div className="flex flex-col items-center">
             <div 
-              className="bg-[rgb(224,89,89)] rounded-t-sm w-7" 
+              className="bg-[rgb(224,89,89)] rounded-t-sm w-10" 
               style={{ height: `${getHeight(progress.hard)}px` }}
             ></div>
-            <div className="text-gray-300 text-[7px] mt-0.5 font-medium leading-none">{progress.hard}</div>
-            <div className="text-gray-400 text-[6px] leading-none">HARD</div>
+            <div className="text-gray-300 text-[9px] mt-1 font-medium">{progress.hard}</div>
+            <div className="text-gray-400 text-[8px]">HARD</div>
           </div>
         </div>
         
         {/* Streak visualization */}
-        <div className="flex-1 flex flex-col justify-center space-y-2">
+        <div className="flex-1 flex flex-col justify-center space-y-4">
           {/* Current streak */}
           <div className="flex items-center">
-            <div className="flex items-center justify-center h-6 w-6 rounded-full bg-gradient-to-br from-[rgb(255,138,76)] to-[rgb(255,56,100)] mr-1.5">
-              <Flame className="h-3 w-3 text-white" />
+            <div className="flex items-center justify-center h-8 w-8 rounded-full bg-gradient-to-br from-[rgb(255,138,76)] to-[rgb(255,56,100)] mr-2">
+              <Flame className="h-4 w-4 text-white" />
             </div>
             <div>
-              <div className="text-[6px] text-gray-400 leading-none">CURRENT STREAK</div>
-              <div className="text-sm font-semibold text-white leading-tight">{stats?.currentStreak || 0} days</div>
+              <div className="text-[8px] text-gray-400 leading-none">CURRENT STREAK</div>
+              <div className="text-base font-semibold text-white leading-tight">{stats?.currentStreak || 0} days</div>
             </div>
           </div>
           
           {/* Longest streak */}
           <div className="flex items-center">
-            <div className="flex items-center justify-center h-6 w-6 rounded-full bg-gradient-to-br from-[rgb(147,197,253)] to-[rgb(59,130,246)] mr-1.5">
-              <Trophy className="h-3 w-3 text-white" />
+            <div className="flex items-center justify-center h-8 w-8 rounded-full bg-gradient-to-br from-[rgb(147,197,253)] to-[rgb(59,130,246)] mr-2">
+              <Trophy className="h-4 w-4 text-white" />
             </div>
             <div>
-              <div className="text-[6px] text-gray-400 leading-none">LONGEST STREAK</div>
-              <div className="text-sm font-semibold text-white leading-tight">{stats?.longestStreak || 0} days</div>
+              <div className="text-[8px] text-gray-400 leading-none">LONGEST STREAK</div>
+              <div className="text-base font-semibold text-white leading-tight">{stats?.longestStreak || 0} days</div>
             </div>
           </div>
         </div>
