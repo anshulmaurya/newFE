@@ -531,6 +531,118 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get monthly activity with optional username and month parameters
+  apiRouter.get("/monthly-activity", optionalAuth, async (req: Request, res: Response) => {
+    try {
+      // Get username and month from query parameters
+      const { username, month, year } = req.query;
+      let targetUserId = req.userId;
+      
+      // If username is provided, look up the user
+      if (username && typeof username === 'string') {
+        const user = await storage.getUserByUsername(username);
+        if (user) {
+          targetUserId = user.id;
+        } else {
+          return res.status(404).json({ error: "User not found" });
+        }
+      }
+      
+      // If no user ID is available, return empty result
+      if (!targetUserId) {
+        return res.json({ activities: [], mostActiveDate: null });
+      }
+      
+      // Parse month and year or use current date
+      const currentDate = new Date();
+      const targetMonth = month ? parseInt(month as string) - 1 : currentDate.getMonth();
+      const targetYear = year ? parseInt(year as string) : currentDate.getFullYear();
+      
+      // Create first and last day of the month
+      const firstDay = new Date(targetYear, targetMonth, 1);
+      const lastDay = new Date(targetYear, targetMonth + 1, 0);
+      
+      // Get activity for the month
+      const activities = await storage.getUserActivity(targetUserId, firstDay, lastDay);
+      
+      // Find most active date
+      let mostActiveDate = null;
+      let maxProblems = 0;
+      
+      activities.forEach(activity => {
+        if (activity.problemsSolved > maxProblems) {
+          maxProblems = activity.problemsSolved;
+          mostActiveDate = activity.date;
+        }
+      });
+      
+      return res.json({
+        activities,
+        mostActiveDate,
+        month: targetMonth + 1,
+        year: targetYear
+      });
+    } catch (error) {
+      console.error("Error fetching monthly activity:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
+  });
+  
+  // Get progress summary with counts by difficulty and streak
+  apiRouter.get("/progress-summary", optionalAuth, async (req: Request, res: Response) => {
+    try {
+      // Get username from query parameter
+      const { username } = req.query;
+      let targetUserId = req.userId;
+      
+      // If username is provided, look up the user
+      if (username && typeof username === 'string') {
+        const user = await storage.getUserByUsername(username);
+        if (user) {
+          targetUserId = user.id;
+        } else {
+          return res.status(404).json({ error: "User not found" });
+        }
+      }
+      
+      // If no user ID is available, return empty result
+      if (!targetUserId) {
+        return res.json({
+          totalSolved: 0,
+          byDifficulty: {
+            easy: 0,
+            medium: 0,
+            hard: 0
+          },
+          streak: {
+            current: 0,
+            longest: 0
+          }
+        });
+      }
+      
+      // Get the user's stats
+      const userStats = await storage.getUserStatsRecord(targetUserId);
+      
+      // Get the user's streak
+      const streak = await storage.getUserStreak(targetUserId);
+      
+      // Prepare and return the response
+      return res.json({
+        totalSolved: userStats?.totalSolved || 0,
+        byDifficulty: {
+          easy: userStats?.easySolved || 0,
+          medium: userStats?.mediumSolved || 0,
+          hard: userStats?.hardSolved || 0
+        },
+        streak
+      });
+    } catch (error) {
+      console.error("Error fetching progress summary:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
+  });
+
   // Setup user codebase for a specific question
   apiRouter.post("/setup-codebase", getUserId, async (req: Request, res: Response) => {
     try {

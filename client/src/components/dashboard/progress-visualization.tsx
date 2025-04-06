@@ -38,59 +38,60 @@ export default function ProgressVisualization() {
     longestStreak: 0,
   };
   
-  // Fetch user stats
-  const { data: statsData, isLoading: isLoadingStats } = useQuery({
-    queryKey: ['/api/user-stats-record'],
+  // Fetch user progress summary (using the new combined API)
+  const { data: summaryData, isLoading: isLoadingSummary } = useQuery({
+    queryKey: ['/api/progress-summary'],
     queryFn: async () => {
       try {
-        const response = await apiRequest('GET', '/api/user-stats-record');
+        const response = await apiRequest('GET', '/api/progress-summary');
         return await response.json();
       } catch (error) {
-        console.error("Error fetching user stats:", error);
-        return defaultStats;
+        console.error("Error fetching progress summary:", error);
+        return {
+          totalSolved: 0,
+          byDifficulty: {
+            easy: 0,
+            medium: 0,
+            hard: 0
+          },
+          streak: {
+            current: 0,
+            longest: 0
+          }
+        };
       }
     },
-    enabled: !!user,
+    enabled: true, // Always enable the query, API handles auth check
   });
   
-  // Fetch streak data
-  const { data: streakData, isLoading: isLoadingStreak } = useQuery({
-    queryKey: ['/api/user-streak'],
-    queryFn: async () => {
-      try {
-        const response = await apiRequest('GET', '/api/user-streak');
-        return await response.json();
-      } catch (error) {
-        console.error("Error fetching streak data:", error);
-        return { current: 0, longest: 0 };
-      }
-    },
-    enabled: !!user,
-  });
-  
-  // Process stats data
+  // Process summary data
   useEffect(() => {
-    if (isLoadingStats || isLoadingStreak) return;
+    if (isLoadingSummary) return;
     
     // Check if we have real data from the API
     if (
-      (statsData && Object.keys(statsData).length > 0 && 
-       streakData && Object.keys(streakData).length > 0) &&
+      summaryData && 
       // Check if there's any actual data (at least one value > 0)
-      (statsData.totalSolved > 0 || statsData.easySolved > 0 || 
-       statsData.mediumSolved > 0 || statsData.hardSolved > 0 ||
-       streakData.current > 0 || streakData.longest > 0)
+      (summaryData.totalSolved > 0 || 
+       summaryData.byDifficulty?.easy > 0 || 
+       summaryData.byDifficulty?.medium > 0 || 
+       summaryData.byDifficulty?.hard > 0 ||
+       summaryData.streak?.current > 0 || 
+       summaryData.streak?.longest > 0)
     ) {
-      // Use real data
+      // Map the new summary structure to our UserStats type
       const combinedStats: UserStats = {
-        ...defaultStats,
-        ...statsData,
-        currentStreak: streakData?.current || 0,
-        longestStreak: streakData?.longest || 0,
+        totalSolved: summaryData.totalSolved || 0,
+        totalAttempted: summaryData.totalSolved || 0, // We don't track attempted separately in the new API
+        easySolved: summaryData.byDifficulty?.easy || 0,
+        mediumSolved: summaryData.byDifficulty?.medium || 0,
+        hardSolved: summaryData.byDifficulty?.hard || 0,
+        currentStreak: summaryData.streak?.current || 0,
+        longestStreak: summaryData.streak?.longest || 0,
       };
       setStats(combinedStats);
     } else {
-      // Use dummy data for demonstration
+      // Use dummy data when no user logged in or no data
       const dummyStats: UserStats = {
         totalSolved: 57,
         totalAttempted: 76,
@@ -104,7 +105,7 @@ export default function ProgressVisualization() {
     }
     
     setIsLoading(false);
-  }, [statsData, streakData, isLoadingStats, isLoadingStreak]);
+  }, [summaryData, isLoadingSummary]);
   
   // Calculate total progress percentages
   const calculateProgress = () => {
@@ -121,7 +122,7 @@ export default function ProgressVisualization() {
   };
   
   // Loading state
-  if (isLoading || isLoadingStats || isLoadingStreak) {
+  if (isLoading || isLoadingSummary) {
     return (
       <div className="p-1 h-full flex flex-col">
         <div className="flex justify-between items-center mb-0.5">

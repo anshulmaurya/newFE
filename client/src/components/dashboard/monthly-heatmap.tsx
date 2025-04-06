@@ -142,23 +142,24 @@ export default function MonthlyHeatmap() {
     return firstOfCurrentMonth >= firstOfCurrentMonthActual;
   }, [currentMonth]);
   
-  // Fetch user activity data for the month
-  const { data: activityData, isLoading: isLoadingActivity } = useQuery({
-    queryKey: ['/api/user-activity', formatDate(firstDayOfMonth), formatDate(lastDayOfMonth)],
+  // Fetch user activity data for the month using the new monthly-activity endpoint
+  const { data: monthlyActivityData, isLoading: isLoadingActivity } = useQuery({
+    queryKey: ['/api/monthly-activity', currentMonth.getMonth() + 1, currentMonth.getFullYear()],
     queryFn: async () => {
       try {
-        // Format dates for API query
-        const fromDate = formatDate(firstDayOfMonth);
-        const toDate = formatDate(lastDayOfMonth);
+        // Get the month and year
+        const month = currentMonth.getMonth() + 1; // 1-12
+        const year = currentMonth.getFullYear();
         
-        const response = await apiRequest('GET', `/api/user-activity?from=${fromDate}&to=${toDate}`);
+        // Use the new endpoint that handles date conversion and includes most active date
+        const response = await apiRequest('GET', `/api/monthly-activity?month=${month}&year=${year}`);
         return await response.json();
       } catch (error) {
         console.error("Error fetching monthly activity data:", error);
-        return [];
+        return { activities: [], mostActiveDate: null };
       }
     },
-    enabled: !!user,
+    enabled: true, // Enable for all users, API handles auth check
   });
 
   // Process activity data to create monthly heatmap data
@@ -177,20 +178,21 @@ export default function MonthlyHeatmap() {
       }
     });
     
-    // Generate dummy data for demonstration
-    // Set this month's data with random activity
-    const maxCount = 7; // Maximum problem count for any day
-    let highestCount = 0;
-    let mostActive = null;
+    // Default max count if no real data is available
+    const maxCount = 7; 
     
-    // Determine if we should show actual or dummy data
-    if (Array.isArray(activityData) && activityData.length > 0 && !isLoadingActivity) {
-      // Populate with actual data if available
-      // Track max problems solved in a day for percentage calculation
+    // Check if we have real data from the API
+    if (monthlyActivityData && 
+        monthlyActivityData.activities && 
+        Array.isArray(monthlyActivityData.activities) && 
+        monthlyActivityData.activities.length > 0 &&
+        !isLoadingActivity) {
+      
+      // Populate with actual data from API response
       let maxProblemsInDay = 0;
       
       // Fill in actual counts from activity data
-      activityData.forEach(activity => {
+      monthlyActivityData.activities.forEach((activity: { date: string; problemsSolved: number }) => {
         const dateStr = activity.date.split('T')[0];
         
         if (initialMonthlyData[dateStr]) {
@@ -203,6 +205,7 @@ export default function MonthlyHeatmap() {
         }
       });
       
+      // Ensure we have at least 1 for percentage calculations
       maxProblemsInDay = Math.max(maxProblemsInDay, 1);
       
       // Calculate percentages based on max problems
@@ -210,20 +213,16 @@ export default function MonthlyHeatmap() {
         initialMonthlyData[date].percentage = Math.round((initialMonthlyData[date].count / maxProblemsInDay) * 100);
       });
       
-      // Find the most active date
-      Object.entries(initialMonthlyData).forEach(([date, data]) => {
-        if (data.count > highestCount) {
-          highestCount = data.count;
-          mostActive = date;
-        }
-      });
+      // Use most active date from API response if available
+      if (monthlyActivityData.mostActiveDate) {
+        setMostActiveDate(monthlyActivityData.mostActiveDate.toString().split('T')[0]);
+      }
     } else {
-      // Use dummy data for demonstration
+      // Use dummy data for demonstration when no user is logged in or no data exists
       // Create a pattern with higher activity on weekends and midweek
       Object.keys(initialMonthlyData).forEach(dateStr => {
         const date = new Date(dateStr);
         const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
-        const dayOfMonth = date.getDate();
         
         // Generate more activity for weekends and some weekdays
         let count = 0;
@@ -254,24 +253,33 @@ export default function MonthlyHeatmap() {
           count = Math.min(count + Math.floor(Math.random() * 5), maxCount);
         }
         
-        // Save the count and track highest
+        // Save the count
         initialMonthlyData[dateStr].count = count;
-        if (count > highestCount) {
-          highestCount = count;
-          mostActive = dateStr;
-        }
       });
       
       // Calculate percentages based on max problems
       Object.keys(initialMonthlyData).forEach(date => {
         initialMonthlyData[date].percentage = Math.round((initialMonthlyData[date].count / maxCount) * 100);
       });
+      
+      // Find most active date from the generated data
+      let highestCount = 0;
+      let mostActive = null;
+      
+      Object.entries(initialMonthlyData).forEach(([date, data]) => {
+        if (data.count > highestCount) {
+          highestCount = data.count;
+          mostActive = date;
+        }
+      });
+      
+      setMostActiveDate(mostActive);
     }
     
-    setMostActiveDate(mostActive);
+    // Update the component state
     setMonthlyData(initialMonthlyData);
     setIsLoading(false);
-  }, [activityData, isLoadingActivity, monthDates]);
+  }, [monthlyActivityData, isLoadingActivity, monthDates]);
 
   // Loading state
   if (isLoading || isLoadingActivity) {
