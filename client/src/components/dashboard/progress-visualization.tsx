@@ -190,14 +190,14 @@ export default function ProgressVisualization() {
         </div>
         
         {/* Streak visualization */}
-        <div className="flex-1 flex flex-col justify-center space-y-4">
+        <div className="flex-1 flex flex-col justify-center space-y-4 items-center">
           {/* Current streak */}
           <div className="flex items-center">
             <div className="flex items-center justify-center h-8 w-8 rounded-full bg-gradient-to-br from-[rgb(255,138,76)] to-[rgb(255,56,100)] mr-2">
               <Flame className="h-4 w-4 text-white" />
             </div>
             <div>
-              <div className="text-[8px] text-gray-400 leading-none">CURRENT STREAK</div>
+              <div className="text-[8px] text-gray-400 leading-none text-center">CURRENT STREAK</div>
               <div className="text-base font-semibold text-white leading-tight">{stats?.currentStreak || 0} days</div>
             </div>
           </div>
@@ -208,7 +208,7 @@ export default function ProgressVisualization() {
               <Trophy className="h-4 w-4 text-white" />
             </div>
             <div>
-              <div className="text-[8px] text-gray-400 leading-none">LONGEST STREAK</div>
+              <div className="text-[8px] text-gray-400 leading-none text-center">LONGEST STREAK</div>
               <div className="text-base font-semibold text-white leading-tight">{stats?.longestStreak || 0} days</div>
             </div>
           </div>

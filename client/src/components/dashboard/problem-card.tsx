@@ -126,7 +126,7 @@ export default function ProblemCard({ problem, index = 0, statusIcon, handleSetu
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-end">
+          <div className="flex flex-col items-end justify-center h-full">
             <TooltipProvider>
               <Tooltip delayDuration={300}>
                 <TooltipTrigger asChild>
