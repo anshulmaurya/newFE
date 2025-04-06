@@ -475,7 +475,7 @@ export default function Dashboard() {
           <div className="flex">
             <div className="flex-1 space-y-4 w-full">
               {/* Integrated progress tracking section with minimal vertical space */}
-              <div className="bg-[rgb(18,18,20)] border border-[rgb(35,35,40)] rounded-lg overflow-hidden">
+              <div className="bg-[rgb(18,18,20)] border border-[rgb(35,35,40)] rounded-lg overflow-hidden h-auto">
                 <div className="flex flex-col md:flex-row">
                   {/* Monthly Activity Heatmap - Left side */}
                   <div className="w-full md:w-2/3 border-b md:border-b-0 md:border-r border-[rgb(35,35,40)]">
