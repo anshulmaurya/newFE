@@ -267,19 +267,19 @@ export default function MonthlyHeatmap() {
   // Loading state
   if (isLoading || isLoadingActivity) {
     return (
-      <div className="p-1.5 h-full">
-        <div className="flex justify-between items-center mb-1">
+      <div className="p-1 h-full">
+        <div className="flex justify-between items-center mb-0.5">
           <h3 className="text-white text-xs font-medium">Monthly Activity</h3>
           <span className="text-[8px] text-gray-300">Loading data...</span>
         </div>
-        <Skeleton className="h-14 w-full bg-[rgb(35,35,40)]" />
+        <Skeleton className="h-11 w-full bg-[rgb(35,35,40)]" />
       </div>
     );
   }
 
   return (
-    <div className="p-1.5 h-full flex flex-col">
-      <div className="flex justify-between items-center mb-1">
+    <div className="p-1 h-full flex flex-col">
+      <div className="flex justify-between items-center mb-0.5">
         <h3 className="text-white text-xs font-medium">Monthly Activity</h3>
         
         <div className="flex items-center space-x-1">
@@ -307,7 +307,7 @@ export default function MonthlyHeatmap() {
         </div>
       </div>
 
-      <div className="mb-0.5 grid grid-cols-7 gap-0.5">
+      <div className="mb-0.5 grid grid-cols-7 gap-[1px]">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
           <div key={index} className="text-[7px] text-gray-400 text-center font-medium">
             {day}
@@ -315,7 +315,7 @@ export default function MonthlyHeatmap() {
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-0.5 flex-1">
+      <div className="grid grid-cols-7 gap-[1px] flex-1">
         {monthDates.map(({ date, currentMonth }, index) => {
           const dateStr = formatDate(date);
           const data = currentMonth && monthlyData[dateStr] 
@@ -329,14 +329,14 @@ export default function MonthlyHeatmap() {
           return (
             <div
               key={index}
-              className={`h-5 w-5 ${bgColor} ${opacity} rounded flex flex-col items-center justify-center transition-colors`}
+              className={`h-4 w-full ${bgColor} ${opacity} rounded-[2px] flex flex-col items-center justify-center transition-colors`}
               title={currentMonth ? `${dateStr}: ${data.count} problems solved` : dateStr}
             >
-              <div className={`text-[6.5px] font-medium ${textColor}`}>
+              <div className={`text-[6px] font-medium leading-none ${textColor}`}>
                 {date.getDate()}
               </div>
               {currentMonth && data.count > 0 && (
-                <div className={`text-[5.5px] font-medium ${textColor}`}>
+                <div className={`text-[5px] font-medium leading-none mt-[1px] ${textColor}`}>
                   {data.count}
                 </div>
               )}
