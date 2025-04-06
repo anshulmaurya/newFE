@@ -315,7 +315,7 @@ export default function MonthlyHeatmap() {
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-0.5 flex-1">
+      <div className="grid grid-cols-7 gap-0.5 flex-1 h-28 max-h-28">
         {monthDates.map(({ date, currentMonth }, index) => {
           const dateStr = formatDate(date);
           const data = currentMonth && monthlyData[dateStr] 
@@ -332,11 +332,11 @@ export default function MonthlyHeatmap() {
               className={`aspect-square ${bgColor} ${opacity} rounded flex flex-col items-center justify-center transition-colors`}
               title={currentMonth ? `${dateStr}: ${data.count} problems solved` : dateStr}
             >
-              <div className={`text-[9px] font-medium ${textColor}`}>
+              <div className={`text-[8px] font-medium ${textColor}`}>
                 {date.getDate()}
               </div>
               {currentMonth && data.count > 0 && (
-                <div className={`text-[7px] font-medium ${textColor}`}>
+                <div className={`text-[6px] font-semibold ${textColor}`}>
                   {data.count}
                 </div>
               )}
