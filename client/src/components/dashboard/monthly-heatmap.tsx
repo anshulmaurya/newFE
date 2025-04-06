@@ -267,56 +267,55 @@ export default function MonthlyHeatmap() {
   // Loading state
   if (isLoading || isLoadingActivity) {
     return (
-      <div className="p-4 h-full">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-white text-sm font-medium">Monthly Activity</h3>
-          <span className="text-sm text-gray-300">Loading data...</span>
+      <div className="p-2 h-full">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-white text-xs font-medium">Monthly Activity</h3>
+          <span className="text-xs text-gray-300">Loading data...</span>
         </div>
-        <Skeleton className="h-32 w-full bg-[rgb(35,35,40)]" />
-        <Skeleton className="h-3 w-3/4 mt-2 bg-[rgb(35,35,40)]" />
+        <Skeleton className="h-20 w-full bg-[rgb(35,35,40)]" />
       </div>
     );
   }
 
   return (
-    <div className="p-4 h-full flex flex-col">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-white text-sm font-medium">Monthly Activity</h3>
+    <div className="p-2 h-full flex flex-col">
+      <div className="flex justify-between items-center mb-1.5">
+        <h3 className="text-white text-xs font-medium">Monthly Activity</h3>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1.5">
           <button 
             onClick={goToPreviousMonth}
             disabled={isPrevDisabled}
-            className={`p-1 rounded-full hover:bg-gray-800 ${isPrevDisabled ? 'text-gray-600' : 'text-gray-300 hover:text-white'}`}
+            className={`p-0.5 rounded-full hover:bg-gray-800 ${isPrevDisabled ? 'text-gray-600' : 'text-gray-300 hover:text-white'}`}
             title="Previous month"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-3.5 w-3.5" />
           </button>
           
-          <span className="text-sm text-gray-200 font-medium">
+          <span className="text-xs text-gray-200 font-medium">
             {getMonthName(currentMonth)} {currentMonth.getFullYear()}
           </span>
           
           <button 
             onClick={goToNextMonth}
             disabled={isNextDisabled}
-            className={`p-1 rounded-full hover:bg-gray-800 ${isNextDisabled ? 'text-gray-600' : 'text-gray-300 hover:text-white'}`}
+            className={`p-0.5 rounded-full hover:bg-gray-800 ${isNextDisabled ? 'text-gray-600' : 'text-gray-300 hover:text-white'}`}
             title="Next month"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
 
-      <div className="mb-2 grid grid-cols-7 gap-1">
+      <div className="mb-1 grid grid-cols-7 gap-0.5">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
-          <div key={index} className="text-xs text-gray-400 text-center font-medium">
+          <div key={index} className="text-[8px] text-gray-400 text-center font-medium">
             {day}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-1 flex-1">
+      <div className="grid grid-cols-7 gap-0.5 flex-1">
         {monthDates.map(({ date, currentMonth }, index) => {
           const dateStr = formatDate(date);
           const data = currentMonth && monthlyData[dateStr] 
@@ -330,14 +329,14 @@ export default function MonthlyHeatmap() {
           return (
             <div
               key={index}
-              className={`p-0.5 aspect-square ${bgColor} ${opacity} rounded-md flex flex-col items-center justify-center transition-colors`}
+              className={`aspect-square ${bgColor} ${opacity} rounded flex flex-col items-center justify-center transition-colors`}
               title={currentMonth ? `${dateStr}: ${data.count} problems solved` : dateStr}
             >
-              <div className={`text-[10px] font-medium ${textColor}`}>
+              <div className={`text-[9px] font-medium ${textColor}`}>
                 {date.getDate()}
               </div>
               {currentMonth && data.count > 0 && (
-                <div className={`text-[8px] font-medium ${textColor}`}>
+                <div className={`text-[7px] font-medium ${textColor}`}>
                   {data.count}
                 </div>
               )}
@@ -347,8 +346,8 @@ export default function MonthlyHeatmap() {
       </div>
       
       {mostActiveDate && (
-        <div className="mt-3 text-xs text-gray-400 flex items-center">
-          <Calendar className="h-3.5 w-3.5 mr-1.5" />
+        <div className="mt-1 text-[8px] text-gray-400 flex items-center">
+          <Calendar className="h-2.5 w-2.5 mr-1" />
           Most active: {new Date(mostActiveDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} with {monthlyData[mostActiveDate].count} problems
         </div>
       )}

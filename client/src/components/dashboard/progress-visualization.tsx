@@ -123,13 +123,13 @@ export default function ProgressVisualization() {
   // Loading state
   if (isLoading || isLoadingStats || isLoadingStreak) {
     return (
-      <div className="p-4 h-full flex flex-col">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-white text-sm font-medium">Your Progress</h3>
-          <span className="text-sm text-gray-300">Loading data...</span>
+      <div className="p-2 h-full flex flex-col">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-white text-xs font-medium">Your Progress</h3>
+          <span className="text-xs text-gray-300">Loading data...</span>
         </div>
         <div className="flex-1">
-          <Skeleton className="h-32 w-full bg-[rgb(35,35,40)]" />
+          <Skeleton className="h-20 w-full bg-[rgb(35,35,40)]" />
         </div>
       </div>
     );
@@ -142,79 +142,77 @@ export default function ProgressVisualization() {
   
   // Calculate normalized heights (percentage of max)
   const getHeight = (value: number) => {
-    return Math.max((value / maxValue) * 140, 8); // Increased height for better visibility
+    return Math.max((value / maxValue) * 80, 6); // Reduced height to save vertical space
   };
   
   return (
-    <div className="p-4 h-full flex flex-col">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-white text-sm font-medium">Your Progress</h3>
-        <span className="text-sm text-gray-300">
+    <div className="p-2 h-full flex flex-col">
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-white text-xs font-medium">Your Progress</h3>
+        <span className="text-xs text-gray-300">
           Total Solved: {progress.total}
         </span>
       </div>
       
-      <div className="flex flex-1 items-center space-x-6">
+      <div className="flex flex-1 items-center space-x-4">
         {/* Problems by difficulty visualization */}
-        <div className="flex-1 flex items-end justify-center space-x-4 pr-6 border-r border-gray-800 h-full">
+        <div className="flex-1 flex items-end justify-center space-x-2 pr-4 border-r border-gray-800 h-full">
           {/* Easy problems */}
           <div className="flex flex-col items-center">
             <div 
-              className="bg-[rgb(63,147,96)] rounded-t-sm w-10" 
+              className="bg-[rgb(63,147,96)] rounded-t-sm w-8" 
               style={{ height: `${getHeight(progress.easy)}px` }}
             ></div>
-            <div className="text-gray-300 text-xs mt-1 font-medium">{progress.easy}</div>
-            <div className="text-gray-400 text-[10px]">EASY</div>
+            <div className="text-gray-300 text-xs mt-0.5 font-medium">{progress.easy}</div>
+            <div className="text-gray-400 text-[8px]">EASY</div>
           </div>
           
           {/* Medium problems */}
           <div className="flex flex-col items-center">
             <div 
-              className="bg-[rgb(236,180,14)] rounded-t-sm w-10" 
+              className="bg-[rgb(236,180,14)] rounded-t-sm w-8" 
               style={{ height: `${getHeight(progress.medium)}px` }}
             ></div>
-            <div className="text-gray-300 text-xs mt-1 font-medium">{progress.medium}</div>
-            <div className="text-gray-400 text-[10px]">MEDIUM</div>
+            <div className="text-gray-300 text-xs mt-0.5 font-medium">{progress.medium}</div>
+            <div className="text-gray-400 text-[8px]">MED</div>
           </div>
           
           {/* Hard problems */}
           <div className="flex flex-col items-center">
             <div 
-              className="bg-[rgb(224,89,89)] rounded-t-sm w-10" 
+              className="bg-[rgb(224,89,89)] rounded-t-sm w-8" 
               style={{ height: `${getHeight(progress.hard)}px` }}
             ></div>
-            <div className="text-gray-300 text-xs mt-1 font-medium">{progress.hard}</div>
-            <div className="text-gray-400 text-[10px]">HARD</div>
+            <div className="text-gray-300 text-xs mt-0.5 font-medium">{progress.hard}</div>
+            <div className="text-gray-400 text-[8px]">HARD</div>
           </div>
         </div>
         
         {/* Streak visualization */}
-        <div className="flex-1 flex flex-col justify-center space-y-4">
+        <div className="flex-1 flex flex-col justify-center space-y-2">
           {/* Current streak */}
           <div className="flex items-center">
-            <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-[rgb(255,138,76)] to-[rgb(255,56,100)] mr-3">
-              <Flame className="h-5 w-5 text-white" />
+            <div className="flex items-center justify-center h-8 w-8 rounded-full bg-gradient-to-br from-[rgb(255,138,76)] to-[rgb(255,56,100)] mr-2">
+              <Flame className="h-4 w-4 text-white" />
             </div>
             <div>
-              <div className="text-[10px] text-gray-400">CURRENT STREAK</div>
-              <div className="text-xl font-semibold text-white">{stats?.currentStreak || 0} days</div>
+              <div className="text-[8px] text-gray-400">CURRENT STREAK</div>
+              <div className="text-base font-semibold text-white">{stats?.currentStreak || 0} days</div>
             </div>
           </div>
           
           {/* Longest streak */}
           <div className="flex items-center">
-            <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-[rgb(147,197,253)] to-[rgb(59,130,246)] mr-3">
-              <Trophy className="h-5 w-5 text-white" />
+            <div className="flex items-center justify-center h-8 w-8 rounded-full bg-gradient-to-br from-[rgb(147,197,253)] to-[rgb(59,130,246)] mr-2">
+              <Trophy className="h-4 w-4 text-white" />
             </div>
             <div>
-              <div className="text-[10px] text-gray-400">LONGEST STREAK</div>
-              <div className="text-xl font-semibold text-white">{stats?.longestStreak || 0} days</div>
+              <div className="text-[8px] text-gray-400">LONGEST STREAK</div>
+              <div className="text-base font-semibold text-white">{stats?.longestStreak || 0} days</div>
             </div>
           </div>
         </div>
       </div>
-      
-      {/* Removed completion rate info text as requested */}
     </div>
   );
 }
