@@ -475,13 +475,18 @@ export default function Dashboard() {
         <div className="pl-4 pr-4 relative">
           <div className="flex">
             <div className="flex-1 space-y-4 w-full">
-              {/* Weekly Activity Heatmap */}
-              <WeeklyHeatmap />
-              
-              {/* Add Stats Components */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <ProblemsSolvedStats />
-                <StreakCard />
+              {/* Progress tracking section - single row layout */}
+              <div className="flex flex-col md:flex-row gap-4">
+                {/* Weekly Activity Heatmap - 2/3 width */}
+                <div className="w-full md:w-2/3">
+                  <WeeklyHeatmap />
+                </div>
+                
+                {/* Stats Components stacked - 1/3 width */}
+                <div className="w-full md:w-1/3 flex flex-col gap-4">
+                  <ProblemsSolvedStats />
+                  <StreakCard />
+                </div>
               </div>
 
               {/* Selected Bundle Details */}
