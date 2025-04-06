@@ -329,15 +329,19 @@ export default function MonthlyHeatmap() {
           return (
             <div
               key={index}
-              className={`h-8 w-full ${bgColor} ${opacity} rounded-[2px] flex flex-col items-center justify-center transition-colors`}
+              className={`h-8 w-full ${bgColor} ${opacity} rounded-[2px] flex items-center justify-center relative transition-colors`}
               title={currentMonth ? `${dateStr}: ${data.count} problems solved` : dateStr}
             >
-              <div className={`text-[10px] leading-none flex items-baseline space-x-0.5 ${textColor}`}>
-                <span className="font-medium">{date.getDate()}</span>
-                {currentMonth && data.count > 0 && (
-                  <span className="text-[7px] opacity-80 font-normal">{data.count}p</span>
-                )}
+              <div className={`text-[11px] leading-none font-medium ${textColor}`}>
+                {date.getDate()}
               </div>
+              {currentMonth && data.count > 0 && (
+                <div className="absolute top-0.5 right-0.5 rounded-full w-3.5 h-3.5 flex items-center justify-center bg-zinc-900 bg-opacity-60">
+                  <span className="text-[7px] font-semibold text-white">
+                    {data.count}
+                  </span>
+                </div>
+              )}
             </div>
           );
         })}
