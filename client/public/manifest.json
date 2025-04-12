@@ -6,6 +6,17 @@
       "src": "/favicon.png",
       "sizes": "192x192",
       "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "180x180",
+      "purpose": "apple-touch-icon",
+      "type": "image/png"
     }
   ],
   "theme_color": "#d6fb41",
