@@ -101,16 +101,16 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
             className="flex items-center gap-2 focus:outline-none"
             aria-label="Go to home page"
           >
-            <div className="h-7 w-7 flex items-center justify-center mr-1">
-              <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className="h-6 w-8 flex items-center justify-center mr-1.5">
+              <svg width="26" height="22" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 {/* Left curly brace */}
-                <path d="M30 20C24 20 20 25 20 32V40C20 46 16 48 10 48C16 48 20 50 20 56V64C20 71 24 76 30 76" stroke="#d6fb41" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M25 30C19 30 15 35 15 40V45C15 51 11 53 5 53C11 53 15 55 15 61V66C15 71 19 76 25 76" stroke="#d6fb41" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
                 
                 {/* Right curly brace */}
-                <path d="M70 20C76 20 80 25 80 32V40C80 46 84 48 90 48C84 48 80 50 80 56V64C80 71 76 76 70 76" stroke="#d6fb41" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M75 30C81 30 85 35 85 40V45C85 51 89 53 95 53C89 53 85 55 85 61V66C85 71 81 76 75 76" stroke="#d6fb41" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
                 
                 {/* Forward slash in the middle */}
-                <path d="M50 20L50 80" stroke="#d6fb41" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" transform="rotate(15 50 50)"/>
+                <path d="M50 30L50 76" stroke="#d6fb41" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" transform="rotate(15 50 50)"/>
               </svg>
             </div>
             <h1 className="font-display font-bold text-xl tracking-tight">
