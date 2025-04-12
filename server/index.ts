@@ -25,42 +25,66 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Special handling for root-level favicon files and Safari's apple-touch-icon.png
+// Special handling for root-level files for Safari compatibility
+// Safari is very specific about its favicon handling
 app.use(express.static(path.join(__dirname, "../public"), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.png')) {
       res.setHeader('Content-Type', 'image/png');
-      res.setHeader('Cache-Control', 'public, max-age=86400');
+      // Aggressive cache-busting headers for Safari
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    } else if (filePath.endsWith('.ico')) {
+      res.setHeader('Content-Type', 'image/x-icon');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
   }
 }));
 
-// Custom middleware for favicon handling with proper MIME types for Safari compatibility
-app.get('/apple-touch-icon.png', (req, res) => {
-  const iconPath = path.join(__dirname, "../public/apple-touch-icon.png");
-  if (fs.existsSync(iconPath)) {
+// High-priority Safari-specific apple-touch-icon.png handler
+app.get([
+  '/apple-touch-icon.png',
+  '/apple-touch-icon-precomposed.png',
+  '/apple-touch-icon-*.png',
+  '/favicon-*.png'
+], (req, res, next) => {
+  // First check if the file exists in the root public directory (preferred by Safari)
+  const publicPath = path.join(__dirname, "../public");
+  const requestedFile = req.path;
+  const filePath = path.join(publicPath, requestedFile);
+  
+  if (fs.existsSync(filePath)) {
+    // Safari-specific aggressive non-caching headers
     res.set({
       'Content-Type': 'image/png',
-      'Cache-Control': 'public, max-age=86400',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
       'X-Content-Type-Options': 'nosniff'
     });
-    res.sendFile(iconPath);
-  } else {
-    res.status(404).end();
+    
+    return res.sendFile(filePath);
   }
+  
+  next();
 });
 
-// Catch-all for other icon variants
+// Catch-all for standard favicon files
 app.get([
-  "/favicon.ico", 
-  "/favicon.png", 
-  "/favicon.svg", 
-  "/manifest.json", 
-  "/apple-touch-icon-precomposed.png",
-  "/apple-touch-icon-*.png"
+  "/favicon.ico",
+  "/favicon.svg",
+  "/manifest.json"
 ], (req, res, next) => {
-  const clientPublicPath = path.join(__dirname, "../client/public");
-  const filePath = path.join(clientPublicPath, req.path);
+  // First check public directory
+  const publicPath = path.join(__dirname, "../public");
+  let filePath = path.join(publicPath, req.path);
+  
+  if (!fs.existsSync(filePath)) {
+    // Then check client/public as fallback
+    const clientPublicPath = path.join(__dirname, "../client/public");
+    filePath = path.join(clientPublicPath, req.path);
+  }
   
   if (fs.existsSync(filePath)) {
     const ext = path.extname(req.path).toLowerCase();
@@ -81,9 +105,12 @@ app.get([
         break;
     }
     
+    // Use cache-busting headers to ensure Safari refreshes the favicon
     res.set({
       "Content-Type": contentType,
-      "Cache-Control": "public, max-age=86400",
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0",
       "X-Content-Type-Options": "nosniff"
     });
     
