@@ -2,6 +2,8 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { setupWebSockets } from "./socket";
+import path from "path";
+import fs from "fs";
 
 // Set NODE_ENV based on Replit environment
 // If we're running on dspcoder.replit.app, assume it's production
@@ -16,6 +18,48 @@ if (process.env.REPL_SLUG === 'dspcoder' && process.env.REPL_OWNER) {
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Custom middleware for favicon handling with proper MIME types for Safari compatibility
+app.get(["/favicon.ico", "/favicon.png", "/favicon.svg", "/manifest.json", "/apple-touch-icon.png"], (req, res, next) => {
+  const clientPublicPath = path.join(__dirname, "../client/public");
+  const filePath = path.join(clientPublicPath, req.path);
+  
+  // Handle request for apple-touch-icon.png by redirecting to favicon.png
+  if (req.path === "/apple-touch-icon.png") {
+    const faviconPath = path.join(clientPublicPath, "/favicon.png");
+    if (fs.existsSync(faviconPath)) {
+      res.set("Content-Type", "image/png");
+      res.set("Cache-Control", "public, max-age=86400"); // 24 hours
+      return res.sendFile(faviconPath);
+    }
+  }
+  
+  if (fs.existsSync(filePath)) {
+    const ext = path.extname(req.path).toLowerCase();
+    let contentType = "text/plain";
+    
+    switch (ext) {
+      case ".ico":
+        contentType = "image/x-icon";
+        break;
+      case ".png":
+        contentType = "image/png";
+        break;
+      case ".svg":
+        contentType = "image/svg+xml";
+        break;
+      case ".json":
+        contentType = "application/json";
+        break;
+    }
+    
+    res.set("Content-Type", contentType);
+    res.set("Cache-Control", "public, max-age=86400"); // 24 hours
+    res.sendFile(filePath);
+  } else {
+    next();
+  }
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
