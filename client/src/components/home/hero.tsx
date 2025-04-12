@@ -703,12 +703,6 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="relative mb-1">
-              <div className="inline-block bg-purple-600/80 text-white text-xs font-medium px-3 py-1 rounded-full shadow-md">
-                <span className="inline-block animate-pulse bg-red-500 rounded-full w-2 h-2 mr-2"></span>
-                Platform is still in development and will be live soon
-              </div>
-            </div>
             <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight text-left">
               <motion.div
                 className="relative"
@@ -843,6 +837,18 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
                   </svg>
                 </div>
                 <span>Expert-Reviewed</span>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              className="mt-6 flex justify-center xl:justify-start"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
+              <div className="inline-flex items-center gap-2 py-1.5 px-3 bg-[rgb(214,251,65)]/10 border border-[rgb(214,251,65)]/30 rounded-md">
+                <span className="w-2 h-2 bg-[rgb(214,251,65)] rounded-full animate-pulse"></span>
+                <span className="text-[rgb(214,251,65)] text-sm font-medium">Platform is still in development and will be live soon</span>
               </div>
             </motion.div>
           </motion.div>
