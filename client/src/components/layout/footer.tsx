@@ -11,14 +11,17 @@ export default function Footer() {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <div className="h-8 w-8 flex items-center justify-center">
-                <svg width="30" height="30" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M15 10C15 7.23858 17.2386 5 20 5H35C37.7614 5 40 7.23858 40 10C40 12.7614 37.7614 15 35 15H20C17.2386 15 15 12.7614 15 10Z" fill="#d6fb41"/>
-                  <path d="M85 90C85 92.7614 82.7614 95 80 95H65C62.2386 95 60 92.7614 60 90C60 87.2386 62.2386 85 65 85H80C82.7614 85 85 87.2386 85 90Z" fill="#d6fb41"/>
-                  <path d="M10 25C10 22.2386 12.2386 20 15 20C17.7614 20 20 22.2386 20 25V75C20 77.7614 17.7614 80 15 80C12.2386 80 10 77.7614 10 75V25Z" fill="#d6fb41"/>
-                  <path d="M90 75C90 77.7614 87.7614 80 85 80C82.2386 80 80 77.7614 80 75V25C80 22.2386 82.2386 20 85 20C87.7614 20 90 22.2386 90 25V75Z" fill="#d6fb41"/>
-                  <path d="M34 50C34 47.2386 36.2386 45 39 45C41.7614 45 44 47.2386 44 50C44 52.7614 41.7614 55 39 55C36.2386 55 34 52.7614 34 50Z" fill="#d6fb41"/>
-                  <path d="M75 50C75 40 65 30 50 30" stroke="#d6fb41" strokeWidth="5" strokeLinecap="round"/>
-                  <path d="M25 50C25 60 35 70 50 70" stroke="#d6fb41" strokeWidth="5" strokeLinecap="round"/>
+                <svg version="1.1" viewBox="0.0 0.0 100.0 100.0" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" width="30" height="30">
+                  <clipPath id="p.0">
+                    <path d="m0 0l100.0 0l0 100.0l-100.0 0l0 -100.0z" clipRule="nonzero"/>
+                  </clipPath>
+                  <g clipPath="url(#p.0)">
+                    <path fill="#000000" fillOpacity="0.0" d="m0 0l100.0 0l0 100.0l-100.0 0z" fillRule="evenodd"/>
+                    <path fill="#000000" fillOpacity="0.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
+                    <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" strokeDasharray="8.0,3.0,1.0,3.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
+                    <path fill="#000000" fillOpacity="0.0" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
+                    <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
+                  </g>
                 </svg>
               </div>
               <h2 className="font-display font-bold text-lg tracking-tight">
