@@ -703,6 +703,12 @@ export default function Hero({ onScrollToFeatures }: HeroProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
+            <div className="relative mb-1">
+              <div className="inline-block bg-purple-600/80 text-white text-xs font-medium px-3 py-1 rounded-full shadow-md">
+                <span className="inline-block animate-pulse bg-red-500 rounded-full w-2 h-2 mr-2"></span>
+                Platform is still in development and will be live soon
+              </div>
+            </div>
             <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight text-left">
               <motion.div
                 className="relative"
