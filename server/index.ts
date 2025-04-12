@@ -25,42 +25,41 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Special handling for root-level favicon files and Safari's apple-touch-icon.png
+app.use(express.static(path.join(__dirname, "../public"), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.png')) {
+      res.setHeader('Content-Type', 'image/png');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    }
+  }
+}));
+
 // Custom middleware for favicon handling with proper MIME types for Safari compatibility
+app.get('/apple-touch-icon.png', (req, res) => {
+  const iconPath = path.join(__dirname, "../public/apple-touch-icon.png");
+  if (fs.existsSync(iconPath)) {
+    res.set({
+      'Content-Type': 'image/png',
+      'Cache-Control': 'public, max-age=86400',
+      'X-Content-Type-Options': 'nosniff'
+    });
+    res.sendFile(iconPath);
+  } else {
+    res.status(404).end();
+  }
+});
+
+// Catch-all for other icon variants
 app.get([
   "/favicon.ico", 
   "/favicon.png", 
   "/favicon.svg", 
   "/manifest.json", 
-  "/apple-touch-icon.png",
   "/apple-touch-icon-precomposed.png",
-  "/apple-touch-icon-120x120.png",
-  "/apple-touch-icon-120x120-precomposed.png",
-  "/apple-touch-icon-152x152.png",
-  "/apple-touch-icon-152x152-precomposed.png",
-  "/apple-touch-icon-167x167.png",
-  "/apple-touch-icon-167x167-precomposed.png",
-  "/apple-touch-icon-180x180.png",
-  "/apple-touch-icon-180x180-precomposed.png"
+  "/apple-touch-icon-*.png"
 ], (req, res, next) => {
   const clientPublicPath = path.join(__dirname, "../client/public");
-  
-  // Map any Apple touch icon requests to our apple-touch-icon.png
-  if (req.path.includes("apple-touch-icon")) {
-    const appleIconPath = path.join(clientPublicPath, "/apple-touch-icon.png");
-    
-    if (fs.existsSync(appleIconPath)) {
-      // Set proper headers for Safari
-      res.set({
-        "Content-Type": "image/png",
-        "Cache-Control": "public, max-age=86400", // 24 hours
-        "X-Content-Type-Options": "nosniff"
-      });
-      
-      return res.sendFile(appleIconPath);
-    }
-  }
-  
-  // Handle regular favicon files
   const filePath = path.join(clientPublicPath, req.path);
   
   if (fs.existsSync(filePath)) {
@@ -82,10 +81,9 @@ app.get([
         break;
     }
     
-    // Set proper headers with strong caching
     res.set({
       "Content-Type": contentType,
-      "Cache-Control": "public, max-age=86400", // 24 hours
+      "Cache-Control": "public, max-age=86400",
       "X-Content-Type-Options": "nosniff"
     });
     
