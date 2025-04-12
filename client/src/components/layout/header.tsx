@@ -102,17 +102,18 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
             aria-label="Go to home page"
           >
             <div className="h-5 w-5 flex items-center justify-center">
-              <svg version="1.1" viewBox="0.0 0.0 100.0 100.0" fill="none" stroke="none" strokeLinecap="square" strokeMiterlimit="10" width="20" height="20">
-                <clipPath id="p.0">
-                  <path d="m0 0l100.0 0l0 100.0l-100.0 0l0 -100.0z" clipRule="nonzero"/>
-                </clipPath>
-                <g clipPath="url(#p.0)">
-                  <path fill="#000000" fillOpacity="0.0" d="m0 0l100.0 0l0 100.0l-100.0 0z" fillRule="evenodd"/>
-                  <path fill="#000000" fillOpacity="0.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
-                  <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" strokeDasharray="8.0,3.0,1.0,3.0" d="m10.431272 9.52057l75.28909 0l0 80.957825l-75.28909 0z" fillRule="evenodd"/>
-                  <path fill="#000000" fillOpacity="0.0" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
-                  <path stroke="#d6fb41" strokeWidth="2.0" strokeLinejoin="round" strokeLinecap="butt" d="m21.61335 20.375572l52.90764 0l0 59.226234l-52.90764 0z" fillRule="evenodd"/>
-                </g>
+              <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Rounded square border */}
+                <rect x="5" y="5" width="90" height="90" rx="15" stroke="#d6fb41" strokeWidth="4" fill="none"/>
+                
+                {/* Left curly brace */}
+                <path d="M30 25C26 25 24 28 24 32V40C24 44 22 46 18 46C22 46 24 48 24 52V60C24 64 26 67 30 67" stroke="#d6fb41" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                
+                {/* Right curly brace */}
+                <path d="M70 25C74 25 76 28 76 32V40C76 44 78 46 82 46C78 46 76 48 76 52V60C76 64 74 67 70 67" stroke="#d6fb41" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                
+                {/* Forward slash in the middle */}
+                <path d="M50 25L50 75" stroke="#d6fb41" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" transform="rotate(15 50 50)"/>
               </svg>
             </div>
             <h1 className="font-display font-bold text-xl tracking-tight">
