@@ -4,6 +4,12 @@ import { setupVite, serveStatic, log } from "./vite";
 import { setupWebSockets } from "./socket";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+// Fix for __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Set NODE_ENV based on Replit environment
 // If we're running on dspcoder.replit.app, assume it's production
@@ -20,19 +26,42 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Custom middleware for favicon handling with proper MIME types for Safari compatibility
-app.get(["/favicon.ico", "/favicon.png", "/favicon.svg", "/manifest.json", "/apple-touch-icon.png"], (req, res, next) => {
+app.get([
+  "/favicon.ico", 
+  "/favicon.png", 
+  "/favicon.svg", 
+  "/manifest.json", 
+  "/apple-touch-icon.png",
+  "/apple-touch-icon-precomposed.png",
+  "/apple-touch-icon-120x120.png",
+  "/apple-touch-icon-120x120-precomposed.png",
+  "/apple-touch-icon-152x152.png",
+  "/apple-touch-icon-152x152-precomposed.png",
+  "/apple-touch-icon-167x167.png",
+  "/apple-touch-icon-167x167-precomposed.png",
+  "/apple-touch-icon-180x180.png",
+  "/apple-touch-icon-180x180-precomposed.png"
+], (req, res, next) => {
   const clientPublicPath = path.join(__dirname, "../client/public");
-  const filePath = path.join(clientPublicPath, req.path);
   
-  // Handle request for apple-touch-icon.png by redirecting to favicon.png
-  if (req.path === "/apple-touch-icon.png") {
-    const faviconPath = path.join(clientPublicPath, "/favicon.png");
-    if (fs.existsSync(faviconPath)) {
-      res.set("Content-Type", "image/png");
-      res.set("Cache-Control", "public, max-age=86400"); // 24 hours
-      return res.sendFile(faviconPath);
+  // Map any Apple touch icon requests to our apple-touch-icon.png
+  if (req.path.includes("apple-touch-icon")) {
+    const appleIconPath = path.join(clientPublicPath, "/apple-touch-icon.png");
+    
+    if (fs.existsSync(appleIconPath)) {
+      // Set proper headers for Safari
+      res.set({
+        "Content-Type": "image/png",
+        "Cache-Control": "public, max-age=86400", // 24 hours
+        "X-Content-Type-Options": "nosniff"
+      });
+      
+      return res.sendFile(appleIconPath);
     }
   }
+  
+  // Handle regular favicon files
+  const filePath = path.join(clientPublicPath, req.path);
   
   if (fs.existsSync(filePath)) {
     const ext = path.extname(req.path).toLowerCase();
@@ -53,12 +82,17 @@ app.get(["/favicon.ico", "/favicon.png", "/favicon.svg", "/manifest.json", "/app
         break;
     }
     
-    res.set("Content-Type", contentType);
-    res.set("Cache-Control", "public, max-age=86400"); // 24 hours
-    res.sendFile(filePath);
-  } else {
-    next();
+    // Set proper headers with strong caching
+    res.set({
+      "Content-Type": contentType,
+      "Cache-Control": "public, max-age=86400", // 24 hours
+      "X-Content-Type-Options": "nosniff"
+    });
+    
+    return res.sendFile(filePath);
   }
+  
+  next();
 });
 
 app.use((req, res, next) => {
