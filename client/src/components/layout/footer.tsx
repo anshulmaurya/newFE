@@ -12,14 +12,35 @@ export default function Footer() {
             <div className="flex items-center space-x-2 mb-4">
               <div className="h-7 w-9 flex items-center justify-center mr-1.5">
                 <svg width="32" height="26" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Left curly brace */}
-                  <path d="M25 30C19 30 15 35 15 40V45C15 51 11 53 5 53C11 53 15 55 15 61V66C15 71 19 76 25 76" stroke="#d6fb41" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
+                  {/* Background rounded square with subtle glow */}
+                  <rect x="5" y="5" width="90" height="90" rx="18" fill="rgba(33, 33, 36, 0.7)" />
                   
-                  {/* Right curly brace */}
-                  <path d="M75 30C81 30 85 35 85 40V45C85 51 89 53 95 53C89 53 85 55 85 61V66C85 71 81 76 75 76" stroke="#d6fb41" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
+                  {/* Glow effect for braces */}
+                  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="2.5" result="blur" />
+                    <feFlood floodColor="#d6fb41" floodOpacity="0.6" result="glow" />
+                    <feComposite in="glow" in2="blur" operator="in" result="coloredBlur" />
+                    <feComposite in="SourceGraphic" in2="coloredBlur" operator="over" />
+                  </filter>
                   
-                  {/* Forward slash in the middle */}
-                  <path d="M50 30L50 76" stroke="white" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" transform="rotate(15 50 50)"/>
+                  {/* Left curly brace with animation and glow */}
+                  <path d="M25 30C19 30 15 35 15 40V45C15 51 11 53 5 53C11 53 15 55 15 61V66C15 71 19 76 25 76" 
+                    stroke="#d6fb41" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" filter="url(#glow)" />
+                  
+                  {/* Right curly brace with animation and glow */}
+                  <path d="M75 30C81 30 85 35 85 40V45C85 51 89 53 95 53C89 53 85 55 85 61V66C85 71 81 76 75 76" 
+                    stroke="#d6fb41" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" filter="url(#glow)" />
+                  
+                  {/* Forward slash in the middle with white glow */}
+                  <filter id="whiteGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="1.5" result="blur" />
+                    <feFlood floodColor="white" floodOpacity="0.7" result="glow" />
+                    <feComposite in="glow" in2="blur" operator="in" result="coloredBlur" />
+                    <feComposite in="SourceGraphic" in2="coloredBlur" operator="over" />
+                  </filter>
+                  
+                  <path d="M50 30L50 76" stroke="white" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" 
+                    transform="rotate(15 50 50)" filter="url(#whiteGlow)" />
                 </svg>
               </div>
               <h2 className="font-display font-bold text-lg tracking-tight">
