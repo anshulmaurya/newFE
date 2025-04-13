@@ -13,31 +13,22 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <!-- Enhanced favicons with Safari-specific optimizations -->
-    <!-- Standard favicon - first priority for most browsers -->
-    <link rel="icon" href="/favicon.svg?v=7" type="image/svg+xml">
+    <!-- Simple favicon setup optimized for Safari -->
+    <!-- Safari-specific favicon tags -->
+    <link rel="apple-touch-icon" href="/favicon-192.png?v=9">
+    <link rel="shortcut icon" href="/favicon.ico?v=9">
     
-    <!-- Apple Touch Icon - for iOS/Safari -->
-    <link rel="apple-touch-icon" href="/favicon-192.png?v=7">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-192.png?v=7">
+    <!-- These formats are in order of Safari preference -->
+    <link rel="icon" href="/favicon.ico?v=9">
+    <link rel="icon" sizes="any" href="/favicon.svg?v=9" type="image/svg+xml">
+    <link rel="icon" href="/favicon-32.png?v=9" type="image/png" sizes="32x32">
+    <link rel="icon" href="/favicon-16.png?v=9" type="image/png" sizes="16x16">
     
-    <!-- Safari specifically needs multiple PNG sizes -->
-    <link rel="icon" href="/favicon-32.png?v=7" type="image/png" sizes="32x32">
-    <link rel="icon" href="/favicon-16.png?v=7" type="image/png" sizes="16x16">
-    <link rel="icon" href="/favicon-96.png?v=7" type="image/png" sizes="96x96">
-    <link rel="icon" href="/favicon-128.png?v=7" type="image/png" sizes="128x128">
-    <link rel="icon" href="/favicon-192.png?v=7" type="image/png" sizes="192x192">
+    <!-- Safari-specific mask icon with branding color -->
+    <link rel="mask-icon" href="/safari-pinned-tab.svg?v=9" color="#d6fb41">
     
-    <!-- Fallback for older browsers -->
-    <link rel="shortcut icon" href="/favicon-32.png?v=7" type="image/png">
-    
-    <!-- Web application manifest -->
-    <link rel="manifest" href="/manifest.json?v=7">
-    
-    <!-- Safari specific meta tags -->
-    <link rel="mask-icon" href="/safari-pinned-tab.svg?v=7" color="#d6fb41">
-    <meta name="apple-mobile-web-app-title" content="dspcoder">
-    <meta name="application-name" content="dspcoder">
+    <!-- Web app manifest -->
+    <link rel="manifest" href="/manifest.json?v=8">
     <meta name="description" content="Advanced embedded systems learning platform that transforms technical interview preparation into an engaging, interactive experience through intelligent code simulation and personalized learning technologies." />
   </head>
   <body>

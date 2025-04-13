@@ -1,14 +1,13 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="240.000000pt" height="240.000000pt" viewBox="0 0 240.000000 240.000000" preserveAspectRatio="xMidYMid meet">
-  <!-- This is a special SVG format specifically for Safari pinned tabs -->
-  <g transform="translate(0.000000,240.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
-    <!-- Left curly brace shape -->
-    <path d="M600 1200 c-100 0 -200 -100 -200 -200 v-100 c0 -120 -80 -160 -200 -160 
-             c120 0 200 -40 200 -160 v-100 c0 -100 100 -200 200 -200" />
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="100pt" height="100pt" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+  <g transform="translate(0.000000,100.000000) scale(0.050000,-0.050000)" fill="#d6fb41" stroke="none">
+    <!-- Left curly brace -->
+    <path d="M500 1200 c-120 0 -200 -100 -200 -200 v-100 c0 -120 -80 -160 -200 -160 
+             c120 0 200 -40 200 -160 v-100 c0 -100 80 -200 200 -200" />
     
-    <!-- Right curly brace shape -->
-    <path d="M1800 1200 c100 0 200 -100 200 -200 v-100 c0 -120 80 -160 200 -160 
-             c-120 0 -200 -40 -200 -160 v-100 c0 -100 -100 -200 -200 -200" />
+    <!-- Right curly brace -->
+    <path d="M1500 1200 c120 0 200 -100 200 -200 v-100 c0 -120 80 -160 200 -160 
+             c-120 0 -200 -40 -200 -160 v-100 c0 -100 -80 -200 -200 -200" />
   </g>
 </svg>
