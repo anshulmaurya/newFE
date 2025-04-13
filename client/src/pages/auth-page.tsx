@@ -100,7 +100,7 @@ export default function AuthPage() {
           {/* Login button */}
           <div className="px-8 pb-6">
             <Button 
-              className="w-full py-6 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] border border-[rgb(224,255,75)] transition-all shadow-[0_0_10px_rgba(214,251,65,0.4)] hover:shadow-[0_0_15px_rgba(214,251,65,0.6)] text-black"
+              className="w-full py-6 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] border border-[rgb(224,255,75)] transition-all text-black"
               onClick={handleGitHubLogin}
             >
               <SiGithub className="mr-2 h-5 w-5" />

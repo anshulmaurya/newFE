@@ -103,21 +103,13 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           >
             <div className="h-7 w-9 flex items-center justify-center mr-1.5">
               <svg width="32" height="26" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Enhanced glow effect for braces */}
-                <filter id="enhancedGlow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="4" result="blur" />
-                  <feFlood floodColor="#d6fb41" floodOpacity="0.9" result="glow" />
-                  <feComposite in="glow" in2="blur" operator="in" result="coloredBlur" />
-                  <feComposite in="SourceGraphic" in2="coloredBlur" operator="over" />
-                </filter>
-                
-                {/* Left curly brace with enhanced glow */}
+                {/* Left curly brace without glow */}
                 <path d="M25 30C19 30 15 35 15 40V45C15 51 11 53 5 53C11 53 15 55 15 61V66C15 71 19 76 25 76" 
-                  stroke="#d6fb41" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" filter="url(#enhancedGlow)" />
+                  stroke="#d6fb41" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
                 
-                {/* Right curly brace with enhanced glow */}
+                {/* Right curly brace without glow */}
                 <path d="M75 30C81 30 85 35 85 40V45C85 51 89 53 95 53C89 53 85 55 85 61V66C85 71 81 76 75 76" 
-                  stroke="#d6fb41" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" filter="url(#enhancedGlow)" />
+                  stroke="#d6fb41" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <h1 className="font-display font-bold text-xl tracking-tight">
@@ -286,7 +278,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           ) : (
             <a 
               href="/api/auth/github" 
-              className="ml-2 px-3 py-1 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-xs text-black font-bold transition-all inline-flex items-center gap-1 shadow-[0_0_10px_rgba(214,251,65,0.4)] hover:shadow-[0_0_15px_rgba(214,251,65,0.6)] border border-[rgb(224,255,75)]"
+              className="ml-2 px-3 py-1 bg-[rgb(214,251,65)] hover:bg-[rgb(194,231,45)] rounded-md text-xs text-black font-bold transition-all inline-flex items-center gap-1 border border-[rgb(224,255,75)]"
             >
               <SiGithub className="h-3 w-3" />
               Login with GitHub
@@ -399,7 +391,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           ) : (
             <a 
               href="/api/auth/github"
-              className="text-black py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[rgb(214,251,65)] shadow-[0_0_10px_rgba(214,251,65,0.4)] border border-[rgb(224,255,75)] text-sm"
+              className="text-black py-1.5 font-bold flex items-center gap-2 mt-1 rounded-md bg-[rgb(214,251,65)] border border-[rgb(224,255,75)] text-sm"
             >
               <SiGithub className="h-4 w-4 ml-2" />
               <span className="ml-1 mr-2">Login with GitHub</span>
