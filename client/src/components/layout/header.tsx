@@ -110,7 +110,7 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                 <path d="M75 30C81 30 85 35 85 40V45C85 51 89 53 95 53C89 53 85 55 85 61V66C85 71 81 76 75 76" stroke="#d6fb41" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
                 
                 {/* Forward slash in the middle */}
-                <path d="M50 30L50 76" stroke="#d6fb41" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" transform="rotate(15 50 50)"/>
+                <path d="M50 30L50 76" stroke="white" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" transform="rotate(15 50 50)"/>
               </svg>
             </div>
             <h1 className="font-display font-bold text-xl tracking-tight">
