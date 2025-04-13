@@ -4,10 +4,10 @@
   <circle cx="96" cy="96" r="96" fill="#181818"/>
   
   <!-- Left curly brace without glow -->
-  <path d="M48 60C36 60 28 70 28 80V90C28 102 20 106 8 106C20 106 28 110 28 122V132C28 142 36 152 48 152" 
+  <path d="M50 58C38 58 30 68 30 78V88C30 100 22 104 10 104C22 104 30 108 30 120V130C30 140 38 150 50 150" 
     stroke="#d6fb41" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
   
   <!-- Right curly brace without glow -->
-  <path d="M144 60C156 60 164 70 164 80V90C164 102 172 106 184 106C172 106 164 110 164 122V132C164 142 156 152 144 152" 
+  <path d="M142 58C154 58 162 68 162 78V88C162 100 170 104 182 104C170 104 162 108 162 120V130C162 140 154 150 142 150" 
     stroke="#d6fb41" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
 </svg>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <!-- Black background -->
-  <rect width="32" height="32" fill="#181818"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <!-- Black circular background -->
+  <circle cx="96" cy="96" r="96" fill="#181818"/>
   
   <!-- Left curly brace without glow -->
-  <path d="M8 9.6C6.08 9.6 4.8 11.2 4.8 12.8V14.4C4.8 16.32 3.52 16.96 1.6 16.96C3.52 16.96 4.8 17.6 4.8 19.52V21.12C4.8 22.72 6.08 24.32 8 24.32" 
-    stroke="#d6fb41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M50 58C38 58 30 68 30 78V88C30 100 22 104 10 104C22 104 30 108 30 120V130C30 140 38 150 50 150" 
+    stroke="#d6fb41" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
   
   <!-- Right curly brace without glow -->
-  <path d="M24 9.6C25.92 9.6 27.2 11.2 27.2 12.8V14.4C27.2 16.32 28.48 16.96 30.4 16.96C28.48 16.96 27.2 17.6 27.2 19.52V21.12C27.2 22.72 25.92 24.32 24 24.32" 
-    stroke="#d6fb41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M142 58C154 58 162 68 162 78V88C162 100 170 104 182 104C170 104 162 108 162 120V130C162 140 154 150 142 150" 
+    stroke="#d6fb41" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
 </svg>
