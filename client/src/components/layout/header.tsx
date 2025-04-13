@@ -102,14 +102,14 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
             aria-label="Go to home page"
           >
             <div className="h-7 w-9 flex items-center justify-center mr-1.5">
-              <svg width="32" height="26" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Left curly brace without glow */}
+              <svg width="32" height="26" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display: 'block'}}>
+                {/* Left curly brace - improved for Safari compatibility */}
                 <path d="M25 30C19 30 15 35 15 40V45C15 51 11 53 5 53C11 53 15 55 15 61V66C15 71 19 76 25 76" 
-                  stroke="#d6fb41" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+                  stroke="#d6fb41" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                 
-                {/* Right curly brace without glow */}
+                {/* Right curly brace - improved for Safari compatibility */}
                 <path d="M75 30C81 30 85 35 85 40V45C85 51 89 53 95 53C89 53 85 55 85 61V66C85 71 81 76 75 76" 
-                  stroke="#d6fb41" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+                  stroke="#d6fb41" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
               </svg>
             </div>
             <h1 className="font-display font-bold text-xl tracking-tight">
