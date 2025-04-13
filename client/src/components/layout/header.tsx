@@ -103,30 +103,23 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           >
             <div className="h-7 w-9 flex items-center justify-center mr-1.5">
               <svg width="32" height="26" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Sharper glow effect for braces */}
+                {/* Simple glow effect for braces */}
                 <defs>
-                  <filter id="sharpGlow" x="-10%" y="-10%" width="120%" height="120%">
-                    <feFlood floodColor="#d6fb41" floodOpacity="0.7" result="glow" />
-                    <feComposite in="glow" in2="SourceAlpha" operator="out" result="outline" />
-                    <feGaussianBlur in="outline" stdDeviation="2" result="blurredOutline" />
-                    <feComposite in="SourceGraphic" in2="blurredOutline" operator="over" />
+                  <filter id="simpleGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="1.5" result="blur" />
+                    <feFlood floodColor="#d6fb41" floodOpacity="0.5" result="glow" />
+                    <feComposite in="glow" in2="blur" operator="in" result="coloredBlur" />
+                    <feComposite in="SourceGraphic" in2="coloredBlur" operator="over" />
                   </filter>
                 </defs>
                 
-                {/* Left curly brace with sharper definition */}
+                {/* Left curly brace with glow */}
                 <path d="M25 30C19 30 15 35 15 40V45C15 51 11 53 5 53C11 53 15 55 15 61V66C15 71 19 76 25 76" 
-                  stroke="#d6fb41" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+                  stroke="#d6fb41" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" filter="url(#simpleGlow)" />
                 
-                {/* Right curly brace with sharper definition */}
+                {/* Right curly brace with glow */}
                 <path d="M75 30C81 30 85 35 85 40V45C85 51 89 53 95 53C89 53 85 55 85 61V66C85 71 81 76 75 76" 
-                  stroke="#d6fb41" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-                
-                {/* Glowing overlay for the braces */}
-                <path d="M25 30C19 30 15 35 15 40V45C15 51 11 53 5 53C11 53 15 55 15 61V66C15 71 19 76 25 76" 
-                  stroke="#d6fb41" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" filter="url(#sharpGlow)" />
-                
-                <path d="M75 30C81 30 85 35 85 40V45C85 51 89 53 95 53C89 53 85 55 85 61V66C85 71 81 76 75 76" 
-                  stroke="#d6fb41" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" filter="url(#sharpGlow)" />
+                  stroke="#d6fb41" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" filter="url(#simpleGlow)" />
               </svg>
             </div>
             <h1 className="font-display font-bold text-xl tracking-tight">
