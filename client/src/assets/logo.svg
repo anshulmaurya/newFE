@@ -1,35 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background rounded square with subtle glow -->
-  <rect x="5" y="5" width="90" height="90" rx="18" fill="rgba(33, 33, 36, 0.7)" />
-  
-  <!-- Glow effect for braces -->
-  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-    <feGaussianBlur stdDeviation="2.5" result="blur" />
-    <feFlood flood-color="#d6fb41" flood-opacity="0.6" result="glow" />
+  <!-- Enhanced glow effect for braces -->
+  <filter id="enhancedGlow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="4" result="blur" />
+    <feFlood flood-color="#d6fb41" flood-opacity="0.9" result="glow" />
     <feComposite in="glow" in2="blur" operator="in" result="coloredBlur" />
     <feComposite in="SourceGraphic" in2="coloredBlur" operator="over" />
   </filter>
   
-  <!-- Left curly brace with animation and glow -->
+  <!-- Left curly brace with enhanced glow -->
   <path d="M25 30C19 30 15 35 15 40V45C15 51 11 53 5 53C11 53 15 55 15 61V66C15 71 19 76 25 76" 
-    stroke="#d6fb41" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+    stroke="#d6fb41" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#enhancedGlow)">
   </path>
   
-  <!-- Right curly brace with animation and glow -->
+  <!-- Right curly brace with enhanced glow -->
   <path d="M75 30C81 30 85 35 85 40V45C85 51 89 53 95 53C89 53 85 55 85 61V66C85 71 81 76 75 76" 
-    stroke="#d6fb41" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
-  </path>
-  
-  <!-- Forward slash in the middle with white glow -->
-  <filter id="whiteGlow" x="-50%" y="-50%" width="200%" height="200%">
-    <feGaussianBlur stdDeviation="1.5" result="blur" />
-    <feFlood flood-color="white" flood-opacity="0.7" result="glow" />
-    <feComposite in="glow" in2="blur" operator="in" result="coloredBlur" />
-    <feComposite in="SourceGraphic" in2="coloredBlur" operator="over" />
-  </filter>
-  
-  <path d="M50 30L50 76" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" 
-    transform="rotate(15 50 50)" filter="url(#whiteGlow)">
+    stroke="#d6fb41" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#enhancedGlow)">
   </path>
 </svg>
