@@ -1,5 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" fill="#000"/>
-  <path stroke="#d6fb41" stroke-width="5" fill="none" d="M21.6 20.4h52.9v59.2H21.6z"/>
-  <path stroke="#d6fb41" stroke-width="3" fill="none" stroke-dasharray="8,3,1,3" d="M10.4 9.5h75.3v81H10.4z"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Black background -->
+  <rect width="100" height="100" fill="#181818"/>
+  
+  <!-- Left curly brace without glow -->
+  <path d="M25 30C19 30 15 35 15 40V45C15 51 11 53 5 53C11 53 15 55 15 61V66C15 71 19 76 25 76" 
+    stroke="#d6fb41" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Right curly brace without glow -->
+  <path d="M75 30C81 30 85 35 85 40V45C85 51 89 53 95 53C89 53 85 55 85 61V66C85 71 81 76 75 76" 
+    stroke="#d6fb41" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
 </svg>
