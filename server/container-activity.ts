@@ -11,8 +11,9 @@ import { log } from './vite';
 // Map to track container activity - username -> last activity timestamp
 const containerActivity: Map<string, Date> = new Map();
 
-// Default inactivity timeout (30 minutes in milliseconds)
-const DEFAULT_INACTIVITY_TIMEOUT = 30 * 60 * 1000;
+// Default inactivity timeout (5 minutes in milliseconds for testing purposes)
+// Note: In production, this would typically be set to 30 minutes or more
+const DEFAULT_INACTIVITY_TIMEOUT = 5 * 60 * 1000;
 
 // The current inactivity timeout setting
 let containerInactivityTimeout = DEFAULT_INACTIVITY_TIMEOUT;
@@ -88,9 +89,10 @@ function startCleanupInterval(): void {
     clearInterval(cleanupIntervalId);
   }
   
-  // Schedule cleanup check every 5 minutes
-  cleanupIntervalId = setInterval(checkInactiveContainers, 5 * 60 * 1000);
-  log('Container cleanup interval started');
+  // For testing purposes, we'll check more frequently (every 1 minute)
+  // In production, this would typically be 5-15 minutes
+  cleanupIntervalId = setInterval(checkInactiveContainers, 60 * 1000);
+  log('Container cleanup interval started (checking every minute for testing)');
 }
 
 /**
@@ -123,10 +125,21 @@ function cleanupContainer(username: string): void {
   // Remove from tracking
   containerActivity.delete(username);
   
-  // In a real implementation, we'd call an API to delete the container
-  // For now, we'll just log the action
+  // Log the cleanup action
   log(`Container for user ${username} has been cleaned up due to inactivity`);
   
-  // TODO: Add actual container deletion logic here
-  // This would involve calling a container management API
+  try {
+    // In a production environment, you would call an API to delete the container
+    // This could be implemented by importing deleteUserContainer from container-api.ts:
+    // 
+    // import { deleteUserContainer } from './container-api';
+    // deleteUserContainer(username).catch(err => {
+    //   log(`Error deleting container for ${username}: ${err.message}`);
+    // });
+    //
+    // For this test implementation, we're just logging the action
+    log(`Container deletion would be triggered here for user: ${username}`);
+  } catch (error) {
+    log(`Error in container cleanup for ${username}: ${error}`);
+  }
 }
