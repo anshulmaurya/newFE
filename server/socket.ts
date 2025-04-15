@@ -36,15 +36,41 @@ const containerStatusMap = new Map<string, {
 
 // Global WebSocketServer instance to prevent multiple initialization
 let wsInstance: WebSocketServer | null = null;
+let pingInterval: NodeJS.Timeout | null = null;
+
+// Helper function to close existing WebSocket server
+export function closeWebSocketServer() {
+  if (wsInstance) {
+    console.log('Closing existing WebSocket server...');
+    if (pingInterval) {
+      clearInterval(pingInterval);
+      pingInterval = null;
+    }
+    
+    // Terminate all clients
+    wsInstance.clients.forEach((client: any) => {
+      try {
+        client.terminate();
+      } catch (e) {
+        console.error('Error terminating client:', e);
+      }
+    });
+    
+    // Close the server
+    wsInstance.close(() => {
+      console.log('WebSocket server closed successfully');
+      wsInstance = null;
+    });
+  }
+}
 
 export function setupWebSockets(server: Server, app: Express) {
-  // Only create a new WebSocketServer instance if one doesn't already exist
-  if (!wsInstance) {
-    wsInstance = new WebSocketServer({ server, path: '/ws' });
-    console.log('WebSocket server initialized');
-  } else {
-    console.log('WebSocket server already initialized, reusing existing instance');
-  }
+  // Close any existing WebSocket server before creating a new one
+  closeWebSocketServer();
+  
+  // Create a new WebSocketServer instance
+  wsInstance = new WebSocketServer({ server, path: '/ws', clientTracking: true });
+  console.log('WebSocket server initialized');
   
   const wss = wsInstance;
   
@@ -105,7 +131,7 @@ export function setupWebSockets(server: Server, app: Express) {
   });
   
   // Ping clients every 30 seconds to keep connections alive
-  const interval = setInterval(() => {
+  pingInterval = setInterval(() => {
     wss.clients.forEach((wsRaw: any) => {
       const ws = wsRaw as WebSocketClient;
       if (ws.isAlive === false) return ws.terminate();
@@ -116,7 +142,10 @@ export function setupWebSockets(server: Server, app: Express) {
   }, 30000);
   
   wss.on('close', () => {
-    clearInterval(interval);
+    if (pingInterval) {
+      clearInterval(pingInterval);
+      pingInterval = null;
+    }
   });
   
   return {

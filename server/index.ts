@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { setupWebSockets } from "./socket";
+import { setupWebSockets, closeWebSocketServer } from "./socket";
 
 // Set NODE_ENV based on Replit environment
 // If we're running on dspcoder.replit.app, assume it's production
@@ -77,12 +77,64 @@ app.use((req, res, next) => {
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port} with WebSocket support`);
-  });
+  const startServer = (port: number = 5000, retries: number = 3) => {
+    try {
+      server.listen({
+        port,
+        host: "0.0.0.0",
+        reusePort: true,
+      }, () => {
+        log(`serving on port ${port} with WebSocket support`);
+      });
+
+      // Add error handler for the server
+      server.on('error', (err: any) => {
+        if (err.code === 'EADDRINUSE' && retries > 0) {
+          console.log(`Port ${port} is in use, attempting to close existing connections...`);
+          
+          // First close the WebSocket server
+          closeWebSocketServer();
+          
+          // Try to recover by finding a new port
+          const newPort = port + 1;
+          console.log(`Attempting to use port ${newPort} instead...`);
+          
+          // Short delay to allow connections to close
+          setTimeout(() => {
+            startServer(newPort, retries - 1);
+          }, 1000);
+        } else {
+          console.error('Server error:', err);
+          closeWebSocketServer();
+          process.exit(1);
+        }
+      });
+    } catch (error) {
+      console.error('Failed to start server:', error);
+      process.exit(1);
+    }
+  };
+
+  // Start the server
+  startServer();
+  
+  // Handle graceful shutdown
+  const handleShutdown = () => {
+    console.log('Shutting down server gracefully...');
+    closeWebSocketServer();
+    server.close(() => {
+      console.log('Server closed successfully');
+      process.exit(0);
+    });
+    
+    // Force exit after timeout
+    setTimeout(() => {
+      console.error('Forced shutdown after timeout');
+      process.exit(1);
+    }, 5000);
+  };
+  
+  // Listen for termination signals
+  process.on('SIGTERM', handleShutdown);
+  process.on('SIGINT', handleShutdown);
 })();
