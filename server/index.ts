@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { setupWebSockets, closeWebSocketServer } from "./socket";
+import { setContainerInactivityTimeout } from "./container-activity";
 
 // Set NODE_ENV based on Replit environment
 // If we're running on dspcoder.replit.app, assume it's production
@@ -56,6 +57,9 @@ app.use((req, res, next) => {
   // Make the update function available globally via the app object
   (app as any).updateContainerStatus = updateContainerStatus;
   console.log('WebSocket server and container status updates initialized');
+  
+  // Initialize container activity tracking with inactivity timeout (30 minutes)
+  setContainerInactivityTimeout(30 * 60 * 1000); // 30 minutes in milliseconds
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

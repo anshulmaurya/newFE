@@ -8,7 +8,7 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User as UserType, insertUserStatsSchema } from "@shared/schema";
 import { createUserContainer, deleteUserContainer } from "./container-api";
-import { registerUserContainer, unregisterUserContainer, recordContainerHeartbeat } from './container-activity';
+import { registerContainer, unregisterContainer, recordContainerHeartbeat } from './container-activity';
 import cookie from "cookie";
 
 // Create type declaration for Express User
@@ -265,7 +265,7 @@ export function setupAuth(app: Express) {
               console.log(`Background container creation completed in ${duration}ms`);
               
               // Register the container for activity tracking
-              registerUserContainer(req.user!.username);
+              registerContainer(req.user!.username);
             })
             .catch(err => console.error("Background container creation error:", err));
         }, 0);
@@ -288,7 +288,7 @@ export function setupAuth(app: Express) {
         createUserContainer(req.user!.username)
           .then(() => {
             // Register the container for activity tracking
-            registerUserContainer(req.user!.username);
+            registerContainer(req.user!.username);
           })
           .catch(err => console.error("Background container creation error:", err));
       }, 0);
@@ -314,7 +314,7 @@ export function setupAuth(app: Express) {
         console.log(`Starting background container deletion for user: ${username}`);
         
         // Unregister from container activity tracking
-        unregisterUserContainer(username);
+        unregisterContainer(username);
         
         setTimeout(() => {
           const deletionStartTime = Date.now();
@@ -375,7 +375,7 @@ export function setupAuth(app: Express) {
           createUserContainer(user.username)
             .then(() => {
               // Register the container for activity tracking
-              registerUserContainer(user.username);
+              registerContainer(user.username);
             })
             .catch(err => console.error("Background container creation error:", err));
         }, 0);

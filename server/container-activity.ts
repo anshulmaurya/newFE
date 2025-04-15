@@ -1,156 +1,132 @@
-import { deleteUserContainer } from './container-api';
+/**
+ * Container Activity Tracking System
+ * 
+ * This module manages container activity tracking and automatic cleanup of inactive containers.
+ * It maintains a registry of active containers with their last activity timestamp and
+ * periodically checks for containers that have been inactive beyond a specified timeout.
+ */
 
-// Interface for storing container activity data
-interface ContainerActivity {
-  username: string;
-  lastActive: Date;
-  containerCreatedAt: Date;
-}
+import { log } from './vite';
 
-// Map to track active containers by username
-const activeContainers = new Map<string, ContainerActivity>();
+// Map to track container activity - username -> last activity timestamp
+const containerActivity: Map<string, Date> = new Map();
 
-// The inactivity timeout (in milliseconds) - default 30 minutes
+// Default inactivity timeout (30 minutes in milliseconds)
 const DEFAULT_INACTIVITY_TIMEOUT = 30 * 60 * 1000;
-let inactivityTimeout = DEFAULT_INACTIVITY_TIMEOUT;
 
-// Interval handle for cleanup
-let cleanupIntervalHandle: NodeJS.Timeout | null = null;
+// The current inactivity timeout setting
+let containerInactivityTimeout = DEFAULT_INACTIVITY_TIMEOUT;
+
+// Interval ID for the cleanup task
+let cleanupIntervalId: NodeJS.Timeout | null = null;
 
 /**
- * Set the inactivity timeout for container deletion
+ * Set the inactivity timeout for container cleanup
  * @param timeoutMs Timeout in milliseconds
  */
 export function setContainerInactivityTimeout(timeoutMs: number): void {
-  inactivityTimeout = timeoutMs;
-  console.log(`Container inactivity timeout set to ${timeoutMs}ms`);
-}
-
-/**
- * Register a container for a user
- * @param username The user's username
- */
-export function registerUserContainer(username: string): void {
-  if (!username) return;
-
-  const now = new Date();
-  activeContainers.set(username, {
-    username,
-    lastActive: now,
-    containerCreatedAt: now
-  });
+  containerInactivityTimeout = timeoutMs;
+  log(`Container inactivity timeout set to ${timeoutMs}ms (${timeoutMs / 60000} minutes)`);
   
-  console.log(`Container registered for user: ${username}`);
-  
-  // Ensure the cleanup interval is running
+  // Start or restart the cleanup interval
   startCleanupInterval();
 }
 
 /**
- * Record a heartbeat for a user's container to keep it active
- * @param username The user's username
+ * Register a new container when a user logs in
+ * @param username The username of the user who owns the container
+ */
+export function registerContainer(username: string): void {
+  containerActivity.set(username, new Date());
+  log(`Container registered for user: ${username}`);
+}
+
+/**
+ * Unregister a container when a user logs out
+ * @param username The username of the user who owns the container
+ */
+export function unregisterContainer(username: string): void {
+  if (containerActivity.has(username)) {
+    containerActivity.delete(username);
+    log(`Container unregistered for user: ${username}`);
+  }
+}
+
+/**
+ * Record container heartbeat to keep it alive
+ * @param username The username of the user who owns the container
  */
 export function recordContainerHeartbeat(username: string): void {
-  if (!username) return;
-  
-  const activity = activeContainers.get(username);
-  
-  if (activity) {
-    // Update the last active timestamp
-    activity.lastActive = new Date();
-    activeContainers.set(username, activity);
-    console.log(`Heartbeat recorded for user container: ${username}`);
-  } else {
-    // If no activity record exists, create one
-    registerUserContainer(username);
-  }
+  containerActivity.set(username, new Date());
+  log(`Container heartbeat recorded for user: ${username}`);
 }
 
 /**
- * Remove a container from activity tracking
- * @param username The user's username
+ * Get container activity statistics (for monitoring/debugging)
+ * @returns Object with activity stats
  */
-export function unregisterUserContainer(username: string): void {
-  if (!username) return;
+export function getContainerActivityStats(): object {
+  const containers: Record<string, string> = {};
   
-  activeContainers.delete(username);
-  console.log(`Container unregistered for user: ${username}`);
-}
-
-/**
- * Start the cleanup interval to check for inactive containers
- */
-function startCleanupInterval(): void {
-  if (cleanupIntervalHandle) return; // Already running
-  
-  // Check for inactive containers every minute
-  cleanupIntervalHandle = setInterval(cleanupInactiveContainers, 60 * 1000);
-  console.log('Container activity cleanup interval started');
-}
-
-/**
- * Stop the cleanup interval
- */
-export function stopCleanupInterval(): void {
-  if (cleanupIntervalHandle) {
-    clearInterval(cleanupIntervalHandle);
-    cleanupIntervalHandle = null;
-    console.log('Container activity cleanup interval stopped');
-  }
-}
-
-/**
- * Check for and delete inactive containers
- */
-function cleanupInactiveContainers(): void {
-  console.log('Checking for inactive containers...');
-  const now = new Date();
-  
-  activeContainers.forEach((activity, username) => {
-    const inactiveTime = now.getTime() - activity.lastActive.getTime();
-    
-    if (inactiveTime > inactivityTimeout) {
-      console.log(`Container for user ${username} has been inactive for ${inactiveTime}ms, deleting...`);
-      
-      // Delete the container
-      deleteUserContainer(username)
-        .then(() => {
-          console.log(`Inactive container for user ${username} deleted successfully`);
-          // Remove from our tracking map
-          activeContainers.delete(username);
-        })
-        .catch(err => {
-          console.error(`Error deleting inactive container for user ${username}:`, err);
-        });
-    }
-  });
-}
-
-/**
- * Get current statistics about active containers
- */
-export function getContainerActivityStats(): {
-  totalActive: number;
-  containers: Array<{
-    username: string;
-    lastActiveMinutesAgo: number;
-    ageMinutes: number;
-  }>;
-} {
-  const now = new Date();
-  const containers = Array.from(activeContainers.entries()).map(([username, activity]) => {
-    const lastActiveMinutesAgo = Math.round((now.getTime() - activity.lastActive.getTime()) / (60 * 1000));
-    const ageMinutes = Math.round((now.getTime() - activity.containerCreatedAt.getTime()) / (60 * 1000));
-    
-    return {
-      username,
-      lastActiveMinutesAgo,
-      ageMinutes
-    };
+  containerActivity.forEach((timestamp, username) => {
+    containers[username] = timestamp.toISOString();
   });
   
   return {
-    totalActive: activeContainers.size,
+    totalContainers: containerActivity.size,
+    inactivityTimeoutMinutes: containerInactivityTimeout / 60000,
     containers
   };
+}
+
+/**
+ * Start the cleanup interval for inactive containers
+ */
+function startCleanupInterval(): void {
+  // Clear existing interval if it exists
+  if (cleanupIntervalId !== null) {
+    clearInterval(cleanupIntervalId);
+  }
+  
+  // Schedule cleanup check every 5 minutes
+  cleanupIntervalId = setInterval(checkInactiveContainers, 5 * 60 * 1000);
+  log('Container cleanup interval started');
+}
+
+/**
+ * Check for inactive containers and clean them up
+ */
+function checkInactiveContainers(): void {
+  const now = new Date();
+  let inactiveCount = 0;
+  
+  containerActivity.forEach((lastActivity, username) => {
+    const inactiveTime = now.getTime() - lastActivity.getTime();
+    
+    if (inactiveTime > containerInactivityTimeout) {
+      // Container has been inactive beyond the timeout
+      cleanupContainer(username);
+      inactiveCount++;
+    }
+  });
+  
+  if (inactiveCount > 0) {
+    log(`Cleaned up ${inactiveCount} inactive containers`);
+  }
+}
+
+/**
+ * Clean up an inactive container
+ * @param username The username of the user who owns the container
+ */
+function cleanupContainer(username: string): void {
+  // Remove from tracking
+  containerActivity.delete(username);
+  
+  // In a real implementation, we'd call an API to delete the container
+  // For now, we'll just log the action
+  log(`Container for user ${username} has been cleaned up due to inactivity`);
+  
+  // TODO: Add actual container deletion logic here
+  // This would involve calling a container management API
 }

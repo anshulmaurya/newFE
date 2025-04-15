@@ -7,6 +7,7 @@ import {
 import { insertUserSchema, User } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { startContainerHeartbeat, stopContainerHeartbeat } from "../lib/container-heartbeat";
 
 type AuthContextType = {
   user: User | null;
@@ -40,6 +41,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setDarkMode(storedTheme === 'dark');
     }
   }, []);
+  
+  // Manage container heartbeat based on authentication status
+  useEffect(() => {
+    if (user) {
+      // User is authenticated, start sending heartbeats to keep container alive
+      console.log('Starting container heartbeat for authenticated user');
+      startContainerHeartbeat();
+    } else {
+      // User is not authenticated, stop sending heartbeats
+      stopContainerHeartbeat();
+    }
+    
+    // Clean up on component unmount
+    return () => {
+      stopContainerHeartbeat();
+    };
+  }, [user]);
 
   // Toggle dark mode function
   const toggleDarkMode = () => {
@@ -50,6 +68,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
+      // Stop sending heartbeats before logging out
+      stopContainerHeartbeat();
       await apiRequest("POST", "/api/logout");
     },
     onSuccess: () => {
