@@ -14,6 +14,7 @@ import { setupUserCodebase } from "./container-api";
 import { connectToMongoDB, getProblemsCollection } from "./mongodb";
 import crypto from 'crypto';
 import { setupWebSockets } from "./socket";
+import { recordContainerHeartbeat, getContainerActivityStats } from './container-activity';
 
 // Container session storage for secure access
 interface ContainerSession {
@@ -85,6 +86,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       status: "ok", 
       timestamp: new Date().toISOString() 
     });
+  });
+  
+  // Container heartbeat endpoint - records user activity to keep container alive
+  apiRouter.post("/container-heartbeat", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId || !req.user?.username) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      // Record the heartbeat for the user's container
+      recordContainerHeartbeat(req.user.username);
+      
+      return res.status(200).json({ 
+        status: "ok", 
+        message: "Heartbeat recorded",
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error recording container heartbeat:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
+  });
+  
+  // Admin endpoint to get container activity stats (for debugging)
+  apiRouter.get("/container-stats", async (req: Request, res: Response) => {
+    try {
+      // In production, this would be protected by admin authentication
+      const stats = getContainerActivityStats();
+      return res.status(200).json(stats);
+    } catch (error) {
+      console.error("Error fetching container stats:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
   });
 
   // External API proxy for problems (accessible without authentication)

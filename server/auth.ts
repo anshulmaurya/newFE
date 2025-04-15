@@ -8,6 +8,7 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User as UserType, insertUserStatsSchema } from "@shared/schema";
 import { createUserContainer, deleteUserContainer } from "./container-api";
+import { registerUserContainer, unregisterUserContainer, recordContainerHeartbeat } from './container-activity';
 import cookie from "cookie";
 
 // Create type declaration for Express User
@@ -262,6 +263,9 @@ export function setupAuth(app: Express) {
             .then(() => {
               const duration = Date.now() - startTime;
               console.log(`Background container creation completed in ${duration}ms`);
+              
+              // Register the container for activity tracking
+              registerUserContainer(req.user!.username);
             })
             .catch(err => console.error("Background container creation error:", err));
         }, 0);
@@ -282,6 +286,10 @@ export function setupAuth(app: Express) {
       // Run container creation asynchronously without blocking the login flow
       setTimeout(() => {
         createUserContainer(req.user!.username)
+          .then(() => {
+            // Register the container for activity tracking
+            registerUserContainer(req.user!.username);
+          })
           .catch(err => console.error("Background container creation error:", err));
       }, 0);
     }
@@ -304,6 +312,10 @@ export function setupAuth(app: Express) {
       // Delete container for the user in the background if they have a username
       if (username) {
         console.log(`Starting background container deletion for user: ${username}`);
+        
+        // Unregister from container activity tracking
+        unregisterUserContainer(username);
+        
         setTimeout(() => {
           const deletionStartTime = Date.now();
           console.log(`Background container deletion started at: ${new Date().toISOString()}`);
@@ -361,6 +373,10 @@ export function setupAuth(app: Express) {
         // Create container for the new user in the background
         setTimeout(() => {
           createUserContainer(user.username)
+            .then(() => {
+              // Register the container for activity tracking
+              registerUserContainer(user.username);
+            })
             .catch(err => console.error("Background container creation error:", err));
         }, 0);
       });
