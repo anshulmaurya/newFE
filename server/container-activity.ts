@@ -7,6 +7,7 @@
  */
 
 import { log } from './vite';
+import { deleteUserContainer } from './container-api';
 
 // Map to track container activity - username -> last activity timestamp
 const containerActivity: Map<string, Date> = new Map();
@@ -129,17 +130,19 @@ function cleanupContainer(username: string): void {
   log(`Container for user ${username} has been cleaned up due to inactivity`);
   
   try {
-    // In a production environment, you would call an API to delete the container
-    // This could be implemented by importing deleteUserContainer from container-api.ts:
-    // 
-    // import { deleteUserContainer } from './container-api';
-    // deleteUserContainer(username).catch(err => {
-    //   log(`Error deleting container for ${username}: ${err.message}`);
-    // });
-    //
-    // For this test implementation, we're just logging the action
-    log(`Container deletion would be triggered here for user: ${username}`);
+    // Call the Azure API to actually delete the container
+    // This uses the same API function as the logout process
+    log(`Calling Azure API to delete container for user: ${username}`);
+    deleteUserContainer(username)
+      .then(() => {
+        log(`Successfully called container deletion API for ${username}`);
+      })
+      .catch(err => {
+        log(`Error calling container deletion API for ${username}: ${err.message}`);
+      });
   } catch (error) {
-    log(`Error in container cleanup for ${username}: ${error}`);
+    // Log any synchronous errors in the try block
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    log(`Error in container cleanup for ${username}: ${errorMessage}`);
   }
 }
