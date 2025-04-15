@@ -12,9 +12,8 @@ import { deleteUserContainer } from './container-api';
 // Map to track container activity - username -> last activity timestamp
 const containerActivity: Map<string, Date> = new Map();
 
-// Default inactivity timeout (5 minutes in milliseconds for testing purposes)
-// Note: In production, this would typically be set to 30 minutes or more
-const DEFAULT_INACTIVITY_TIMEOUT = 5 * 60 * 1000;
+// Default inactivity timeout (30 minutes in milliseconds for production use)
+const DEFAULT_INACTIVITY_TIMEOUT = 30 * 60 * 1000;
 
 // The current inactivity timeout setting
 let containerInactivityTimeout = DEFAULT_INACTIVITY_TIMEOUT;
@@ -99,10 +98,10 @@ function startCleanupInterval(): void {
     clearInterval(cleanupIntervalId);
   }
   
-  // For testing purposes, we'll check more frequently (every 1 minute)
-  // In production, this would typically be 5-15 minutes
-  cleanupIntervalId = setInterval(checkInactiveContainers, 60 * 1000);
-  log('Container cleanup interval started (checking every minute for testing)');
+  // Run cleanup check every 5 minutes in production
+  const fiveMinutes = 5 * 60 * 1000;
+  cleanupIntervalId = setInterval(checkInactiveContainers, fiveMinutes);
+  log(`Container cleanup interval started (checking every 5 minutes)`);
 }
 
 /**

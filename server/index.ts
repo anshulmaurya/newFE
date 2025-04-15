@@ -58,8 +58,8 @@ app.use((req, res, next) => {
   (app as any).updateContainerStatus = updateContainerStatus;
   console.log('WebSocket server and container status updates initialized');
   
-  // Initialize container activity tracking with inactivity timeout (5 minutes for testing)
-  setContainerInactivityTimeout(5 * 60 * 1000); // 5 minutes in milliseconds for testing
+  // Initialize container activity tracking with inactivity timeout (30 minutes for production)
+  setContainerInactivityTimeout(30 * 60 * 1000); // 30 minutes in milliseconds
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
