@@ -82,6 +82,15 @@ export function getContainerActivityStats(): object {
 }
 
 /**
+ * Check if a container is registered in the activity tracker
+ * @param username The username to check
+ * @returns boolean indicating if the container is registered
+ */
+export function isContainerRegistered(username: string): boolean {
+  return containerActivity.has(username);
+}
+
+/**
  * Start the cleanup interval for inactive containers
  */
 function startCleanupInterval(): void {

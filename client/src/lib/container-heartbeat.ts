@@ -131,6 +131,21 @@ function handleUserActivity(): void {
   }
 }
 
+// Variable to store the current problem ID and language
+let currentProblemId: string | null = null;
+let currentLanguage: string = 'c';
+
+/**
+ * Set the current problem context for heartbeats
+ * @param problemId ID of the current problem being worked on
+ * @param language Programming language being used (default: 'c')
+ */
+export function setCurrentProblemContext(problemId: string, language: string = 'c'): void {
+  currentProblemId = problemId;
+  currentLanguage = language;
+  console.log(`Set current problem context: problemId=${problemId}, language=${language}`);
+}
+
 /**
  * Send a single heartbeat signal to the server
  */
@@ -138,17 +153,44 @@ async function sendHeartbeat(): Promise<void> {
   try {
     lastHeartbeatTime = Date.now();
     
+    // Prepare payload with problem context if available
+    const payload: Record<string, any> = {};
+    if (currentProblemId) {
+      payload.problemId = currentProblemId;
+      payload.lang = currentLanguage;
+    }
+    
     const response = await fetch('/api/container-heartbeat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
+      body: JSON.stringify(payload),
       credentials: 'include' // Include cookies for authentication
     });
     
     if (response.ok) {
-      // Update last successful heartbeat time
-      console.log('Container heartbeat sent successfully');
+      // Parse the response
+      const data = await response.json();
+      
+      // Check if container was recreated and needs to be reloaded
+      if (data.status === 'container_recreated') {
+        console.log('Container was recreated due to inactivity, reloading page');
+        
+        // If we have container info with a URL, reload to that URL
+        if (data.containerInfo && data.containerInfo.containerUrl) {
+          // Store the URL to redirect to after reload
+          localStorage.setItem('container_redirect_url', data.containerInfo.containerUrl);
+          
+          // Reload the page - the app should handle redirect on reload
+          window.location.reload();
+        } else {
+          console.warn('Container recreated but no URL provided, continuing without reload');
+        }
+      } else {
+        // Normal heartbeat
+        console.log('Container heartbeat sent successfully');
+      }
     } else {
       // If unauthorized or other error, stop sending heartbeats
       if (response.status === 401) {

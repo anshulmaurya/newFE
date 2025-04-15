@@ -10,11 +10,15 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 import { setupAuth } from "./auth";
-import { setupUserCodebase } from "./container-api";
+import { createUserContainer, setupUserCodebase } from "./container-api";
 import { connectToMongoDB, getProblemsCollection } from "./mongodb";
 import crypto from 'crypto';
 import { setupWebSockets } from "./socket";
-import { recordContainerHeartbeat, getContainerActivityStats } from './container-activity';
+import { 
+  recordContainerHeartbeat, 
+  getContainerActivityStats,
+  isContainerRegistered 
+} from './container-activity';
 
 // Container session storage for secure access
 interface ContainerSession {
@@ -95,8 +99,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Unauthorized" });
       }
       
-      // Record the heartbeat for the user's container
-      recordContainerHeartbeat(req.user.username);
+      const username = req.user.username;
+      
+      // Check if the container is not registered (it might have been deleted due to inactivity)
+      if (!isContainerRegistered(username)) {
+        console.log(`Container for ${username} is not registered, recreating it`);
+        
+        // Recreate the container
+        try {
+          await createUserContainer(username);
+          console.log(`Container recreated for ${username}`);
+          
+          // Record heartbeat to register the new container
+          recordContainerHeartbeat(username);
+          
+          // Also check if we have information about the current problem
+          const problemId = req.body.problemId || req.query.problemId;
+          const lang = req.body.lang || req.query.lang || "c";
+          
+          if (problemId) {
+            console.log(`Setting up codebase for problem ${problemId} with lang ${lang}`);
+            
+            // Run the setup-codebase API to restore the user's environment
+            const setupResult = await setupUserCodebase(username, problemId.toString(), lang);
+            
+            return res.status(200).json({
+              status: "container_recreated",
+              message: "Container was recreated due to inactivity",
+              containerInfo: setupResult,
+              timestamp: new Date().toISOString()
+            });
+          } else {
+            // Container recreated but no problem info available
+            return res.status(200).json({
+              status: "container_recreated",
+              message: "Container was recreated due to inactivity, but no problem information was provided",
+              timestamp: new Date().toISOString()
+            });
+          }
+        } catch (setupError) {
+          console.error("Error recreating container during heartbeat:", setupError);
+          // We'll still continue and register the heartbeat
+        }
+      } else {
+        // Container is registered, just record the heartbeat
+        recordContainerHeartbeat(username);
+      }
       
       return res.status(200).json({ 
         status: "ok", 
