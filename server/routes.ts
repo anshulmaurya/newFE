@@ -19,6 +19,7 @@ import {
   getContainerActivityStats,
   isContainerRegistered 
 } from './container-activity';
+import { adminRouter } from './admin-routes';
 
 // Container session storage for secure access
 interface ContainerSession {
@@ -83,6 +84,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create API routes
   const apiRouter = express.Router();
   app.use("/api", apiRouter);
+  
+
 
   // Health check endpoint
   apiRouter.get("/health", async (_req: Request, res: Response) => {

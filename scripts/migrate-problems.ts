@@ -9,13 +9,16 @@ const MONGODB_CONNECTION_STRING = "mongodb+srv://db_admin:thefutureofdb@dspclust
 const MONGODB_DATABASE = "dsp_dev";
 const PROBLEM_COLLECTION = "problems";
 
-// PostgreSQL connection
-const connectionString = process.env.DATABASE_URL || '';
-const client = postgres(connectionString);
-const db = drizzle(client);
-
-async function migrateProblemData() {
+// Export the migration function
+export async function migrateProblemData() {
   console.log('Starting problem data migration...');
+  let migratedCount = 0;
+  let errorCount = 0;
+  
+  // PostgreSQL connection
+  const connectionString = process.env.DATABASE_URL || '';
+  const client = postgres(connectionString);
+  const db = drizzle(client);
   
   // Connect to MongoDB
   const mongoClient = new MongoClient(MONGODB_CONNECTION_STRING);
@@ -45,7 +48,30 @@ async function migrateProblemData() {
         }
         
         // Map MongoDB problem to PostgreSQL schema
-        const pgProblem = mapMongoDbToPgProblem(mongoProblem);
+        const pgProblem = {
+          mongoId: mongoProblem.id,
+          title: mongoProblem.title || 'Untitled Problem',
+          description: mongoProblem.description || 'No description provided',
+          difficulty: (mongoProblem.difficulty as 'Easy' | 'Medium' | 'Hard') || 'Easy',
+          type: (mongoProblem.type as 'dsa' | 'embedded' | 'system') || 'dsa',
+          // Handle arrays properly
+          tags: mongoProblem.tags || [],
+          companies: mongoProblem.companies || [],
+          filePath: mongoProblem.file_path,
+          likes: parseInt(mongoProblem.likes) || 0,
+          dislikes: parseInt(mongoProblem.dislikes) || 0,
+          successfulSubmissions: parseInt(mongoProblem.successful_submissions) || 0,
+          failedSubmissions: parseInt(mongoProblem.failed_submissions) || 0,
+          acceptanceRate: parseInt(mongoProblem.acceptance_rate) || 0,
+          importance: mongoProblem.importance,
+          questionId: mongoProblem.question_id,
+          category: 'Data Structures', // Default category if not specified
+          codeSnippet: mongoProblem.code_snippet,
+          // Additional metadata that doesn't fit into columns
+          metadata: {
+            originalData: mongoProblem
+          }
+        };
         
         // Insert into PostgreSQL
         await db.insert(problems)
@@ -53,51 +79,41 @@ async function migrateProblemData() {
           .execute();
           
         console.log(`Migrated problem: ${mongoProblem.title} (${mongoProblem.id})`);
+        migratedCount++;
       } catch (error) {
         console.error(`Error migrating problem ${mongoProblem.id}:`, error);
+        errorCount++;
       }
     }
     
-    console.log('Problem data migration completed');
+    console.log(`Migration completed: ${migratedCount} problems migrated, ${errorCount} errors`);
+    return { 
+      success: true, 
+      migrated: migratedCount, 
+      errors: errorCount, 
+      total: mongoProblems.length 
+    };
   } catch (error) {
     console.error('Error during migration:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error',
+      migrated: migratedCount, 
+      errors: errorCount + 1 
+    };
   } finally {
-    await mongoClient.close();
-    console.log('Disconnected from MongoDB Atlas');
+    if (mongoClient) {
+      await mongoClient.close();
+      console.log('Disconnected from MongoDB Atlas');
+    }
     await client.end();
     console.log('Disconnected from PostgreSQL');
   }
 }
 
-function mapMongoDbToPgProblem(mongoProblem: any) {
-  // Handle any necessary data type conversions and create a valid problem object
-  const pgProblem: any = {
-    mongoId: mongoProblem.id,
-    title: mongoProblem.title || 'Untitled Problem',
-    description: mongoProblem.description || 'No description provided', // Provide default for required fields
-    difficulty: (mongoProblem.difficulty as 'Easy' | 'Medium' | 'Hard') || 'Easy',
-    type: (mongoProblem.type as 'dsa' | 'embedded' | 'system') || 'dsa',
-    // Handle arrays properly
-    tags: mongoProblem.tags || [],
-    companies: mongoProblem.companies || [],
-    filePath: mongoProblem.file_path,
-    likes: parseInt(mongoProblem.likes) || 0,
-    dislikes: parseInt(mongoProblem.dislikes) || 0,
-    successfulSubmissions: parseInt(mongoProblem.successful_submissions) || 0,
-    failedSubmissions: parseInt(mongoProblem.failed_submissions) || 0,
-    acceptanceRate: parseInt(mongoProblem.acceptance_rate) || 0,
-    importance: mongoProblem.importance,
-    questionId: mongoProblem.question_id,
-    category: 'Data Structures', // Default category if not specified
-    codeSnippet: mongoProblem.code_snippet,
-    // Additional metadata that doesn't fit into columns
-    metadata: {
-      originalData: mongoProblem
-    }
-  };
-  
-  return pgProblem;
+// Main execution - for direct script execution
+if (process.argv[1]?.endsWith('migrate-problems.ts')) {
+  migrateProblemData()
+    .then(result => console.log('Migration result:', result))
+    .catch(console.error);
 }
-
-// Run the migration
-migrateProblemData().catch(console.error);
