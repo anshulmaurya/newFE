@@ -1,8 +1,53 @@
 import { MongoClient } from 'mongodb';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import { problems } from '../shared/schema';
+import { problems, categoryEnum } from '../shared/schema';
 import { eq } from 'drizzle-orm';
+
+// Helper function to map any category string to a valid category enum value
+function mapToValidCategory(category: string | undefined): typeof categoryEnum.enumValues[number] {
+  if (!category) return 'Data Structures';
+  
+  const validCategories = categoryEnum.enumValues;
+  
+  // Try direct match first
+  if (validCategories.includes(category as any)) {
+    return category as typeof categoryEnum.enumValues[number];
+  }
+  
+  // Try case-insensitive match
+  const lowerCategory = category.toLowerCase();
+  for (const validCategory of validCategories) {
+    if (validCategory.toLowerCase() === lowerCategory) {
+      return validCategory;
+    }
+  }
+  
+  // Map similar categories
+  if (lowerCategory.includes('memory') || lowerCategory.includes('allocation')) {
+    return 'Memory Management';
+  } else if (lowerCategory.includes('thread') || lowerCategory.includes('concurrency')) {
+    return 'Multithreading';
+  } else if (lowerCategory.includes('data') || lowerCategory.includes('algorithm') || 
+             lowerCategory.includes('array') || lowerCategory.includes('list')) {
+    return 'Data Structures';
+  } else if (lowerCategory.includes('c++') || lowerCategory.includes('cpp') || 
+             lowerCategory.includes('stl')) {
+    return 'C++ API';
+  } else if (lowerCategory.includes('linux') || lowerCategory.includes('unix') || 
+             lowerCategory.includes('posix')) {
+    return 'Linux API';
+  } else if (lowerCategory.includes('rtos') || lowerCategory.includes('freertos') || 
+             lowerCategory.includes('real-time')) {
+    return 'RTOS';
+  } else if (lowerCategory.includes('power') || lowerCategory.includes('energy') || 
+             lowerCategory.includes('battery')) {
+    return 'Power Management';
+  }
+  
+  // Default fallback
+  return 'Data Structures';
+}
 
 // MongoDB Atlas connection string
 const MONGODB_CONNECTION_STRING = "mongodb+srv://db_admin:thefutureofdb@dspcluster.xdg0hzp.mongodb.net/?retryWrites=true&w=majority&appName=dspcluster";

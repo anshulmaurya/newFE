@@ -33,14 +33,16 @@ const MigratePage: React.FC = () => {
     setResult(null);
 
     try {
-      const response = await apiRequest('/api/admin/migrate-problems', {
-        method: 'POST',
-        headers: {
-          'X-Admin-Token': adminToken
-        }
-      });
+      const headers = { 'X-Admin-Token': adminToken };
+      const response = await apiRequest(
+        'POST',
+        '/api/admin/migrate-problems',
+        undefined,
+        { headers }
+      );
 
-      setResult(response as MigrationResult);
+      const jsonData = await response.json();
+      setResult(jsonData as MigrationResult);
     } catch (err: any) {
       setError(err.message || 'Failed to start migration');
     } finally {
@@ -58,19 +60,20 @@ const MigratePage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await apiRequest('/api/admin/db-status', {
-        method: 'GET',
-        headers: {
-          'X-Admin-Token': adminToken
-        }
-      });
+      const headers = { 'X-Admin-Token': adminToken };
+      const response = await apiRequest(
+        'GET',
+        '/api/admin/db-status',
+        undefined,
+        { headers }
+      );
 
-      const typedResponse = response as {success: boolean; postgresConnection: string; mongoConnection: string; timestamp: string};
+      const jsonData = await response.json();
       
       setResult({
         message: 'Database status checked successfully',
-        success: typedResponse.success,
-        ...typedResponse
+        success: jsonData.success,
+        ...jsonData
       });
     } catch (err: any) {
       setError(err.message || 'Failed to check database status');
