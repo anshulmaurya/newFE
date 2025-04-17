@@ -35,7 +35,6 @@ export const users = pgTable("users", {
 // Problems table
 export const problems = pgTable("problems", {
   id: serial("id").primaryKey(),
-  mongoId: text("mongo_id").unique(), // Original MongoDB _id/id
   title: text("title").notNull(),
   description: text("description").notNull(),
   difficulty: difficultyEnum("difficulty").notNull(),
@@ -43,18 +42,13 @@ export const problems = pgTable("problems", {
   tags: text("tags").array(),  // Using array column type
   companies: text("companies").array(), // Array of company names
   filePath: text("file_path"), // file_path in MongoDB
-  likes: integer("likes").default(0), 
-  dislikes: integer("dislikes").default(0),
   successfulSubmissions: integer("successful_submissions").default(0),
   failedSubmissions: integer("failed_submissions").default(0),
-  acceptanceRate: integer("acceptance_rate").default(0),
   importance: text("importance"), // High, Medium, Low
   questionId: text("question_id").unique(), // Unique identifier like "10101_reverse_linked_list"
   category: categoryEnum("category").default('Data Structures'), // Using the existing categoryEnum
-  codeSnippet: text("code_snippet"), // Kept from existing schema
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
-  metadata: jsonb("metadata"), // Additional metadata that doesn't fit into columns
 });
 
 // User progress table

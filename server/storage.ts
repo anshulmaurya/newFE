@@ -47,7 +47,7 @@ export interface IStorage {
     importance?: string;
   }): Promise<{ problems: Problem[]; total: number }>;
   getProblem(id: number): Promise<Problem | undefined>;
-  getProblemByMongoId(mongoId: string): Promise<Problem | undefined>;
+  // Removed getProblemByMongoId as MongoDB migration is being handled manually
   getProblemByQuestionId(questionId: string): Promise<Problem | undefined>;
   createProblem(problem: InsertProblem): Promise<Problem>;
   updateProblem(id: number, problem: Partial<Problem>): Promise<Problem | undefined>;
@@ -319,10 +319,7 @@ export class DatabaseStorage implements IStorage {
     return problem;
   }
   
-  async getProblemByMongoId(mongoId: string): Promise<Problem | undefined> {
-    const [problem] = await db.select().from(problems).where(eq(problems.mongoId, mongoId));
-    return problem;
-  }
+  // Removed getProblemByMongoId implementation
   
   async getProblemByQuestionId(questionId: string): Promise<Problem | undefined> {
     const [problem] = await db.select().from(problems).where(eq(problems.questionId, questionId));

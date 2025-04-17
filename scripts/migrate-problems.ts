@@ -81,20 +81,32 @@ export async function migrateProblemData() {
     // Process each problem
     for (const mongoProblem of mongoProblems) {
       try {
-        // Check if problem already exists in PostgreSQL by mongo_id
-        const existingProblem = await db.select()
-          .from(problems)
-          .where(eq(problems.mongoId, mongoProblem.id))
-          .execute();
-          
-        if (existingProblem.length > 0) {
-          console.log(`Problem with mongo_id ${mongoProblem.id} already exists, skipping`);
-          continue;
+        // Check if problem already exists in PostgreSQL by questionId (if it exists)
+        if (mongoProblem.question_id) {
+          const existingProblem = await db.select()
+            .from(problems)
+            .where(eq(problems.questionId, mongoProblem.question_id))
+            .execute();
+            
+          if (existingProblem.length > 0) {
+            console.log(`Problem with questionId ${mongoProblem.question_id} already exists, skipping`);
+            continue;
+          }
+        } else {
+          // If no questionId, check by title as a fallback
+          const existingProblem = await db.select()
+            .from(problems)
+            .where(eq(problems.title, mongoProblem.title || ''))
+            .execute();
+            
+          if (existingProblem.length > 0) {
+            console.log(`Problem with title "${mongoProblem.title}" already exists, skipping`);
+            continue;
+          }
         }
         
         // Map MongoDB problem to PostgreSQL schema
         const pgProblem = {
-          mongoId: mongoProblem.id,
           title: mongoProblem.title || 'Untitled Problem',
           description: mongoProblem.description || 'No description provided',
           difficulty: (mongoProblem.difficulty as 'Easy' | 'Medium' | 'Hard') || 'Easy',
@@ -103,19 +115,11 @@ export async function migrateProblemData() {
           tags: mongoProblem.tags || [],
           companies: mongoProblem.companies || [],
           filePath: mongoProblem.file_path,
-          likes: parseInt(mongoProblem.likes) || 0,
-          dislikes: parseInt(mongoProblem.dislikes) || 0,
           successfulSubmissions: parseInt(mongoProblem.successful_submissions) || 0,
           failedSubmissions: parseInt(mongoProblem.failed_submissions) || 0,
-          acceptanceRate: parseInt(mongoProblem.acceptance_rate) || 0,
           importance: mongoProblem.importance,
           questionId: mongoProblem.question_id,
           category: mapToValidCategory(mongoProblem.category), // Map to a valid category enum value
-          codeSnippet: mongoProblem.code_snippet,
-          // Additional metadata that doesn't fit into columns
-          metadata: {
-            originalData: mongoProblem
-          }
         };
         
         // Insert into PostgreSQL
