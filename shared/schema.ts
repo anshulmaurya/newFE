@@ -8,15 +8,32 @@ import { relations } from "drizzle-orm";
 export const difficultyEnum = pgEnum('difficulty', ['Easy', 'Medium', 'Hard']);
 export const statusEnum = pgEnum('status', ['Solved', 'Attempted', 'Not Started']);
 export const categoryEnum = pgEnum('category', [
-  'Memory Management', 
-  'Multithreading', 
-  'Data Structures', 
-  'C++ API', 
-  'Linux API', 
-  'RTOS', 
-  'Power Management'
+  'Arrays',
+  'Strings',
+  'Linked Lists',
+  'Stacks',
+  'Queues',
+  'Trees',
+  'Heaps',
+  'Hash Tables',
+  'Graphs',
+  'Tries',
+  'Disjoint Sets',
+  'Searching',
+  'Sorting',
+  'Recursion',
+  'Dynamic Programming',
+  'Greedy Algorithms',
+  'Divide and Conquer',
+  'Bit Manipulation',
+  'Mathematical Algorithms',
+  'RTOS',
+  'State Machines',
+  'Multithreading',
+  'Memory Management'
 ]);
-export const problemTypeEnum = pgEnum('problem_type', ['dsa', 'embedded', 'system']); // Added for 'type' field
+export const problemTypeEnum = pgEnum('problem_type', ['dsa', 'embedded', 'bridge']); // Updated 'system' to 'bridge'
+export const importanceEnum = pgEnum('importance', ['low', 'medium', 'high']); // Added importance enum
 
 // User schema
 export const users = pgTable("users", {
@@ -34,10 +51,38 @@ export const users = pgTable("users", {
 
 // Companies enum for better querying
 export const companyEnum = pgEnum('company', [
-  'Amazon', 'Apple', 'Facebook', 'Google', 'Microsoft', 
-  'Netflix', 'Tesla', 'Uber', 'Twitter', 'LinkedIn',
-  'Adobe', 'Airbnb', 'Bloomberg', 'Dropbox', 'Nvidia',
-  'Salesforce', 'Snapchat', 'Spotify', 'Oracle', 'Intel'
+  'Tesla',
+  'Rivian',
+  'Lucid Motors',
+  'General Motors',
+  'Ford',
+  'Bosch',
+  'Qualcomm',
+  'Intel',
+  'AMD',
+  'NVIDIA',
+  'Texas Instruments',
+  'Broadcom',
+  'MediaTek',
+  'ARM',
+  'Infineon Technologies',
+  'Apple',
+  'Samsung',
+  'Lockheed Martin',
+  'Raytheon Technologies',
+  'Northrop Grumman',
+  'Boeing',
+  'General Dynamics',
+  'DRDO',
+  'Sony',
+  'Cisco',
+  'HP',
+  'Dell',
+  'IBM',
+  'Google',
+  'Amazon',
+  'LG',
+  'Huawei'
 ]);
 
 // Problems table
@@ -51,9 +96,9 @@ export const problems = pgTable("problems", {
   filePath: text("file_path"), // file_path in MongoDB
   successfulSubmissions: integer("successful_submissions").default(0),
   failedSubmissions: integer("failed_submissions").default(0),
-  importance: text("importance"), // High, Medium, Low
+  importance: importanceEnum("importance"), // Using the new enum: low, medium, high
   questionId: text("question_id").unique(), // Unique identifier like "10101_reverse_linked_list"
-  category: categoryEnum("category").default('Data Structures'), // Using the existing categoryEnum
+  category: categoryEnum("category").default('Arrays'), // Using the updated categoryEnum
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
