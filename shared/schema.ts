@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, pgEnum, date } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, pgEnum, date, jsonb } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -16,6 +16,7 @@ export const categoryEnum = pgEnum('category', [
   'RTOS', 
   'Power Management'
 ]);
+export const problemTypeEnum = pgEnum('problem_type', ['dsa', 'embedded', 'system']); // Added for 'type' field
 
 // User schema
 export const users = pgTable("users", {
@@ -34,16 +35,26 @@ export const users = pgTable("users", {
 // Problems table
 export const problems = pgTable("problems", {
   id: serial("id").primaryKey(),
+  mongoId: text("mongo_id").unique(), // Original MongoDB _id/id
   title: text("title").notNull(),
   description: text("description").notNull(),
-  category: categoryEnum("category").notNull(),
   difficulty: difficultyEnum("difficulty").notNull(),
-  acceptanceRate: integer("acceptance_rate"),
-  completionRate: text("completion_rate"),
-  estimatedTime: text("estimated_time"),
-  codeSnippet: text("code_snippet"),
-  frequency: integer("frequency").default(0),
+  type: problemTypeEnum("type").notNull(),
+  tags: text("tags").array(),  // Using array column type
+  companies: text("companies").array(), // Array of company names
+  filePath: text("file_path"), // file_path in MongoDB
+  likes: integer("likes").default(0), 
+  dislikes: integer("dislikes").default(0),
+  successfulSubmissions: integer("successful_submissions").default(0),
+  failedSubmissions: integer("failed_submissions").default(0),
+  acceptanceRate: integer("acceptance_rate").default(0),
+  importance: text("importance"), // High, Medium, Low
+  questionId: text("question_id").unique(), // Unique identifier like "10101_reverse_linked_list"
+  category: categoryEnum("category").default('Data Structures'), // Using the existing categoryEnum
+  codeSnippet: text("code_snippet"), // Kept from existing schema
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  metadata: jsonb("metadata"), // Additional metadata that doesn't fit into columns
 });
 
 // User progress table
@@ -131,16 +142,11 @@ export const insertUserSchema = createInsertSchema(users).pick({
   accessToken: true,
 });
 
-export const insertProblemSchema = createInsertSchema(problems).pick({
-  title: true,
-  description: true,
-  category: true,
-  difficulty: true,
-  acceptanceRate: true,
-  completionRate: true,
-  estimatedTime: true,
-  codeSnippet: true,
-  frequency: true,
+// This will be updated after the migration succeeds
+export const insertProblemSchema = createInsertSchema(problems).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export const insertUserProgressSchema = createInsertSchema(userProgress).pick({
