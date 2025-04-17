@@ -65,7 +65,7 @@ export async function migrateProblemData() {
           acceptanceRate: parseInt(mongoProblem.acceptance_rate) || 0,
           importance: mongoProblem.importance,
           questionId: mongoProblem.question_id,
-          category: 'Data Structures', // Default category if not specified
+          category: mapToValidCategory(mongoProblem.category), // Map to a valid category enum value
           codeSnippet: mongoProblem.code_snippet,
           // Additional metadata that doesn't fit into columns
           metadata: {

@@ -37,6 +37,9 @@ import PrivacyPolicy from '@/pages/privacy-policy';
 import Pricing from '@/pages/pricing';
 import AboutUs from '@/pages/about-us';
 
+// Import admin pages
+import MigratePage from '@/pages/admin/migrate';
+
 // Import notes pages
 import GettingStarted from '@/pages/notes/getting-started';
 import GitbookDocumentation from '@/pages/notes/gitbook-documentation';
@@ -93,6 +96,9 @@ function Router() {
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/about-us" component={AboutUs} />
+      
+      {/* Admin pages */}
+      <Route path="/admin/migrate" component={MigratePage} />
       
       {/* Protected Notes routes */}
       <ProtectedRoute path="/notes" component={Notes} />
