@@ -175,19 +175,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // External API proxy for problems (accessible without authentication)
-  apiRouter.get("/problems-proxy", optionalAuth, async (_req: Request, res: Response) => {
+  // Get problems from PostgreSQL database (accessible without authentication)
+  apiRouter.get("/problems-proxy", optionalAuth, async (req: Request, res: Response) => {
     try {
-      const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/get_problems');
-      const problems = await response.json();
+      // Use the storage interface to get problems from the database
+      const options = {
+        category: req.query.category as string | undefined,
+        difficulty: req.query.difficulty as string | undefined,
+        search: req.query.search as string | undefined,
+        page: req.query.page ? parseInt(req.query.page as string) : 1,
+        limit: req.query.limit ? parseInt(req.query.limit as string) : 100, // Higher limit to get more problems
+        sortBy: req.query.sortBy as string | undefined,
+        sortOrder: req.query.sortOrder as 'asc' | 'desc' | undefined,
+        type: req.query.type as string | undefined,
+        company: req.query.company as string | undefined,
+        importance: req.query.importance as string | undefined
+      };
+
+      const { problems, total } = await storage.getProblems(options);
+      
       res.status(200).json({ 
         status: "ok", 
         count: problems.length,
         problems: problems
       });
     } catch (error) {
-      console.error("External API error:", error);
-      res.status(500).json({ error: "Failed to fetch problems from external API" });
+      console.error("Database error:", error);
+      res.status(500).json({ error: "Failed to fetch problems from database" });
     }
   });
 
@@ -214,7 +228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Problem routes - fetch from external API (accessible without authentication)
+  // Problem routes - fetch from database (accessible without authentication)
   apiRouter.get("/problems", optionalAuth, async (req: Request, res: Response) => {
     try {
       const { 
@@ -224,67 +238,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         page = '1', 
         limit = '10',
         sortBy = 'title',
-        sortOrder = 'asc'
+        sortOrder = 'asc',
+        type,
+        company,
+        importance
       } = req.query;
       
-      // Fetch from external API
-      const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/get_problems');
-      const allProblems = await response.json();
+      // Use storage interface to get problems from database with pagination and filtering
+      const options = {
+        category: category && category !== 'all' ? category as string : undefined,
+        difficulty: difficulty && difficulty !== 'all' ? difficulty as string : undefined,
+        search: search as string | undefined,
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as 'asc' | 'desc',
+        type: type && type !== 'all' ? type as string : undefined,
+        company: company && company !== 'all' ? company as string : undefined,
+        importance: importance as string | undefined
+      };
       
-      // Apply filters in-memory (since we can't control the API filtering)
-      let filteredProblems = [...allProblems];
-      
-      // Apply category filter
-      if (category && category !== 'all') {
-        filteredProblems = filteredProblems.filter(p => 
-          p.type?.toLowerCase() === (category as string).toLowerCase() ||
-          p.tags?.some((tag: string) => tag.toLowerCase() === (category as string).toLowerCase())
-        );
-      }
-      
-      // Apply difficulty filter
-      if (difficulty && difficulty !== 'all') {
-        filteredProblems = filteredProblems.filter(p => 
-          p.difficulty?.toLowerCase() === (difficulty as string).toLowerCase()
-        );
-      }
-      
-      // Apply search filter
-      if (search && (search as string).trim() !== '') {
-        const searchTerm = (search as string).toLowerCase();
-        filteredProblems = filteredProblems.filter(p => 
-          p.title?.toLowerCase().includes(searchTerm) ||
-          p.tags?.some((tag: string) => tag.toLowerCase().includes(searchTerm))
-        );
-      }
-      
-      // Apply sorting
-      if (sortBy) {
-        filteredProblems.sort((a, b) => {
-          const aValue = a[sortBy as string] || '';
-          const bValue = b[sortBy as string] || '';
-          const compareResult = aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-          return (sortOrder as string) === 'asc' ? compareResult : -compareResult;
-        });
-      }
-      
-      // Calculate total for pagination
-      const total = filteredProblems.length;
-      
-      // Apply pagination
-      const pageNum = parseInt(page as string);
-      const limitNum = parseInt(limit as string);
-      const startIndex = (pageNum - 1) * limitNum;
-      const endIndex = startIndex + limitNum;
-      const paginatedProblems = filteredProblems.slice(startIndex, endIndex);
+      const { problems, total } = await storage.getProblems(options);
       
       return res.json({ 
-        problems: paginatedProblems, 
+        problems, 
         total 
       });
     } catch (error) {
-      console.error("Error fetching problems from external API:", error);
-      return res.status(500).json({ error: "Failed to fetch problems from external API" });
+      console.error("Error fetching problems from database:", error);
+      return res.status(500).json({ error: "Failed to fetch problems from database" });
     }
   });
   
@@ -292,18 +274,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const problemId = req.params.id;
       
-      // Fetch all problems from the external API
-      const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/get_problems');
-      const problems = await response.json();
-      
-      // Find the problem with the matching ID
-      const problem = problems.find((p: any) => p.id === problemId);
-      
-      if (problem) {
-        return res.json(problem);
-      }
-      
-      // If not found in external API, try the database as fallback
+      // First, try to get the problem from the database
       try {
         const id = parseInt(problemId);
         if (!isNaN(id)) {
@@ -314,6 +285,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       } catch (dbError) {
         console.error("Database error fetching problem:", dbError);
+      }
+      
+      // If not found in database, try the external API as fallback
+      try {
+        // Fetch all problems from the external API
+        const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/get_problems');
+        const problems = await response.json();
+        
+        // Find the problem with the matching ID
+        const problem = problems.find((p: any) => p.id === problemId);
+        
+        if (problem) {
+          return res.json(problem);
+        }
+      } catch (apiError) {
+        console.error("External API error fetching problem:", apiError);
       }
       
       return res.status(404).json({ error: "Problem not found" });
