@@ -228,6 +228,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Get all available categories
+  apiRouter.get("/categories", async (req: Request, res: Response) => {
+    try {
+      // Return the enum values from the categoryEnum directly
+      return res.json([
+        'Arrays',
+        'Strings',
+        'Linked Lists',
+        'Stacks',
+        'Queues',
+        'Trees',
+        'Heaps',
+        'Hash Tables',
+        'Graphs',
+        'Tries',
+        'Disjoint Sets',
+        'Searching',
+        'Sorting',
+        'Recursion',
+        'Dynamic Programming',
+        'Greedy Algorithms',
+        'Divide and Conquer',
+        'Bit Manipulation',
+        'Mathematical Algorithms',
+        'RTOS',
+        'State Machines',
+        'Multithreading',
+        'Memory Management'
+      ]);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
+  });
+  
   // Problem routes - fetch from database (accessible without authentication)
   apiRouter.get("/problems", optionalAuth, async (req: Request, res: Response) => {
     try {
