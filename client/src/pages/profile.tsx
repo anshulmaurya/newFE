@@ -200,7 +200,7 @@ export default function ProfilePage() {
                     <Card className="bg-[rgb(28,28,30)] border-[rgb(38,38,40)]">
                       <CardContent className="pt-6">
                         <div className="space-y-4">
-                          <div className="flex items-center justify-between">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <div className="space-y-1">
                               <Label htmlFor="dailyGoal">Problems per day</Label>
                               <p className="text-sm text-gray-400">
@@ -209,7 +209,7 @@ export default function ProfilePage() {
                             </div>
                             
                             {!isEditing ? (
-                              <Badge className="text-base py-1.5 px-3 bg-[rgb(214,251,65)] hover:bg-[rgb(214,251,65)] text-black">
+                              <Badge className="text-base py-1.5 px-3 bg-[rgb(214,251,65)] hover:bg-[rgb(214,251,65)] text-black self-start sm:self-center flex-shrink-0">
                                 {userStats?.dailyGoal || 3}
                               </Badge>
                             ) : null}
