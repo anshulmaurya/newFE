@@ -223,6 +223,15 @@ export default function Dashboard() {
     },
   });
   
+  // Fetch available categories from database
+  const { data: availableCategories, isLoading: isLoadingCategories } = useQuery({
+    queryKey: ['/api/categories'],
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/categories');
+      return await response.json();
+    },
+  });
+  
   // Fetch user progress data for problems - only if user is authenticated
   const { data: userProgressData, isLoading: isLoadingUserProgress } = useQuery({
     queryKey: ['/api/user-progress'],
@@ -568,13 +577,21 @@ export default function Dashboard() {
                     </SelectTrigger>
                     <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
                       <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Category</SelectItem>
-                      <SelectItem value="Memory Management" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Memory Management</SelectItem>
-                      <SelectItem value="Multithreading" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Multithreading</SelectItem>
-                      <SelectItem value="Data Structures" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Data Structures</SelectItem>
-                      <SelectItem value="C++ API" className="text-gray-200 focus:bg-[rgb(45,45,50)]">C++ API</SelectItem>
-                      <SelectItem value="Linux API" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Linux API</SelectItem>
-                      <SelectItem value="RTOS" className="text-gray-200 focus:bg-[rgb(45,45,50)]">RTOS</SelectItem>
-                      <SelectItem value="Power Management" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Power Management</SelectItem>
+                      {isLoadingCategories ? (
+                        <SelectItem value="loading" disabled className="text-gray-500 focus:bg-[rgb(45,45,50)]">
+                          Loading categories...
+                        </SelectItem>
+                      ) : (
+                        availableCategories?.map((categoryName) => (
+                          <SelectItem 
+                            key={categoryName} 
+                            value={categoryName} 
+                            className="text-gray-200 focus:bg-[rgb(45,45,50)]"
+                          >
+                            {categoryName}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
