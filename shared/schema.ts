@@ -69,6 +69,7 @@ export const userStats = pgTable("user_stats", {
   totalAttempted: integer("total_attempted").default(0),
   currentStreak: integer("current_streak").default(0),
   longestStreak: integer("longest_streak").default(0),
+  dailyGoal: integer("daily_goal").default(3).notNull(),
   lastActiveDate: date("last_active_date").notNull().default(sql`CURRENT_DATE`),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -175,6 +176,7 @@ export const insertUserStatsSchema = createInsertSchema(userStats)
     totalAttempted: true,
     currentStreak: true,
     longestStreak: true,
+    dailyGoal: true,
   })
   .extend({
     lastActiveDate: z.date().default(() => new Date())
