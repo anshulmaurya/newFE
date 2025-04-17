@@ -71,19 +71,29 @@ export function setupAuth(app: Express) {
       ? "https://www.dspcoder.com/api/auth/github/callback/"
       : "https://97332a4d-a72c-4bed-9d97-03b0350ae447-00-2lw03c0sn2pc2.kirk.replit.dev/api/auth/github/callback";
 
+  const clientID = process.env.NODE_ENV === "production" 
+    ? process.env.GITHUB_CLIENT_ID!
+    : process.env.DEV_GITHUB_CLIENT_ID!;
+
   console.log("GitHub Auth Callback URL:", callbackURL);
+  console.log("Using GitHub OAuth credentials for:", process.env.NODE_ENV === "production" ? "PRODUCTION" : "DEVELOPMENT");
+  console.log("GitHub Client ID being used:", clientID);
 
   app.set("trust proxy", 1);
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // GitHub authentication strategy
+  // GitHub authentication strategy - use different credentials for dev/prod
   passport.use(
     new GithubStrategy(
       {
-        clientID: process.env.GITHUB_CLIENT_ID!,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+        clientID: process.env.NODE_ENV === "production" 
+          ? process.env.GITHUB_CLIENT_ID!
+          : process.env.DEV_GITHUB_CLIENT_ID!,
+        clientSecret: process.env.NODE_ENV === "production" 
+          ? process.env.GITHUB_CLIENT_SECRET!
+          : process.env.DEV_GITHUB_CLIENT_SECRET!,
         callbackURL: callbackURL,
         scope: ["user:email", "read:user"],
       },
