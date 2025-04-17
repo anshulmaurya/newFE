@@ -82,7 +82,8 @@ export const companyEnum = pgEnum('company', [
   'Google',
   'Amazon',
   'LG',
-  'Huawei'
+  'Huawei',
+  'Microsoft'
 ]);
 
 // Problems table
@@ -92,7 +93,7 @@ export const problems = pgTable("problems", {
   description: text("description").notNull(),
   difficulty: difficultyEnum("difficulty").notNull(),
   type: problemTypeEnum("type").notNull(),
-  company: companyEnum("company"), // Single company assignation for better querying
+  companies: companyEnum("companies").array(), // Array of companies instead of single company
   filePath: text("file_path"), // file_path in MongoDB
   successfulSubmissions: integer("successful_submissions").default(0),
   failedSubmissions: integer("failed_submissions").default(0),
