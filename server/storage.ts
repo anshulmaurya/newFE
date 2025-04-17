@@ -43,7 +43,7 @@ export interface IStorage {
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
     type?: string;
-    companies?: string[];
+    company?: string;
     importance?: string;
   }): Promise<{ problems: Problem[]; total: number }>;
   getProblem(id: number): Promise<Problem | undefined>;
@@ -234,7 +234,7 @@ export class DatabaseStorage implements IStorage {
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
     type?: string;
-    companies?: string[];
+    company?: string;
     importance?: string;
   }): Promise<{ problems: Problem[]; total: number }> {
     const { 
@@ -246,7 +246,7 @@ export class DatabaseStorage implements IStorage {
       sortBy = 'id',
       sortOrder = 'asc',
       type,
-      companies,
+      company,
       importance
     } = options || {};
     
@@ -276,12 +276,9 @@ export class DatabaseStorage implements IStorage {
       );
     }
     
-    // We'll handle company filtering separately since it's an array
-    // Note: This is a simple contains check and might need optimization for larger datasets
-    if (companies && companies.length > 0) {
-      for (const company of companies) {
-        filters.push(sql`${problems.companies} @> ARRAY[${company}]::text[]`);
-      }
+    // Filter by company (now a single enum value)
+    if (company) {
+      filters.push(eq(problems.company, company as any));
     }
     
     if (filters.length > 0) {

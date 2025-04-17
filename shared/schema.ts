@@ -32,6 +32,14 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Companies enum for better querying
+export const companyEnum = pgEnum('company', [
+  'Amazon', 'Apple', 'Facebook', 'Google', 'Microsoft', 
+  'Netflix', 'Tesla', 'Uber', 'Twitter', 'LinkedIn',
+  'Adobe', 'Airbnb', 'Bloomberg', 'Dropbox', 'Nvidia',
+  'Salesforce', 'Snapchat', 'Spotify', 'Oracle', 'Intel'
+]);
+
 // Problems table
 export const problems = pgTable("problems", {
   id: serial("id").primaryKey(),
@@ -39,8 +47,7 @@ export const problems = pgTable("problems", {
   description: text("description").notNull(),
   difficulty: difficultyEnum("difficulty").notNull(),
   type: problemTypeEnum("type").notNull(),
-  tags: text("tags").array(),  // Using array column type
-  companies: text("companies").array(), // Array of company names
+  company: companyEnum("company"), // Single company assignation for better querying
   filePath: text("file_path"), // file_path in MongoDB
   successfulSubmissions: integer("successful_submissions").default(0),
   failedSubmissions: integer("failed_submissions").default(0),
