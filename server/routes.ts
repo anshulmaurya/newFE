@@ -497,6 +497,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Update user daily goal
+  apiRouter.post("/user-daily-goal", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const { dailyGoal } = req.body;
+      
+      // Validate the daily goal value
+      if (typeof dailyGoal !== 'number' || dailyGoal < 1) {
+        return res.status(400).json({ error: "Daily goal must be a number greater than or equal to 1" });
+      }
+      
+      // Get current stats
+      let currentStats = await storage.getUserStatsRecord(req.userId);
+      
+      // If no stats record exists, create one
+      if (!currentStats) {
+        currentStats = await storage.createUserStats({
+          userId: req.userId,
+          lastActiveDate: new Date(),
+          dailyGoal: dailyGoal,
+          totalSolved: 0,
+          easySolved: 0,
+          mediumSolved: 0,
+          hardSolved: 0,
+          totalAttempted: 0,
+          currentStreak: 0,
+          longestStreak: 0
+        });
+        return res.status(201).json(currentStats);
+      }
+      
+      // Otherwise update existing record with just the daily goal
+      const updatedStats = await storage.updateUserStats(req.userId, {
+        dailyGoal: dailyGoal,
+        updatedAt: new Date()
+      });
+      
+      return res.json(updatedStats);
+    } catch (error) {
+      console.error("Error updating user daily goal:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
+  });
+  
   // User Activity routes
   apiRouter.get("/user-activity", getUserId, async (req: Request, res: Response) => {
     try {

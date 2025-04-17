@@ -230,13 +230,18 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
                     </div>
                   </button>
                   
-                  <div className="cursor-not-allowed flex items-center justify-between py-3 px-3 focus:bg-[rgb(30,32,40)] text-gray-300">
+                  <button 
+                    className="flex w-full items-center py-3 px-3 focus:bg-[rgb(30,32,40)] text-white hover:bg-[rgb(30,32,40)] rounded-sm"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setLocation("/profile");
+                    }}
+                  >
                     <div className="flex items-center">
-                      <User className="mr-3 h-5 w-5 text-gray-500" />
+                      <User className="mr-3 h-5 w-5 text-[rgb(214,251,65)]" />
                       <span>Profile</span>
                     </div>
-                    <Clock className="h-4 w-4 text-gray-500" />
-                  </div>
+                  </button>
                   
                   <div className="cursor-not-allowed flex items-center justify-between py-3 px-3 focus:bg-[rgb(30,32,40)] text-gray-300">
                     <div className="flex items-center">
@@ -356,6 +361,19 @@ export default function Header({ onNavigateFeatures, onNavigateProblems, isScrol
           >
             <BarChart3 className="h-4 w-4 mr-2 text-[rgb(214,251,65)]" />
             My Statistics
+          </button>
+          
+          <button 
+            onClick={(e) => { 
+              e.preventDefault();
+              setMobileMenuOpen(false); 
+              setLocation("/profile"); 
+            }}
+            type="button"
+            className={`${location.includes("/profile") ? "text-[rgb(214,251,65)]" : "text-gray-300 hover:text-white"} py-1.5 border-b border-gray-700/30 text-sm flex items-center`}
+          >
+            <User className="h-4 w-4 mr-2 text-[rgb(214,251,65)]" />
+            Profile
           </button>
           {/* User profile or login button */}
           {user ? (
