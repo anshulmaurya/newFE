@@ -85,6 +85,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const apiRouter = express.Router();
   app.use("/api", apiRouter);
   
+  // Register admin routes
+  app.use("/api/admin", adminRouter);
+  
 
 
   // Health check endpoint

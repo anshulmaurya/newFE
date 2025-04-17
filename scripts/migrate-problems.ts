@@ -75,7 +75,7 @@ export async function migrateProblemData() {
         
         // Insert into PostgreSQL
         await db.insert(problems)
-          .values(pgProblem)
+          .values([pgProblem]) // Wrap in array as required by drizzle-orm
           .execute();
           
         console.log(`Migrated problem: ${mongoProblem.title} (${mongoProblem.id})`);
