@@ -42,9 +42,16 @@ export interface IStorage {
     limit?: number;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
+    type?: string;
+    companies?: string[];
+    importance?: string;
   }): Promise<{ problems: Problem[]; total: number }>;
   getProblem(id: number): Promise<Problem | undefined>;
+  getProblemByMongoId(mongoId: string): Promise<Problem | undefined>;
+  getProblemByQuestionId(questionId: string): Promise<Problem | undefined>;
   createProblem(problem: InsertProblem): Promise<Problem>;
+  updateProblem(id: number, problem: Partial<Problem>): Promise<Problem | undefined>;
+  deleteProblem(id: number): Promise<boolean>;
   
   // User Progress methods
   getUserProgress(userId: number): Promise<(UserProgress & { problem: Problem })[]>;
@@ -226,6 +233,9 @@ export class DatabaseStorage implements IStorage {
     limit?: number;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
+    type?: string;
+    companies?: string[];
+    importance?: string;
   }): Promise<{ problems: Problem[]; total: number }> {
     const { 
       category, 
@@ -234,7 +244,10 @@ export class DatabaseStorage implements IStorage {
       page = 1, 
       limit = 20,
       sortBy = 'id',
-      sortOrder = 'asc'
+      sortOrder = 'asc',
+      type,
+      companies,
+      importance
     } = options || {};
     
     let query = db.select().from(problems);
@@ -247,13 +260,28 @@ export class DatabaseStorage implements IStorage {
     if (difficulty) {
       filters.push(eq(problems.difficulty, difficulty as any));
     }
+    if (type) {
+      filters.push(eq(problems.type, type as any));
+    }
+    if (importance) {
+      filters.push(eq(problems.importance, importance));
+    }
     if (search) {
       filters.push(
         or(
           ilike(problems.title, `%${search}%`),
-          ilike(problems.description, `%${search}%`)
+          ilike(problems.description, `%${search}%`),
+          ilike(problems.questionId, `%${search}%`)
         )
       );
+    }
+    
+    // We'll handle company filtering separately since it's an array
+    // Note: This is a simple contains check and might need optimization for larger datasets
+    if (companies && companies.length > 0) {
+      for (const company of companies) {
+        filters.push(sql`${problems.companies} @> ARRAY[${company}]::text[]`);
+      }
     }
     
     if (filters.length > 0) {
@@ -290,10 +318,40 @@ export class DatabaseStorage implements IStorage {
     const [problem] = await db.select().from(problems).where(eq(problems.id, id));
     return problem;
   }
+  
+  async getProblemByMongoId(mongoId: string): Promise<Problem | undefined> {
+    const [problem] = await db.select().from(problems).where(eq(problems.mongoId, mongoId));
+    return problem;
+  }
+  
+  async getProblemByQuestionId(questionId: string): Promise<Problem | undefined> {
+    const [problem] = await db.select().from(problems).where(eq(problems.questionId, questionId));
+    return problem;
+  }
 
   async createProblem(problem: InsertProblem): Promise<Problem> {
     const [createdProblem] = await db.insert(problems).values(problem).returning();
     return createdProblem;
+  }
+  
+  async updateProblem(id: number, problem: Partial<Problem>): Promise<Problem | undefined> {
+    const [updatedProblem] = await db
+      .update(problems)
+      .set({
+        ...problem,
+        updatedAt: new Date()
+      })
+      .where(eq(problems.id, id))
+      .returning();
+    return updatedProblem;
+  }
+  
+  async deleteProblem(id: number): Promise<boolean> {
+    const result = await db
+      .delete(problems)
+      .where(eq(problems.id, id))
+      .returning({ id: problems.id });
+    return result.length > 0;
   }
   
   // User Progress methods
