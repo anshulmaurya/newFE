@@ -66,10 +66,7 @@ export function setupAuth(app: Express) {
   };
 
   // Use the exact callback URL configured in GitHub OAuth settings
-  const callbackURL =
-    process.env.NODE_ENV === "production" 
-      ? "https://dspcoder.replit.app/api/auth/github/callback"
-      : "https://97332a4d-a72c-4bed-9d97-03b0350ae447-00-2lw03c0sn2pc2.kirk.replit.dev/api/auth/github/callback";
+  const callbackURL = "https://www.dspcoder.com/api/auth/github/callback/";
 
   console.log("GitHub Auth Callback URL:", callbackURL);
 
