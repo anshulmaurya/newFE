@@ -452,10 +452,7 @@ export class DatabaseStorage implements IStorage {
   async updateUserProgress(id: number, progress: Partial<UserProgress>): Promise<UserProgress | undefined> {
     const [updatedProgress] = await db
       .update(userProgress)
-      .set({
-        ...progress,
-        updatedAt: new Date()
-      })
+      .set(progress) // userProgress table doesn't have an updatedAt column
       .where(eq(userProgress.id, id))
       .returning();
     return updatedProgress;
@@ -890,6 +887,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUserNote(id: number, note: Partial<UserNote>): Promise<UserNote | undefined> {
+    // The userNotes table has an updatedAt column which we need to update
     const [updatedNote] = await db
       .update(userNotes)
       .set({
