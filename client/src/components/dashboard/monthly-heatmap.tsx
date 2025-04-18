@@ -10,17 +10,31 @@ interface MonthlyActivityData {
   [date: string]: {
     count: number;
     percentage: number;
+    isActive: boolean; // Flag to track if user logged in on this day
   };
 }
 
-// Function to get color based on count - improved color gradient
-const getColorForCount = (count: number): string => {
+// Interface for user stats
+interface UserStats {
+  id: number;
+  userId: number;
+  totalSolved: number;
+  easySolved: number;
+  mediumSolved: number;
+  hardSolved: number;
+  totalAttempted: number;
+  currentStreak: number;
+  longestStreak: number;
+  dailyGoal: number;
+  lastActiveDate: string;
+  updatedAt: string;
+}
+
+// Function to get color based on count and daily goal
+const getColorForCount = (count: number, dailyGoal: number): string => {
   if (count === 0) return 'bg-[rgb(32,32,36)]';
-  if (count === 1) return 'bg-[rgb(44,94,112)]';
-  if (count === 2) return 'bg-[rgb(65,126,152)]';
-  if (count === 3) return 'bg-[rgb(86,157,191)]';
-  if (count === 4) return 'bg-[rgb(107,188,231)]';
-  return 'bg-[rgb(128,216,255)]';
+  if (count >= dailyGoal) return 'bg-[rgb(34,139,34)]'; // Dark green for meeting/exceeding daily goal
+  return 'bg-[rgb(144,238,144)]'; // Light green for solving at least one problem
 };
 
 // Function to get text color based on count
@@ -35,6 +49,14 @@ const getCountTextColor = (count: number): string => {
   } else {
     return 'text-white';
   }
+};
+
+// Function to check if date is today
+const isToday = (date: Date): boolean => {
+  const today = new Date();
+  return date.getDate() === today.getDate() &&
+         date.getMonth() === today.getMonth() &&
+         date.getFullYear() === today.getFullYear();
 };
 
 // Format date as YYYY-MM-DD
@@ -53,6 +75,12 @@ export default function MonthlyHeatmap() {
   const [mostActiveDate, setMostActiveDate] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+  
+  // Fetch user stats to get daily goal and last active date
+  const { data: userStats, isLoading: isLoadingStats } = useQuery<UserStats>({
+    queryKey: ['/api/user-stats-record'],
+    enabled: !!user,
+  });
   
   // Calculate first and last day of month
   const firstDayOfMonth = useMemo(() => {
@@ -167,13 +195,20 @@ export default function MonthlyHeatmap() {
     // Initialize empty data structure for the month
     const initialMonthlyData: MonthlyActivityData = {};
     
+    // Get the user's last active date (for login tracking)
+    const lastActiveDate = userStats?.lastActiveDate ? new Date(userStats.lastActiveDate) : null;
+    
     // Initialize with zero counts for all days of the month
     monthDates.forEach(({ date, currentMonth }) => {
       if (currentMonth) {
         const dateStr = formatDate(date);
+        const isUserActiveOnThisDay = lastActiveDate ? 
+          formatDate(lastActiveDate) === dateStr : false;
+        
         initialMonthlyData[dateStr] = {
           count: 0,
-          percentage: 0
+          percentage: 0,
+          isActive: isUserActiveOnThisDay
         };
       }
     });
@@ -223,6 +258,7 @@ export default function MonthlyHeatmap() {
       Object.keys(initialMonthlyData).forEach(date => {
         initialMonthlyData[date].count = 0;
         initialMonthlyData[date].percentage = 0;
+        // Keep the isActive flag as is
       });
       
       // No most active date when there's no activity
@@ -232,10 +268,10 @@ export default function MonthlyHeatmap() {
     // Update the component state
     setMonthlyData(initialMonthlyData);
     setIsLoading(false);
-  }, [monthlyActivityData, isLoadingActivity, monthDates]);
+  }, [monthlyActivityData, isLoadingActivity, monthDates, userStats]);
 
   // Loading state
-  if (isLoading || isLoadingActivity) {
+  if (isLoading || isLoadingActivity || isLoadingStats) {
     return (
       <div className="p-3 h-full">
         <div className="flex justify-between items-center mb-2">
@@ -290,17 +326,28 @@ export default function MonthlyHeatmap() {
           const dateStr = formatDate(date);
           const data = currentMonth && monthlyData[dateStr] 
             ? monthlyData[dateStr] 
-            : { count: 0, percentage: 0 };
+            : { count: 0, percentage: 0, isActive: false };
           
-          const bgColor = currentMonth ? getColorForCount(data.count) : 'bg-[rgb(25,25,28)]';
+          // Get daily goal from user stats (default to 3 if not available)
+          const dailyGoal = userStats?.dailyGoal || 3;
+          
+          // Determine background color based on count and daily goal
+          const bgColor = currentMonth ? getColorForCount(data.count, dailyGoal) : 'bg-[rgb(25,25,28)]';
           const textColor = currentMonth ? getTextColorForCount(data.count) : 'text-gray-500';
           const opacity = currentMonth ? 'opacity-100' : 'opacity-40';
+          
+          // Check if the date is today for highlighting
+          const isDateToday = isToday(date);
+          
+          // Create border style for login days and highlight style for today
+          const borderStyle = data.isActive ? 'border-2 border-green-500' : '';
+          const todayHighlight = isDateToday ? 'ring-2 ring-yellow-400' : '';
           
           return (
             <div
               key={index}
-              className={`h-8 w-full ${bgColor} ${opacity} rounded-[2px] flex items-center justify-center relative transition-colors`}
-              title={currentMonth ? `${dateStr}: ${data.count} problems solved` : dateStr}
+              className={`h-8 w-full ${bgColor} ${opacity} ${borderStyle} ${todayHighlight} rounded-[2px] flex items-center justify-center relative transition-colors`}
+              title={currentMonth ? `${dateStr}: ${data.count} problems solved${data.isActive ? ' (Logged in)' : ''}` : dateStr}
             >
               <div className={`text-[11px] leading-none font-medium ${textColor}`}>
                 {date.getDate()}
