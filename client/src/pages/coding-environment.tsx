@@ -330,10 +330,12 @@ export default function CodingEnvironment() {
           console.log(`${key}: ${typeof problemData[key]}`, problemData[key]);
         }
         
-        if (problemData.question_id) {
+        // Handle both camelCase and snake_case property names
+        const questionIdValue = problemData.questionId || problemData.question_id;
+        if (questionIdValue) {
           // Set question ID for other uses if it's available
-          console.log('Setting question ID:', problemData.question_id);
-          setQuestionId(problemData.question_id);
+          console.log('Setting question ID:', questionIdValue);
+          setQuestionId(questionIdValue);
         }
         
         // CRITICAL FIX: The database field is 'filePath' (camelCase) not 'file_path' (snake_case)
@@ -370,7 +372,13 @@ export default function CodingEnvironment() {
         
         // Add debugging for the problem data
         console.log('Full problem data from database:', problemData);
-        console.log('file_path type:', typeof problemData.file_path);
+        console.log('filePath type:', typeof filePath);
+        
+        // Show explicit log message to help debug camelCase vs snake_case issue
+        console.log('Property names in problem data:');
+        for (const key in problemData) {
+          console.log(`- ${key}: ${typeof problemData[key]}`);
+        }
         
         // DO NOT extract just the folder name from the URL
         // DO NOT modify the file_path in any way
@@ -497,8 +505,11 @@ export default function CodingEnvironment() {
           // Try the question_id approach as a fallback
           if (questionId) {
             try {
-              const questionIdUrl = `https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description?question_id=${encodeURIComponent(questionId)}`;
+              // Make sure we use the latest question ID value
+              const finalQuestionId = questionId || questionIdValue;
+              const questionIdUrl = `https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description?question_id=${encodeURIComponent(finalQuestionId)}`;
               console.log('Fetching problem description using URL (question_id method):', questionIdUrl);
+              console.log('Using question_id:', finalQuestionId);
               
               const questionIdRes = await fetch(questionIdUrl);
               
@@ -590,16 +601,39 @@ export default function CodingEnvironment() {
   const DebugPanel = () => {
     return (
       <div className="bg-black/80 text-white p-4 absolute bottom-0 right-0 max-w-[600px] max-h-[400px] overflow-auto text-xs">
-        <h3 className="font-bold">Debug Info:</h3>
+        <div className="flex justify-between items-center">
+          <h3 className="font-bold">Debug Info:</h3>
+          <Button variant="outline" size="sm" className="h-6 text-xs" onClick={() => console.log('Full problemDescription:', problemDescription)}>
+            Log to Console
+          </Button>
+        </div>
         <div className="mt-1">
-          <p className="font-semibold">Problem ID: {problemId}</p>
-          <p className="font-semibold">Question ID: {questionId}</p>
-          <p className="mt-1 font-semibold">Loading: {isLoadingDescription ? 'Yes' : 'No'}</p>
-          <p className="font-semibold">API Error: {descriptionError ? 'Yes' : 'No'}</p>
-          <p className="mb-1 font-semibold text-red-400">{descriptionError ? String(descriptionError) : ''}</p>
+          <div className="grid grid-cols-2 gap-x-4">
+            <p className="font-semibold">Problem ID: <span className="font-normal text-blue-300">{problemId}</span></p>
+            <p className="font-semibold">Question ID: <span className="font-normal text-blue-300">{questionId}</span></p>
+          </div>
           
-          <p className="font-semibold mt-2">API Response:</p>
-          <pre className="text-green-400 mt-1 whitespace-pre-wrap">
+          <div className="grid grid-cols-2 gap-x-4 mt-1">
+            <p className="font-semibold">Loading: <span className={isLoadingDescription ? "text-yellow-300" : "text-green-300"}>{isLoadingDescription ? 'Yes' : 'No'}</span></p>
+            <p className="font-semibold">API Error: <span className={descriptionError ? "text-red-300" : "text-green-300"}>{descriptionError ? 'Yes' : 'No'}</span></p>
+          </div>
+          
+          {descriptionError && (
+            <p className="my-1 font-semibold text-red-400 border border-red-800 bg-red-950/50 p-1 rounded">
+              {String(descriptionError)}
+            </p>
+          )}
+          
+          <p className="font-semibold mt-2 border-t border-gray-700 pt-1">Property Names Check:</p>
+          <div className="grid grid-cols-2 gap-x-2 mt-1 text-2xs">
+            <p><span className="text-gray-400">file_path:</span> <span className="text-green-300">{problemDescription && problemDescription.file_path ? '✓' : '✗'}</span></p>
+            <p><span className="text-gray-400">filePath:</span> <span className="text-green-300">{problemDescription && problemDescription.filePath ? '✓' : '✗'}</span></p>
+            <p><span className="text-gray-400">question_id:</span> <span className="text-green-300">{problemDescription && problemDescription.question_id ? '✓' : '✗'}</span></p>
+            <p><span className="text-gray-400">questionId:</span> <span className="text-green-300">{problemDescription && problemDescription.questionId ? '✓' : '✗'}</span></p>
+          </div>
+          
+          <p className="font-semibold mt-2 border-t border-gray-700 pt-1">API Response:</p>
+          <pre className="text-green-400 mt-1 whitespace-pre-wrap bg-black/50 p-2 rounded max-h-60 overflow-auto text-2xs">
             {problemDescription ? JSON.stringify(problemDescription, null, 2) : 'No data'}
           </pre>
         </div>
