@@ -146,8 +146,8 @@ export interface IStorage {
   createCompany(company: InsertCompany): Promise<Company>;
   updateCompany(id: number, company: Partial<Company>): Promise<Company | undefined>;
   
-  // Company-Problem mapping methods
-  associateProblemWithCompany(problemId: number, companyId: number, relevanceScore?: number): Promise<CompanyProblemMap>;
+  // Company-Problem association methods (using companyIds array in problems table)
+  associateProblemWithCompany(problemId: number, companyId: number, relevanceScore?: number): Promise<{ problemId: number, companyId: number, relevanceScore: number | null }>;
   removeProblemCompanyAssociation(problemId: number, companyId: number): Promise<boolean>;
 }
 
@@ -371,27 +371,34 @@ export class DatabaseStorage implements IStorage {
       filteredProblems = filteredProblems.filter(p => (p as any).importance === importance);
     }
     
-    // For company filter, we need to query the company_problem_map table
+    // For company filter, filter based on companyIds array in the problems table
     if (company && company !== 'all') {
-      // First find the company ID by name
-      const companyRecord = await db
-        .select()
-        .from(companies)
-        .where(eq(companies.name, company))
-        .limit(1);
+      let companyId: number | undefined;
       
-      if (companyRecord.length > 0) {
-        const companyId = companyRecord[0].id;
-        
-        // Find all problems associated with this company
-        const companyProblemMappings = await db
+      // First determine if company is a name or ID
+      if (typeof company === 'number') {
+        companyId = company;
+      } else if (typeof company === 'string' && !isNaN(parseInt(company))) {
+        // If company is a string number, convert to number
+        companyId = parseInt(company);
+      } else {
+        // Try to find company by name
+        const companyRecord = await db
           .select()
-          .from(companyProblemMap)
-          .where(eq(companyProblemMap.companyId, companyId));
+          .from(companies)
+          .where(eq(companies.name, company))
+          .limit(1);
         
-        // Filter problems by the IDs found in the mappings
-        const problemIds = companyProblemMappings.map(mapping => mapping.problemId);
-        filteredProblems = filteredProblems.filter(p => problemIds.includes(p.id));
+        if (companyRecord.length > 0) {
+          companyId = companyRecord[0].id;
+        }
+      }
+      
+      if (companyId) {
+        // Filter problems with this company ID in their companyIds array
+        filteredProblems = filteredProblems.filter(p => 
+          p.companyIds && Array.isArray(p.companyIds) && p.companyIds.includes(companyId)
+        );
       } else {
         // If company not found, return empty list
         filteredProblems = [];
@@ -1061,22 +1068,19 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getCompaniesByProblemId(problemId: number): Promise<Company[]> {
-    // First get all mappings for this problem
-    const mappings = await db
+    // First get the problem to access its companyIds array
+    const [problem] = await db
       .select()
-      .from(companyProblemMap)
-      .where(eq(companyProblemMap.problemId, problemId));
+      .from(problems)
+      .where(eq(problems.id, problemId));
     
-    if (mappings.length === 0) {
+    if (!problem || !problem.companyIds || problem.companyIds.length === 0) {
       return [];
     }
     
-    // Get all company IDs from the mappings
-    const companyIds = mappings.map(mapping => mapping.companyId);
-    
-    // Now get the company details for each ID
+    // Get all company details for the IDs in the array
     const companyList: Company[] = [];
-    for (const companyId of companyIds) {
+    for (const companyId of problem.companyIds) {
       const [company] = await db
         .select()
         .from(companies)
@@ -1110,61 +1114,63 @@ export class DatabaseStorage implements IStorage {
     return updatedCompany;
   }
   
-  // Company-Problem mapping methods
-  async associateProblemWithCompany(problemId: number, companyId: number, relevanceScore: number = 5): Promise<CompanyProblemMap> {
-    // Check if association already exists
-    const [existingMapping] = await db
+  // Company-Problem association methods (using companyIds array)
+  async associateProblemWithCompany(problemId: number, companyId: number, relevanceScore: number = 5): Promise<{ problemId: number, companyId: number, relevanceScore: number | null }> {
+    // Get the current problem
+    const [problem] = await db
       .select()
-      .from(companyProblemMap)
-      .where(
-        and(
-          eq(companyProblemMap.problemId, problemId),
-          eq(companyProblemMap.companyId, companyId)
-        )
-      );
+      .from(problems)
+      .where(eq(problems.id, problemId));
     
-    if (existingMapping) {
-      // Update relevance score if it exists
-      const [updatedMapping] = await db
-        .update(companyProblemMap)
-        .set({
-          relevanceScore
-        })
-        .where(
-          and(
-            eq(companyProblemMap.problemId, problemId),
-            eq(companyProblemMap.companyId, companyId)
-          )
-        )
-        .returning();
-      return updatedMapping;
-    } else {
-      // Create new mapping
-      const [newMapping] = await db
-        .insert(companyProblemMap)
-        .values({
-          problemId,
-          companyId,
-          relevanceScore
-        })
-        .returning();
-      return newMapping;
+    if (!problem) {
+      throw new Error(`Problem with ID ${problemId} not found`);
     }
+    
+    // Check if this company is already in the array
+    const companyIds = problem.companyIds || [];
+    
+    if (!companyIds.includes(companyId)) {
+      // Add the company ID to the array
+      const updatedCompanyIds = [...companyIds, companyId];
+      
+      // Update the problem with the new company ID array
+      await db
+        .update(problems)
+        .set({
+          companyIds: updatedCompanyIds,
+          updatedAt: new Date()
+        })
+        .where(eq(problems.id, problemId));
+    }
+    
+    // Return the association data with relevanceScore included to match the interface
+    return { problemId, companyId, relevanceScore };
   }
   
   async removeProblemCompanyAssociation(problemId: number, companyId: number): Promise<boolean> {
     try {
-      await db
-        .delete(companyProblemMap)
-        .where(
-          and(
-            eq(companyProblemMap.problemId, problemId),
-            eq(companyProblemMap.companyId, companyId)
-          )
-        );
+      // Get the current problem
+      const [problem] = await db
+        .select()
+        .from(problems)
+        .where(eq(problems.id, problemId));
       
-      // If we get here without an error, we'll assume success
-      // In a real production system, we'd want to check rows affected
+      if (!problem || !problem.companyIds) {
+        return false;
+      }
+      
+      // Remove the company ID from the array
+      const updatedCompanyIds = problem.companyIds.filter(id => id !== companyId);
+      
+      // Update the problem with the new company ID array
+      await db
+        .update(problems)
+        .set({
+          companyIds: updatedCompanyIds,
+          updatedAt: new Date()
+        })
+        .where(eq(problems.id, problemId));
+      
       return true;
     } catch (error) {
       console.error("Error removing problem-company association:", error);
