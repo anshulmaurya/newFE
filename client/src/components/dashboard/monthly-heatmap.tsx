@@ -30,7 +30,7 @@ interface UserStats {
   updatedAt: string;
 }
 
-// Function to get color based on count and daily goal - using teal gradient approach
+// Function to get color based on count and daily goal - using teal gradient approach (dark to light)
 const getColorForCount = (count: number, dailyGoal: number): string => {
   if (count === 0) return 'bg-[rgb(32,32,36)]'; // Dark background for no activity
   
@@ -38,26 +38,26 @@ const getColorForCount = (count: number, dailyGoal: number): string => {
   const percentComplete = Math.min(count / dailyGoal, 1);
   
   if (percentComplete <= 0.25) {
-    return 'bg-[rgb(213,242,240)]'; // Very light teal - 25% of goal
+    return 'bg-[rgb(35,78,82)]'; // Dark teal - 25% of goal
   } else if (percentComplete <= 0.5) {
-    return 'bg-[rgb(129,212,209)]'; // Light teal - 50% of goal
+    return 'bg-[rgb(56,178,172)]'; // Medium teal - 50% of goal
   } else if (percentComplete <= 0.75) {
-    return 'bg-[rgb(56,178,172)]'; // Medium teal - 75% of goal
+    return 'bg-[rgb(129,212,209)]'; // Light teal - 75% of goal
   } else {
-    return 'bg-[rgb(35,78,82)]'; // Dark teal - 100% of goal
+    return 'bg-[rgb(213,242,240)]'; // Very light teal - 100% of goal
   }
 };
 
-// Function to get text color based on count and daily goal
+// Function to get text color based on count and daily goal (for dark-to-light)
 const getTextColorForCount = (count: number, dailyGoal: number): string => {
   if (count === 0) return 'text-gray-400';
   const percentComplete = Math.min(count / dailyGoal, 1);
   
-  // For darker teal backgrounds, use white text
-  if (percentComplete > 0.5) {
+  // For darker teal backgrounds (lower percentages), use white text
+  if (percentComplete <= 0.5) {
     return 'text-white';
   }
-  // For lighter teal backgrounds, use dark text
+  // For lighter teal backgrounds (higher percentages), use dark text
   return 'text-gray-800';
 };
 
@@ -65,11 +65,11 @@ const getTextColorForCount = (count: number, dailyGoal: number): string => {
 const getCountTextColor = (count: number, dailyGoal: number): string => {
   const percentComplete = Math.min(count / dailyGoal, 1);
   
-  // For darker teal backgrounds, use white text
-  if (percentComplete > 0.5) {
+  // For darker teal backgrounds (lower percentages), use white text
+  if (percentComplete <= 0.5) {
     return 'text-white';
   }
-  // For lighter teal backgrounds, use dark text
+  // For lighter teal backgrounds (higher percentages), use dark text
   return 'text-gray-800';
 };
 
