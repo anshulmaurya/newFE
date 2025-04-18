@@ -558,13 +558,6 @@ export default function CodingEnvironment() {
     }
   }, [descriptionError]);
   
-  // Update document title when problem title is available
-  React.useEffect(() => {
-    // Use database title first, then external API title, then default
-    const problemTitle = dbProblemTitle || (problem?.title || "Coding Problem");
-    document.title = `${problemTitle} | DSP Coder`;
-  }, [dbProblemTitle, problem]);
-  
   const refreshIframe = () => {
     if (iframeRef.current && iframeRef.current.src) {
       iframeRef.current.src = iframeRef.current.src;
@@ -615,6 +608,14 @@ export default function CodingEnvironment() {
   const [dbProblemTitle, setDbProblemTitle] = useState<string | null>(null);
   const [dbProblemDifficulty, setDbProblemDifficulty] = useState<string | null>(null);
   const problem = problemDescription?.data;
+  
+  // Update document title when problem title is available
+  React.useEffect(() => {
+    if (dbProblemTitle || (problem && problem.title)) {
+      const problemTitle = dbProblemTitle || (problem?.title || "Coding Problem");
+      document.title = `${problemTitle} | DSP Coder`;
+    }
+  }, [dbProblemTitle, problem]);
   
   // Removed debug component
 
