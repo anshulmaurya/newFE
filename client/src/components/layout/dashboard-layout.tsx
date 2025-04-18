@@ -200,7 +200,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, darkMode, t
   };
 
   return (
-    <div className={`flex flex-col min-h-screen ${themeClasses.bg} ${themeClasses.text} transition-colors duration-200 app-container`}>
+    <div className={`flex flex-col h-full ${themeClasses.bg} ${themeClasses.text} transition-colors duration-200 app-container`}>
       <Header 
         onNavigateFeatures={navigateToFeatures} 
         onNavigateProblems={navigateToProblems}
@@ -277,7 +277,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, darkMode, t
         </div>
 
         {/* Main content - Adding ml-56 to create space for the fixed sidebar */}
-        <div className="flex-1 overflow-y-auto px-0 py-4 ml-56 scrollable-content min-h-screen">
+        <div className="flex-1 overflow-y-auto px-0 py-4 ml-56 scrollable-content">
           {children}
         </div>
       </div>
