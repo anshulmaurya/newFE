@@ -1106,24 +1106,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Code Submission endpoint
   apiRouter.post("/code-submissions", getUserId, async (req: Request, res: Response) => {
     try {
+      console.log("Code submission request received, auth userId:", req.userId);
+      console.log("Request body:", req.body);
+      
       if (!req.userId) {
         return res.status(401).json({ error: "Unauthorized" });
       }
       
-      // Validate the submission data
-      const submissionData = insertCodeSubmissionSchema.parse({
-        ...req.body,
-        userId: req.userId
-      });
-      
-      // Save the submission to the database
-      const submission = await storage.createCodeSubmission(submissionData);
-      
-      return res.status(201).json({
-        status: "success",
-        message: "Code submission recorded successfully",
-        submission
-      });
+      try {
+        // Validate the submission data
+        const submissionData = insertCodeSubmissionSchema.parse({
+          ...req.body,
+          userId: req.userId
+        });
+        
+        console.log("Validated submission data:", submissionData);
+        
+        // Save the submission to the database
+        const submission = await storage.createCodeSubmission(submissionData);
+        
+        console.log("Submission saved successfully:", submission);
+        
+        return res.status(201).json({
+          status: "success",
+          message: "Code submission recorded successfully",
+          submission
+        });
+      } catch (validationError) {
+        console.error("Validation error:", validationError);
+        return res.status(400).json({
+          status: "error",
+          message: "Invalid submission data",
+          error: validationError
+        });
+      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ 

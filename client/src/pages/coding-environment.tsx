@@ -1874,20 +1874,26 @@ The solution file for this problem could not be found or is inaccessible.
                           };
                           
                           // Save to our database
-                          const response = await fetch('/api/code-submissions', {
-                            method: 'POST',
-                            headers: {
-                              'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(submissionData)
-                          });
-                          
-                          const dbData = await response.json();
-                          
-                          if (response.ok) {
-                            console.log('Submission saved to database:', dbData);
-                          } else {
-                            console.error('Failed to save submission to database:', dbData);
+                          console.log('Submitting to database with data:', submissionData);
+                          try {
+                            const response = await fetch('/api/code-submissions', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify(submissionData),
+                              credentials: 'include' // Important for including cookies for auth
+                            });
+                            
+                            const dbData = await response.json();
+                            
+                            if (response.ok) {
+                              console.log('Submission saved to database:', dbData);
+                            } else {
+                              console.error('Failed to save submission to database. Status:', response.status, 'Response:', dbData);
+                            }
+                          } catch (fetchError) {
+                            console.error('Network error when saving to database:', fetchError);
                           }
                         } catch (dbError) {
                           console.error('Error saving submission to database:', dbError);
