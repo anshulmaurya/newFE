@@ -662,9 +662,14 @@ export default function Dashboard() {
                           return false;
                         } else if (user) {
                           // For authenticated users, filter by progress data
-                          const progressData = userProgressData?.find((p: any) => 
-                            parseInt(p.problemId) === parseInt(problem.id)
-                          );
+                          // Make sure to safely parse problem ID as integers for comparison
+                          let problemId = typeof problem.id === 'string' ? parseInt(problem.id) : problem.id;
+                          
+                          const progressData = userProgressData?.find((p: any) => {
+                            const pId = typeof p.problemId === 'string' ? parseInt(p.problemId) : p.problemId;
+                            return pId === problemId;
+                          });
+                          
                           const problemStatus = progressData?.status || 'Not Started';
                           if (problemStatus !== status) {
                             return false;
@@ -675,19 +680,35 @@ export default function Dashboard() {
                       // Apply search filter
                       if (search && search.trim() !== '') {
                         const searchTerm = search.toLowerCase();
-                        return problem.title?.toLowerCase().includes(searchTerm) ||
-                              problem.description?.toLowerCase().includes(searchTerm) ||
-                              problem.tags?.some((tag: string) => tag.toLowerCase().includes(searchTerm)) ||
-                              problem.companies?.some((company: string) => company.toLowerCase().includes(searchTerm));
+                        
+                        // Safely check each field with proper null checks
+                        const titleMatch = problem.title ? problem.title.toLowerCase().includes(searchTerm) : false;
+                        const descriptionMatch = problem.description ? problem.description.toLowerCase().includes(searchTerm) : false;
+                        
+                        // Check arrays with proper null checks
+                        const tagMatch = Array.isArray(problem.tags) 
+                          ? problem.tags.some((tag: string) => tag && tag.toLowerCase().includes(searchTerm)) 
+                          : false;
+                          
+                        const companyMatch = Array.isArray(problem.companies) 
+                          ? problem.companies.some((company: string) => company && company.toLowerCase().includes(searchTerm)) 
+                          : false;
+                          
+                        return titleMatch || descriptionMatch || tagMatch || companyMatch;
                       }
                       
                       return true;
                     })
                     .map((problem: any, idx: number) => {
                       // Get the problem status from userProgress data if available, otherwise default to "Not Started"
-                      const progressData = userProgressData?.find((p: any) => 
-                        parseInt(p.problemId) === parseInt(problem.id)
-                      );
+                      // Make sure to safely parse problem ID as integers for comparison
+                      let problemId = typeof problem.id === 'string' ? parseInt(problem.id) : problem.id;
+                      
+                      const progressData = userProgressData?.find((p: any) => {
+                        const pId = typeof p.problemId === 'string' ? parseInt(p.problemId) : p.problemId;
+                        return pId === problemId;
+                      });
+                      
                       const problemStatus = progressData?.status || 'Not Started';
                       const statusIcon = getStatusIcon(problemStatus);
                       
