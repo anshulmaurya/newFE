@@ -30,21 +30,22 @@ interface UserStats {
   updatedAt: string;
 }
 
-// Function to get color based on count and daily goal - using teal gradient approach
+// Function to get color based on count and daily goal - using teal gradient approach (reversed)
 const getColorForCount = (count: number, dailyGoal: number): string => {
   if (count === 0) return 'bg-[rgb(32,32,36)]'; // Dark background for no activity
   
   // Calculate percentage of daily goal
   const percentComplete = Math.min(count / dailyGoal, 1);
   
-  if (percentComplete <= 0.25) {
-    return 'bg-[rgb(213,242,240)]'; // Very light teal - 25% of goal
-  } else if (percentComplete <= 0.5) {
-    return 'bg-[rgb(129,212,209)]'; // Light teal - 50% of goal
-  } else if (percentComplete <= 0.75) {
-    return 'bg-[rgb(56,178,172)]'; // Medium teal - 75% of goal
+  // Reversed color scheme - lighter colors for meeting/exceeding goals
+  if (percentComplete >= 1) {
+    return 'bg-[rgb(213,242,240)]'; // Very light teal - 100% or more of goal
+  } else if (percentComplete >= 0.75) {
+    return 'bg-[rgb(129,212,209)]'; // Light teal - 75-99% of goal
+  } else if (percentComplete >= 0.5) {
+    return 'bg-[rgb(56,178,172)]'; // Medium teal - 50-74% of goal
   } else {
-    return 'bg-[rgb(35,78,82)]'; // Dark teal - 100% of goal
+    return 'bg-[rgb(35,78,82)]'; // Dark teal - <50% of goal but at least one problem
   }
 };
 
@@ -53,11 +54,11 @@ const getTextColorForCount = (count: number, dailyGoal: number): string => {
   if (count === 0) return 'text-gray-400';
   const percentComplete = Math.min(count / dailyGoal, 1);
   
-  // For darker teal backgrounds, use white text
-  if (percentComplete > 0.5) {
+  // For darker teal backgrounds (lower percentage), use white text
+  if (percentComplete < 0.75) {
     return 'text-white';
   }
-  // For lighter teal backgrounds, use dark text
+  // For lighter teal backgrounds (higher percentage), use dark text
   return 'text-gray-800';
 };
 
@@ -65,11 +66,11 @@ const getTextColorForCount = (count: number, dailyGoal: number): string => {
 const getCountTextColor = (count: number, dailyGoal: number): string => {
   const percentComplete = Math.min(count / dailyGoal, 1);
   
-  // For darker teal backgrounds, use white text
-  if (percentComplete > 0.5) {
+  // For darker teal backgrounds (lower percentage), use white text
+  if (percentComplete < 0.75) {
     return 'text-white';
   }
-  // For lighter teal backgrounds, use dark text
+  // For lighter teal backgrounds (higher percentage), use dark text
   return 'text-gray-800';
 };
 
@@ -364,8 +365,8 @@ export default function MonthlyHeatmap() {
           // Create subtle indicator for login days
           const loginIndicator = data.isActive && currentMonth ? 'after:content-[""] after:absolute after:right-1 after:top-1 after:h-1.5 after:w-1.5 after:rounded-full after:bg-emerald-500' : '';
           
-          // Create subtle pulsing animation for today's date
-          const todayHighlight = isDateToday ? 'ring-1 ring-blue-300' : '';
+          // Create a different highlight for today's date - bold font and subtle shadow
+          const todayHighlight = isDateToday ? 'font-bold shadow-[0_0_3px_rgba(255,255,255,0.5)]' : '';
           
           return (
             <div
