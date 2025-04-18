@@ -1070,13 +1070,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("Test code submission endpoint called with body:", req.body);
       
-      // Use a default user ID for testing (id: 1)
-      const testUserId = 1;
+      // Use the userId from the request body or default to 1 for testing
+      const testUserId = req.body.userId || 1;
+      
+      let problemId = req.body.problemId;
+      
+      // If the problemId is a large number (like 10102), try to find the internal ID
+      if (problemId > 1000) {
+        // Look up the problem by question_id
+        const questionIdPattern = `${problemId}_%`;
+        console.log(`Looking up problem with question_id like: ${questionIdPattern}`);
+        
+        try {
+          const problem = await storage.getProblemByQuestionIdPattern(questionIdPattern);
+          
+          if (problem) {
+            console.log(`Found problem with internal ID ${problem.id} for external ID ${problemId}`);
+            problemId = problem.id; // Use the internal ID instead
+          } else {
+            console.log(`No problem found for external ID ${problemId}`);
+            return res.status(404).json({
+              status: "error",
+              message: `Problem with ID ${problemId} not found in database`
+            });
+          }
+        } catch (lookupError) {
+          console.error("Error looking up problem:", lookupError);
+          // Continue with the original ID, which might fail later
+        }
+      }
       
       // Validate the submission data
       const submissionData = insertCodeSubmissionSchema.parse({
         ...req.body,
-        userId: testUserId
+        userId: testUserId,
+        problemId: problemId
       });
       
       // Save the submission to the database

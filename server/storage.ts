@@ -340,6 +340,21 @@ export class DatabaseStorage implements IStorage {
   }
   
   // Problem methods
+  
+  // Look up problem by question_id pattern (for mapping external IDs)
+  async getProblemByQuestionIdPattern(questionIdPattern: string): Promise<Problem | undefined> {
+    const result = await db.select()
+      .from(problems)
+      .where(like(problems.questionId, questionIdPattern))
+      .limit(1);
+    
+    if (result.length > 0) {
+      return result[0];
+    }
+    
+    return undefined;
+  }
+  
   async getProblems(options?: {
     category?: string | number; // Can accept categoryId (number) or category name (string)
     difficulty?: string;
