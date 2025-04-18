@@ -648,22 +648,38 @@ export default function Dashboard() {
                       
                       // Apply category filter - now comparing with category id 
                       if (category !== 'all') {
-                        // Find matching category by id
-                        const categoryObj = availableCategories?.find(cat => cat.id.toString() === category);
+                        // Category id from select dropdown
+                        const selectedCategoryId = parseInt(category);
                         
-                        // If we found a matching category, compare with problem.category
-                        if (categoryObj && 
-                           !(
-                             // Try to match by category name or type
-                             (problem.category && problem.category.toLowerCase() === categoryObj.name.toLowerCase()) ||
-                             (problem.type && problem.type.toLowerCase() === categoryObj.name.toLowerCase()) ||
-                             // Try to match by tags
-                             (Array.isArray(problem.tags) && problem.tags.some((tag: string) => 
-                               tag && tag.toLowerCase() === categoryObj.name.toLowerCase()
-                             ))
-                           )
-                        ) {
-                          return false;
+                        // Check problem's category id
+                        if (problem.category && problem.category.id) {
+                          // Direct match by ID
+                          if (problem.category.id !== selectedCategoryId) {
+                            return false;
+                          }
+                        } else if (problem.categoryId) {
+                          // Direct match by categoryId field
+                          if (problem.categoryId !== selectedCategoryId) {
+                            return false;
+                          }
+                        } else {
+                          // Fallback for problems that might not have the new category structure
+                          const categoryObj = availableCategories?.find(cat => cat.id === selectedCategoryId);
+                          
+                          // Try matching by name or tags as a fallback
+                          if (categoryObj && 
+                             !(
+                               // Try to match by old category name or type
+                               (problem.oldCategory && problem.oldCategory.toLowerCase() === categoryObj.name.toLowerCase()) ||
+                               (problem.type && problem.type.toLowerCase() === categoryObj.name.toLowerCase()) ||
+                               // Try to match by tags
+                               (Array.isArray(problem.tags) && problem.tags.some((tag: string) => 
+                                 tag && tag.toLowerCase() === categoryObj.name.toLowerCase()
+                               ))
+                             )
+                          ) {
+                            return false;
+                          }
                         }
                       }
                       

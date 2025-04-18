@@ -8,31 +8,6 @@ import { relations } from "drizzle-orm";
 export const difficultyEnum = pgEnum('difficulty', ['Easy', 'Medium', 'Hard']);
 export const statusEnum = pgEnum('status', ['Solved', 'Attempted', 'Not Started']);
 export const submissionStatusEnum = pgEnum('submission_status', ['pass', 'fail']);
-export const categoryEnum = pgEnum('category', [
-  'Arrays',
-  'Strings',
-  'Linked Lists',
-  'Stacks',
-  'Queues',
-  'Trees',
-  'Heaps',
-  'Hash Tables',
-  'Graphs',
-  'Tries',
-  'Disjoint Sets',
-  'Searching',
-  'Sorting',
-  'Recursion',
-  'Dynamic Programming',
-  'Greedy Algorithms',
-  'Divide and Conquer',
-  'Bit Manipulation',
-  'Mathematical Algorithms',
-  'RTOS',
-  'State Machines',
-  'Multithreading',
-  'Memory Management'
-]);
 export const problemTypeEnum = pgEnum('problem_type', ['dsa', 'embedded', 'bridge']); // Updated 'system' to 'bridge'
 export const importanceEnum = pgEnum('importance', ['low', 'medium', 'high']); // Added importance enum
 

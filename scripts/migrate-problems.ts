@@ -1,52 +1,80 @@
 import { MongoClient } from 'mongodb';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import { problems, categoryEnum } from '../shared/schema';
+import { problems, problemCategories } from '../shared/schema';
 import { eq } from 'drizzle-orm';
 
-// Helper function to map any category string to a valid category enum value
-function mapToValidCategory(category: string | undefined): typeof categoryEnum.enumValues[number] {
-  if (!category) return 'Data Structures';
-  
-  const validCategories = categoryEnum.enumValues;
-  
-  // Try direct match first
-  if (validCategories.includes(category as any)) {
-    return category as typeof categoryEnum.enumValues[number];
+// Helper function to map any category string to a valid category ID
+async function mapToCategoryId(db: any, category: string | undefined): Promise<number> {
+  if (!category) {
+    // Default to "Arrays" category
+    const defaultCategory = await db.select()
+      .from(problemCategories)
+      .where(eq(problemCategories.name, 'Arrays'))
+      .execute();
+    
+    return defaultCategory[0]?.id || 31; // Default to ID 31 if not found
   }
   
-  // Try case-insensitive match
+  // Try direct match first
+  const exactMatch = await db.select()
+    .from(problemCategories)
+    .where(eq(problemCategories.name, category))
+    .execute();
+    
+  if (exactMatch.length > 0) {
+    return exactMatch[0].id;
+  }
+  
+  // Try case-insensitive match (need to do this manually since Drizzle doesn't have case-insensitive comparison)
+  const allCategories = await db.select().from(problemCategories).execute();
   const lowerCategory = category.toLowerCase();
-  for (const validCategory of validCategories) {
-    if (validCategory.toLowerCase() === lowerCategory) {
-      return validCategory;
+  
+  for (const cat of allCategories) {
+    if (cat.name.toLowerCase() === lowerCategory) {
+      return cat.id;
     }
   }
   
-  // Map similar categories
+  // Map similar categories based on keywords
   if (lowerCategory.includes('memory') || lowerCategory.includes('allocation')) {
-    return 'Memory Management';
+    const memoryCategory = await db.select()
+      .from(problemCategories)
+      .where(eq(problemCategories.name, 'Memory Management'))
+      .execute();
+    return memoryCategory[0]?.id || 53;
   } else if (lowerCategory.includes('thread') || lowerCategory.includes('concurrency')) {
-    return 'Multithreading';
-  } else if (lowerCategory.includes('data') || lowerCategory.includes('algorithm') || 
-             lowerCategory.includes('array') || lowerCategory.includes('list')) {
-    return 'Data Structures';
-  } else if (lowerCategory.includes('c++') || lowerCategory.includes('cpp') || 
-             lowerCategory.includes('stl')) {
-    return 'C++ API';
-  } else if (lowerCategory.includes('linux') || lowerCategory.includes('unix') || 
-             lowerCategory.includes('posix')) {
-    return 'Linux API';
-  } else if (lowerCategory.includes('rtos') || lowerCategory.includes('freertos') || 
-             lowerCategory.includes('real-time')) {
-    return 'RTOS';
-  } else if (lowerCategory.includes('power') || lowerCategory.includes('energy') || 
-             lowerCategory.includes('battery')) {
-    return 'Power Management';
+    const threadingCategory = await db.select()
+      .from(problemCategories)
+      .where(eq(problemCategories.name, 'Multithreading'))
+      .execute();
+    return threadingCategory[0]?.id || 33;
+  } else if (lowerCategory.includes('array')) {
+    const arrayCategory = await db.select()
+      .from(problemCategories)
+      .where(eq(problemCategories.name, 'Arrays'))
+      .execute();
+    return arrayCategory[0]?.id || 31;
+  } else if (lowerCategory.includes('data') || lowerCategory.includes('structure')) {
+    const dataStructCategory = await db.select()
+      .from(problemCategories)
+      .where(eq(problemCategories.name, 'Arrays'))
+      .execute();
+    return dataStructCategory[0]?.id || 31;
+  } else if (lowerCategory.includes('rtos') || lowerCategory.includes('real-time')) {
+    const rtosCategory = await db.select()
+      .from(problemCategories)
+      .where(eq(problemCategories.name, 'RTOS'))
+      .execute();
+    return rtosCategory[0]?.id || 50;
   }
   
-  // Default fallback
-  return 'Data Structures';
+  // Default fallback to Arrays
+  const defaultCategory = await db.select()
+    .from(problemCategories)
+    .where(eq(problemCategories.name, 'Arrays'))
+    .execute();
+  return defaultCategory[0]?.id || 31;
 }
 
 // MongoDB Atlas connection string
@@ -105,21 +133,22 @@ export async function migrateProblemData() {
           }
         }
         
+        // Get category ID for the problem
+        const categoryId = await mapToCategoryId(db, mongoProblem.category);
+        
         // Map MongoDB problem to PostgreSQL schema
         const pgProblem = {
           title: mongoProblem.title || 'Untitled Problem',
           description: mongoProblem.description || 'No description provided',
           difficulty: (mongoProblem.difficulty as 'Easy' | 'Medium' | 'Hard') || 'Easy',
-          type: (mongoProblem.type as 'dsa' | 'embedded' | 'system') || 'dsa',
-          // Handle arrays properly
-          tags: mongoProblem.tags || [],
-          companies: mongoProblem.companies || [],
+          type: (mongoProblem.type as 'dsa' | 'embedded' | 'bridge') || 'dsa', // Updated 'system' to 'bridge'
+          // Removed tags and companies from direct insertion - will be handled separately if needed
           filePath: mongoProblem.file_path,
           successfulSubmissions: parseInt(mongoProblem.successful_submissions) || 0,
           failedSubmissions: parseInt(mongoProblem.failed_submissions) || 0,
           importance: mongoProblem.importance,
           questionId: mongoProblem.question_id,
-          category: mapToValidCategory(mongoProblem.category), // Map to a valid category enum value
+          categoryId: categoryId, // Use the category ID instead of enum value
         };
         
         // Insert into PostgreSQL
