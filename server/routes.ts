@@ -1070,8 +1070,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("Test code submission endpoint called with body:", req.body);
       
-      // Use the userId from the request body or default to 1 for testing
-      const testUserId = req.body.userId || 1;
+      // Use the userId from the request body (no fallback to ensure we detect missing user IDs)
+      const testUserId = req.body.userId;
       
       let problemId = req.body.problemId;
       

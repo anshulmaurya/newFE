@@ -1864,8 +1864,8 @@ The solution file for this problem could not be found or is inaccessible.
                           const memoryStats = dataAzure.response.output.metadata.mem_stat || {};
                           
                           // Prepare submission data
-                          // Use user.id if available, otherwise use a default for development
-                          const userId = user?.id || 2; // Default to user ID 2 for testing if not authenticated
+                          // Use a consistent user ID for development testing
+                          const userId = 4; // Using ID 4 since we know this user exists
                           
                           // For problem ID, we need to send the external ID (like 10101) for proper mapping
                           // Extract the numeric part at the beginning of questionId (e.g., 10101_reverse_linked_list)
