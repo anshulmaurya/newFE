@@ -309,6 +309,8 @@ export default function CodingEnvironment() {
   // Fetch problem description from the external API using file_path
   const { data: problemDescription, isLoading: isLoadingDescription, error: descriptionError } = useQuery<ProblemDescriptionResponse>({
     queryKey: ['problemDescription', problemId],
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    staleTime: Infinity, // Keep data fresh indefinitely
     queryFn: async () => {
       try {
         console.log('Fetching problem data for ID:', problemId);
@@ -339,10 +341,17 @@ export default function CodingEnvironment() {
         // Extract the folder name from container URL or file_path
         let folderName = problemData.file_path;
         
-        // If the file_path contains a full path, extract just the folder name
+        // For debugging purposes, log the folder name before any manipulation
+        console.log('Before any manipulation, folderName:', folderName);
+        
+        // IMPORTANT: We should NOT extract just the folder name from the URL! 
+        // The API expects the full URL format: https://dspcoderproblem.blob.core.windows.net/problem-bucket/10101_reverse_linked_list/
+        // Commenting out this code which was incorrectly extracting just the last part of the path
+        /* 
         if (folderName && folderName.includes('/')) {
           folderName = folderName.split('/').pop();
-        }
+        } 
+        */
         
         // Containers might use a folder param in format "/home/username/FolderName"
         // We want to extract just "FolderName" for the API call
@@ -548,6 +557,27 @@ export default function CodingEnvironment() {
   };
   
   const problem = problemDescription?.data;
+  
+  // This is a debug component to show API response
+  const DebugPanel = () => {
+    return (
+      <div className="bg-black/80 text-white p-4 absolute bottom-0 right-0 max-w-[600px] max-h-[400px] overflow-auto text-xs">
+        <h3 className="font-bold">Debug Info:</h3>
+        <div className="mt-1">
+          <p className="font-semibold">Problem ID: {problemId}</p>
+          <p className="font-semibold">Question ID: {questionId}</p>
+          <p className="mt-1 font-semibold">Loading: {isLoadingDescription ? 'Yes' : 'No'}</p>
+          <p className="font-semibold">API Error: {descriptionError ? 'Yes' : 'No'}</p>
+          <p className="mb-1 font-semibold text-red-400">{descriptionError ? String(descriptionError) : ''}</p>
+          
+          <p className="font-semibold mt-2">API Response:</p>
+          <pre className="text-green-400 mt-1 whitespace-pre-wrap">
+            {problemDescription ? JSON.stringify(problemDescription, null, 2) : 'No data'}
+          </pre>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <motion.div 
