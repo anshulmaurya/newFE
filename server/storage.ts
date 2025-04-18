@@ -287,7 +287,7 @@ export class DatabaseStorage implements IStorage {
   
   // Problem methods
   async getProblems(options?: {
-    category?: string;
+    category?: string | number; // Can accept categoryId (number) or category name (string)
     difficulty?: string;
     search?: string;
     page?: number;
@@ -311,15 +311,27 @@ export class DatabaseStorage implements IStorage {
       importance
     } = options || {};
     
-    // Get all problems, then apply filtering in memory
-    // This is a workaround for the potential schema mismatch issues
+    // Get all categories to help with filtering
+    const allCategories = await db.select().from(problemCategories);
+    
+    // Get all problems with a join to get category information
     const allProblems = await db.select().from(problems);
     
     // Apply filters in memory
     let filteredProblems = [...allProblems];
     
     if (category) {
-      filteredProblems = filteredProblems.filter(p => p.category === category);
+      // If category is a number, it's the categoryId
+      if (typeof category === 'number') {
+        filteredProblems = filteredProblems.filter(p => p.categoryId === category);
+      } 
+      // If category is a string, find the matching category ID
+      else if (typeof category === 'string') {
+        const matchingCategory = allCategories.find(c => c.name === category);
+        if (matchingCategory) {
+          filteredProblems = filteredProblems.filter(p => p.categoryId === matchingCategory.id);
+        }
+      }
     }
     
     if (difficulty) {
@@ -392,8 +404,27 @@ export class DatabaseStorage implements IStorage {
     return { problems: paginatedProblems, total };
   }
 
-  async getProblem(id: number): Promise<Problem | undefined> {
+  async getProblem(id: number): Promise<(Problem & { category?: { id: number, name: string } }) | undefined> {
     const [problem] = await db.select().from(problems).where(eq(problems.id, id));
+    
+    if (problem && problem.categoryId) {
+      // Get the category information
+      const [category] = await db
+        .select()
+        .from(problemCategories)
+        .where(eq(problemCategories.id, problem.categoryId));
+      
+      if (category) {
+        return {
+          ...problem,
+          category: {
+            id: category.id,
+            name: category.name
+          }
+        };
+      }
+    }
+    
     return problem;
   }
   
@@ -423,11 +454,14 @@ export class DatabaseStorage implements IStorage {
   }
   
   // User Progress methods
-  async getUserProgress(userId: number): Promise<(UserProgress & { problem: Problem })[]> {
+  async getUserProgress(userId: number): Promise<(UserProgress & { problem: Problem & { category?: { id: number, name: string } } })[]> {
     const userProgressItems = await db
       .select()
       .from(userProgress)
       .where(eq(userProgress.userId, userId));
+    
+    // Get all categories for lookup
+    const categories = await db.select().from(problemCategories);
     
     // Get problem details for each progress item
     const result = [];
@@ -438,9 +472,22 @@ export class DatabaseStorage implements IStorage {
         .where(eq(problems.id, progressItem.problemId));
         
       if (problem) {
+        // Find the category for this problem
+        let enrichedProblem = { ...problem };
+        
+        if (problem.categoryId) {
+          const category = categories.find(c => c.id === problem.categoryId);
+          if (category) {
+            enrichedProblem.category = {
+              id: category.id,
+              name: category.name
+            };
+          }
+        }
+        
         result.push({
           ...progressItem,
-          problem
+          problem: enrichedProblem
         });
       }
     }
