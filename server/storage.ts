@@ -330,11 +330,13 @@ export class DatabaseStorage implements IStorage {
       filteredProblems = filteredProblems.filter(p => p.type === type);
     }
     
-    if (importance && 'importance' in filteredProblems[0]) {
+    // Safe check for importance filter - only apply if we have problems and they have the field
+    if (importance && filteredProblems.length > 0 && 'importance' in filteredProblems[0]) {
       filteredProblems = filteredProblems.filter(p => (p as any).importance === importance);
     }
     
-    if (company && 'company' in filteredProblems[0]) {
+    // Safe check for company filter - only apply if we have problems and they have the field
+    if (company && filteredProblems.length > 0 && 'company' in filteredProblems[0]) {
       filteredProblems = filteredProblems.filter(p => {
         if (Array.isArray((p as any).company)) {
           return (p as any).company.includes(company);
@@ -345,11 +347,14 @@ export class DatabaseStorage implements IStorage {
     
     if (search) {
       const searchLower = search.toLowerCase();
-      filteredProblems = filteredProblems.filter(p => 
-        p.title.toLowerCase().includes(searchLower) || 
-        p.description.toLowerCase().includes(searchLower) || 
-        (p.questionId && p.questionId.toLowerCase().includes(searchLower))
-      );
+      filteredProblems = filteredProblems.filter(p => {
+        // Always check if properties exist before doing operations on them
+        const titleMatch = p.title ? p.title.toLowerCase().includes(searchLower) : false;
+        const descriptionMatch = p.description ? p.description.toLowerCase().includes(searchLower) : false;
+        const questionIdMatch = p.questionId ? p.questionId.toLowerCase().includes(searchLower) : false;
+        
+        return titleMatch || descriptionMatch || questionIdMatch;
+      });
     }
     
     // Count total
@@ -361,6 +366,18 @@ export class DatabaseStorage implements IStorage {
         const aValue = (a as any)[sortBy];
         const bValue = (b as any)[sortBy];
         
+        // Handle null/undefined values for proper sorting
+        if (aValue === null || aValue === undefined) return sortOrder === 'asc' ? -1 : 1;
+        if (bValue === null || bValue === undefined) return sortOrder === 'asc' ? 1 : -1;
+        
+        // Safe comparison for different data types
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          return sortOrder === 'asc' 
+            ? aValue.localeCompare(bValue) 
+            : bValue.localeCompare(aValue);
+        }
+        
+        // Default numeric comparison
         if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
         return 0;
