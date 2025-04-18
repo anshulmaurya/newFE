@@ -331,12 +331,23 @@ export default function CodingEnvironment() {
         }
         
         // Use file_path to fetch the problem description and solution
+        console.log('Original file_path from database:', problemData.file_path);
+        
+        // CRITICAL FIX: Make sure file_path exists and is not undefined!
+        // It should come from the database. If it's missing, we need a better error message
         if (!problemData.file_path) {
           console.error('File path is missing for this problem');
-          throw new Error('File path is missing for this problem');
+          // Try using question_id directly as fallback if file_path is missing
+          if (problemData.question_id) {
+            console.log('Falling back to using question_id instead:', problemData.question_id);
+            // We'll set questionId but continue - later code will use it for fallback API call
+            setQuestionId(problemData.question_id);
+            // Directly go to question_id method
+            throw new Error('File path is missing, using question_id instead');
+          } else {
+            throw new Error('File path is missing for this problem');
+          }
         }
-        
-        console.log('Original file_path from database:', problemData.file_path);
         
         // Extract the folder name from container URL or file_path
         let folderName = problemData.file_path;
@@ -346,6 +357,10 @@ export default function CodingEnvironment() {
         
         // IMPORTANT: We shouldn't modify the file_path at all! The API expects the complete path from the database
         console.log('KEEPING ORIGINAL FILE PATH FROM DATABASE');
+        
+        // Add debugging for the problem data
+        console.log('Full problem data from database:', problemData);
+        console.log('file_path type:', typeof problemData.file_path);
         
         // DO NOT extract just the folder name from the URL
         // DO NOT modify the file_path in any way
@@ -445,9 +460,13 @@ export default function CodingEnvironment() {
 
         // Let's try both API endpoints - first by file path, then by question ID if that fails
         try {
-          // Try with file_path approach first
-          const filePathUrl = `https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_file_path?file_path=${encodeURIComponent(folderName)}`;
+          // IMPORTANT: When using the file_path from the database, it must be properly URL-encoded
+          // The API expects the full URL in the file_path parameter, but properly encoded
+          const encodedFilePath = encodeURIComponent(folderName);
+          const filePathUrl = `https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_file_path?file_path=${encodedFilePath}`;
           console.log('Fetching problem description using URL (file_path method):', filePathUrl);
+          console.log('Original file_path:', folderName);
+          console.log('Encoded file_path:', encodedFilePath);
           
           const filePathRes = await fetch(filePathUrl);
           
