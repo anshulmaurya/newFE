@@ -218,62 +218,15 @@ export default function MonthlyHeatmap() {
         setMostActiveDate(monthlyActivityData.mostActiveDate.toString().split('T')[0]);
       }
     } else {
-      // Use dummy data for demonstration when no user is logged in or no data exists
-      // Create a pattern with higher activity on weekends and midweek
-      Object.keys(initialMonthlyData).forEach(dateStr => {
-        const date = new Date(dateStr);
-        const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
-        
-        // Generate more activity for weekends and some weekdays
-        let count = 0;
-        
-        // Weekend pattern
-        if (dayOfWeek === 0 || dayOfWeek === 6) {
-          // Weekends have more activity
-          count = 2 + Math.floor(Math.random() * 6); // 2-7 problems
-        } 
-        // Wednesday pattern
-        else if (dayOfWeek === 3) {
-          // Midweek spike
-          count = 1 + Math.floor(Math.random() * 5); // 1-5 problems
-        } 
-        // Normal weekday pattern
-        else {
-          // Regular weekdays have less activity
-          // More likely to have 0 but occasionally 1-3
-          const rand = Math.random();
-          if (rand > 0.6) {
-            count = 1 + Math.floor(Math.random() * 3); // 1-3 problems with 40% chance
-          }
-        }
-        
-        // Add some randomness to avoid too regular patterns
-        // Occasionally have a really productive day
-        if (Math.random() > 0.9) {
-          count = Math.min(count + Math.floor(Math.random() * 5), maxCount);
-        }
-        
-        // Save the count
-        initialMonthlyData[dateStr].count = count;
-      });
-      
-      // Calculate percentages based on max problems
+      // Keep all days with zero counts when no activity data exists
+      // We won't generate dummy data to avoid confusing users
       Object.keys(initialMonthlyData).forEach(date => {
-        initialMonthlyData[date].percentage = Math.round((initialMonthlyData[date].count / maxCount) * 100);
+        initialMonthlyData[date].count = 0;
+        initialMonthlyData[date].percentage = 0;
       });
       
-      // Find most active date from the generated data
-      let highestCount = 0;
-      let mostActive = null;
-      
-      Object.entries(initialMonthlyData).forEach(([date, data]) => {
-        if (data.count > highestCount) {
-          highestCount = data.count;
-          mostActive = date;
-        }
-      });
-      
-      setMostActiveDate(mostActive);
+      // No most active date when there's no activity
+      setMostActiveDate(null);
     }
     
     // Update the component state
