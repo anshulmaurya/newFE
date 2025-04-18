@@ -30,47 +30,47 @@ interface UserStats {
   updatedAt: string;
 }
 
-// Function to get color based on count and daily goal - using teal gradient approach (dark to light)
+// Function to get color based on count and daily goal - using Emerald Green gradient
 const getColorForCount = (count: number, dailyGoal: number): string => {
-  if (count === 0) return 'bg-[rgb(32,32,36)]'; // Dark background for no activity
+  if (count === 0) return 'bg-[rgb(12,31,23)]'; // Dark forest - no activity
   
   // Calculate percentage of daily goal
   const percentComplete = Math.min(count / dailyGoal, 1);
   
   if (percentComplete <= 0.25) {
-    return 'bg-[rgb(35,78,82)]'; // Dark teal - 25% of goal
+    return 'bg-[rgb(6,78,59)]'; // Emerald dark - 25% of goal
   } else if (percentComplete <= 0.5) {
-    return 'bg-[rgb(56,178,172)]'; // Medium teal - 50% of goal
+    return 'bg-[rgb(5,150,105)]'; // Emerald medium - 50% of goal
   } else if (percentComplete <= 0.75) {
-    return 'bg-[rgb(129,212,209)]'; // Light teal - 75% of goal
+    return 'bg-[rgb(52,211,153)]'; // Emerald light - 75% of goal
   } else {
-    return 'bg-[rgb(213,242,240)]'; // Very light teal - 100% of goal
+    return 'bg-[rgb(167,243,208)]'; // Mint - 100% of goal
   }
 };
 
-// Function to get text color based on count and daily goal (for dark-to-light)
+// Function to get text color based on count and daily goal (for Emerald Green gradient)
 const getTextColorForCount = (count: number, dailyGoal: number): string => {
   if (count === 0) return 'text-gray-400';
   const percentComplete = Math.min(count / dailyGoal, 1);
   
-  // For darker teal backgrounds (lower percentages), use white text
+  // For darker Emerald backgrounds (lower percentages), use white text
   if (percentComplete <= 0.5) {
     return 'text-white';
   }
-  // For lighter teal backgrounds (higher percentages), use dark text
-  return 'text-gray-800';
+  // For lighter Emerald backgrounds (higher percentages), use dark text
+  return 'text-gray-900';
 };
 
 // Function to get text color for the count indicator
 const getCountTextColor = (count: number, dailyGoal: number): string => {
   const percentComplete = Math.min(count / dailyGoal, 1);
   
-  // For darker teal backgrounds (lower percentages), use white text
+  // For darker Emerald backgrounds (lower percentages), use white text
   if (percentComplete <= 0.5) {
     return 'text-white';
   }
-  // For lighter teal backgrounds (higher percentages), use dark text
-  return 'text-gray-800';
+  // For lighter Emerald backgrounds (higher percentages), use dark text
+  return 'text-gray-900';
 };
 
 // Function to check if date is today
@@ -300,7 +300,7 @@ export default function MonthlyHeatmap() {
           <h3 className="text-white text-base font-semibold">Monthly Activity</h3>
           <span className="text-[11px] text-gray-300">Loading data...</span>
         </div>
-        <Skeleton className="h-16 w-full bg-[rgb(35,35,40)]" />
+        <Skeleton className="h-16 w-full bg-[rgb(12,31,23)]" />
       </div>
     );
   }
@@ -354,7 +354,7 @@ export default function MonthlyHeatmap() {
           const dailyGoal = userStats?.dailyGoal || 3;
           
           // Determine background color based on count and daily goal
-          const bgColor = currentMonth ? getColorForCount(data.count, dailyGoal) : 'bg-[rgb(25,25,28)]';
+          const bgColor = currentMonth ? getColorForCount(data.count, dailyGoal) : 'bg-[rgb(20,24,23)]';
           const textColor = currentMonth ? getTextColorForCount(data.count, dailyGoal) : 'text-gray-500';
           const opacity = currentMonth ? 'opacity-100' : 'opacity-40';
           
@@ -362,10 +362,10 @@ export default function MonthlyHeatmap() {
           const isDateToday = isToday(date);
           
           // Create subtle indicator for login days
-          const loginIndicator = data.isActive && currentMonth ? 'after:content-[""] after:absolute after:right-1 after:top-1 after:h-1.5 after:w-1.5 after:rounded-full after:bg-emerald-500' : '';
+          const loginIndicator = data.isActive && currentMonth ? 'after:content-[""] after:absolute after:right-1 after:top-1 after:h-1.5 after:w-1.5 after:rounded-full after:bg-emerald-400' : '';
           
-          // Create subtle pulsing animation for today's date
-          const todayHighlight = isDateToday ? 'ring-1 ring-blue-300' : '';
+          // Create subtle highlight for today's date with matching emerald theme
+          const todayHighlight = isDateToday ? 'ring-2 ring-emerald-300 ring-opacity-60' : '';
           
           return (
             <div
