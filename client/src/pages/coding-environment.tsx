@@ -1757,9 +1757,10 @@ The solution file for this problem could not be found or is inaccessible.
                   onClick={async () => {
                     if (!questionId || !user) {
                       toast({
-                        title: 'Error',
-                        description: 'Problem ID or user information is missing.',
-                        variant: 'destructive'
+                        title: 'Missing Information',
+                        description: 'Unable to run code. Problem ID or user information is missing.',
+                        variant: 'destructive',
+                        className: 'border-orange-800 bg-orange-700'
                       });
                       return;
                     }
@@ -1795,17 +1796,19 @@ The solution file for this problem could not be found or is inaccessible.
                         console.log('Run result:', data);
                       } else {
                         toast({
-                          title: 'Error',
-                          description: data.message || 'Failed to run code.',
-                          variant: 'destructive'
+                          title: 'Run Failed',
+                          description: data.message || 'Your code could not be executed. Please check for compilation errors.',
+                          variant: 'destructive',
+                          className: 'border-red-800 bg-red-700'
                         });
                       }
                     } catch (error) {
                       console.error('Error running code:', error);
                       toast({
-                        title: 'Error',
-                        description: 'Failed to run code. Please try again.',
-                        variant: 'destructive'
+                        title: 'Connection Error',
+                        description: 'Unable to connect to the code execution server. Please try again later.',
+                        variant: 'destructive',
+                        className: 'border-red-800 bg-red-700'
                       });
                     }
                   }}
@@ -1930,16 +1933,18 @@ The solution file for this problem could not be found or is inaccessible.
                         console.log('Submit result:', dataAzure);
                       } else {
                         toast({
-                          title: 'Success',
-                          description: 'Solution submitted, but no detailed results available.'
+                          title: 'Solution Submitted',
+                          description: 'Your solution has been recorded, but detailed results are not available.',
+                          className: 'bg-blue-600 text-white border-blue-800'
                         });
                       }
                     } catch (error) {
                       console.error('Error submitting solution:', error);
                       toast({
-                        title: 'Error',
-                        description: 'Failed to submit solution. Please try again.',
-                        variant: 'destructive'
+                        title: 'Submission Error',
+                        description: 'Unable to submit your solution. Please check your connection and try again later.',
+                        variant: 'destructive',
+                        className: 'border-red-800 bg-red-700'
                       });
                     }
                   }}
