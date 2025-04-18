@@ -678,7 +678,9 @@ export class DatabaseStorage implements IStorage {
           // Since lastActiveDate is a DATE type in PostgreSQL
           const updateData: Partial<UserStats> = {
             totalSolved: (userStatsRecord.totalSolved || 0) + 1,
-            lastActiveDate: sql`CURRENT_DATE`
+            // Use the SQL template literal but cast it to any to bypass TypeScript's type checking
+            // since we know this will work correctly with PostgreSQL
+            lastActiveDate: sql`CURRENT_DATE` as any
           };
           
           // Update difficulty-specific counters
