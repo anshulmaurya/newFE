@@ -1765,8 +1765,9 @@ The solution file for this problem could not be found or is inaccessible.
                     }
                     
                     toast({
-                      title: 'Run Code',
-                      description: 'Running your code...',
+                      title: 'Running Code',
+                      description: 'Compiling and executing your solution...',
+                      className: 'bg-blue-600 text-white border-blue-800',
                     });
                     
                     try {
@@ -1788,7 +1789,8 @@ The solution file for this problem could not be found or is inaccessible.
                       if (response.ok) {
                         toast({
                           title: 'Success',
-                          description: 'Code ran successfully!',
+                          description: 'Code ran successfully! View output in the console.',
+                          className: 'bg-green-600 text-white border-green-800',
                         });
                         console.log('Run result:', data);
                       } else {
@@ -1825,8 +1827,9 @@ The solution file for this problem could not be found or is inaccessible.
                     }
                     
                     toast({
-                      title: 'Submit Solution',
-                      description: 'Submitting your solution for evaluation...',
+                      title: 'Submitting Solution',
+                      description: 'Evaluating your code against all test cases...',
+                      className: 'bg-purple-600 text-white border-purple-800',
                     });
                     
                     try {
@@ -1914,9 +1917,15 @@ The solution file for this problem could not be found or is inaccessible.
                           console.error('Error saving submission to database:', dbError);
                         }
                         
+                        const status = dataAzure.response.output.overall_status;
                         toast({
-                          title: 'Success',
-                          description: 'Solution submitted successfully!'
+                          title: status === 'pass' ? 'Solution Accepted!' : 'Tests Completed',
+                          description: status === 'pass' 
+                            ? 'Your solution passed all test cases. Great job!' 
+                            : 'Your solution was submitted. Check the results tab for details.',
+                          className: status === 'pass' 
+                            ? 'bg-green-600 text-white border-green-800' 
+                            : 'bg-amber-600 text-white border-amber-800',
                         });
                         console.log('Submit result:', dataAzure);
                       } else {
