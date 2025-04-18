@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { useToast } from '@/hooks/use-toast';
+import { useToast, toast } from '@/hooks/use-toast';
 import { 
   ArrowLeft, 
   FileText, 
@@ -1831,10 +1831,12 @@ The solution file for this problem could not be found or is inaccessible.
                       return;
                     }
                     
-                    toast({
+                    // Create loading toast for submission
+                    const { id: toastId } = toast({
                       title: 'Submitting Solution',
                       description: 'Evaluating your code against all test cases...',
-                      variant: 'info'
+                      variant: 'submitting',
+                      duration: 0 // Don't auto-dismiss while loading
                     });
                     
                     try {
@@ -1923,6 +1925,8 @@ The solution file for this problem could not be found or is inaccessible.
                         }
                         
                         const status = dataAzure.response.output.overall_status;
+                        // Dismiss the loading toast and show the result
+                        toast.dismiss(toastId);
                         toast({
                           title: status === 'pass' ? 'Solution Accepted!' : 'Tests Completed',
                           description: status === 'pass' 
@@ -1932,6 +1936,8 @@ The solution file for this problem could not be found or is inaccessible.
                         });
                         console.log('Submit result:', dataAzure);
                       } else {
+                        // Dismiss loading toast and show info 
+                        toast.dismiss(toastId);
                         toast({
                           title: 'Solution Submitted',
                           description: 'Your solution has been recorded, but detailed results are not available.',
@@ -1940,6 +1946,8 @@ The solution file for this problem could not be found or is inaccessible.
                       }
                     } catch (error) {
                       console.error('Error submitting solution:', error);
+                      // Dismiss loading toast and show error
+                      toast.dismiss(toastId);
                       toast({
                         title: 'Submission Error',
                         description: 'Unable to submit your solution. Please check your connection and try again later.',
