@@ -373,7 +373,7 @@ export default function MonthlyHeatmap() {
               className={`h-8 w-full ${bgColor} ${opacity} ${loginIndicator} ${todayHighlight} rounded-sm flex items-center justify-center relative transition-colors`}
               title={currentMonth ? `${dateStr}: ${data.count} problems solved${data.isActive ? ' (Logged in)' : ''}` : dateStr}
             >
-              <div className={`${isDateToday ? 'text-[12px] font-bold' : 'text-[11px] font-medium'} leading-none ${textColor}`}>
+              <div className={`${isDateToday ? 'text-[13px] font-extrabold' : 'text-[11px] font-medium'} leading-none ${textColor}`}>
                 {date.getDate()}
               </div>
               {currentMonth && data.count > 0 && (
