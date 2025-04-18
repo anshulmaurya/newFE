@@ -514,16 +514,86 @@ export class DatabaseStorage implements IStorage {
     return enrichedProblem;
   }
   
-  async createProblem(problem: InsertProblem): Promise<Problem> {
-    const [createdProblem] = await db.insert(problems).values(problem).returning();
+  // Helper method to convert category name to category ID
+  private async getCategoryIdByName(categoryName: string): Promise<number | undefined> {
+    const [category] = await db
+      .select()
+      .from(problemCategories)
+      .where(eq(problemCategories.name, categoryName));
+    
+    return category?.id;
+  }
+  
+  // Helper method to convert company names to company IDs
+  private async getCompanyIdsByNames(companyNames: string[]): Promise<number[]> {
+    const companyIds: number[] = [];
+    
+    for (const name of companyNames) {
+      const [company] = await db
+        .select()
+        .from(companies)
+        .where(eq(companies.name, name));
+      
+      if (company) {
+        companyIds.push(company.id);
+      }
+    }
+    
+    return companyIds;
+  }
+  
+  async createProblem(problem: InsertProblem & {
+    categoryName?: string; 
+    companyNames?: string[];
+  }): Promise<Problem> {
+    const problemData: any = { ...problem };
+    
+    // Convert category name to ID if provided
+    if (problemData.categoryName) {
+      const categoryId = await this.getCategoryIdByName(problemData.categoryName);
+      if (categoryId) {
+        problemData.categoryId = categoryId;
+      }
+      delete problemData.categoryName;
+    }
+    
+    // Convert company names to IDs if provided
+    if (problemData.companyNames && Array.isArray(problemData.companyNames)) {
+      const companyIds = await this.getCompanyIdsByNames(problemData.companyNames);
+      problemData.companyIds = companyIds;
+      delete problemData.companyNames;
+    }
+    
+    const [createdProblem] = await db.insert(problems).values(problemData).returning();
     return createdProblem;
   }
   
-  async updateProblem(id: number, problem: Partial<Problem>): Promise<Problem | undefined> {
+  async updateProblem(id: number, problem: Partial<Problem> & {
+    categoryName?: string; 
+    companyNames?: string[];
+  }): Promise<Problem | undefined> {
+    const problemData: any = { ...problem };
+    
+    // Convert category name to ID if provided
+    if (problemData.categoryName) {
+      const categoryId = await this.getCategoryIdByName(problemData.categoryName);
+      if (categoryId) {
+        problemData.categoryId = categoryId;
+      }
+      delete problemData.categoryName;
+    }
+    
+    // Convert company names to IDs if provided
+    if (problemData.companyNames && Array.isArray(problemData.companyNames)) {
+      const companyIds = await this.getCompanyIdsByNames(problemData.companyNames);
+      problemData.companyIds = companyIds;
+      delete problemData.companyNames;
+    }
+    
     const [updatedProblem] = await db
       .update(problems)
       .set({
-        ...problem,
+        ...problemData,
         updatedAt: new Date()
       })
       .where(eq(problems.id, id))
