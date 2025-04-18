@@ -1802,8 +1802,7 @@ The solution file for this problem could not be found or is inaccessible.
                       toast({
                         title: 'Connection Error',
                         description: 'Unable to connect to the code execution server. Please try again later.',
-                        variant: 'destructive',
-                        className: 'border-red-800 bg-red-700'
+                        variant: 'destructive'
                       });
                     }
                   }}
@@ -1819,8 +1818,7 @@ The solution file for this problem could not be found or is inaccessible.
                       toast({
                         title: 'Missing Information',
                         description: 'Unable to submit solution. Problem ID or user information is missing.',
-                        variant: 'destructive',
-                        className: 'border-orange-800 bg-orange-700'
+                        variant: 'warning'
                       });
                       return;
                     }
@@ -1828,7 +1826,7 @@ The solution file for this problem could not be found or is inaccessible.
                     toast({
                       title: 'Submitting Solution',
                       description: 'Evaluating your code against all test cases...',
-                      className: 'bg-purple-600 text-white border-purple-800',
+                      variant: 'info'
                     });
                     
                     try {
@@ -1922,16 +1920,14 @@ The solution file for this problem could not be found or is inaccessible.
                           description: status === 'pass' 
                             ? 'Your solution passed all test cases. Great job!' 
                             : 'Your solution was submitted. Check the results tab for details.',
-                          className: status === 'pass' 
-                            ? 'bg-green-600 text-white border-green-800' 
-                            : 'bg-amber-600 text-white border-amber-800',
+                          variant: status === 'pass' ? 'success' : 'warning'
                         });
                         console.log('Submit result:', dataAzure);
                       } else {
                         toast({
                           title: 'Solution Submitted',
                           description: 'Your solution has been recorded, but detailed results are not available.',
-                          className: 'bg-blue-600 text-white border-blue-800'
+                          variant: 'info'
                         });
                       }
                     } catch (error) {
@@ -1939,8 +1935,7 @@ The solution file for this problem could not be found or is inaccessible.
                       toast({
                         title: 'Submission Error',
                         description: 'Unable to submit your solution. Please check your connection and try again later.',
-                        variant: 'destructive',
-                        className: 'border-red-800 bg-red-700'
+                        variant: 'destructive'
                       });
                     }
                   }}
