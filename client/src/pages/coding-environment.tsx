@@ -855,9 +855,14 @@ export default function CodingEnvironment() {
               {isLoadingDescription ? (
                 <Skeleton className="h-5 w-16" />
               ) : (
-                <Badge variant="outline" className={getDifficultyColor(dbProblemDifficulty || (problem?.difficulty || "Easy"))}>
-                  {dbProblemDifficulty || (problem?.difficulty || "Easy")}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="bg-[#3E3E42] text-[#c2ee4a] border-[#c2ee4a]">
+                    {language === "c" ? "C" : language === "cpp" ? "C++" : language}
+                  </Badge>
+                  <Badge variant="outline" className={getDifficultyColor(dbProblemDifficulty || (problem?.difficulty || "Easy"))}>
+                    {dbProblemDifficulty || (problem?.difficulty || "Easy")}
+                  </Badge>
+                </div>
               )}
             </div>
             
@@ -875,14 +880,6 @@ export default function CodingEnvironment() {
                     <div>
                       {/* Problem metadata section - streamlined with no separate box */}
                       <div className="mb-5 space-y-4">
-                        {/* Language */}
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">Language:</span>
-                          <Badge variant="outline" className="bg-[#3E3E42] text-[#c2ee4a] border-[#c2ee4a]">
-                            {language === "c" ? "C" : language === "cpp" ? "C++" : language}
-                          </Badge>
-                        </div>
-                        
                         {/* Acceptance rate */}
                         {problem.acceptance_rate && (
                           <div className="flex items-center gap-2">
