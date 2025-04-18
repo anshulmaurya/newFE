@@ -3,7 +3,7 @@
  */
 
 import { db, pool } from "../server/db";
-import { companies, companyProblemMap, problems } from "../shared/schema";
+import { companies, problems } from "../shared/schema";
 import { and, eq } from "drizzle-orm";
 
 async function seedCompaniesAndMappings() {
@@ -60,8 +60,8 @@ async function seedCompaniesAndMappings() {
       { problemId: 49, companyNames: ["Google", "Microsoft", "Apple"] }  // Memory Pool Allocator
     ];
 
-    // Create problem-company mappings
-    console.log("Creating problem-company mappings...");
+    // Set companyIds directly on problems (new approach)
+    console.log("Setting companyIds directly on problems...");
     
     for (const mapping of mappings) {
       // Check if problem exists
@@ -72,9 +72,11 @@ async function seedCompaniesAndMappings() {
         continue;
       }
       
-      console.log(`Processing mappings for problem ${problem.id}: ${problem.title}`);
+      console.log(`Processing companies for problem ${problem.id}: ${problem.title}`);
       
-      // Process each company for this problem
+      // Get company IDs
+      const companyIds: number[] = [];
+      
       for (const companyName of mapping.companyNames) {
         const company = allCompanies.find(c => c.name === companyName);
         
@@ -83,22 +85,23 @@ async function seedCompaniesAndMappings() {
           continue;
         }
         
+        companyIds.push(company.id);
+      }
+      
+      if (companyIds.length > 0) {
         try {
-          // Create the mapping, catching any unique constraint violations
-          await db.insert(companyProblemMap).values({
-            problemId: problem.id,
-            companyId: company.id,
-            relevanceScore: 5 // Default relevance score
-          });
+          // Update the problem with the company IDs
+          await db
+            .update(problems)
+            .set({
+              companyIds: companyIds,
+              updatedAt: new Date()
+            })
+            .where(eq(problems.id, mapping.problemId));
           
-          console.log(`Created mapping: Problem ${problem.id} - Company ${company.name} (ID: ${company.id})`);
+          console.log(`Updated problem ${problem.id} with company IDs: ${companyIds.join(', ')}`);
         } catch (error: any) {
-          // If it's a unique constraint violation, that's fine
-          if (error.message.includes("duplicate key")) {
-            console.log(`Mapping for problem ${problem.id} and company ${company.name} already exists.`);
-          } else {
-            console.error(`Error creating mapping: ${error.message}`);
-          }
+          console.error(`Error updating problem ${problem.id}: ${error.message}`);
         }
       }
     }

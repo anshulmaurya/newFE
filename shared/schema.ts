@@ -191,14 +191,7 @@ export const companies = pgTable("companies", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Company-problem mapping table
-export const companyProblemMap = pgTable("company_problem_map", {
-  companyId: integer("company_id").references(() => companies.id).notNull(),
-  problemId: integer("problem_id").references(() => problems.id).notNull(),
-  relevanceScore: integer("relevance_score").default(5),
-}, (t) => ({
-  pk: primaryKey({ columns: [t.companyId, t.problemId] })
-}));
+// Company-problem mapping table removed (now using companyIds array in problems table)
 
 // Forum discussions
 export const discussions = pgTable("discussions", {
@@ -331,16 +324,7 @@ export const companiesRelations = relations(companies, ({ many }) => ({
   // No direct relations needed with the new approach
 }));
 
-export const companyProblemMapRelations = relations(companyProblemMap, ({ one }) => ({
-  company: one(companies, {
-    fields: [companyProblemMap.companyId],
-    references: [companies.id],
-  }),
-  problem: one(problems, {
-    fields: [companyProblemMap.problemId],
-    references: [problems.id],
-  }),
-}));
+// Company-problem map relations removed (now using companyIds array in problems table)
 
 export const discussionsRelations = relations(discussions, ({ many, one }) => ({
   replies: many(discussionReplies),
@@ -591,10 +575,7 @@ export const insertCompanySchema = createInsertSchema(companies).omit({
 export type InsertCompany = z.infer<typeof insertCompanySchema>;
 export type Company = typeof companies.$inferSelect;
 
-// Insert schema for companyProblemMap
-export const insertCompanyProblemMapSchema = createInsertSchema(companyProblemMap);
-export type InsertCompanyProblemMap = z.infer<typeof insertCompanyProblemMapSchema>;
-export type CompanyProblemMap = typeof companyProblemMap.$inferSelect;
+// CompanyProblemMap schema and types removed (now using companyIds array in problems table)
 
 // Insert schema for discussions
 export const insertDiscussionSchema = createInsertSchema(discussions).omit({

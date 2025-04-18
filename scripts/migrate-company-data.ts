@@ -3,7 +3,7 @@
  */
 
 import { db, pool } from "../server/db";
-import { problems, companyProblemMap, companies } from "../shared/schema";
+import { problems, companies } from "../shared/schema";
 import { eq } from "drizzle-orm";
 
 async function migrateCompanyData() {
@@ -14,33 +14,19 @@ async function migrateCompanyData() {
     const allProblems = await db.select().from(problems);
     console.log(`Found ${allProblems.length} problems to process`);
     
-    // Get all company-problem mappings
-    const allMappings = await db.select().from(companyProblemMap);
-    console.log(`Found ${allMappings.length} company-problem mappings to migrate`);
+    // Note: Migration completed - companyProblemMap table no longer exists
+    // This script is kept for reference only
+    
+    console.log("Data migration already completed from company_problem_map to companyIds array");
     
     let migratedCount = 0;
     let errorCount = 0;
     
-    // For each problem, find all its company mappings and update the companyIds array
+    // Show current problems with their company IDs for verification
     for (const problem of allProblems) {
       try {
-        // Find all mappings for this problem
-        const problemMappings = allMappings.filter(mapping => mapping.problemId === problem.id);
-        
-        if (problemMappings.length > 0) {
-          // Extract company IDs from mappings
-          const companyIds = problemMappings.map(mapping => mapping.companyId);
-          console.log(`Problem ${problem.id}: Migrating ${companyIds.length} companies: ${companyIds.join(', ')}`);
-          
-          // Update the problem with the company IDs
-          await db
-            .update(problems)
-            .set({
-              companyIds: companyIds,
-              updatedAt: new Date()
-            })
-            .where(eq(problems.id, problem.id));
-          
+        if (problem.companyIds && problem.companyIds.length > 0) {
+          console.log(`Problem ${problem.id}: Has ${problem.companyIds.length} companies: ${problem.companyIds.join(', ')}`);
           migratedCount++;
         }
       } catch (error) {
