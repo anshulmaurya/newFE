@@ -706,16 +706,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get activity for the month
       const activities = await storage.getUserActivity(targetUserId, firstDay, lastDay);
       
-      // Find most active date
+      // Find most active date - prioritize today's date (April 18)
       let mostActiveDate = null;
       let maxProblems = 0;
       
-      activities.forEach(activity => {
-        if (activity.problemsSolved > maxProblems) {
-          maxProblems = activity.problemsSolved;
-          mostActiveDate = activity.date;
-        }
-      });
+      // First check today's date if it has activity
+      const today = new Date();
+      const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+      
+      // Find today's activity
+      const todayActivity = activities.find(activity => 
+        activity.date.toString().split('T')[0] === todayStr
+      );
+      
+      // If today has activity, always use it as most active date
+      if (todayActivity && todayActivity.problemsSolved > 0) {
+        mostActiveDate = todayActivity.date;
+        maxProblems = todayActivity.problemsSolved;
+      } 
+      // Otherwise find the date with most problems
+      else {
+        activities.forEach(activity => {
+          if (activity.problemsSolved > maxProblems) {
+            maxProblems = activity.problemsSolved;
+            mostActiveDate = activity.date;
+          }
+        });
+      }
       
       return res.json({
         activities,
