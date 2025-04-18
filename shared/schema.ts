@@ -100,7 +100,7 @@ export const problems = pgTable("problems", {
   failedSubmissions: integer("failed_submissions").default(0),
   importance: importanceEnum("importance"), // Using the new enum: low, medium, high
   questionId: text("question_id").unique(), // Unique identifier like "10101_reverse_linked_list"
-  category: categoryEnum("category").default('Arrays'), // Using the updated categoryEnum
+  categoryId: integer("category_id").references(() => problemCategories.id), // Using a reference to problemCategories
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -293,10 +293,15 @@ export const problemRelations = relations(problems, ({ many, one }) => ({
   learningPathItems: many(learningPathItems),
   companyMappings: many(companyProblemMap),
   discussions: many(discussions),
+  category: one(problemCategories, {
+    fields: [problems.categoryId],
+    references: [problemCategories.id],
+  }),
 }));
 
 export const problemCategoriesRelations = relations(problemCategories, ({ many }) => ({
   learningPaths: many(learningPaths),
+  problems: many(problems),
 }));
 
 export const userPreferencesRelations = relations(userPreferences, ({ one }) => ({
