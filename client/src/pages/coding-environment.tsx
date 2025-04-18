@@ -1761,10 +1761,12 @@ The solution file for this problem could not be found or is inaccessible.
                       return;
                     }
                     
-                    toast({
+                    // Create a loading toast that will be updated when the operation completes
+                    const { id: toastId } = toast({
                       title: 'Running Code',
                       description: 'Compiling and executing your solution...',
-                      variant: 'info'
+                      variant: 'running',
+                      duration: 0 // Don't auto-dismiss while loading
                     });
                     
                     try {
@@ -1784,6 +1786,8 @@ The solution file for this problem could not be found or is inaccessible.
                       const data = await response.json();
                       
                       if (response.ok) {
+                        // Update the existing toast with success info
+                        toast.dismiss(toastId);
                         toast({
                           title: 'Success',
                           description: 'Code ran successfully! View output in the console.',
@@ -1791,6 +1795,8 @@ The solution file for this problem could not be found or is inaccessible.
                         });
                         console.log('Run result:', data);
                       } else {
+                        // Update the existing toast with error info
+                        toast.dismiss(toastId);
                         toast({
                           title: 'Run Failed',
                           description: data.message || 'Your code could not be executed. Please check for compilation errors.',
@@ -1799,6 +1805,8 @@ The solution file for this problem could not be found or is inaccessible.
                       }
                     } catch (error) {
                       console.error('Error running code:', error);
+                      // Update existing toast with error info
+                      toast.dismiss(toastId);
                       toast({
                         title: 'Connection Error',
                         description: 'Unable to connect to the code execution server. Please try again later.',
