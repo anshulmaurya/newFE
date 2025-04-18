@@ -166,20 +166,31 @@ export class DatabaseStorage implements IStorage {
   
   // User Activity methods
   async getUserActivity(userId: number, fromDate?: Date, toDate?: Date): Promise<UserActivity[]> {
-    let query = db.select().from(userActivity).where(eq(userActivity.userId, userId));
+    let query = db.select().from(userActivity);
+    const whereConditions = [eq(userActivity.userId, userId)];
     
     if (fromDate) {
-      query = query.where(sql`${userActivity.date} >= ${fromDate.toISOString()}`);
+      const fromDateStr = fromDate.toISOString();
+      whereConditions.push(sql`${userActivity.date} >= ${fromDateStr}`);
     }
     
     if (toDate) {
-      query = query.where(sql`${userActivity.date} <= ${toDate.toISOString()}`);
+      const toDateStr = toDate.toISOString();
+      whereConditions.push(sql`${userActivity.date} <= ${toDateStr}`);
     }
     
-    return await query.orderBy(desc(userActivity.date));
+    return await query
+      .where(and(...whereConditions))
+      .orderBy(desc(userActivity.date));
   }
   
   async recordUserActivity(activity: InsertUserActivity): Promise<UserActivity> {
+    // Convert Date object to ISO string if needed
+    const activityToInsert = {
+      ...activity,
+      date: typeof activity.date === 'string' ? activity.date : activity.date.toISOString()
+    };
+    
     // Check if we already have an entry for this date
     const [existingActivity] = await db
       .select()
@@ -187,7 +198,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(userActivity.userId, activity.userId),
-          eq(userActivity.date, activity.date)
+          eq(userActivity.date, activityToInsert.date)
         )
       );
       
@@ -207,7 +218,7 @@ export class DatabaseStorage implements IStorage {
       // Create a new activity
       const [newActivity] = await db
         .insert(userActivity)
-        .values(activity)
+        .values([activityToInsert])
         .returning();
       return newActivity;
     }
@@ -453,20 +464,20 @@ export class DatabaseStorage implements IStorage {
     const allProblems = await db.select().from(problems);
     
     // Get user progress
-    const userProgress = await db
+    const progress = await db
       .select()
       .from(userProgress)
       .where(eq(userProgress.userId, userId));
     
     // Calculate stats
     const totalProblems = allProblems.length;
-    const solvedProblems = userProgress.filter(p => p.status === 'Solved').length;
-    const attemptedProblems = userProgress.length;
+    const solvedProblems = progress.filter(p => p.status === 'Solved').length;
+    const attemptedProblems = progress.length;
     
     // Calculate by difficulty
     const easyProblems = {
       total: allProblems.filter(p => p.difficulty === 'Easy').length,
-      solved: userProgress.filter(p => 
+      solved: progress.filter(p => 
         p.status === 'Solved' && 
         allProblems.find(ap => ap.id === p.problemId)?.difficulty === 'Easy'
       ).length
@@ -474,7 +485,7 @@ export class DatabaseStorage implements IStorage {
     
     const mediumProblems = {
       total: allProblems.filter(p => p.difficulty === 'Medium').length,
-      solved: userProgress.filter(p => 
+      solved: progress.filter(p => 
         p.status === 'Solved' && 
         allProblems.find(ap => ap.id === p.problemId)?.difficulty === 'Medium'
       ).length
@@ -482,7 +493,7 @@ export class DatabaseStorage implements IStorage {
     
     const hardProblems = {
       total: allProblems.filter(p => p.difficulty === 'Hard').length,
-      solved: userProgress.filter(p => 
+      solved: progress.filter(p => 
         p.status === 'Solved' && 
         allProblems.find(ap => ap.id === p.problemId)?.difficulty === 'Hard'
       ).length

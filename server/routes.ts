@@ -1197,6 +1197,486 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Learning Paths routes
+  apiRouter.get("/learning-paths", async (req: Request, res: Response) => {
+    try {
+      const learningPaths = await storage.getLearningPaths();
+      return res.json({
+        status: "success",
+        learningPaths
+      });
+    } catch (error) {
+      console.error("Error fetching learning paths:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch learning paths" 
+      });
+    }
+  });
+  
+  apiRouter.get("/learning-paths/:id", async (req: Request, res: Response) => {
+    try {
+      const pathId = parseInt(req.params.id);
+      if (isNaN(pathId)) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid learning path ID" 
+        });
+      }
+      
+      const learningPath = await storage.getLearningPathById(pathId);
+      if (!learningPath) {
+        return res.status(404).json({ 
+          status: "error", 
+          message: "Learning path not found" 
+        });
+      }
+      
+      // Get the items in this learning path
+      const items = await storage.getLearningPathItems(pathId);
+      
+      return res.json({
+        status: "success",
+        learningPath: {
+          ...learningPath,
+          items
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching learning path:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch learning path" 
+      });
+    }
+  });
+
+  // User Preferences routes
+  apiRouter.get("/user-preferences", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ 
+          status: "error", 
+          message: "Unauthorized" 
+        });
+      }
+      
+      let preferences = await storage.getUserPreferences(req.userId);
+      
+      // If preferences don't exist, create default ones
+      if (!preferences) {
+        preferences = await storage.createUserPreferences({
+          userId: req.userId,
+          theme: 'system',
+          notificationSettings: {
+            email_notifications: true,
+            push_notifications: true
+          },
+          editorPreferences: {
+            font_size: 14,
+            tab_size: 2,
+            theme: 'vs-dark',
+            auto_save: true
+          }
+        });
+      }
+      
+      return res.json({
+        status: "success",
+        preferences
+      });
+    } catch (error) {
+      console.error("Error fetching user preferences:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch user preferences" 
+      });
+    }
+  });
+  
+  apiRouter.post("/user-preferences", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ 
+          status: "error", 
+          message: "Unauthorized" 
+        });
+      }
+      
+      // Check if preferences already exist
+      const existingPreferences = await storage.getUserPreferences(req.userId);
+      
+      let preferences;
+      if (existingPreferences) {
+        // Update existing preferences
+        preferences = await storage.updateUserPreferences(req.userId, req.body);
+      } else {
+        // Create new preferences
+        preferences = await storage.createUserPreferences({
+          userId: req.userId,
+          ...req.body
+        });
+      }
+      
+      return res.json({
+        status: "success",
+        preferences
+      });
+    } catch (error) {
+      console.error("Error updating user preferences:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to update user preferences" 
+      });
+    }
+  });
+
+  // User Notes routes
+  apiRouter.get("/user-notes", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ 
+          status: "error", 
+          message: "Unauthorized" 
+        });
+      }
+      
+      // Get optional problemId filter
+      const problemId = req.query.problemId 
+        ? parseInt(req.query.problemId as string) 
+        : undefined;
+      
+      const notes = await storage.getUserNotes(req.userId, problemId);
+      
+      return res.json({
+        status: "success",
+        notes
+      });
+    } catch (error) {
+      console.error("Error fetching user notes:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch user notes" 
+      });
+    }
+  });
+  
+  apiRouter.post("/user-notes", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ 
+          status: "error", 
+          message: "Unauthorized" 
+        });
+      }
+      
+      // Create a new note
+      const note = await storage.createUserNote({
+        userId: req.userId,
+        ...req.body
+      });
+      
+      return res.status(201).json({
+        status: "success",
+        note
+      });
+    } catch (error) {
+      console.error("Error creating user note:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to create user note" 
+      });
+    }
+  });
+  
+  apiRouter.put("/user-notes/:id", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ 
+          status: "error", 
+          message: "Unauthorized" 
+        });
+      }
+      
+      const noteId = parseInt(req.params.id);
+      if (isNaN(noteId)) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid note ID" 
+        });
+      }
+      
+      // Update the note
+      const updatedNote = await storage.updateUserNote(noteId, req.body);
+      
+      if (!updatedNote) {
+        return res.status(404).json({ 
+          status: "error", 
+          message: "Note not found" 
+        });
+      }
+      
+      return res.json({
+        status: "success",
+        note: updatedNote
+      });
+    } catch (error) {
+      console.error("Error updating user note:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to update user note" 
+      });
+    }
+  });
+
+  // Learning Paths routes
+  apiRouter.get("/learning-paths", async (req: Request, res: Response) => {
+    try {
+      const learningPaths = await storage.getLearningPaths();
+      return res.json({
+        status: "success",
+        learningPaths
+      });
+    } catch (error) {
+      console.error("Error fetching learning paths:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch learning paths" 
+      });
+    }
+  });
+  
+  apiRouter.get("/learning-paths/:id", async (req: Request, res: Response) => {
+    try {
+      const pathId = parseInt(req.params.id);
+      if (isNaN(pathId)) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid learning path ID" 
+        });
+      }
+      
+      const learningPath = await storage.getLearningPathById(pathId);
+      if (!learningPath) {
+        return res.status(404).json({ 
+          status: "error", 
+          message: "Learning path not found" 
+        });
+      }
+      
+      // Get the items in this learning path
+      const items = await storage.getLearningPathItems(pathId);
+      
+      return res.json({
+        status: "success",
+        learningPath: {
+          ...learningPath,
+          items
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching learning path:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch learning path" 
+      });
+    }
+  });
+
+  // Problem Categories routes
+  apiRouter.get("/problem-categories", async (req: Request, res: Response) => {
+    try {
+      const categories = await storage.getProblemCategories();
+      return res.json({
+        status: "success",
+        categories
+      });
+    } catch (error) {
+      console.error("Error fetching problem categories:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch problem categories" 
+      });
+    }
+  });
+
+  // User Preferences routes
+  apiRouter.get("/user-preferences", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ 
+          status: "error", 
+          message: "Unauthorized" 
+        });
+      }
+      
+      let preferences = await storage.getUserPreferences(req.userId);
+      
+      // If preferences don't exist, create default ones
+      if (!preferences) {
+        preferences = await storage.createUserPreferences({
+          userId: req.userId,
+          theme: 'system',
+          notificationSettings: {
+            email_notifications: true,
+            push_notifications: true
+          },
+          editorPreferences: {
+            font_size: 14,
+            tab_size: 2,
+            theme: 'vs-dark',
+            auto_save: true
+          }
+        });
+      }
+      
+      return res.json({
+        status: "success",
+        preferences
+      });
+    } catch (error) {
+      console.error("Error fetching user preferences:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch user preferences" 
+      });
+    }
+  });
+  
+  apiRouter.post("/user-preferences", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ 
+          status: "error", 
+          message: "Unauthorized" 
+        });
+      }
+      
+      // Check if preferences already exist
+      const existingPreferences = await storage.getUserPreferences(req.userId);
+      
+      let preferences;
+      if (existingPreferences) {
+        // Update existing preferences
+        preferences = await storage.updateUserPreferences(req.userId, req.body);
+      } else {
+        // Create new preferences
+        preferences = await storage.createUserPreferences({
+          userId: req.userId,
+          ...req.body
+        });
+      }
+      
+      return res.json({
+        status: "success",
+        preferences
+      });
+    } catch (error) {
+      console.error("Error updating user preferences:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to update user preferences" 
+      });
+    }
+  });
+
+  // User Notes routes
+  apiRouter.get("/user-notes", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ 
+          status: "error", 
+          message: "Unauthorized" 
+        });
+      }
+      
+      // Get optional problemId filter
+      const problemId = req.query.problemId 
+        ? parseInt(req.query.problemId as string) 
+        : undefined;
+      
+      const notes = await storage.getUserNotes(req.userId, problemId);
+      return res.json({
+        status: "success",
+        notes
+      });
+    } catch (error) {
+      console.error("Error fetching user notes:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch user notes" 
+      });
+    }
+  });
+  
+  apiRouter.post("/user-notes", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ 
+          status: "error", 
+          message: "Unauthorized" 
+        });
+      }
+      
+      // Create a new note
+      const note = await storage.createUserNote({
+        userId: req.userId,
+        ...req.body
+      });
+      
+      return res.status(201).json({
+        status: "success",
+        note
+      });
+    } catch (error) {
+      console.error("Error creating user note:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to create user note" 
+      });
+    }
+  });
+  
+  apiRouter.put("/user-notes/:id", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ 
+          status: "error", 
+          message: "Unauthorized" 
+        });
+      }
+      
+      const noteId = parseInt(req.params.id);
+      if (isNaN(noteId)) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid note ID" 
+        });
+      }
+      
+      // Update the note
+      const updatedNote = await storage.updateUserNote(noteId, req.body);
+      
+      if (!updatedNote) {
+        return res.status(404).json({ 
+          status: "error", 
+          message: "Note not found" 
+        });
+      }
+      
+      return res.json({
+        status: "success",
+        note: updatedNote
+      });
+    } catch (error) {
+      console.error("Error updating user note:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to update user note" 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   
   // Set up WebSockets
