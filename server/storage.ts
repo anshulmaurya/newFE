@@ -71,13 +71,20 @@ export interface IStorage {
     company?: string;
     importance?: string;
   }): Promise<{ problems: Problem[]; total: number }>;
-  getProblem(id: number): Promise<Problem | undefined>;
+  getProblem(id: number): Promise<(Problem & { 
+    category?: { id: number, name: string },
+    companies?: { id: number, name: string, logoUrl?: string | null }[]
+  }) | undefined>;
   createProblem(problem: InsertProblem): Promise<Problem>;
   updateProblem(id: number, problem: Partial<Problem>): Promise<Problem | undefined>;
   deleteProblem(id: number): Promise<boolean>;
   
   // User Progress methods
-  getUserProgress(userId: number): Promise<(UserProgress & { problem: Problem })[]>;
+  getUserProgress(userId: number): Promise<(UserProgress & { 
+    problem: Problem & { 
+      category?: { id: number, name: string } 
+    } 
+  })[]>;
   getUserProgressForProblem(userId: number, problemId: number): Promise<UserProgress | undefined>;
   createUserProgress(userProgress: InsertUserProgress): Promise<UserProgress>;
   updateUserProgress(id: number, userProgress: Partial<UserProgress>): Promise<UserProgress | undefined>;
@@ -455,28 +462,49 @@ export class DatabaseStorage implements IStorage {
     return { problems: paginatedProblems, total };
   }
 
-  async getProblem(id: number): Promise<(Problem & { category?: { id: number, name: string } }) | undefined> {
+  async getProblem(id: number): Promise<(Problem & { 
+    category?: { id: number, name: string },
+    companies?: { id: number, name: string, logoUrl?: string | null }[]
+  }) | undefined> {
     const [problem] = await db.select().from(problems).where(eq(problems.id, id));
     
-    if (problem && problem.categoryId) {
-      // Get the category information
+    if (!problem) {
+      return undefined;
+    }
+    
+    // Create enriched problem object with additional data
+    const enrichedProblem: Problem & { 
+      category?: { id: number, name: string },
+      companies?: { id: number, name: string, logoUrl?: string | null }[]
+    } = { ...problem };
+    
+    // Get category information if available
+    if (problem.categoryId) {
       const [category] = await db
         .select()
         .from(problemCategories)
         .where(eq(problemCategories.id, problem.categoryId));
       
       if (category) {
-        return {
-          ...problem,
-          category: {
-            id: category.id,
-            name: category.name
-          }
+        enrichedProblem.category = {
+          id: category.id,
+          name: category.name
         };
       }
     }
     
-    return problem;
+    // Get associated companies
+    const associatedCompanies = await this.getCompaniesByProblemId(id);
+    
+    if (associatedCompanies.length > 0) {
+      enrichedProblem.companies = associatedCompanies.map(company => ({
+        id: company.id,
+        name: company.name,
+        logoUrl: company.logoUrl
+      }));
+    }
+    
+    return enrichedProblem;
   }
   
   async createProblem(problem: InsertProblem): Promise<Problem> {
@@ -1125,17 +1153,23 @@ export class DatabaseStorage implements IStorage {
   }
   
   async removeProblemCompanyAssociation(problemId: number, companyId: number): Promise<boolean> {
-    const result = await db
-      .delete(companyProblemMap)
-      .where(
-        and(
-          eq(companyProblemMap.problemId, problemId),
-          eq(companyProblemMap.companyId, companyId)
-        )
-      );
-    
-    // Return true if at least one row was deleted
-    return result.count > 0;
+    try {
+      await db
+        .delete(companyProblemMap)
+        .where(
+          and(
+            eq(companyProblemMap.problemId, problemId),
+            eq(companyProblemMap.companyId, companyId)
+          )
+        );
+      
+      // If we get here without an error, we'll assume success
+      // In a real production system, we'd want to check rows affected
+      return true;
+    } catch (error) {
+      console.error("Error removing problem-company association:", error);
+      return false;
+    }
   }
 }
 

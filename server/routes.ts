@@ -13,10 +13,14 @@ import {
   insertLearningPathItemSchema,
   insertUserPreferencesSchema,
   insertUserNoteSchema,
+  insertCompanySchema,
+  insertCompanyProblemMapSchema,
   problemCategories,
   learningPaths,
   userPreferences,
-  userNotes
+  userNotes,
+  companies,
+  companyProblemMap
 } from "@shared/schema";
 import { z } from "zod";
 import { setupAuth } from "./auth";
@@ -1721,6 +1725,210 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({ 
         status: "error", 
         message: "Failed to update user note" 
+      });
+    }
+  });
+
+  // Company routes
+  apiRouter.get("/companies", async (req: Request, res: Response) => {
+    try {
+      const companies = await storage.getCompanies();
+      return res.json({
+        status: "success",
+        companies
+      });
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch companies" 
+      });
+    }
+  });
+
+  apiRouter.get("/companies/:id", async (req: Request, res: Response) => {
+    try {
+      const companyId = parseInt(req.params.id);
+      if (isNaN(companyId)) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid company ID" 
+        });
+      }
+      
+      const company = await storage.getCompanyById(companyId);
+      
+      if (!company) {
+        return res.status(404).json({ 
+          status: "error", 
+          message: "Company not found" 
+        });
+      }
+      
+      return res.json({
+        status: "success",
+        company
+      });
+    } catch (error) {
+      console.error("Error fetching company:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch company" 
+      });
+    }
+  });
+
+  apiRouter.post("/companies", async (req: Request, res: Response) => {
+    try {
+      const companyData = insertCompanySchema.parse(req.body);
+      const company = await storage.createCompany(companyData);
+      return res.status(201).json({
+        status: "success",
+        company
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid company data", 
+          errors: error.errors 
+        });
+      }
+      
+      console.error("Error creating company:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to create company" 
+      });
+    }
+  });
+
+  apiRouter.put("/companies/:id", async (req: Request, res: Response) => {
+    try {
+      const companyId = parseInt(req.params.id);
+      if (isNaN(companyId)) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid company ID" 
+        });
+      }
+      
+      const updatedCompany = await storage.updateCompany(companyId, req.body);
+      
+      if (!updatedCompany) {
+        return res.status(404).json({ 
+          status: "error", 
+          message: "Company not found" 
+        });
+      }
+      
+      return res.json({
+        status: "success",
+        company: updatedCompany
+      });
+    } catch (error) {
+      console.error("Error updating company:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to update company" 
+      });
+    }
+  });
+
+  // Problem-Company mapping routes
+  apiRouter.get("/problems/:problemId/companies", async (req: Request, res: Response) => {
+    try {
+      const problemId = parseInt(req.params.problemId);
+      if (isNaN(problemId)) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid problem ID" 
+        });
+      }
+      
+      const companies = await storage.getCompaniesByProblemId(problemId);
+      
+      return res.json({
+        status: "success",
+        companies
+      });
+    } catch (error) {
+      console.error("Error fetching problem companies:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch problem companies" 
+      });
+    }
+  });
+
+  apiRouter.post("/problems/:problemId/companies", async (req: Request, res: Response) => {
+    try {
+      const problemId = parseInt(req.params.problemId);
+      if (isNaN(problemId)) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid problem ID" 
+        });
+      }
+      
+      const { companyId, relevanceScore } = req.body;
+      
+      if (!companyId || isNaN(parseInt(companyId))) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid company ID" 
+        });
+      }
+      
+      const mapping = await storage.associateProblemWithCompany(
+        problemId, 
+        parseInt(companyId), 
+        relevanceScore
+      );
+      
+      return res.status(201).json({
+        status: "success",
+        mapping
+      });
+    } catch (error) {
+      console.error("Error associating problem with company:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to associate problem with company" 
+      });
+    }
+  });
+
+  apiRouter.delete("/problems/:problemId/companies/:companyId", async (req: Request, res: Response) => {
+    try {
+      const problemId = parseInt(req.params.problemId);
+      const companyId = parseInt(req.params.companyId);
+      
+      if (isNaN(problemId) || isNaN(companyId)) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid problem ID or company ID" 
+        });
+      }
+      
+      const success = await storage.removeProblemCompanyAssociation(problemId, companyId);
+      
+      if (!success) {
+        return res.status(404).json({ 
+          status: "error", 
+          message: "Association not found" 
+        });
+      }
+      
+      return res.json({
+        status: "success",
+        message: "Association removed successfully"
+      });
+    } catch (error) {
+      console.error("Error removing problem-company association:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to remove problem-company association" 
       });
     }
   });
