@@ -345,16 +345,77 @@ export default function CodingEnvironment() {
         // Containers might use a folder param in format "/home/username/FolderName"
         // We want to extract just "FolderName" for the API call
         if (!folderName && containerUrl) {
-          const folderParam = new URL(containerUrl).searchParams.get('folder');
-          if (folderParam) {
-            folderName = folderParam.split('/').pop();
+          try {
+            // Handle containerUrl directly or as a redirect endpoint
+            let url = containerUrl;
+            
+            // If it's our internal redirect URL, we need to extract the token and look at localStorage
+            if (containerUrl.includes('/api/container-redirect/')) {
+              const token = containerToken || containerUrl.split('/api/container-redirect/')[1];
+              console.log('Using container token to determine folderName:', token);
+              
+              // Check if we have the original URL stored
+              if (containerStatus?.containerUrl) {
+                url = containerStatus.containerUrl;
+                console.log('Using containerStatus.containerUrl:', url);
+              }
+            }
+            
+            // Try to extract folder from URL parameters
+            const folderParam = new URL(url).searchParams.get('folder');
+            console.log('Extracted folder parameter:', folderParam);
+            
+            if (folderParam) {
+              // Split by path separator and get the last part
+              const parts = folderParam.split('/');
+              folderName = parts[parts.length - 1];
+              console.log('Parsed folder name from path:', folderName);
+            }
+            
+            // If we still don't have a folder name, try with the question ID
+            if (!folderName && questionId) {
+              // Extract the name part from the question ID format "10101_reverse_linked_list"
+              const questionIdParts = questionId.split('_');
+              if (questionIdParts.length > 1) {
+                // Remove the number prefix and join the rest with underscores
+                folderName = questionIdParts.slice(1).join('_');
+                // Convert to proper format with first letters capitalized
+                folderName = folderName.split('_')
+                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join('_');
+                
+                console.log('Derived folder name from question ID:', folderName);
+              }
+            }
+          } catch (e) {
+            console.error('Error parsing containerUrl:', e);
           }
         }
         
-        console.log('Extracted folder name for problem description:', folderName);
+        console.log('Final extracted folder name for problem description:', folderName);
+        
+        // If we still don't have a folder name, check if we can use the current path from the iframe
+        if (!folderName && iframeRef.current) {
+          try {
+            // Try to get the path from iframe location
+            const iframePath = new URL(iframeRef.current.src).searchParams.get('folder');
+            if (iframePath) {
+              folderName = iframePath.split('/').pop();
+              console.log('Extracted folder name from iframe src:', folderName);
+            }
+          } catch (e) {
+            console.error('Error getting path from iframe:', e);
+          }
+        }
+        
+        // For Reverse Linked List specifically
+        if (!folderName && questionId && questionId.includes('reverse_linked_list')) {
+          folderName = 'Reverse_Linked_List_C';
+          console.log('Using hardcoded folder name for Reverse Linked List:', folderName);
+        }
         
         if (!folderName) {
-          console.error('Could not determine folder name from file_path or container URL');
+          console.error('Could not determine folder name from file_path, container URL or question ID');
           throw new Error('Missing folder name for problem description');
         }
         
