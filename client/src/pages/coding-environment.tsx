@@ -1413,36 +1413,8 @@ The solution file for this problem could not be found or is inaccessible.
           
           {containerUrl ? (
             <div className="relative flex-grow w-full">
-              {/* Problem details header overlay */}
-              <div className="absolute top-1 left-1 right-1 z-10 flex items-center justify-between bg-[#252526] rounded-md px-3 py-1.5 shadow-md">
-                <div className="flex items-center gap-2 truncate">
-                  <Code className="h-4 w-4 text-gray-400" />
-                  <h2 className="font-medium text-sm truncate text-white">
-                    {isLoadingDescription ? (
-                      <Skeleton className="h-4 w-48" />
-                    ) : (
-                      problem?.title || "Loading problem..."
-                    )}
-                  </h2>
-                </div>
-                <div className="flex items-center gap-2">
-                  {!isLoadingDescription && (
-                    <>
-                      <Badge variant="outline" className="bg-[#3E3E42] text-[#c2ee4a] border-[#c2ee4a] text-xs uppercase">
-                        {language === "c" ? "C" : language === "cpp" ? "C++" : language}
-                      </Badge>
-                      {problem && (
-                        <Badge variant="outline" className={getDifficultyColor(problem.difficulty)}>
-                          {problem.difficulty}
-                        </Badge>
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
-              
               {/* Action buttons overlay */}
-              <div className="absolute top-10 left-[95px] z-10 flex items-center space-x-2">
+              <div className="absolute top-1 left-[95px] z-10 flex items-center space-x-2">
                 <Button 
                   variant="default"
                   className="h-6 px-3 text-xs bg-[#c2ee4a] hover:bg-[#b2de3a] text-black border-none rounded-full"
