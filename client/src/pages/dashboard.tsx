@@ -582,13 +582,13 @@ export default function Dashboard() {
                           Loading categories...
                         </SelectItem>
                       ) : (
-                        availableCategories?.map((categoryName) => (
+                        availableCategories?.map((category) => (
                           <SelectItem 
-                            key={categoryName} 
-                            value={categoryName} 
+                            key={category.id.toString()} 
+                            value={category.slug || ''} 
                             className="text-gray-200 focus:bg-[rgb(45,45,50)]"
                           >
-                            {categoryName}
+                            {category.name}
                           </SelectItem>
                         ))
                       )}
@@ -646,13 +646,25 @@ export default function Dashboard() {
                         return false;
                       }
                       
-                      // Apply category filter
-                      if (category !== 'all' && 
-                          !(problem.category?.toLowerCase() === category.toLowerCase() ||
-                            problem.type?.toLowerCase() === category.toLowerCase() ||
-                            problem.tags?.some((tag: string) => tag.toLowerCase() === category.toLowerCase()))
-                         ) {
-                        return false;
+                      // Apply category filter - now comparing with category slug 
+                      if (category !== 'all') {
+                        // First try to find matching category by slug
+                        const categoryObj = availableCategories?.find(cat => cat.slug === category);
+                        
+                        // If we found a matching category, compare with problem.category
+                        if (categoryObj && 
+                           !(
+                             // Try to match by category name or type
+                             (problem.category && problem.category.toLowerCase() === categoryObj.name.toLowerCase()) ||
+                             (problem.type && problem.type.toLowerCase() === categoryObj.name.toLowerCase()) ||
+                             // Try to match by tags
+                             (Array.isArray(problem.tags) && problem.tags.some((tag: string) => 
+                               tag && tag.toLowerCase() === categoryObj.name.toLowerCase()
+                             ))
+                           )
+                        ) {
+                          return false;
+                        }
                       }
                       
                       // Apply status filter - only works if user is authenticated
