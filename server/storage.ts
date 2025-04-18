@@ -16,7 +16,22 @@ import {
   type UserActivity,
   type InsertUserActivity,
   type CodeSubmission,
-  type InsertCodeSubmission
+  type InsertCodeSubmission,
+  problemCategories,
+  learningPaths,
+  learningPathItems,
+  userPreferences,
+  userNotes,
+  type ProblemCategory,
+  type InsertProblemCategory,
+  type LearningPath,
+  type InsertLearningPath,
+  type LearningPathItem,
+  type InsertLearningPathItem,
+  type UserPreferences,
+  type InsertUserPreferences,
+  type UserNote,
+  type InsertUserNote
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, sql, like, ilike, or } from "drizzle-orm";
@@ -50,8 +65,6 @@ export interface IStorage {
     importance?: string;
   }): Promise<{ problems: Problem[]; total: number }>;
   getProblem(id: number): Promise<Problem | undefined>;
-  // Removed getProblemByMongoId as MongoDB migration is being handled manually
-
   createProblem(problem: InsertProblem): Promise<Problem>;
   updateProblem(id: number, problem: Partial<Problem>): Promise<Problem | undefined>;
   deleteProblem(id: number): Promise<boolean>;
@@ -87,6 +100,30 @@ export interface IStorage {
   getCodeSubmissions(userId: number, problemId?: number): Promise<CodeSubmission[]>;
   createCodeSubmission(submission: InsertCodeSubmission): Promise<CodeSubmission>;
   getCodeSubmissionById(id: number): Promise<CodeSubmission | undefined>;
+  
+  // Problem Categories methods
+  getProblemCategories(): Promise<ProblemCategory[]>;
+  getProblemCategoryById(id: number): Promise<ProblemCategory | undefined>;
+  createProblemCategory(category: InsertProblemCategory): Promise<ProblemCategory>;
+  updateProblemCategory(id: number, category: Partial<ProblemCategory>): Promise<ProblemCategory | undefined>;
+  
+  // Learning Paths methods
+  getLearningPaths(): Promise<LearningPath[]>;
+  getLearningPathById(id: number): Promise<LearningPath | undefined>;
+  createLearningPath(learningPath: InsertLearningPath): Promise<LearningPath>;
+  updateLearningPath(id: number, learningPath: Partial<LearningPath>): Promise<LearningPath | undefined>;
+  getLearningPathItems(pathId: number): Promise<any[]>;
+  createLearningPathItem(item: InsertLearningPathItem): Promise<LearningPathItem>;
+  
+  // User Preferences methods
+  getUserPreferences(userId: number): Promise<UserPreferences | undefined>;
+  createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences>;
+  updateUserPreferences(userId: number, preferences: Partial<UserPreferences>): Promise<UserPreferences | undefined>;
+  
+  // User Notes methods
+  getUserNotes(userId: number, problemId?: number): Promise<UserNote[]>;
+  createUserNote(note: InsertUserNote): Promise<UserNote>;
+  updateUserNote(id: number, note: Partial<UserNote>): Promise<UserNote | undefined>;
 }
 
 // Create PostgreSQL session store
@@ -132,11 +169,11 @@ export class DatabaseStorage implements IStorage {
     let query = db.select().from(userActivity).where(eq(userActivity.userId, userId));
     
     if (fromDate) {
-      query = query.where(sql`${userActivity.date} >= ${fromDate}`);
+      query = query.where(sql`${userActivity.date} >= ${fromDate.toISOString()}`);
     }
     
     if (toDate) {
-      query = query.where(sql`${userActivity.date} <= ${toDate}`);
+      query = query.where(sql`${userActivity.date} <= ${toDate.toISOString()}`);
     }
     
     return await query.orderBy(desc(userActivity.date));
@@ -159,8 +196,8 @@ export class DatabaseStorage implements IStorage {
       const [updatedActivity] = await db
         .update(userActivity)
         .set({
-          problemsSolved: existingActivity.problemsSolved + (activity.problemsSolved || 0),
-          minutesActive: existingActivity.minutesActive + (activity.minutesActive || 0),
+          problemsSolved: (existingActivity.problemsSolved || 0) + (activity.problemsSolved || 0),
+          minutesActive: (existingActivity.minutesActive || 0) + (activity.minutesActive || 0),
           updatedAt: new Date(),
         })
         .where(eq(userActivity.id, existingActivity.id))
@@ -194,8 +231,8 @@ export class DatabaseStorage implements IStorage {
     
     if (userStatsRecord) {
       return {
-        current: userStatsRecord.currentStreak,
-        longest: userStatsRecord.longestStreak,
+        current: userStatsRecord.currentStreak || 0,
+        longest: userStatsRecord.longestStreak || 0,
       };
     }
     
@@ -272,7 +309,7 @@ export class DatabaseStorage implements IStorage {
       filters.push(eq(problems.type, type as any));
     }
     if (importance) {
-      filters.push(eq(problems.importance, importance));
+      filters.push(eq(problems.importance, importance as any));
     }
     if (search) {
       filters.push(
@@ -284,9 +321,9 @@ export class DatabaseStorage implements IStorage {
       );
     }
     
-    // Filter by company (now a single enum value)
-    if (company) {
-      filters.push(eq(problems.company, company as any));
+    // Filter by company (if schema has it)
+    if (company && 'company' in problems) {
+      filters.push(eq(problems.company as any, company as any));
     }
     
     if (filters.length > 0) {
@@ -316,14 +353,10 @@ export class DatabaseStorage implements IStorage {
     
     let problemsList = await query;
     
-    // The problems are already using question_id format from the database
-    // Just ensure the other required fields are present
+    // Ensure the other required fields are present
     problemsList = problemsList.map(problem => ({
       ...problem,
-      // Add acceptance_rate if it doesn't exist
-      acceptance_rate: problem.acceptance_rate || 90,
-      // Ensure companies is always an array
-      companies: problem.companies || []
+      // Add any additional processing if needed
     }));
     
     return { problems: problemsList, total };
@@ -334,10 +367,6 @@ export class DatabaseStorage implements IStorage {
     return problem;
   }
   
-  // Removed getProblemByMongoId implementation
-  
-
-
   async createProblem(problem: InsertProblem): Promise<Problem> {
     const [createdProblem] = await db.insert(problems).values(problem).returning();
     return createdProblem;
@@ -356,24 +385,31 @@ export class DatabaseStorage implements IStorage {
   }
   
   async deleteProblem(id: number): Promise<boolean> {
-    const result = await db
+    const [deletedProblem] = await db
       .delete(problems)
       .where(eq(problems.id, id))
-      .returning({ id: problems.id });
-    return result.length > 0;
+      .returning();
+    return !!deletedProblem;
   }
   
   // User Progress methods
   async getUserProgress(userId: number): Promise<(UserProgress & { problem: Problem })[]> {
-    const result = await db
-      .select()
+    const progress = await db
+      .select({
+        progress: userProgress,
+        problem: problems
+      })
       .from(userProgress)
-      .innerJoin(problems, eq(userProgress.problemId, problems.id))
-      .where(eq(userProgress.userId, userId));
-      
-    return result as (UserProgress & { problem: Problem })[];
+      .where(eq(userProgress.userId, userId))
+      .innerJoin(problems, eq(userProgress.problemId, problems.id));
+    
+    // Combine the results
+    return progress.map(entry => ({
+      ...entry.progress,
+      problem: entry.problem
+    }));
   }
-
+  
   async getUserProgressForProblem(userId: number, problemId: number): Promise<UserProgress | undefined> {
     const [progress] = await db
       .select()
@@ -386,25 +422,25 @@ export class DatabaseStorage implements IStorage {
       );
     return progress;
   }
-
+  
   async createUserProgress(progress: InsertUserProgress): Promise<UserProgress> {
-    const [createdProgress] = await db
-      .insert(userProgress)
-      .values(progress)
-      .returning();
+    const [createdProgress] = await db.insert(userProgress).values(progress).returning();
     return createdProgress;
   }
-
+  
   async updateUserProgress(id: number, progress: Partial<UserProgress>): Promise<UserProgress | undefined> {
     const [updatedProgress] = await db
       .update(userProgress)
-      .set(progress)
+      .set({
+        ...progress,
+        updatedAt: new Date()
+      })
       .where(eq(userProgress.id, id))
       .returning();
     return updatedProgress;
   }
   
-  // Stats methods
+  // User Stats methods (calculated)
   async getUserStats(userId: number): Promise<{
     totalProblems: number;
     solvedProblems: number;
@@ -413,97 +449,67 @@ export class DatabaseStorage implements IStorage {
     mediumProblems: { solved: number; total: number };
     hardProblems: { solved: number; total: number };
   }> {
-    // Get total problems
-    const [totalResult] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(problems);
-    const totalProblems = totalResult?.count || 0;
+    // Get all problems
+    const allProblems = await db.select().from(problems);
     
-    // Get solved problems
-    const [solvedResult] = await db
-      .select({ count: sql<number>`count(*)` })
+    // Get user progress
+    const userProgress = await db
+      .select()
       .from(userProgress)
-      .where(
-        and(
-          eq(userProgress.userId, userId),
-          eq(userProgress.status, 'Solved')
-        )
-      );
-    const solvedProblems = solvedResult?.count || 0;
+      .where(eq(userProgress.userId, userId));
     
-    // Get attempted but not solved problems
-    const [attemptedResult] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(userProgress)
-      .where(
-        and(
-          eq(userProgress.userId, userId),
-          eq(userProgress.status, 'Attempted')
-        )
-      );
-    const attemptedProblems = attemptedResult?.count || 0;
+    // Calculate stats
+    const totalProblems = allProblems.length;
+    const solvedProblems = userProgress.filter(p => p.status === 'Solved').length;
+    const attemptedProblems = userProgress.length;
     
-    // Get difficulty breakdown
-    const difficultyStats = {
-      easyProblems: { solved: 0, total: 0 },
-      mediumProblems: { solved: 0, total: 0 },
-      hardProblems: { solved: 0, total: 0 }
+    // Calculate by difficulty
+    const easyProblems = {
+      total: allProblems.filter(p => p.difficulty === 'Easy').length,
+      solved: userProgress.filter(p => 
+        p.status === 'Solved' && 
+        allProblems.find(ap => ap.id === p.problemId)?.difficulty === 'Easy'
+      ).length
     };
     
-    // Get total by difficulty
-    const totalByDifficulty = await db
-      .select({
-        difficulty: problems.difficulty,
-        count: sql<number>`count(*)`
-      })
-      .from(problems)
-      .groupBy(problems.difficulty);
+    const mediumProblems = {
+      total: allProblems.filter(p => p.difficulty === 'Medium').length,
+      solved: userProgress.filter(p => 
+        p.status === 'Solved' && 
+        allProblems.find(ap => ap.id === p.problemId)?.difficulty === 'Medium'
+      ).length
+    };
     
-    for (const { difficulty, count } of totalByDifficulty) {
-      if (difficulty === 'Easy') difficultyStats.easyProblems.total = count;
-      if (difficulty === 'Medium') difficultyStats.mediumProblems.total = count;
-      if (difficulty === 'Hard') difficultyStats.hardProblems.total = count;
-    }
-    
-    // Get solved by difficulty
-    const solvedByDifficulty = await db
-      .select({
-        difficulty: problems.difficulty,
-        count: sql<number>`count(*)`
-      })
-      .from(userProgress)
-      .innerJoin(problems, eq(userProgress.problemId, problems.id))
-      .where(
-        and(
-          eq(userProgress.userId, userId),
-          eq(userProgress.status, 'Solved')
-        )
-      )
-      .groupBy(problems.difficulty);
-    
-    for (const { difficulty, count } of solvedByDifficulty) {
-      if (difficulty === 'Easy') difficultyStats.easyProblems.solved = count;
-      if (difficulty === 'Medium') difficultyStats.mediumProblems.solved = count;
-      if (difficulty === 'Hard') difficultyStats.hardProblems.solved = count;
-    }
+    const hardProblems = {
+      total: allProblems.filter(p => p.difficulty === 'Hard').length,
+      solved: userProgress.filter(p => 
+        p.status === 'Solved' && 
+        allProblems.find(ap => ap.id === p.problemId)?.difficulty === 'Hard'
+      ).length
+    };
     
     return {
       totalProblems,
       solvedProblems,
       attemptedProblems,
-      ...difficultyStats
+      easyProblems,
+      mediumProblems,
+      hardProblems
     };
   }
   
   // Code Submissions methods
   async getCodeSubmissions(userId: number, problemId?: number): Promise<CodeSubmission[]> {
-    let query = db.select().from(codeSubmissions).where(eq(codeSubmissions.userId, userId));
+    let query = db
+      .select()
+      .from(codeSubmissions)
+      .where(eq(codeSubmissions.userId, userId));
     
     if (problemId) {
       query = query.where(eq(codeSubmissions.problemId, problemId));
     }
     
-    return await query.orderBy(desc(codeSubmissions.submittedAt));
+    return await query.orderBy(desc(codeSubmissions.createdAt));
   }
   
   async createCodeSubmission(submission: InsertCodeSubmission): Promise<CodeSubmission> {
@@ -511,179 +517,71 @@ export class DatabaseStorage implements IStorage {
       .insert(codeSubmissions)
       .values(submission)
       .returning();
-      
-    // Update problem success/failure counts if this is a submission with a status
-    if (submission.status) {
-      const problem = await this.getProblem(submission.problemId);
-      if (problem) {
-        if (submission.status === 'pass') {
-          await this.updateProblem(problem.id, {
-            successfulSubmissions: (problem.successfulSubmissions || 0) + 1
+    
+    // If this is a successful submission, update user stats and user progress
+    if (submission.status === 'Accepted') {
+      try {
+        // Update user progress
+        const existingProgress = await this.getUserProgressForProblem(
+          submission.userId,
+          submission.problemId
+        );
+        
+        if (existingProgress) {
+          await this.updateUserProgress(existingProgress.id, {
+            status: 'Solved',
+            completedAt: new Date()
           });
-          
-          // Also update user progress to mark as solved if not already
-          const userProgress = await this.getUserProgressForProblem(submission.userId, submission.problemId);
-          if (userProgress) {
-            if (userProgress.status !== 'Solved') {
-              await this.updateUserProgress(userProgress.id, {
-                status: 'Solved',
-                completedAt: new Date(),
-                attemptCount: (userProgress.attemptCount || 0) + 1,
-                lastAttemptedAt: new Date()
-              });
-            } else {
-              // Just update the attempt count
-              await this.updateUserProgress(userProgress.id, {
-                attemptCount: (userProgress.attemptCount || 0) + 1,
-                lastAttemptedAt: new Date()
-              });
-            }
-          } else {
-            // Create new user progress
-            await this.createUserProgress({
-              userId: submission.userId,
-              problemId: submission.problemId,
-              status: 'Solved',
-              attemptCount: 1,
-              lastAttemptedAt: new Date(),
-              completedAt: new Date()
-            });
-          }
-          
-          // Record activity
-          await this.recordUserActivity({
+        } else {
+          await this.createUserProgress({
             userId: submission.userId,
-            date: new Date().toISOString().split('T')[0], // Use today's date in YYYY-MM-DD format
-            problemsSolved: 1,
-            minutesActive: 10 // Assume 10 minutes per problem solved
+            problemId: submission.problemId,
+            status: 'Solved',
+            attemptCount: 1,
+            lastAttemptedAt: new Date(),
+            completedAt: new Date()
           });
-          
-          // Update user stats
-          const userStatsRecord = await this.getUserStatsRecord(submission.userId);
-          if (userStatsRecord) {
-            // Calculate streak
-            const today = new Date();
-            const lastActiveDate = userStatsRecord.lastActiveDate;
-            
-            let currentStreak = userStatsRecord.currentStreak;
-            let longestStreak = userStatsRecord.longestStreak;
-            
-            // Check if the last active date is yesterday
-            const yesterday = new Date(today);
-            yesterday.setDate(yesterday.getDate() - 1);
-            
-            const isYesterday = 
-              lastActiveDate.getFullYear() === yesterday.getFullYear() &&
-              lastActiveDate.getMonth() === yesterday.getMonth() &&
-              lastActiveDate.getDate() === yesterday.getDate();
-              
-            // Check if the last active date is today
-            const isToday = 
-              lastActiveDate.getFullYear() === today.getFullYear() &&
-              lastActiveDate.getMonth() === today.getMonth() &&
-              lastActiveDate.getDate() === today.getDate();
-            
-            if (isYesterday) {
-              // Increment streak
-              currentStreak += 1;
-              if (currentStreak > longestStreak) {
-                longestStreak = currentStreak;
-              }
-            } else if (!isToday) {
-              // Reset streak if not today or yesterday
-              currentStreak = 1;
-            }
-            
-            // Calculate solved counts
-            const difficulty = problem.difficulty;
-            const updateData: Partial<UserStats> = {
-              totalSolved: (userStatsRecord.totalSolved || 0) + 1,
-              currentStreak,
-              longestStreak,
-              lastActiveDate: today
-            };
-            
-            if (difficulty === 'Easy') {
-              updateData.easySolved = (userStatsRecord.easySolved || 0) + 1;
-            } else if (difficulty === 'Medium') {
-              updateData.mediumSolved = (userStatsRecord.mediumSolved || 0) + 1;
-            } else if (difficulty === 'Hard') {
-              updateData.hardSolved = (userStatsRecord.hardSolved || 0) + 1;
-            }
-            
-            await this.updateUserStats(submission.userId, updateData);
-          } else {
-            // Create new user stats
-            const updateData: InsertUserStats = {
-              userId: submission.userId,
-              totalSolved: 1,
-              currentStreak: 1,
-              longestStreak: 1,
-              lastActiveDate: new Date(),
-              dailyGoal: 3 // Default daily goal
-            };
-            
-            const difficulty = problem.difficulty;
-            if (difficulty === 'Easy') {
-              updateData.easySolved = 1;
-            } else if (difficulty === 'Medium') {
-              updateData.mediumSolved = 1;
-            } else if (difficulty === 'Hard') {
-              updateData.hardSolved = 1;
-            }
-            
-            await this.createUserStats(updateData);
-          }
-        } else if (submission.status === 'fail') {
-          await this.updateProblem(problem.id, {
-            failedSubmissions: (problem.failedSubmissions || 0) + 1
-          });
-          
-          // Update user progress as attempted if not already solved
-          const userProgress = await this.getUserProgressForProblem(submission.userId, submission.problemId);
-          if (userProgress) {
-            if (userProgress.status !== 'Solved') {
-              await this.updateUserProgress(userProgress.id, {
-                status: 'Attempted',
-                attemptCount: (userProgress.attemptCount || 0) + 1,
-                lastAttemptedAt: new Date()
-              });
-            } else {
-              // Just update the attempt count
-              await this.updateUserProgress(userProgress.id, {
-                attemptCount: (userProgress.attemptCount || 0) + 1,
-                lastAttemptedAt: new Date()
-              });
-            }
-          } else {
-            // Create new user progress
-            await this.createUserProgress({
-              userId: submission.userId,
-              problemId: submission.problemId,
-              status: 'Attempted',
-              attemptCount: 1,
-              lastAttemptedAt: new Date()
-            });
-          }
-          
-          // Update user stats - just increment attempted count and update last active date
-          const userStatsRecord = await this.getUserStatsRecord(submission.userId);
-          if (userStatsRecord) {
-            await this.updateUserStats(submission.userId, {
-              totalAttempted: (userStatsRecord.totalAttempted || 0) + 1,
-              lastActiveDate: new Date()
-            });
-          } else {
-            // Create new user stats with one attempt
-            await this.createUserStats({
-              userId: submission.userId,
-              totalAttempted: 1,
-              dailyGoal: 3, // Default daily goal
-              lastActiveDate: new Date()
-            });
-          }
         }
+        
+        // Update user stats
+        const userStatsRecord = await this.getUserStatsRecord(submission.userId);
+        
+        // Get problem difficulty
+        const problem = await this.getProblem(submission.problemId);
+        
+        if (problem && userStatsRecord) {
+          const updateData = {
+            totalSolved: (userStatsRecord.totalSolved || 0) + 1,
+            lastActiveDate: new Date()
+          } as Partial<UserStats>;
+          
+          // Update difficulty-specific counters
+          if (problem.difficulty === 'Easy') {
+            updateData.easySolved = (userStatsRecord.easySolved || 0) + 1;
+          } else if (problem.difficulty === 'Medium') {
+            updateData.mediumSolved = (userStatsRecord.mediumSolved || 0) + 1;
+          } else if (problem.difficulty === 'Hard') {
+            updateData.hardSolved = (userStatsRecord.hardSolved || 0) + 1;
+          }
+          
+          await this.updateUserStats(submission.userId, updateData);
+        }
+        
+      } catch (error) {
+        console.error("Error updating stats/progress after submission:", error);
       }
+    }
+    
+    // Record activity
+    try {
+      await this.recordUserActivity({
+        userId: submission.userId,
+        date: new Date().toISOString(),
+        problemsSolved: submission.status === 'Accepted' ? 1 : 0,
+        minutesActive: 30 // Default value
+      });
+    } catch (error) {
+      console.error("Error recording activity after submission:", error);
     }
     
     return createdSubmission;
@@ -696,7 +594,155 @@ export class DatabaseStorage implements IStorage {
       .where(eq(codeSubmissions.id, id));
     return submission;
   }
+
+  // Problem Categories methods
+  async getProblemCategories(): Promise<ProblemCategory[]> {
+    return await db.select().from(problemCategories).orderBy(asc(problemCategories.displayOrder));
+  }
+
+  async getProblemCategoryById(id: number): Promise<ProblemCategory | undefined> {
+    const [category] = await db
+      .select()
+      .from(problemCategories)
+      .where(eq(problemCategories.id, id));
+    return category;
+  }
+
+  async createProblemCategory(category: InsertProblemCategory): Promise<ProblemCategory> {
+    const [createdCategory] = await db
+      .insert(problemCategories)
+      .values(category)
+      .returning();
+    return createdCategory;
+  }
+
+  async updateProblemCategory(id: number, category: Partial<ProblemCategory>): Promise<ProblemCategory | undefined> {
+    const [updatedCategory] = await db
+      .update(problemCategories)
+      .set({
+        ...category,
+        updatedAt: new Date()
+      })
+      .where(eq(problemCategories.id, id))
+      .returning();
+    return updatedCategory;
+  }
+
+  // Learning Paths methods
+  async getLearningPaths(): Promise<LearningPath[]> {
+    return await db.select().from(learningPaths);
+  }
+
+  async getLearningPathById(id: number): Promise<LearningPath | undefined> {
+    const [learningPath] = await db
+      .select()
+      .from(learningPaths)
+      .where(eq(learningPaths.id, id));
+    return learningPath;
+  }
+
+  async createLearningPath(learningPath: InsertLearningPath): Promise<LearningPath> {
+    const [createdLearningPath] = await db
+      .insert(learningPaths)
+      .values(learningPath)
+      .returning();
+    return createdLearningPath;
+  }
+
+  async updateLearningPath(id: number, learningPath: Partial<LearningPath>): Promise<LearningPath | undefined> {
+    const [updatedLearningPath] = await db
+      .update(learningPaths)
+      .set({
+        ...learningPath,
+        updatedAt: new Date()
+      })
+      .where(eq(learningPaths.id, id))
+      .returning();
+    return updatedLearningPath;
+  }
+
+  async getLearningPathItems(pathId: number): Promise<any[]> {
+    return await db
+      .select({
+        item: learningPathItems,
+        problem: problems
+      })
+      .from(learningPathItems)
+      .innerJoin(problems, eq(learningPathItems.problemId, problems.id))
+      .where(eq(learningPathItems.learningPathId, pathId))
+      .orderBy(asc(learningPathItems.displayOrder));
+  }
+
+  async createLearningPathItem(item: InsertLearningPathItem): Promise<LearningPathItem> {
+    const [createdItem] = await db
+      .insert(learningPathItems)
+      .values(item)
+      .returning();
+    return createdItem;
+  }
+
+  // User Preferences methods
+  async getUserPreferences(userId: number): Promise<UserPreferences | undefined> {
+    const [preferences] = await db
+      .select()
+      .from(userPreferences)
+      .where(eq(userPreferences.userId, userId));
+    return preferences;
+  }
+
+  async createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences> {
+    const [createdPreferences] = await db
+      .insert(userPreferences)
+      .values(preferences)
+      .returning();
+    return createdPreferences;
+  }
+
+  async updateUserPreferences(userId: number, preferences: Partial<UserPreferences>): Promise<UserPreferences | undefined> {
+    const [updatedPreferences] = await db
+      .update(userPreferences)
+      .set({
+        ...preferences,
+        updatedAt: new Date()
+      })
+      .where(eq(userPreferences.userId, userId))
+      .returning();
+    return updatedPreferences;
+  }
+
+  // User Notes methods
+  async getUserNotes(userId: number, problemId?: number): Promise<UserNote[]> {
+    let query = db
+      .select()
+      .from(userNotes)
+      .where(eq(userNotes.userId, userId));
+      
+    if (problemId) {
+      query = query.where(eq(userNotes.problemId, problemId));
+    }
+    
+    return await query.orderBy(desc(userNotes.updatedAt));
+  }
+
+  async createUserNote(note: InsertUserNote): Promise<UserNote> {
+    const [createdNote] = await db
+      .insert(userNotes)
+      .values(note)
+      .returning();
+    return createdNote;
+  }
+
+  async updateUserNote(id: number, note: Partial<UserNote>): Promise<UserNote | undefined> {
+    const [updatedNote] = await db
+      .update(userNotes)
+      .set({
+        ...note,
+        updatedAt: new Date()
+      })
+      .where(eq(userNotes.id, id))
+      .returning();
+    return updatedNote;
+  }
 }
 
-// Export instance of storage
 export const storage = new DatabaseStorage();

@@ -8,6 +8,15 @@ import {
   insertUserStatsSchema,
   insertUserActivitySchema,
   insertCodeSubmissionSchema,
+  insertProblemCategorySchema,
+  insertLearningPathSchema,
+  insertLearningPathItemSchema,
+  insertUserPreferencesSchema,
+  insertUserNoteSchema,
+  problemCategories,
+  learningPaths,
+  userPreferences,
+  userNotes
 } from "@shared/schema";
 import { z } from "zod";
 import { setupAuth } from "./auth";
@@ -229,35 +238,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Get all available categories
+  // Get all available categories - this now returns the full category objects from the database
   apiRouter.get("/categories", async (req: Request, res: Response) => {
     try {
-      // Return the enum values from the categoryEnum directly
-      return res.json([
-        'Arrays',
-        'Strings',
-        'Linked Lists',
-        'Stacks',
-        'Queues',
-        'Trees',
-        'Heaps',
-        'Hash Tables',
-        'Graphs',
-        'Tries',
-        'Disjoint Sets',
-        'Searching',
-        'Sorting',
-        'Recursion',
-        'Dynamic Programming',
-        'Greedy Algorithms',
-        'Divide and Conquer',
-        'Bit Manipulation',
-        'Mathematical Algorithms',
-        'RTOS',
-        'State Machines',
-        'Multithreading',
-        'Memory Management'
-      ]);
+      // Get categories from the database
+      const categories = await storage.getProblemCategories();
+      return res.json(categories);
     } catch (error) {
       console.error("Error fetching categories:", error);
       return res.status(500).json({ error: "Server error" });
