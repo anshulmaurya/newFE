@@ -306,7 +306,18 @@ export class DatabaseStorage implements IStorage {
     // Apply pagination
     query = query.limit(limit).offset((page - 1) * limit);
     
-    const problemsList = await query;
+    let problemsList = await query;
+    
+    // Map the field names for compatibility with existing code - especially question_id
+    problemsList = problemsList.map(problem => ({
+      ...problem,
+      // Keep questionId but also provide question_id for backward compatibility
+      question_id: problem.questionId,
+      // Add acceptance_rate if it doesn't exist
+      acceptance_rate: problem.acceptance_rate || 90,
+      // Ensure companies is always an array
+      companies: problem.companies || []
+    }));
     
     return { problems: problemsList, total };
   }
