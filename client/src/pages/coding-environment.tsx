@@ -330,6 +330,15 @@ export default function CodingEnvironment() {
           console.log(`${key}: ${typeof problemData[key]}`, problemData[key]);
         }
         
+        // Store problem title and difficulty from database for display
+        if (problemData.title) {
+          setDbProblemTitle(problemData.title);
+        }
+        
+        if (problemData.difficulty) {
+          setDbProblemDifficulty(problemData.difficulty);
+        }
+        
         // Handle both camelCase and snake_case property names
         const questionIdValue = problemData.questionId || problemData.question_id;
         if (questionIdValue) {
@@ -595,6 +604,9 @@ export default function CodingEnvironment() {
     }
   };
   
+  // Store both database problem data and external problem description
+  const [dbProblemTitle, setDbProblemTitle] = useState<string | null>(null);
+  const [dbProblemDifficulty, setDbProblemDifficulty] = useState<string | null>(null);
   const problem = problemDescription?.data;
   
   // Removed debug component
@@ -788,7 +800,7 @@ export default function CodingEnvironment() {
                   {isLoadingDescription ? (
                     <Skeleton className="h-5 w-48" />
                   ) : (
-                    problem?.title || "Loading problem..."
+                    dbProblemTitle || problem?.title || "Loading problem..."
                   )}
                 </h2>
               </div>
