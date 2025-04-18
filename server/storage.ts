@@ -673,15 +673,27 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getLearningPathItems(pathId: number): Promise<any[]> {
-    return await db
-      .select({
-        item: learningPathItems,
-        problem: problems
-      })
+    const items = await db
+      .select()
       .from(learningPathItems)
-      .innerJoin(problems, eq(learningPathItems.problemId, problems.id))
       .where(eq(learningPathItems.learningPathId, pathId))
       .orderBy(asc(learningPathItems.displayOrder));
+      
+    // Fetch problem details for each item
+    const result = [];
+    for (const item of items) {
+      const [problem] = await db
+        .select()
+        .from(problems)
+        .where(eq(problems.id, item.problemId));
+        
+      result.push({
+        ...item,
+        problem
+      });
+    }
+    
+    return result;
   }
 
   async createLearningPathItem(item: InsertLearningPathItem): Promise<LearningPathItem> {
