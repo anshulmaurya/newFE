@@ -17,6 +17,7 @@ import {
   type InsertUserActivity,
   type CodeSubmission,
   type InsertCodeSubmission,
+  type MemoryStatsData, // Import the memory stats interface
   problemCategories,
   learningPaths,
   learningPathItems,
@@ -637,6 +638,9 @@ export class DatabaseStorage implements IStorage {
       .values(submission)
       .returning();
     
+    // Cast memoryStats to the proper type
+    const typedMemoryStats = createdSubmission.memoryStats as unknown as MemoryStatsData;
+    
     // If this is a successful submission, update user stats and user progress
     if (submission.status === 'pass') {
       try {
@@ -649,7 +653,8 @@ export class DatabaseStorage implements IStorage {
         if (existingProgress) {
           await this.updateUserProgress(existingProgress.id, {
             status: 'Solved',
-            completedAt: new Date()
+            lastAttemptedAt: new Date(),
+            completedAt: new Date() 
           });
         } else {
           await this.createUserProgress({
@@ -669,10 +674,11 @@ export class DatabaseStorage implements IStorage {
         const problem = await this.getProblem(submission.problemId);
         
         if (problem && userStatsRecord) {
-          const updateData = {
+          // Since lastActiveDate is a DATE type in PostgreSQL
+          const updateData: Partial<UserStats> = {
             totalSolved: (userStatsRecord.totalSolved || 0) + 1,
-            lastActiveDate: new Date()
-          } as Partial<UserStats>;
+            lastActiveDate: sql`CURRENT_DATE`
+          };
           
           // Update difficulty-specific counters
           if (problem.difficulty === 'Easy') {
@@ -695,7 +701,7 @@ export class DatabaseStorage implements IStorage {
     try {
       await this.recordUserActivity({
         userId: submission.userId,
-        date: new Date().toISOString(),
+        date: new Date(), // The InsertUserActivitySchema will handle this properly
         problemsSolved: submission.status === 'pass' ? 1 : 0,
         minutesActive: 30 // Default value
       });
@@ -703,7 +709,11 @@ export class DatabaseStorage implements IStorage {
       console.error("Error recording activity after submission:", error);
     }
     
-    return createdSubmission;
+    // Return the submission with properly typed memory stats
+    return {
+      ...createdSubmission,
+      memoryStats: typedMemoryStats
+    };
   }
   
   async getCodeSubmissionById(id: number): Promise<CodeSubmission | undefined> {
