@@ -297,7 +297,7 @@ export class DatabaseStorage implements IStorage {
     type?: string;
     company?: string;
     importance?: string;
-  }): Promise<{ problems: Problem[]; total: number }> {
+  }): Promise<{ problems: (Problem & { category?: { id: number, name: string } })[]; total: number }> {
     const { 
       category, 
       difficulty, 
@@ -311,10 +311,10 @@ export class DatabaseStorage implements IStorage {
       importance
     } = options || {};
     
-    // Get all categories to help with filtering
+    // Get all categories to help with filtering and enrichment
     const allCategories = await db.select().from(problemCategories);
     
-    // Get all problems with a join to get category information
+    // Get all problems
     const allProblems = await db.select().from(problems);
     
     // Apply filters in memory
@@ -399,7 +399,24 @@ export class DatabaseStorage implements IStorage {
     // Apply pagination
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-    const paginatedProblems = filteredProblems.slice(startIndex, endIndex);
+    let paginatedProblems = filteredProblems.slice(startIndex, endIndex);
+    
+    // Enrich problems with category information
+    paginatedProblems = paginatedProblems.map(problem => {
+      if (problem.categoryId) {
+        const category = allCategories.find(cat => cat.id === problem.categoryId);
+        if (category) {
+          return {
+            ...problem,
+            category: {
+              id: category.id,
+              name: category.name
+            }
+          };
+        }
+      }
+      return problem;
+    });
     
     return { problems: paginatedProblems, total };
   }
