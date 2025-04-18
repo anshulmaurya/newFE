@@ -327,7 +327,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   apiRouter.post("/problems", async (req: Request, res: Response) => {
     try {
+      // Parse problem data with the extended schema that includes categoryName and companyNames
       const problemData = insertProblemSchema.parse(req.body);
+      // Pass the data to storage.createProblem which will handle name to ID conversion
       const problem = await storage.createProblem(problemData);
       return res.status(201).json(problem);
     } catch (error) {
