@@ -1830,7 +1830,8 @@ The solution file for this problem could not be found or is inaccessible.
                     });
                     
                     try {
-                      const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/submit_question', {
+                      // First call the external Azure API to get the solution evaluation
+                      const responseAzure = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/submit_question', {
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',
@@ -1843,34 +1844,64 @@ The solution file for this problem could not be found or is inaccessible.
                         })
                       });
                       
-                      const data = await response.json();
+                      const dataAzure = await responseAzure.json();
                       
-                      if (response.ok) {
+                      if (responseAzure.ok && dataAzure.response) {
                         // Store the submission result
-                        if (data.response && data.response.status) {
-                          setSubmissionResult(data.response);
+                        setSubmissionResult(dataAzure.response);
+                        
+                        // Make sure the submissions panel is open
+                        setIsDescriptionOpen(true);
+                        setActiveSection('submissions');
+                        
+                        // Now let's also save this submission to our database
+                        try {
+                          // First convert numerical ID from questionId string which might be like "10101_reverse_linked_list"
+                          const problemIdMatch = questionId.match(/^(\d+)/);
+                          const numericProblemId = problemIdMatch ? parseInt(problemIdMatch[1]) : 0;
                           
-                          // Make sure the submissions panel is open
-                          // We need to ensure this doesn't toggle off if already open
-                          setIsDescriptionOpen(true);
-                          setActiveSection('submissions');
+                          // Prepare memory stats from the Azure response
+                          const memoryStats = dataAzure.response.output.metadata.mem_stat || {};
                           
-                          toast({
-                            title: 'Success',
-                            description: 'Solution submitted successfully!',
+                          // Prepare submission data
+                          const submissionData = {
+                            userId: user.id,
+                            problemId: numericProblemId, 
+                            status: dataAzure.response.output.overall_status === "pass" ? "pass" : "fail",
+                            executionTime: dataAzure.response.output.metadata.Total_Time || 0,
+                            language: language,
+                            memoryStats: memoryStats
+                          };
+                          
+                          // Save to our database
+                          const response = await fetch('/api/code-submissions', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(submissionData)
                           });
-                          console.log('Submit result:', data);
-                        } else {
-                          toast({
-                            title: 'Success',
-                            description: 'Solution submitted, but no detailed results available.',
-                          });
+                          
+                          const dbData = await response.json();
+                          
+                          if (response.ok) {
+                            console.log('Submission saved to database:', dbData);
+                          } else {
+                            console.error('Failed to save submission to database:', dbData);
+                          }
+                        } catch (dbError) {
+                          console.error('Error saving submission to database:', dbError);
                         }
+                        
+                        toast({
+                          title: 'Success',
+                          description: 'Solution submitted successfully!'
+                        });
+                        console.log('Submit result:', dataAzure);
                       } else {
                         toast({
-                          title: 'Error',
-                          description: data.message || 'Failed to submit solution.',
-                          variant: 'destructive'
+                          title: 'Success',
+                          description: 'Solution submitted, but no detailed results available.'
                         });
                       }
                     } catch (error) {
