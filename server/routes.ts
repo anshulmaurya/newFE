@@ -14,13 +14,11 @@ import {
   insertUserPreferencesSchema,
   insertUserNoteSchema,
   insertCompanySchema,
-  insertCompanyProblemMapSchema,
   problemCategories,
   learningPaths,
   userPreferences,
   userNotes,
-  companies,
-  companyProblemMap
+  companies
 } from "@shared/schema";
 import { z } from "zod";
 import { setupAuth } from "./auth";

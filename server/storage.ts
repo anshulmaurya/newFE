@@ -24,7 +24,6 @@ import {
   userPreferences,
   userNotes,
   companies,
-  companyProblemMap,
   type ProblemCategory,
   type InsertProblemCategory,
   type LearningPath,
@@ -36,9 +35,7 @@ import {
   type UserNote,
   type InsertUserNote,
   type Company,
-  type InsertCompany,
-  type CompanyProblemMap,
-  type InsertCompanyProblemMap
+  type InsertCompany
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, sql, like, ilike, or } from "drizzle-orm";
