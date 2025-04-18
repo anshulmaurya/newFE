@@ -1068,6 +1068,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Test endpoint for code submissions (doesn't require authentication - for testing only)
   apiRouter.post("/test-code-submissions", async (req: Request, res: Response) => {
     try {
+      console.log("Test code submission endpoint called with body:", req.body);
+      
       // Use a default user ID for testing (id: 1)
       const testUserId = 1;
       
