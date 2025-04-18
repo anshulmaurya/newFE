@@ -306,71 +306,68 @@ export class DatabaseStorage implements IStorage {
       importance
     } = options || {};
     
-    let query = db.select().from(problems);
+    // Get all problems, then apply filtering in memory
+    // This is a workaround for the potential schema mismatch issues
+    const allProblems = await db.select().from(problems);
     
-    // Apply filters
-    const filters = [];
+    // Apply filters in memory
+    let filteredProblems = [...allProblems];
+    
     if (category) {
-      filters.push(eq(problems.category, category as any));
+      filteredProblems = filteredProblems.filter(p => p.category === category);
     }
+    
     if (difficulty) {
-      filters.push(eq(problems.difficulty, difficulty as any));
+      filteredProblems = filteredProblems.filter(p => p.difficulty === difficulty);
     }
+    
     if (type) {
-      filters.push(eq(problems.type, type as any));
+      filteredProblems = filteredProblems.filter(p => p.type === type);
     }
-    if (importance) {
-      filters.push(eq(problems.importance, importance as any));
+    
+    if (importance && 'importance' in filteredProblems[0]) {
+      filteredProblems = filteredProblems.filter(p => (p as any).importance === importance);
     }
+    
+    if (company && 'company' in filteredProblems[0]) {
+      filteredProblems = filteredProblems.filter(p => {
+        if (Array.isArray((p as any).company)) {
+          return (p as any).company.includes(company);
+        }
+        return (p as any).company === company;
+      });
+    }
+    
     if (search) {
-      filters.push(
-        or(
-          ilike(problems.title, `%${search}%`),
-          ilike(problems.description, `%${search}%`),
-          ilike(problems.questionId, `%${search}%`)
-        )
+      const searchLower = search.toLowerCase();
+      filteredProblems = filteredProblems.filter(p => 
+        p.title.toLowerCase().includes(searchLower) || 
+        p.description.toLowerCase().includes(searchLower) || 
+        (p.questionId && p.questionId.toLowerCase().includes(searchLower))
       );
     }
     
-    // Filter by company (if schema has it)
-    if (company && 'company' in problems) {
-      filters.push(eq(problems.company as any, company as any));
-    }
-    
-    if (filters.length > 0) {
-      query = query.where(and(...filters));
-    }
-    
-    // Count total before pagination
-    const [countResult] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(problems)
-      .where(filters.length > 0 ? and(...filters) : undefined);
-    
-    const total = countResult?.count || 0;
+    // Count total
+    const total = filteredProblems.length;
     
     // Apply sorting
-    if (sortBy && sortBy in problems) {
-      const sortColumn = problems[sortBy as keyof typeof problems];
-      if (sortColumn) {
-        query = query.orderBy(
-          sortOrder === 'desc' ? desc(sortColumn) : asc(sortColumn)
-        );
-      }
+    if (sortBy) {
+      filteredProblems.sort((a, b) => {
+        const aValue = (a as any)[sortBy];
+        const bValue = (b as any)[sortBy];
+        
+        if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
     }
     
     // Apply pagination
-    query = query.limit(limit).offset((page - 1) * limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedProblems = filteredProblems.slice(startIndex, endIndex);
     
-    let problemsList = await query;
-    
-    // Ensure the other required fields are present
-    problemsList = problemsList.map(problem => ({
-      ...problem,
-      // Add any additional processing if needed
-    }));
-    
-    return { problems: problemsList, total };
+    return { problems: paginatedProblems, total };
   }
 
   async getProblem(id: number): Promise<Problem | undefined> {
@@ -405,20 +402,28 @@ export class DatabaseStorage implements IStorage {
   
   // User Progress methods
   async getUserProgress(userId: number): Promise<(UserProgress & { problem: Problem })[]> {
-    const progress = await db
-      .select({
-        progress: userProgress,
-        problem: problems
-      })
+    const userProgressItems = await db
+      .select()
       .from(userProgress)
-      .where(eq(userProgress.userId, userId))
-      .innerJoin(problems, eq(userProgress.problemId, problems.id));
+      .where(eq(userProgress.userId, userId));
     
-    // Combine the results
-    return progress.map(entry => ({
-      ...entry.progress,
-      problem: entry.problem
-    }));
+    // Get problem details for each progress item
+    const result = [];
+    for (const progressItem of userProgressItems) {
+      const [problem] = await db
+        .select()
+        .from(problems)
+        .where(eq(problems.id, progressItem.problemId));
+        
+      if (problem) {
+        result.push({
+          ...progressItem,
+          problem
+        });
+      }
+    }
+    
+    return result;
   }
   
   async getUserProgressForProblem(userId: number, problemId: number): Promise<UserProgress | undefined> {
