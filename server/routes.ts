@@ -870,21 +870,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         const problemId = parseInt(questionId);
         if (!isNaN(problemId)) {
-          const existingProgress = await storage.getUserProgressForProblem(req.userId, problemId);
+          // First check if the problem exists to avoid foreign key constraint errors
+          const problemExists = await storage.getProblem(problemId);
           
-          if (existingProgress) {
-            await storage.updateUserProgress(existingProgress.id, {
-              lastAttemptedAt: new Date(),
-              attemptCount: (existingProgress.attemptCount || 0) + 1
-            });
+          if (problemExists) {
+            const existingProgress = await storage.getUserProgressForProblem(req.userId, problemId);
+            
+            if (existingProgress) {
+              await storage.updateUserProgress(existingProgress.id, {
+                lastAttemptedAt: new Date(),
+                attemptCount: (existingProgress.attemptCount || 0) + 1
+              });
+            } else {
+              await storage.createUserProgress({
+                userId: req.userId,
+                problemId: problemId,
+                status: "Attempted",
+                lastAttemptedAt: new Date(),
+                attemptCount: 1
+              });
+            }
           } else {
-            await storage.createUserProgress({
-              userId: req.userId,
-              problemId: problemId,
-              status: "Attempted",
-              lastAttemptedAt: new Date(),
-              attemptCount: 1
-            });
+            console.log(`Problem ID ${problemId} does not exist in the database. Skipping user progress update.`);
           }
         }
       } catch (progressError) {
