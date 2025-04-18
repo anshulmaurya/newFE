@@ -32,7 +32,7 @@ interface UserStats {
 
 // Function to get color based on count and daily goal - using Emerald Green gradient
 const getColorForCount = (count: number, dailyGoal: number): string => {
-  if (count === 0) return 'bg-[rgb(12,31,23)]'; // Dark forest - no activity
+  if (count === 0) return 'bg-[rgb(32,32,36)]'; // Original dark shade - no activity
   
   // Calculate percentage of daily goal
   const percentComplete = Math.min(count / dailyGoal, 1);
@@ -300,7 +300,7 @@ export default function MonthlyHeatmap() {
           <h3 className="text-white text-base font-semibold">Monthly Activity</h3>
           <span className="text-[11px] text-gray-300">Loading data...</span>
         </div>
-        <Skeleton className="h-16 w-full bg-[rgb(12,31,23)]" />
+        <Skeleton className="h-16 w-full bg-[rgb(32,32,36)]" />
       </div>
     );
   }
