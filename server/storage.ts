@@ -525,7 +525,86 @@ export class DatabaseStorage implements IStorage {
       query = query.where(eq(codeSubmissions.problemId, problemId));
     }
     
-    return await query.orderBy(desc(codeSubmissions.createdAt));
+    return await query.orderBy(desc(codeSubmissions.submittedAt));
+  }
+  
+  // Get memory usage statistics for a user across all submissions or for a specific problem
+  async getMemoryStatsSummary(userId: number, problemId?: number): Promise<any> {
+    const submissions = await this.getCodeSubmissions(userId, problemId);
+    
+    // Filter for successful submissions only
+    const successfulSubmissions = submissions.filter(sub => sub.status === 'pass');
+    
+    if (successfulSubmissions.length === 0) {
+      return {
+        count: 0,
+        averageMemoryUsage: null,
+        averageExecutionTime: null,
+        memoryLeakCount: 0,
+        submissionsWithMemoryStats: 0
+      };
+    }
+    
+    // Count submissions with memory stats
+    const submissionsWithMemoryStats = successfulSubmissions.filter(
+      sub => sub.memoryStats && typeof sub.memoryStats === 'object'
+    );
+    
+    // Calculate memory leak count
+    const memoryLeakCount = submissionsWithMemoryStats.filter(
+      sub => sub.memoryStats && sub.memoryStats.memory_leak === true
+    ).length;
+    
+    // Calculate average heap usage
+    let totalHeapUsage = 0;
+    let heapUsageCount = 0;
+    
+    // Calculate average execution time
+    let totalExecutionTime = 0;
+    
+    // Cache efficiency metrics
+    let totalCacheHits = 0;
+    let totalCacheMisses = 0;
+    let cacheMetricsCount = 0;
+    
+    submissionsWithMemoryStats.forEach(sub => {
+      if (sub.executionTime) {
+        totalExecutionTime += sub.executionTime;
+      }
+      
+      if (sub.memoryStats && sub.memoryStats.footprint && sub.memoryStats.footprint.heap_usage) {
+        totalHeapUsage += sub.memoryStats.footprint.heap_usage;
+        heapUsageCount++;
+      }
+      
+      if (sub.memoryStats && sub.memoryStats.cache_profile) {
+        if (sub.memoryStats.cache_profile.cache_hits !== undefined) {
+          totalCacheHits += sub.memoryStats.cache_profile.cache_hits;
+        }
+        if (sub.memoryStats.cache_profile.cache_misses !== undefined) {
+          totalCacheMisses += sub.memoryStats.cache_profile.cache_misses;
+        }
+        if (sub.memoryStats.cache_profile.cache_hits !== undefined || 
+            sub.memoryStats.cache_profile.cache_misses !== undefined) {
+          cacheMetricsCount++;
+        }
+      }
+    });
+    
+    const averageHeapUsage = heapUsageCount > 0 ? totalHeapUsage / heapUsageCount : null;
+    const averageExecutionTime = successfulSubmissions.length > 0 ? 
+      totalExecutionTime / successfulSubmissions.length : null;
+    const cacheHitRate = (cacheMetricsCount > 0 && (totalCacheHits + totalCacheMisses) > 0) ? 
+      totalCacheHits / (totalCacheHits + totalCacheMisses) : null;
+      
+    return {
+      count: successfulSubmissions.length,
+      averageHeapUsage,
+      averageExecutionTime,
+      memoryLeakCount,
+      submissionsWithMemoryStats: submissionsWithMemoryStats.length,
+      cacheHitRate: cacheHitRate !== null ? Math.round(cacheHitRate * 100) / 100 : null // Round to 2 decimal places
+    };
   }
   
   async createCodeSubmission(submission: InsertCodeSubmission): Promise<CodeSubmission> {
@@ -535,7 +614,7 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     // If this is a successful submission, update user stats and user progress
-    if (submission.status === 'Accepted') {
+    if (submission.status === 'pass') {
       try {
         // Update user progress
         const existingProgress = await this.getUserProgressForProblem(
@@ -593,7 +672,7 @@ export class DatabaseStorage implements IStorage {
       await this.recordUserActivity({
         userId: submission.userId,
         date: new Date().toISOString(),
-        problemsSolved: submission.status === 'Accepted' ? 1 : 0,
+        problemsSolved: submission.status === 'pass' ? 1 : 0,
         minutesActive: 30 // Default value
       });
     } catch (error) {

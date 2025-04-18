@@ -1196,6 +1196,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Get memory statistics summary for a user or for a specific problem
+  apiRouter.get("/memory-stats-summary", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const problemId = req.query.problemId ? parseInt(req.query.problemId as string) : undefined;
+      
+      const statsSummary = await storage.getMemoryStatsSummary(req.userId, problemId);
+      
+      return res.json({
+        status: "success",
+        statsSummary
+      });
+    } catch (error) {
+      console.error("Error fetching memory stats summary:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch memory statistics summary" 
+      });
+    }
+  });
+  
+  // For testing - get memory statistics summary without authentication
+  apiRouter.get("/test-memory-stats-summary", async (req: Request, res: Response) => {
+    try {
+      // Use a default user ID for testing (id: 1)
+      const testUserId = 1;
+      
+      const problemId = req.query.problemId ? parseInt(req.query.problemId as string) : undefined;
+      
+      const statsSummary = await storage.getMemoryStatsSummary(testUserId, problemId);
+      
+      return res.json({
+        status: "success",
+        statsSummary
+      });
+    } catch (error) {
+      console.error("Error fetching memory stats summary:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch memory statistics summary",
+        error: String(error)
+      });
+    }
+  });
 
   // Learning Paths routes
   apiRouter.get("/learning-paths", async (req: Request, res: Response) => {
