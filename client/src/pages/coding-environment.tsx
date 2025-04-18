@@ -1223,10 +1223,19 @@ The solution file for this problem could not be found or is inaccessible.
                 </div>
               ) : (
                 <div className="p-4 text-center flex flex-col items-center justify-center h-full">
-                  <Info className="h-12 w-12 text-gray-400 mb-4" />
+                  <AlertTriangle className="h-12 w-12 text-amber-500 mb-4" />
                   <h3 className="text-lg font-medium mb-2">Problem description not available</h3>
-                  <p className="text-gray-400 max-w-md">
-                    We couldn't load the problem description. Please try again or go back to the problem page.
+                  <p className="text-gray-400 max-w-md mb-4">
+                    We couldn't load the problem description. The README file could not be found or is inaccessible.
+                  </p>
+                  <div className="bg-[#1E1E1E] rounded-md p-4 text-left text-sm w-full max-w-md">
+                    <h4 className="font-mono mb-2 text-amber-500">Problem Details</h4>
+                    <p className="font-mono text-xs mb-1"><span className="text-gray-400">Problem ID:</span> {problemId}</p>
+                    <p className="font-mono text-xs mb-1"><span className="text-gray-400">Question ID:</span> {questionId}</p>
+                    <p className="font-mono text-xs mb-1"><span className="text-gray-400">File Path:</span> {problemData?.file_path || 'Not provided'}</p>
+                  </div>
+                  <p className="text-gray-400 mt-4 text-sm max-w-md">
+                    You can still work on the problem in the coding environment.
                   </p>
                 </div>
               )}
