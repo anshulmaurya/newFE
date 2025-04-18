@@ -270,8 +270,16 @@ export default function MonthlyHeatmap() {
         initialMonthlyData[date].percentage = Math.round((initialMonthlyData[date].count / maxProblemsInDay) * 100);
       });
       
-      // Use most active date from API response if available
-      if (monthlyActivityData.mostActiveDate) {
+      // Prioritize today's date as most active date
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Check if today has any activity
+      if (initialMonthlyData[today] && initialMonthlyData[today].count > 0) {
+        // Always use today as most active if it has any activity
+        setMostActiveDate(today);
+      } 
+      // Otherwise use the API's most active date if available
+      else if (monthlyActivityData.mostActiveDate) {
         setMostActiveDate(monthlyActivityData.mostActiveDate.toString().split('T')[0]);
       }
     } else {
