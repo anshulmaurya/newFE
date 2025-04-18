@@ -324,24 +324,34 @@ export default function CodingEnvironment() {
         const problemData = await problemRes.json();
         console.log('Problem data received:', JSON.stringify(problemData, null, 2));
         
+        // DEBUG: Inspect the structure of problemData to check all properties
+        console.log('Problem data structure:');
+        for (const key in problemData) {
+          console.log(`${key}: ${typeof problemData[key]}`, problemData[key]);
+        }
+        
         if (problemData.question_id) {
           // Set question ID for other uses if it's available
           console.log('Setting question ID:', problemData.question_id);
           setQuestionId(problemData.question_id);
         }
         
-        // Use file_path to fetch the problem description and solution
-        console.log('Original file_path from database:', problemData.file_path);
+        // CRITICAL FIX: The database field is 'filePath' (camelCase) not 'file_path' (snake_case)
+        // We need to check both properties to be sure
+        const filePath = problemData.filePath || problemData.file_path;
+        console.log('Original file_path from database:', filePath);
+        console.log('Full problem data structure to check property names:', problemData);
         
         // CRITICAL FIX: Make sure file_path exists and is not undefined!
         // It should come from the database. If it's missing, we need a better error message
-        if (!problemData.file_path) {
-          console.error('File path is missing for this problem');
+        if (!filePath) {
+          console.error('File path is missing for this problem (checked both filePath and file_path)');
           // Try using question_id directly as fallback if file_path is missing
-          if (problemData.question_id) {
-            console.log('Falling back to using question_id instead:', problemData.question_id);
+          if (problemData.questionId || problemData.question_id) {
+            const questionIdValue = problemData.questionId || problemData.question_id;
+            console.log('Falling back to using question_id instead:', questionIdValue);
             // We'll set questionId but continue - later code will use it for fallback API call
-            setQuestionId(problemData.question_id);
+            setQuestionId(questionIdValue);
             // Directly go to question_id method
             throw new Error('File path is missing, using question_id instead');
           } else {
@@ -350,7 +360,7 @@ export default function CodingEnvironment() {
         }
         
         // Extract the folder name from container URL or file_path
-        let folderName = problemData.file_path;
+        let folderName = filePath;
         
         // For debugging purposes, log the folder name before any manipulation
         console.log('Before any manipulation, folderName:', folderName);
