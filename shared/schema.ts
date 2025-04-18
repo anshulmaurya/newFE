@@ -106,10 +106,12 @@ export const problems = pgTable("problems", {
 
 // Problem-category mapping table - allows multiple categories per problem
 export const problemCategoryMap = pgTable("problem_category_map", {
+  id: serial("id").primaryKey(),
   problemId: integer("problem_id").references(() => problems.id).notNull(),
   categoryId: integer("category_id").references(() => problemCategories.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
 }, (t) => ({
-  pk: primaryKey({ columns: [t.problemId, t.categoryId] })
+  unq: primaryKey({ columns: [t.problemId, t.categoryId] })
 }));
 
 // User progress table
@@ -403,9 +405,11 @@ export const discussionRepliesRelations = relations(discussionReplies, ({ one, m
     fields: [discussionReplies.userId],
     references: [users.id],
   }),
+  // Fix recursive relation
   parentReply: one(discussionReplies, {
     fields: [discussionReplies.parentReplyId],
     references: [discussionReplies.id],
+    relationName: 'parentReply',
   }),
   childReplies: many(discussionReplies),
 }));
