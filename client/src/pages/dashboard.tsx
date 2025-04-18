@@ -585,7 +585,7 @@ export default function Dashboard() {
                         availableCategories?.map((category) => (
                           <SelectItem 
                             key={category.id.toString()} 
-                            value={category.slug || ''} 
+                            value={category.id.toString()} 
                             className="text-gray-200 focus:bg-[rgb(45,45,50)]"
                           >
                             {category.name}
@@ -646,10 +646,10 @@ export default function Dashboard() {
                         return false;
                       }
                       
-                      // Apply category filter - now comparing with category slug 
+                      // Apply category filter - now comparing with category id 
                       if (category !== 'all') {
-                        // First try to find matching category by slug
-                        const categoryObj = availableCategories?.find(cat => cat.slug === category);
+                        // Find matching category by id
+                        const categoryObj = availableCategories?.find(cat => cat.id.toString() === category);
                         
                         // If we found a matching category, compare with problem.category
                         if (categoryObj && 

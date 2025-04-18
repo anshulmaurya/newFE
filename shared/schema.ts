@@ -147,9 +147,6 @@ export const userActivity = pgTable("user_activity", {
 export const problemCategories = pgTable("problem_categories", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 50 }).notNull().unique(),
-  slug: varchar("slug", { length: 50 }).notNull().unique(),
-  description: text("description"),
-  iconPath: varchar("icon_path", { length: 255 }),
   displayOrder: integer("display_order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
