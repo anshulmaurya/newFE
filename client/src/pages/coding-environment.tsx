@@ -330,24 +330,35 @@ export default function CodingEnvironment() {
           console.log(`${key}: ${typeof problemData[key]}`, problemData[key]);
         }
         
-        // Store problem title and difficulty from database for display
+        // Store problem title from database for display
         if (problemData.title) {
+          // Save the title in localStorage so we can reuse it across languages
+          localStorage.setItem(`problem_title_${questionId?.split('_')[0]}`, problemData.title);
           setDbProblemTitle(problemData.title);
-        } else if (questionId) {
-          // Extract title from questionId as fallback (e.g., 10102_detect_cycle_in_linked_list -> Detect Cycle in Linked List)
-          try {
-            const parts = questionId.split('_');
-            if (parts.length > 1) {
-              // Skip the first part (problem number) and join the rest
-              const titleFromId = parts.slice(1)
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
-              
-              console.log('Generated title from questionId:', titleFromId);
-              setDbProblemTitle(titleFromId);
+        } else {
+          // Check if we have a saved title for this problem ID from previous visits
+          const problemNumber = questionId?.split('_')[0];
+          const savedTitle = localStorage.getItem(`problem_title_${problemNumber}`);
+          
+          if (savedTitle) {
+            console.log('Using saved title from localStorage:', savedTitle);
+            setDbProblemTitle(savedTitle);
+          } else if (questionId) {
+            // As a last resort, extract title from questionId
+            try {
+              const parts = questionId.split('_');
+              if (parts.length > 1) {
+                // Skip the first part (problem number) and join the rest
+                const titleFromId = parts.slice(1)
+                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(' ');
+                
+                console.log('Generated title from questionId:', titleFromId);
+                setDbProblemTitle(titleFromId);
+              }
+            } catch (err) {
+              console.error('Error parsing questionId for title:', err);
             }
-          } catch (err) {
-            console.error('Error parsing questionId for title:', err);
           }
         }
         
@@ -627,11 +638,23 @@ export default function CodingEnvironment() {
   
   // Update document title when problem title is available
   React.useEffect(() => {
-    if (dbProblemTitle || (problem && problem.title)) {
-      const problemTitle = dbProblemTitle || (problem?.title || "Coding Problem");
+    // If we don't have a DB title, check localStorage
+    let finalTitle = dbProblemTitle;
+    if (!finalTitle && questionId) {
+      const problemNumber = questionId.split('_')[0];
+      const savedTitle = localStorage.getItem(`problem_title_${problemNumber}`);
+      if (savedTitle) {
+        console.log('Restoring title from localStorage for document title:', savedTitle);
+        setDbProblemTitle(savedTitle);
+        finalTitle = savedTitle;
+      }
+    }
+    
+    if (finalTitle || (problem && problem.title)) {
+      const problemTitle = finalTitle || (problem?.title || "Coding Problem");
       document.title = `${problemTitle} | DSP Coder`;
     }
-  }, [dbProblemTitle, problem]);
+  }, [dbProblemTitle, problem, questionId]);
   
   // Removed debug component
 
