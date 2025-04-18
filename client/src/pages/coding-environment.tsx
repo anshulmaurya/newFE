@@ -333,6 +333,22 @@ export default function CodingEnvironment() {
         // Store problem title and difficulty from database for display
         if (problemData.title) {
           setDbProblemTitle(problemData.title);
+        } else if (questionId) {
+          // Extract title from questionId as fallback (e.g., 10102_detect_cycle_in_linked_list -> Detect Cycle in Linked List)
+          try {
+            const parts = questionId.split('_');
+            if (parts.length > 1) {
+              // Skip the first part (problem number) and join the rest
+              const titleFromId = parts.slice(1)
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+              
+              console.log('Generated title from questionId:', titleFromId);
+              setDbProblemTitle(titleFromId);
+            }
+          } catch (err) {
+            console.error('Error parsing questionId for title:', err);
+          }
         }
         
         if (problemData.difficulty) {
