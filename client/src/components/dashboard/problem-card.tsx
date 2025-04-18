@@ -31,14 +31,18 @@ export default function ProblemCard({ problem, index = 0, statusIcon, handleSetu
     
     // No toast notifications at all as requested by user
     
+    // Get questionId from either question_id or questionId field (to handle both formats)
+    const questionIdToUse = problem.questionId || problem.question_id;
+    console.log("Using questionId:", questionIdToUse, "from problem:", problem);
+    
     if (handleSetupCodebase) {
       // Use the parent's provided function for immediate navigation
-      handleSetupCodebase(problem.id, problem.question_id);
+      handleSetupCodebase(problem.id, questionIdToUse);
     } else {
       // Use our own implementation with the setupCodebase hook
       setupCodebase({
         problemId: problem.id,
-        questionId: problem.question_id,
+        questionId: questionIdToUse,
         language
       });
     }

@@ -818,7 +818,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Question ID is required" });
       }
       
-      // Get the MongoDB problem details to extract the question_id field
+      // The question_id from the client should already be in the right format
+      // (e.g. "10101_reverse_linked_list")
       let mongoDbQuestionId = questionId;
       
       // Try to retrieve the question_id from MongoDB if this is a MongoDB ID
@@ -863,6 +864,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           req.userId
         );
       }
+      
+      // Log for debugging
+      console.log(`About to call external API for user ${user.username}, with question_id: ${mongoDbQuestionId}, language: ${language}`);
       
       // Call the external API to setup the codebase using the question_id from MongoDB and language
       const result = await setupUserCodebase(user.username, mongoDbQuestionId.toString(), language);

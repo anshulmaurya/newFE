@@ -68,6 +68,7 @@ export async function setupUserCodebase(username: string, questionId: string, la
     };
     
     console.log(`Making request to ${SETUP_CODEBASE_URL} with body:`, JSON.stringify(requestBody));
+    console.log(`IMPORTANT: Full request details: URL=${SETUP_CODEBASE_URL}, Method=POST, username=${username}, question_id=${questionId}`);
     
     const response = await fetch(SETUP_CODEBASE_URL, {
       method: 'POST',

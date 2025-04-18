@@ -308,11 +308,10 @@ export class DatabaseStorage implements IStorage {
     
     let problemsList = await query;
     
-    // Map the field names for compatibility with existing code - especially question_id
+    // The problems are already using question_id format from the database
+    // Just ensure the other required fields are present
     problemsList = problemsList.map(problem => ({
       ...problem,
-      // Keep questionId but also provide question_id for backward compatibility
-      question_id: problem.questionId,
       // Add acceptance_rate if it doesn't exist
       acceptance_rate: problem.acceptance_rate || 90,
       // Ensure companies is always an array
