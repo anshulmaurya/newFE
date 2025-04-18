@@ -1935,6 +1935,251 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Discussion routes
+  // Get discussions with optional filters
+  apiRouter.get("/discussions", optionalAuth, async (req: Request, res: Response) => {
+    try {
+      const { 
+        problemId, 
+        userId, 
+        category, 
+        page = '1', 
+        limit = '10',
+        sortBy = 'createdAt',
+        sortOrder = 'desc'
+      } = req.query;
+      
+      // Convert query params
+      const options = {
+        problemId: problemId ? parseInt(problemId as string) : undefined,
+        userId: userId ? parseInt(userId as string) : undefined,
+        category: category as string | undefined,
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as 'asc' | 'desc'
+      };
+      
+      const { discussions, total } = await storage.getDiscussions(options);
+      
+      return res.json({ 
+        discussions, 
+        total 
+      });
+    } catch (error) {
+      console.error("Error fetching discussions:", error);
+      return res.status(500).json({ error: "Failed to fetch discussions" });
+    }
+  });
+  
+  // Get discussions for a specific problem
+  apiRouter.get("/problems/:problemId/discussions", optionalAuth, async (req: Request, res: Response) => {
+    try {
+      const problemId = parseInt(req.params.problemId);
+      if (isNaN(problemId)) {
+        return res.status(400).json({ error: "Invalid problem ID" });
+      }
+      
+      const { 
+        page = '1', 
+        limit = '10',
+        sortBy = 'createdAt',
+        sortOrder = 'desc'
+      } = req.query;
+      
+      const options = {
+        problemId,
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as 'asc' | 'desc'
+      };
+      
+      const { discussions, total } = await storage.getDiscussions(options);
+      
+      return res.json({ 
+        discussions, 
+        total 
+      });
+    } catch (error) {
+      console.error("Error fetching discussions for problem:", error);
+      return res.status(500).json({ error: "Failed to fetch discussions" });
+    }
+  });
+  
+  // Get a specific discussion by ID with replies
+  apiRouter.get("/discussions/:id", optionalAuth, async (req: Request, res: Response) => {
+    try {
+      const discussionId = parseInt(req.params.id);
+      if (isNaN(discussionId)) {
+        return res.status(400).json({ error: "Invalid discussion ID" });
+      }
+      
+      const discussion = await storage.getDiscussion(discussionId);
+      if (!discussion) {
+        return res.status(404).json({ error: "Discussion not found" });
+      }
+      
+      return res.json(discussion);
+    } catch (error) {
+      console.error("Error fetching discussion:", error);
+      return res.status(500).json({ error: "Failed to fetch discussion" });
+    }
+  });
+  
+  // Create a new discussion
+  apiRouter.post("/discussions", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const discussionData = insertDiscussionSchema.parse({
+        ...req.body,
+        userId: req.userId
+      });
+      
+      const discussion = await storage.createDiscussion(discussionData);
+      return res.status(201).json(discussion);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      console.error("Error creating discussion:", error);
+      return res.status(500).json({ error: "Failed to create discussion" });
+    }
+  });
+  
+  // Update a discussion
+  apiRouter.patch("/discussions/:id", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const discussionId = parseInt(req.params.id);
+      if (isNaN(discussionId)) {
+        return res.status(400).json({ error: "Invalid discussion ID" });
+      }
+      
+      // Check if the discussion exists and belongs to the user
+      const existingDiscussion = await storage.getDiscussion(discussionId);
+      if (!existingDiscussion) {
+        return res.status(404).json({ error: "Discussion not found" });
+      }
+      
+      if (existingDiscussion.userId !== req.userId) {
+        return res.status(403).json({ error: "You are not authorized to update this discussion" });
+      }
+      
+      // Update the discussion
+      const updatedDiscussion = await storage.updateDiscussion(discussionId, req.body);
+      return res.json(updatedDiscussion);
+    } catch (error) {
+      console.error("Error updating discussion:", error);
+      return res.status(500).json({ error: "Failed to update discussion" });
+    }
+  });
+  
+  // Delete a discussion
+  apiRouter.delete("/discussions/:id", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const discussionId = parseInt(req.params.id);
+      if (isNaN(discussionId)) {
+        return res.status(400).json({ error: "Invalid discussion ID" });
+      }
+      
+      // Check if the discussion exists and belongs to the user
+      const existingDiscussion = await storage.getDiscussion(discussionId);
+      if (!existingDiscussion) {
+        return res.status(404).json({ error: "Discussion not found" });
+      }
+      
+      if (existingDiscussion.userId !== req.userId) {
+        return res.status(403).json({ error: "You are not authorized to delete this discussion" });
+      }
+      
+      // Delete the discussion
+      const success = await storage.deleteDiscussion(discussionId);
+      if (success) {
+        return res.status(204).end();
+      } else {
+        return res.status(500).json({ error: "Failed to delete discussion" });
+      }
+    } catch (error) {
+      console.error("Error deleting discussion:", error);
+      return res.status(500).json({ error: "Failed to delete discussion" });
+    }
+  });
+  
+  // Create a reply to a discussion
+  apiRouter.post("/discussions/:id/replies", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const discussionId = parseInt(req.params.id);
+      if (isNaN(discussionId)) {
+        return res.status(400).json({ error: "Invalid discussion ID" });
+      }
+      
+      // Check if the discussion exists
+      const existingDiscussion = await storage.getDiscussion(discussionId);
+      if (!existingDiscussion) {
+        return res.status(404).json({ error: "Discussion not found" });
+      }
+      
+      const replyData = insertDiscussionReplySchema.parse({
+        ...req.body,
+        userId: req.userId,
+        discussionId
+      });
+      
+      const reply = await storage.createDiscussionReply(replyData);
+      return res.status(201).json(reply);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      console.error("Error creating reply:", error);
+      return res.status(500).json({ error: "Failed to create reply" });
+    }
+  });
+  
+  // Vote on a reply
+  apiRouter.post("/discussion-replies/:id/vote", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const replyId = parseInt(req.params.id);
+      if (isNaN(replyId)) {
+        return res.status(400).json({ error: "Invalid reply ID" });
+      }
+      
+      const { vote } = req.body;
+      if (vote !== 'like' && vote !== 'dislike') {
+        return res.status(400).json({ error: "Invalid vote type. Must be 'like' or 'dislike'" });
+      }
+      
+      const updatedReply = await storage.voteDiscussionReply(replyId, vote);
+      if (!updatedReply) {
+        return res.status(404).json({ error: "Reply not found" });
+      }
+      
+      return res.json(updatedReply);
+    } catch (error) {
+      console.error("Error voting on reply:", error);
+      return res.status(500).json({ error: "Failed to vote on reply" });
+    }
+  });
+
   const httpServer = createServer(app);
   
   // Set up WebSockets
