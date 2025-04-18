@@ -344,14 +344,13 @@ export default function CodingEnvironment() {
         // For debugging purposes, log the folder name before any manipulation
         console.log('Before any manipulation, folderName:', folderName);
         
-        // IMPORTANT: We should NOT extract just the folder name from the URL! 
-        // The API expects the full URL format: https://dspcoderproblem.blob.core.windows.net/problem-bucket/10101_reverse_linked_list/
-        // Commenting out this code which was incorrectly extracting just the last part of the path
-        /* 
-        if (folderName && folderName.includes('/')) {
-          folderName = folderName.split('/').pop();
-        } 
-        */
+        // IMPORTANT: We shouldn't modify the file_path at all! The API expects the complete path from the database
+        console.log('KEEPING ORIGINAL FILE PATH FROM DATABASE');
+        
+        // DO NOT extract just the folder name from the URL
+        // DO NOT modify the file_path in any way
+        // The API expects the complete file_path from the database: 
+        // e.g., https://dspcoderproblem.blob.core.windows.net/problem-bucket/10101_reverse_linked_list/
         
         // Containers might use a folder param in format "/home/username/FolderName"
         // We want to extract just "FolderName" for the API call
@@ -1593,6 +1592,10 @@ The solution file for this problem could not be found or is inaccessible.
           )}
         </div>
       </div>
+      
+      {/* Add Debug Panel */}
+      <DebugPanel />
+      
     </motion.div>
   );
 }
