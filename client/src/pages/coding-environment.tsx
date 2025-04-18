@@ -306,48 +306,38 @@ export default function CodingEnvironment() {
     }
   }, [user]); // Removed toast dependency
   
-  // Fetch problem description from the external API
+  // Fetch problem description from the external API using file_path
   const { data: problemDescription, isLoading: isLoadingDescription } = useQuery<ProblemDescriptionResponse>({
-    queryKey: ['problemDescription', questionId, problemId],
+    queryKey: ['problemDescription', problemId],
     queryFn: async () => {
       // Try to get problem data including file_path
       const problemRes = await fetch(`/api/problems/${problemId}`);
-      if (problemRes.ok) {
-        const problemData = await problemRes.json();
-        
-        if (problemData.question_id) {
-          // Set question ID for other uses if it's available
-          setQuestionId(problemData.question_id);
-        }
-        
-        // Use file_path to fetch the problem description and solution
-        if (problemData.file_path) {
-          console.log('Fetching problem description using file_path:', problemData.file_path);
-          const descRes = await fetch(`https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_file_path?file_path=${encodeURIComponent(problemData.file_path)}`);
-          if (!descRes.ok) throw new Error('Failed to fetch problem description');
-          return descRes.json();
-        }
+      if (!problemRes.ok) {
+        throw new Error('Failed to fetch problem data');
       }
       
-      // Fallback if no file_path is available
-      if (questionId) {
-        console.warn('No file_path available, falling back to question_id');
-        // Get problem by questionId first to find file_path
-        const problemByQidRes = await fetch(`/api/problems/by-question-id/${questionId}`);
-        if (problemByQidRes.ok) {
-          const problemData = await problemByQidRes.json();
-          if (problemData.file_path) {
-            const descRes = await fetch(`https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_file_path?file_path=${encodeURIComponent(problemData.file_path)}`);
-            if (!descRes.ok) throw new Error('Failed to fetch problem description');
-            return descRes.json();
-          }
-        }
-        throw new Error('File path not available');
+      const problemData = await problemRes.json();
+      
+      if (problemData.question_id) {
+        // Set question ID for other uses if it's available
+        setQuestionId(problemData.question_id);
       }
       
-      throw new Error('Problem information not available');
+      // Use file_path to fetch the problem description and solution
+      if (!problemData.file_path) {
+        throw new Error('File path is missing for this problem');
+      }
+      
+      console.log('Fetching problem description using file_path:', problemData.file_path);
+      const descRes = await fetch(`https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_file_path?file_path=${encodeURIComponent(problemData.file_path)}`);
+      
+      if (!descRes.ok) {
+        throw new Error('Failed to fetch problem description');
+      }
+      
+      return descRes.json();
     },
-    enabled: !!problemId || !!questionId,
+    enabled: !!problemId,
   });
   
   const refreshIframe = () => {

@@ -359,52 +359,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Get problem by question_id
-  apiRouter.get("/problems/by-question-id/:questionId", optionalAuth, async (req: Request, res: Response) => {
-    try {
-      const { questionId } = req.params;
-      
-      if (!questionId) {
-        return res.status(400).json({ error: "Question ID is required" });
-      }
-      
-      // Try to get the problem from the database by questionId
-      try {
-        const dbProblem = await storage.getProblemByQuestionId(questionId);
-        if (dbProblem) {
-          return res.json(dbProblem);
-        }
-      } catch (dbError) {
-        console.error("Database error fetching problem by question_id:", dbError);
-      }
-      
-      // If not found in database, try the external API as fallback
-      try {
-        // Fetch all problems from the external API
-        const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/get_problems');
-        if (!response.ok) {
-          throw new Error(`External API error: ${response.status} ${response.statusText}`);
-        }
-        
-        const problems = await response.json();
-        
-        // Find the problem with matching question_id
-        const problem = problems.problems.find((p: any) => p.question_id === questionId);
-        
-        if (problem) {
-          return res.json(problem);
-        }
-      } catch (apiError) {
-        console.error("External API error fetching problem by question_id:", apiError);
-      }
-      
-      // If the problem is not found in either source, return 404
-      return res.status(404).json({ error: "Problem not found" });
-    } catch (error) {
-      console.error("Error getting problem by question_id:", error);
-      return res.status(500).json({ error: "Server error" });
-    }
-  });
+
   
   // User Progress routes
   apiRouter.get("/user-progress", getUserId, async (req: Request, res: Response) => {
