@@ -662,7 +662,9 @@ export default function Dashboard() {
                           return false;
                         } else if (user) {
                           // For authenticated users, filter by progress data
-                          const progressData = userProgressData?.find((p: any) => p.problemId === problem.id);
+                          const progressData = userProgressData?.find((p: any) => 
+                            parseInt(p.problemId) === parseInt(problem.id)
+                          );
                           const problemStatus = progressData?.status || 'Not Started';
                           if (problemStatus !== status) {
                             return false;
