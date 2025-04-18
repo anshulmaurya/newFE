@@ -5,7 +5,8 @@ import {
   problems, 
   userProgress,
   userStats,
-  userActivity, 
+  userActivity,
+  codeSubmissions,
   type Problem, 
   type InsertProblem,
   type UserProgress,
@@ -13,7 +14,9 @@ import {
   type UserStats,
   type InsertUserStats,
   type UserActivity,
-  type InsertUserActivity
+  type InsertUserActivity,
+  type CodeSubmission,
+  type InsertCodeSubmission
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, sql, like, ilike, or } from "drizzle-orm";
@@ -79,6 +82,11 @@ export interface IStorage {
   recordUserActivity(activity: InsertUserActivity): Promise<UserActivity>;
   updateUserActivity(id: number, activity: Partial<UserActivity>): Promise<UserActivity | undefined>;
   getUserStreak(userId: number): Promise<{ current: number, longest: number }>;
+  
+  // Code Submissions methods
+  getCodeSubmissions(userId: number, problemId?: number): Promise<CodeSubmission[]>;
+  createCodeSubmission(submission: InsertCodeSubmission): Promise<CodeSubmission>;
+  getCodeSubmissionById(id: number): Promise<CodeSubmission | undefined>;
 }
 
 // Create PostgreSQL session store
@@ -485,6 +493,207 @@ export class DatabaseStorage implements IStorage {
       attemptedProblems,
       ...difficultyStats
     };
+  }
+  
+  // Code Submissions methods
+  async getCodeSubmissions(userId: number, problemId?: number): Promise<CodeSubmission[]> {
+    let query = db.select().from(codeSubmissions).where(eq(codeSubmissions.userId, userId));
+    
+    if (problemId) {
+      query = query.where(eq(codeSubmissions.problemId, problemId));
+    }
+    
+    return await query.orderBy(desc(codeSubmissions.submittedAt));
+  }
+  
+  async createCodeSubmission(submission: InsertCodeSubmission): Promise<CodeSubmission> {
+    const [createdSubmission] = await db
+      .insert(codeSubmissions)
+      .values(submission)
+      .returning();
+      
+    // Update problem success/failure counts if this is a submission with a status
+    if (submission.status) {
+      const problem = await this.getProblem(submission.problemId);
+      if (problem) {
+        if (submission.status === 'pass') {
+          await this.updateProblem(problem.id, {
+            successfulSubmissions: (problem.successfulSubmissions || 0) + 1
+          });
+          
+          // Also update user progress to mark as solved if not already
+          const userProgress = await this.getUserProgressForProblem(submission.userId, submission.problemId);
+          if (userProgress) {
+            if (userProgress.status !== 'Solved') {
+              await this.updateUserProgress(userProgress.id, {
+                status: 'Solved',
+                completedAt: new Date(),
+                attemptCount: (userProgress.attemptCount || 0) + 1,
+                lastAttemptedAt: new Date()
+              });
+            } else {
+              // Just update the attempt count
+              await this.updateUserProgress(userProgress.id, {
+                attemptCount: (userProgress.attemptCount || 0) + 1,
+                lastAttemptedAt: new Date()
+              });
+            }
+          } else {
+            // Create new user progress
+            await this.createUserProgress({
+              userId: submission.userId,
+              problemId: submission.problemId,
+              status: 'Solved',
+              attemptCount: 1,
+              lastAttemptedAt: new Date(),
+              completedAt: new Date()
+            });
+          }
+          
+          // Record activity
+          await this.recordUserActivity({
+            userId: submission.userId,
+            problemsSolved: 1,
+            minutesActive: 10 // Assume 10 minutes per problem solved
+          });
+          
+          // Update user stats
+          const userStatsRecord = await this.getUserStatsRecord(submission.userId);
+          if (userStatsRecord) {
+            // Calculate streak
+            const today = new Date();
+            const lastActiveDate = userStatsRecord.lastActiveDate;
+            
+            let currentStreak = userStatsRecord.currentStreak;
+            let longestStreak = userStatsRecord.longestStreak;
+            
+            // Check if the last active date is yesterday
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            const isYesterday = 
+              lastActiveDate.getFullYear() === yesterday.getFullYear() &&
+              lastActiveDate.getMonth() === yesterday.getMonth() &&
+              lastActiveDate.getDate() === yesterday.getDate();
+              
+            // Check if the last active date is today
+            const isToday = 
+              lastActiveDate.getFullYear() === today.getFullYear() &&
+              lastActiveDate.getMonth() === today.getMonth() &&
+              lastActiveDate.getDate() === today.getDate();
+            
+            if (isYesterday) {
+              // Increment streak
+              currentStreak += 1;
+              if (currentStreak > longestStreak) {
+                longestStreak = currentStreak;
+              }
+            } else if (!isToday) {
+              // Reset streak if not today or yesterday
+              currentStreak = 1;
+            }
+            
+            // Calculate solved counts
+            const difficulty = problem.difficulty;
+            const updateData: Partial<UserStats> = {
+              totalSolved: (userStatsRecord.totalSolved || 0) + 1,
+              currentStreak,
+              longestStreak,
+              lastActiveDate: today
+            };
+            
+            if (difficulty === 'Easy') {
+              updateData.easySolved = (userStatsRecord.easySolved || 0) + 1;
+            } else if (difficulty === 'Medium') {
+              updateData.mediumSolved = (userStatsRecord.mediumSolved || 0) + 1;
+            } else if (difficulty === 'Hard') {
+              updateData.hardSolved = (userStatsRecord.hardSolved || 0) + 1;
+            }
+            
+            await this.updateUserStats(submission.userId, updateData);
+          } else {
+            // Create new user stats
+            const updateData: InsertUserStats = {
+              userId: submission.userId,
+              totalSolved: 1,
+              currentStreak: 1,
+              longestStreak: 1,
+              lastActiveDate: new Date(),
+              dailyGoal: 3 // Default daily goal
+            };
+            
+            const difficulty = problem.difficulty;
+            if (difficulty === 'Easy') {
+              updateData.easySolved = 1;
+            } else if (difficulty === 'Medium') {
+              updateData.mediumSolved = 1;
+            } else if (difficulty === 'Hard') {
+              updateData.hardSolved = 1;
+            }
+            
+            await this.createUserStats(updateData);
+          }
+        } else if (submission.status === 'fail') {
+          await this.updateProblem(problem.id, {
+            failedSubmissions: (problem.failedSubmissions || 0) + 1
+          });
+          
+          // Update user progress as attempted if not already solved
+          const userProgress = await this.getUserProgressForProblem(submission.userId, submission.problemId);
+          if (userProgress) {
+            if (userProgress.status !== 'Solved') {
+              await this.updateUserProgress(userProgress.id, {
+                status: 'Attempted',
+                attemptCount: (userProgress.attemptCount || 0) + 1,
+                lastAttemptedAt: new Date()
+              });
+            } else {
+              // Just update the attempt count
+              await this.updateUserProgress(userProgress.id, {
+                attemptCount: (userProgress.attemptCount || 0) + 1,
+                lastAttemptedAt: new Date()
+              });
+            }
+          } else {
+            // Create new user progress
+            await this.createUserProgress({
+              userId: submission.userId,
+              problemId: submission.problemId,
+              status: 'Attempted',
+              attemptCount: 1,
+              lastAttemptedAt: new Date()
+            });
+          }
+          
+          // Update user stats - just increment attempted count and update last active date
+          const userStatsRecord = await this.getUserStatsRecord(submission.userId);
+          if (userStatsRecord) {
+            await this.updateUserStats(submission.userId, {
+              totalAttempted: (userStatsRecord.totalAttempted || 0) + 1,
+              lastActiveDate: new Date()
+            });
+          } else {
+            // Create new user stats with one attempt
+            await this.createUserStats({
+              userId: submission.userId,
+              totalAttempted: 1,
+              dailyGoal: 3, // Default daily goal
+              lastActiveDate: new Date()
+            });
+          }
+        }
+      }
+    }
+    
+    return createdSubmission;
+  }
+  
+  async getCodeSubmissionById(id: number): Promise<CodeSubmission | undefined> {
+    const [submission] = await db
+      .select()
+      .from(codeSubmissions)
+      .where(eq(codeSubmissions.id, id));
+    return submission;
   }
 }
 

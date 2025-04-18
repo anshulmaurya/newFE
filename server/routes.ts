@@ -7,6 +7,7 @@ import {
   insertUserProgressSchema,
   insertUserStatsSchema,
   insertUserActivitySchema,
+  insertCodeSubmissionSchema,
 } from "@shared/schema";
 import { z } from "zod";
 import { setupAuth } from "./auth";
