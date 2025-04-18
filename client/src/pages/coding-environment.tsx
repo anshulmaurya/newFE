@@ -73,17 +73,39 @@ interface ProblemDescriptionResponse {
   data: ProblemDescription;
 }
 
-interface Comment {
+interface DiscussionReply {
   id: number;
-  problemId: string;
   userId: number;
-  username: string;
-  avatarUrl?: string;
+  discussionId: number;
   content: string;
   createdAt: string;
-  upvotes: number;
-  downvotes: number;
-  userVote?: 'upvote' | 'downvote' | null;
+  updatedAt: string;
+  likes: number;
+  dislikes: number;
+  userVote?: 'like' | 'dislike' | null;
+  parentReplyId?: number | null;
+  user: {
+    id: number;
+    username: string;
+    avatarUrl?: string | null;
+  };
+}
+
+interface Discussion {
+  id: number;
+  userId: number;
+  problemId: number;
+  title: string;
+  content: string;
+  category?: string;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: number;
+    username: string;
+    avatarUrl?: string | null;
+  };
+  replies?: DiscussionReply[];
 }
 
 interface SubmissionResult {
@@ -117,47 +139,15 @@ interface SubmissionResult {
   message: string;
 }
 
-interface NewComment {
-  problemId: string;
+interface NewDiscussion {
+  problemId: number;
+  title: string;
   content: string;
+  category?: string;
 }
 
-// Sample comment data
-const SAMPLE_COMMENTS: Comment[] = [
-  {
-    id: 1,
-    problemId: '671988657912757f63726161',
-    userId: 1,
-    username: 'dspcoder',
-    avatarUrl: 'https://github.com/identicons/dspcoder.png',
-    content: 'Watch out for edge cases with circular linked lists. Make sure your pointers are initialized correctly!',
-    createdAt: '2025-03-29T12:00:00Z',
-    upvotes: 5,
-    downvotes: 1,
-  },
-  {
-    id: 2,
-    problemId: '671988657912757f63726161',
-    userId: 2,
-    username: 'embeddedsystems',
-    avatarUrl: 'https://github.com/identicons/embeddedsystems.png',
-    content: 'I found it helpful to use Floyd\'s cycle-finding algorithm (tortoise and hare) for this problem. The trick is to have one pointer move twice as fast as the other.',
-    createdAt: '2025-03-29T13:30:00Z',
-    upvotes: 12,
-    downvotes: 0,
-  },
-  {
-    id: 3,
-    problemId: '671988657912757f63726161',
-    userId: 3,
-    username: 'cplusplusexpert',
-    avatarUrl: 'https://github.com/identicons/cplusplusexpert.png',
-    content: 'Be careful with memory management here. In a real-world implementation, you\'d need to consider how to properly free memory and avoid leaks.',
-    createdAt: '2025-03-30T09:15:00Z',
-    upvotes: 8,
-    downvotes: 2,
-  }
-];
+// We'll replace this with real data from the API
+const SAMPLE_DISCUSSIONS: Discussion[] = [];
 
 export default function CodingEnvironment() {
   const [, setLocation] = useLocation();
@@ -169,8 +159,11 @@ export default function CodingEnvironment() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<'description' | 'solution' | 'discussion' | 'submissions'>('description');
-  const [commentText, setCommentText] = useState('');
-  const [comments, setComments] = useState<Comment[]>(SAMPLE_COMMENTS);
+  const [discussionTitle, setDiscussionTitle] = useState('');
+  const [discussionContent, setDiscussionContent] = useState('');
+  const [discussions, setDiscussions] = useState<Discussion[]>([]);
+  const [currentDiscussion, setCurrentDiscussion] = useState<Discussion | null>(null);
+  const [replyContent, setReplyContent] = useState('');
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
   const [activeTab, setActiveTab] = useState<'test-results' | 'memory-profile' | 'cache-profile'>('test-results');
   const [isLoading, setIsLoading] = useState(true);
@@ -576,6 +569,155 @@ export default function CodingEnvironment() {
     },
     enabled: !!problemId,
     retry: 2,
+  });
+
+  // Fetch discussions for this problem
+  const { 
+    data: discussionData, 
+    isLoading: isLoadingDiscussions,
+    refetch: refetchDiscussions
+  } = useQuery({
+    queryKey: ['discussions', problemId],
+    enabled: !!problemId,
+    queryFn: async () => {
+      // Convert string problem ID to number
+      const numericProblemId = problemId ? parseInt(problemId) : 0;
+      if (isNaN(numericProblemId)) throw new Error('Invalid problem ID');
+      
+      const response = await fetch(`/api/problems/${numericProblemId}/discussions`);
+      if (!response.ok) throw new Error('Failed to fetch discussions');
+      return response.json();
+    },
+    refetchOnWindowFocus: false,
+  });
+
+  // Create a new discussion
+  const createDiscussionMutation = useMutation({
+    mutationFn: async (newDiscussion: NewDiscussion) => {
+      const response = await fetch('/api/discussions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newDiscussion),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create discussion');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      // Clear form fields
+      setDiscussionTitle('');
+      setDiscussionContent('');
+      
+      // Refetch discussions
+      refetchDiscussions();
+      
+      // Show success message
+      toast({
+        title: 'Success!',
+        description: 'Your discussion has been posted.',
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to create discussion',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Fetch a specific discussion with its replies
+  const { 
+    data: discussionWithReplies,
+    isLoading: isLoadingDiscussionDetails,
+    refetch: refetchDiscussionDetails
+  } = useQuery({
+    queryKey: ['discussion', currentDiscussion?.id],
+    enabled: !!currentDiscussion?.id,
+    queryFn: async () => {
+      const response = await fetch(`/api/discussions/${currentDiscussion?.id}`);
+      if (!response.ok) throw new Error('Failed to fetch discussion details');
+      return response.json();
+    },
+    refetchOnWindowFocus: false,
+  });
+
+  // Create a reply to a discussion
+  const createReplyMutation = useMutation({
+    mutationFn: async (content: string) => {
+      if (!currentDiscussion) throw new Error('No discussion selected');
+      
+      const response = await fetch(`/api/discussions/${currentDiscussion.id}/replies`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to post reply');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      // Clear the reply input
+      setReplyContent('');
+      
+      // Refetch the discussion with updated replies
+      refetchDiscussionDetails();
+      
+      toast({
+        title: 'Success!',
+        description: 'Your reply has been posted.',
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to post reply',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Vote on a reply
+  const voteReplyMutation = useMutation({
+    mutationFn: async ({ replyId, vote }: { replyId: number, vote: 'like' | 'dislike' }) => {
+      const response = await fetch(`/api/discussion-replies/${replyId}/vote`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ vote }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to vote');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      // Refetch the discussion with updated votes
+      refetchDiscussionDetails();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to vote',
+        variant: 'destructive',
+      });
+    },
   });
   
   // Log any errors for debugging
