@@ -214,13 +214,18 @@ export default function Dashboard() {
   // Use the preventScrollJump hook
   usePreventScrollJump();
 
-  // Fetch problems from external API via our server proxy
-  const { data: externalProblems, isLoading: isLoadingExternal } = useQuery({
-    queryKey: ['/api/problems-proxy'],
+  // Fetch problems from database with filtering support
+  const { data: problemsData, isLoading: isLoadingProblems } = useQuery({
+    // Include category and company in the query key so it refreshes when these change
+    queryKey: ['/api/problems', { category, company }],
     queryFn: async () => {
-      const response = await apiRequest('GET', '/api/problems-proxy');
-      const data = await response.json();
-      return data.problems;
+      // Build query parameters for filtering
+      const params = new URLSearchParams();
+      if (category !== 'all') params.append('category', category);
+      if (company !== 'all') params.append('company', company);
+      
+      const response = await apiRequest('GET', `/api/problems?${params.toString()}`);
+      return await response.json();
     },
   });
   
@@ -669,16 +674,16 @@ export default function Dashboard() {
               </div>
               
               {/* Problem Cards */}
-              {isLoadingExternal ? (
+              {isLoadingProblems ? (
                 <div className="bg-[rgb(18,18,20)] rounded-lg border border-[rgb(45,45,50)] p-8 text-center">
                   <div className="flex flex-col items-center">
                     <Loader2 className="h-6 w-6 animate-spin text-[rgb(214,251,65)]" />
                     <p className="mt-2 text-gray-400 text-xs">Loading problems...</p>
                   </div>
                 </div>
-              ) : externalProblems && externalProblems.length > 0 ? (
+              ) : problemsData?.problems && problemsData.problems.length > 0 ? (
                 <div className="space-y-3">
-                  {externalProblems
+                  {problemsData.problems
                     .filter((problem: any) => {
                       // Apply difficulty filter
                       if (difficulty !== 'all' && problem.difficulty?.toLowerCase() !== difficulty.toLowerCase()) {
