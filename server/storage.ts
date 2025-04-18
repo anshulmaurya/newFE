@@ -325,10 +325,12 @@ export class DatabaseStorage implements IStorage {
     const [problem] = await db.select().from(problems).where(eq(problems.id, id));
     return problem;
   }
-  
-  // Removed getProblemByMongoId implementation
-  
 
+  async getProblemByQuestionId(questionId: string): Promise<Problem | undefined> {
+    const [problem] = await db.select().from(problems).where(eq(problems.question_id, questionId));
+    return problem;
+  }
+  
 
   async createProblem(problem: InsertProblem): Promise<Problem> {
     const [createdProblem] = await db.insert(problems).values(problem).returning();
