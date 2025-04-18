@@ -490,10 +490,8 @@ export const insertUserStatsSchema = createInsertSchema(userStats)
     currentStreak: true,
     longestStreak: true,
     dailyGoal: true,
-  })
-  .extend({
-    lastActiveDate: z.date().default(() => new Date())
   });
+  // Don't extend with lastActiveDate as the DB column has a default value of CURRENT_DATE
 
 export const insertUserActivitySchema = createInsertSchema(userActivity)
   .pick({

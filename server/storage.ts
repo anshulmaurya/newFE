@@ -149,7 +149,11 @@ export class DatabaseStorage implements IStorage {
   }
   
   async createUserStats(stats: InsertUserStats): Promise<UserStats> {
-    const [createdStats] = await db.insert(userStats).values(stats).returning();
+    // The lastActiveDate is handled by the database default value
+    const [createdStats] = await db.insert(userStats).values({
+      ...stats,
+      // Let DB use default value for lastActiveDate
+    }).returning();
     return createdStats;
   }
   
@@ -862,16 +866,19 @@ export class DatabaseStorage implements IStorage {
 
   // User Notes methods
   async getUserNotes(userId: number, problemId?: number): Promise<UserNote[]> {
-    let query = db
-      .select()
-      .from(userNotes)
-      .where(eq(userNotes.userId, userId));
-      
+    // Build where conditions for the query
+    const whereConditions = [eq(userNotes.userId, userId)];
+    
     if (problemId) {
-      query = query.where(eq(userNotes.problemId, problemId));
+      whereConditions.push(eq(userNotes.problemId, problemId));
     }
     
-    return await query.orderBy(desc(userNotes.updatedAt));
+    // Execute the query with AND conditions
+    return await db
+      .select()
+      .from(userNotes)
+      .where(and(...whereConditions))
+      .orderBy(desc(userNotes.updatedAt));
   }
 
   async createUserNote(note: InsertUserNote): Promise<UserNote> {

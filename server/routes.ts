@@ -449,7 +449,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!stats) {
         stats = await storage.createUserStats({
           userId: req.userId,
-          lastActiveDate: new Date(),
           totalSolved: 0,
           easySolved: 0,
           mediumSolved: 0,
@@ -457,6 +456,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           totalAttempted: 0,
           currentStreak: 0,
           longestStreak: 0
+          // lastActiveDate handled by DB default value
         });
       }
       

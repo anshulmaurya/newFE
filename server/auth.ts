@@ -143,7 +143,6 @@ export function setupAuth(app: Express) {
               // Initialize user stats
               await storage.createUserStats({
                 userId: user.id,
-                lastActiveDate: new Date(),
                 totalSolved: 0,
                 easySolved: 0,
                 mediumSolved: 0,
@@ -151,6 +150,7 @@ export function setupAuth(app: Express) {
                 totalAttempted: 0,
                 currentStreak: 0,
                 longestStreak: 0,
+                // lastActiveDate handled by DB default value
               });
             } catch (createError) {
               console.error("Error creating user:", createError);
@@ -362,7 +362,6 @@ export function setupAuth(app: Express) {
       // Initialize user stats
       await storage.createUserStats({
         userId: user.id,
-        lastActiveDate: new Date(),
         totalSolved: 0,
         easySolved: 0,
         mediumSolved: 0,
@@ -370,6 +369,7 @@ export function setupAuth(app: Express) {
         totalAttempted: 0,
         currentStreak: 0,
         longestStreak: 0,
+        // lastActiveDate handled by DB default value
       });
 
       // Log user in
