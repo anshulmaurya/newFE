@@ -195,7 +195,7 @@ type ProblemResponse = {
 export default function Dashboard() {
   // State
   const [category, setCategory] = useState<string>('all');
-  const [company, setCompany] = useState<string>('all');
+  // Company filter removed as requested
   const [difficulty, setDifficulty] = useState<string>('all');
   const [status, setStatus] = useState<string>('all');
   const [language, setLanguage] = useState<string>('c'); // Default language is C
@@ -216,13 +216,12 @@ export default function Dashboard() {
 
   // Fetch problems from database with filtering support
   const { data: problemsData, isLoading: isLoadingProblems } = useQuery({
-    // Include category and company in the query key so it refreshes when these change
-    queryKey: ['/api/problems', { category, company }],
+    // Only include category in the query key since company filter was removed
+    queryKey: ['/api/problems', { category }],
     queryFn: async () => {
       // Build query parameters for filtering
       const params = new URLSearchParams();
       if (category !== 'all') params.append('category', category);
-      if (company !== 'all') params.append('company', company);
       
       const response = await apiRequest('GET', `/api/problems?${params.toString()}`);
       return await response.json();
@@ -611,34 +610,7 @@ export default function Dashboard() {
                   </Select>
                 </div>
                 
-                <div className="w-1/3 md:w-auto">
-                  <Select
-                    value={company}
-                    onValueChange={setCompany}
-                  >
-                    <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
-                      <SelectValue placeholder="Company" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
-                      <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Company</SelectItem>
-                      {isLoadingCompanies ? (
-                        <SelectItem value="loading" disabled className="text-gray-500 focus:bg-[rgb(45,45,50)]">
-                          Loading companies...
-                        </SelectItem>
-                      ) : (
-                        availableCompanies?.map((company) => (
-                          <SelectItem 
-                            key={company.id.toString()} 
-                            value={company.id.toString()} 
-                            className="text-gray-200 focus:bg-[rgb(45,45,50)]"
-                          >
-                            {company.name}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {/* Company filter removed as requested */}
                 
                 <div className="w-1/3 md:w-auto">
                   <Select
@@ -727,42 +699,7 @@ export default function Dashboard() {
                         }
                       }
                       
-                      // Apply company filter - checking the companies associated with the problem
-                      if (company !== 'all') {
-                        // Company id from select dropdown
-                        const selectedCompanyId = parseInt(company);
-                        
-                        // Check problem's companies
-                        if (problem.companies) {
-                          // For array of company objects with id property (new structure)
-                          if (Array.isArray(problem.companies) && problem.companies.length > 0 && typeof problem.companies[0] === 'object') {
-                            // Check if any of the problem's companies match the selected company
-                            const hasMatchingCompany = problem.companies.some((comp: any) => comp.id === selectedCompanyId);
-                            if (!hasMatchingCompany) {
-                              return false;
-                            }
-                          } 
-                          // For array of company names (old structure) - try matching by name as fallback
-                          else if (Array.isArray(problem.companies) && problem.companies.length > 0) {
-                            const selectedCompanyObj = availableCompanies?.find(c => c.id === selectedCompanyId);
-                            if (selectedCompanyObj) {
-                              const hasMatchingCompany = problem.companies.some((companyName: string) => 
-                                companyName.toLowerCase() === selectedCompanyObj.name.toLowerCase()
-                              );
-                              if (!hasMatchingCompany) {
-                                return false;
-                              }
-                            } else {
-                              return false;
-                            }
-                          } else {
-                            return false;
-                          }
-                        } else {
-                          // No companies associated with this problem
-                          return false;
-                        }
-                      }
+                      // Company filtering removed as requested
                       
                       // Apply status filter - only works if user is authenticated
                       if (status !== 'all') {
@@ -799,11 +736,9 @@ export default function Dashboard() {
                           ? problem.tags.some((tag: string) => tag && tag.toLowerCase().includes(searchTerm)) 
                           : false;
                           
-                        const companyMatch = Array.isArray(problem.companies) 
-                          ? problem.companies.some((company: string) => company && company.toLowerCase().includes(searchTerm)) 
-                          : false;
-                          
-                        return titleMatch || descriptionMatch || tagMatch || companyMatch;
+                        // Company matching in search removed as requested
+                        
+                        return titleMatch || descriptionMatch || tagMatch;
                       }
                       
                       return true;
