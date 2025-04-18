@@ -1,33 +1,86 @@
--- Category Schema Changes
+-- Migration script for category schema changes
+-- 1. Create problem_category_map table for many-to-many relationship
 
--- 1. Simplify problem_categories table
-ALTER TABLE problem_categories 
-DROP COLUMN IF EXISTS slug,
-DROP COLUMN IF EXISTS description,
-DROP COLUMN IF EXISTS icon_path,
-DROP COLUMN IF EXISTS display_order;
-
--- 2. Create problem_category_map table for many-to-many relationship
+-- Create problem_category_map table if it doesn't exist
 CREATE TABLE IF NOT EXISTS problem_category_map (
-  problem_id INTEGER NOT NULL REFERENCES problems(id),
-  category_id INTEGER NOT NULL REFERENCES problem_categories(id),
-  PRIMARY KEY (problem_id, category_id)
+  id SERIAL PRIMARY KEY,
+  problem_id INTEGER NOT NULL REFERENCES problems(id) ON DELETE CASCADE,
+  category_id INTEGER NOT NULL REFERENCES problem_categories(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(problem_id, category_id)
 );
 
--- 3. For existing problems, migrate category data to the new mapping table
--- First, make sure all categories exist in the problem_categories table
-INSERT INTO problem_categories (name)
-SELECT DISTINCT category FROM problems
-WHERE category IS NOT NULL 
-ON CONFLICT (name) DO NOTHING;
+-- 2. Migrate the existing category data to the new mapping table
+-- For each problem, look up the category ID from problem_categories and create a mapping
 
--- Then, create the mappings using the existing category values
+-- First, make sure all categories exist
+DO $$
+DECLARE
+  category_name TEXT;
+  category_id INTEGER;
+BEGIN
+  -- Get distinct categories from problems table
+  FOR category_name IN (SELECT DISTINCT category FROM problems WHERE category IS NOT NULL) LOOP
+    -- Check if the category exists in problem_categories
+    SELECT id INTO category_id FROM problem_categories WHERE name = category_name;
+    
+    -- If category doesn't exist, create it
+    IF category_id IS NULL THEN
+      INSERT INTO problem_categories (name, created_at, updated_at)
+      VALUES (category_name, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      RETURNING id INTO category_id;
+    END IF;
+  END LOOP;
+END
+$$;
+
+-- Now create the mappings
 INSERT INTO problem_category_map (problem_id, category_id)
 SELECT p.id, pc.id
 FROM problems p
-JOIN problem_categories pc ON pc.name = p.category
+JOIN problem_categories pc ON p.category = pc.name
 WHERE p.category IS NOT NULL
-ON CONFLICT (problem_id, category_id) DO NOTHING;
+ON CONFLICT DO NOTHING;
 
--- 4. Remove the category column from problems table
-ALTER TABLE problems DROP COLUMN IF EXISTS category;
+-- 3. Remove unnecessary columns from problem_categories table
+-- First, check if columns exist and then drop them
+DO $$
+BEGIN
+  -- Drop slug column if it exists
+  IF EXISTS (SELECT 1 FROM information_schema.columns 
+             WHERE table_name = 'problem_categories' AND column_name = 'slug') THEN
+    ALTER TABLE problem_categories DROP COLUMN slug;
+  END IF;
+  
+  -- Drop description column if it exists
+  IF EXISTS (SELECT 1 FROM information_schema.columns 
+             WHERE table_name = 'problem_categories' AND column_name = 'description') THEN
+    ALTER TABLE problem_categories DROP COLUMN description;
+  END IF;
+  
+  -- Drop icon_path column if it exists
+  IF EXISTS (SELECT 1 FROM information_schema.columns 
+             WHERE table_name = 'problem_categories' AND column_name = 'icon_path') THEN
+    ALTER TABLE problem_categories DROP COLUMN icon_path;
+  END IF;
+  
+  -- Drop display_order column if it exists
+  IF EXISTS (SELECT 1 FROM information_schema.columns 
+             WHERE table_name = 'problem_categories' AND column_name = 'display_order') THEN
+    ALTER TABLE problem_categories DROP COLUMN display_order;
+  END IF;
+END
+$$;
+
+-- 4. Now we can safely remove the category column from problems table
+-- First make sure we check if the column exists
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns 
+             WHERE table_name = 'problems' AND column_name = 'category') THEN
+    ALTER TABLE problems DROP COLUMN category;
+  END IF;
+END
+$$;
+
+-- Done! The schema has been updated to support multiple categories per problem

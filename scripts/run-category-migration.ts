@@ -1,10 +1,13 @@
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from 'url';
 import { pool } from "../server/db";
 import { exec } from "child_process";
 import { promisify } from "util";
 
 const execAsync = promisify(exec);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 async function runMigration() {
   try {
