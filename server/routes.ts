@@ -1008,6 +1008,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Test endpoint for code submissions (doesn't require authentication - for testing only)
+  apiRouter.post("/test-code-submissions", async (req: Request, res: Response) => {
+    try {
+      // Use a default user ID for testing (id: 1)
+      const testUserId = 1;
+      
+      // Validate the submission data
+      const submissionData = insertCodeSubmissionSchema.parse({
+        ...req.body,
+        userId: testUserId
+      });
+      
+      // Save the submission to the database
+      const submission = await storage.createCodeSubmission(submissionData);
+      
+      return res.status(201).json({
+        status: "success",
+        message: "Code submission recorded successfully",
+        submission
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid submission data", 
+          errors: error.errors 
+        });
+      }
+      
+      console.error("Error recording code submission:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to record code submission",
+        error: String(error)
+      });
+    }
+  });
+  
   // Code Submission endpoint
   apiRouter.post("/code-submissions", getUserId, async (req: Request, res: Response) => {
     try {

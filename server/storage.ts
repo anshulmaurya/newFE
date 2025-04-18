@@ -553,6 +553,7 @@ export class DatabaseStorage implements IStorage {
           // Record activity
           await this.recordUserActivity({
             userId: submission.userId,
+            date: new Date().toISOString().split('T')[0], // Use today's date in YYYY-MM-DD format
             problemsSolved: 1,
             minutesActive: 10 // Assume 10 minutes per problem solved
           });
