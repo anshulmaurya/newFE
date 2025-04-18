@@ -1100,6 +1100,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
+      console.log("About to validate submission data for userId:", testUserId, "problemId:", problemId);
+      
       // Validate the submission data
       const submissionData = insertCodeSubmissionSchema.parse({
         ...req.body,
@@ -1107,8 +1109,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         problemId: problemId
       });
       
+      console.log("Validation passed. Creating submission with data:", JSON.stringify(submissionData, null, 2));
+      
       // Save the submission to the database
       const submission = await storage.createCodeSubmission(submissionData);
+      
+      console.log("Submission created successfully:", submission.id);
       
       return res.status(201).json({
         status: "success",

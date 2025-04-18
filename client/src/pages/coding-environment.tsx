@@ -1864,9 +1864,23 @@ The solution file for this problem could not be found or is inaccessible.
                           const memoryStats = dataAzure.response.output.metadata.mem_stat || {};
                           
                           // Prepare submission data
+                          // Use user.id if available, otherwise use a default for development
+                          const userId = user?.id || 2; // Default to user ID 2 for testing if not authenticated
+                          
+                          // For problem ID, we need to send the external ID (like 10101) for proper mapping
+                          // Extract the numeric part at the beginning of questionId (e.g., 10101_reverse_linked_list)
+                          let externalProblemId = numericProblemId;
+                          if (questionId && questionId.includes('_')) {
+                            const idMatch = questionId.match(/^(\d+)_/);
+                            if (idMatch && idMatch[1]) {
+                              externalProblemId = parseInt(idMatch[1]);
+                              console.log(`Extracted external problem ID ${externalProblemId} from ${questionId}`);
+                            }
+                          }
+                          
                           const submissionData = {
-                            userId: user.id,
-                            problemId: numericProblemId, 
+                            userId: userId,
+                            problemId: externalProblemId, // Send the external ID (like 10101)
                             status: dataAzure.response.output.overall_status === "pass" ? "pass" : "fail",
                             executionTime: dataAzure.response.output.metadata.Total_Time || 0,
                             language: language,
