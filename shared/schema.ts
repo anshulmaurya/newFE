@@ -7,6 +7,7 @@ import { relations } from "drizzle-orm";
 // Enums
 export const difficultyEnum = pgEnum('difficulty', ['Easy', 'Medium', 'Hard']);
 export const statusEnum = pgEnum('status', ['Solved', 'Attempted', 'Not Started']);
+export const submissionStatusEnum = pgEnum('submission_status', ['pass', 'fail']);
 export const categoryEnum = pgEnum('category', [
   'Arrays',
   'Strings',
@@ -142,15 +143,30 @@ export const userActivity = pgTable("user_activity", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Code submissions table to track submission results and memory stats
+export const codeSubmissions = pgTable("code_submissions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  problemId: integer("problem_id").references(() => problems.id).notNull(),
+  status: submissionStatusEnum("status").notNull(),
+  executionTime: integer("execution_time"), // Total execution time in milliseconds
+  submittedAt: timestamp("submitted_at").defaultNow(),
+  language: text("language").notNull(), // Programming language used (e.g., 'c', 'cpp')
+  // Memory statistics stored as JSON
+  memoryStats: jsonb("memory_stats"), // Will contain heap_usage, stack_usage, etc.
+});
+
 // Define relations
 export const userRelations = relations(users, ({ many, one }) => ({
   progress: many(userProgress),
   activity: many(userActivity),
   stats: one(userStats),
+  submissions: many(codeSubmissions),
 }));
 
 export const problemRelations = relations(problems, ({ many }) => ({
   userProgress: many(userProgress),
+  submissions: many(codeSubmissions),
 }));
 
 export const userProgressRelations = relations(userProgress, ({ one }) => ({
@@ -175,6 +191,17 @@ export const userActivityRelations = relations(userActivity, ({ one }) => ({
   user: one(users, {
     fields: [userActivity.userId],
     references: [users.id],
+  }),
+}));
+
+export const codeSubmissionsRelations = relations(codeSubmissions, ({ one }) => ({
+  user: one(users, {
+    fields: [codeSubmissions.userId],
+    references: [users.id],
+  }),
+  problem: one(problems, {
+    fields: [codeSubmissions.problemId],
+    references: [problems.id],
   }),
 }));
 
