@@ -19,15 +19,12 @@ import {
   type InsertCodeSubmission,
   type MemoryStatsData, // Import the memory stats interface
   problemCategories,
-  problemCategoryMap,
   learningPaths,
   learningPathItems,
   userPreferences,
   userNotes,
   type ProblemCategory,
   type InsertProblemCategory,
-  type ProblemCategoryMap,
-  type InsertProblemCategoryMap,
   type LearningPath,
   type InsertLearningPath,
   type LearningPathItem,
@@ -110,11 +107,6 @@ export interface IStorage {
   getProblemCategoryById(id: number): Promise<ProblemCategory | undefined>;
   createProblemCategory(category: InsertProblemCategory): Promise<ProblemCategory>;
   updateProblemCategory(id: number, category: Partial<ProblemCategory>): Promise<ProblemCategory | undefined>;
-  
-  // Problem Category Mapping methods
-  getProblemCategoriesForProblem(problemId: number): Promise<ProblemCategory[]>;
-  addProblemCategory(problemId: number, categoryId: number): Promise<ProblemCategoryMap>;
-  removeProblemCategory(problemId: number, categoryId: number): Promise<void>;
   
   // Learning Paths methods
   getLearningPaths(): Promise<LearningPath[]>;
@@ -326,34 +318,8 @@ export class DatabaseStorage implements IStorage {
     // Apply filters in memory
     let filteredProblems = [...allProblems];
     
-    // For category filtering, we need to use the problem_category_map table
     if (category) {
-      // Get all problems with that category
-      const categoryObj = await db
-        .select()
-        .from(problemCategories)
-        .where(eq(problemCategories.name, category))
-        .limit(1);
-        
-      if (categoryObj && categoryObj.length > 0) {
-        const categoryId = categoryObj[0].id;
-        
-        // Get all problem IDs with this category
-        const mappings = await db
-          .select()
-          .from(problemCategoryMap)
-          .where(eq(problemCategoryMap.categoryId, categoryId));
-        
-        const problemIds = mappings.map(m => m.problemId);
-        
-        // Filter problems to only those with matching IDs
-        filteredProblems = filteredProblems.filter(p => 
-          problemIds.includes(p.id)
-        );
-      } else {
-        // If category doesn't exist, return no problems
-        filteredProblems = [];
-      }
+      filteredProblems = filteredProblems.filter(p => p.category === category);
     }
     
     if (difficulty) {
@@ -789,7 +755,7 @@ export class DatabaseStorage implements IStorage {
 
   // Problem Categories methods
   async getProblemCategories(): Promise<ProblemCategory[]> {
-    return await db.select().from(problemCategories).orderBy(asc(problemCategories.id));
+    return await db.select().from(problemCategories).orderBy(asc(problemCategories.displayOrder));
   }
 
   async getProblemCategoryById(id: number): Promise<ProblemCategory | undefined> {
@@ -818,42 +784,6 @@ export class DatabaseStorage implements IStorage {
       .where(eq(problemCategories.id, id))
       .returning();
     return updatedCategory;
-  }
-  
-  // Problem Category Mapping methods
-  async getProblemCategoriesForProblem(problemId: number): Promise<ProblemCategory[]> {
-    // Get all categories for a specific problem
-    const categoryMappings = await db
-      .select({
-        category: problemCategories
-      })
-      .from(problemCategoryMap)
-      .innerJoin(
-        problemCategories,
-        eq(problemCategoryMap.categoryId, problemCategories.id)
-      )
-      .where(eq(problemCategoryMap.problemId, problemId));
-      
-    return categoryMappings.map(mapping => mapping.category);
-  }
-  
-  async addProblemCategory(problemId: number, categoryId: number): Promise<ProblemCategoryMap> {
-    const [mapping] = await db
-      .insert(problemCategoryMap)
-      .values({ problemId, categoryId })
-      .returning();
-    return mapping;
-  }
-  
-  async removeProblemCategory(problemId: number, categoryId: number): Promise<void> {
-    await db
-      .delete(problemCategoryMap)
-      .where(
-        and(
-          eq(problemCategoryMap.problemId, problemId),
-          eq(problemCategoryMap.categoryId, categoryId)
-        )
-      );
   }
 
   // Learning Paths methods

@@ -87,7 +87,7 @@ export const companyEnum = pgEnum('company', [
   'Microsoft'
 ]);
 
-// Problems table - removed single category field
+// Problems table
 export const problems = pgTable("problems", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
@@ -100,19 +100,10 @@ export const problems = pgTable("problems", {
   failedSubmissions: integer("failed_submissions").default(0),
   importance: importanceEnum("importance"), // Using the new enum: low, medium, high
   questionId: text("question_id").unique(), // Unique identifier like "10101_reverse_linked_list"
+  category: categoryEnum("category").default('Arrays'), // Using the updated categoryEnum
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
-
-// Problem-category mapping table - allows multiple categories per problem
-export const problemCategoryMap = pgTable("problem_category_map", {
-  id: serial("id").primaryKey(),
-  problemId: integer("problem_id").references(() => problems.id).notNull(),
-  categoryId: integer("category_id").references(() => problemCategories.id).notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-}, (t) => ({
-  unq: primaryKey({ columns: [t.problemId, t.categoryId] })
-}));
 
 // User progress table
 export const userProgress = pgTable("user_progress", {
@@ -152,10 +143,14 @@ export const userActivity = pgTable("user_activity", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Problem categories normalized table - simplified structure
+// Problem categories normalized table (replaces categoryEnum eventually)
 export const problemCategories = pgTable("problem_categories", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 50 }).notNull().unique(),
+  slug: varchar("slug", { length: 50 }).notNull().unique(),
+  description: text("description"),
+  iconPath: varchar("icon_path", { length: 255 }),
+  displayOrder: integer("display_order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -301,23 +296,10 @@ export const problemRelations = relations(problems, ({ many, one }) => ({
   learningPathItems: many(learningPathItems),
   companyMappings: many(companyProblemMap),
   discussions: many(discussions),
-  categoryMappings: many(problemCategoryMap),
 }));
 
 export const problemCategoriesRelations = relations(problemCategories, ({ many }) => ({
   learningPaths: many(learningPaths),
-  problemMappings: many(problemCategoryMap),
-}));
-
-export const problemCategoryMapRelations = relations(problemCategoryMap, ({ one }) => ({
-  problem: one(problems, {
-    fields: [problemCategoryMap.problemId],
-    references: [problems.id],
-  }),
-  category: one(problemCategories, {
-    fields: [problemCategoryMap.categoryId],
-    references: [problemCategories.id],
-  }),
 }));
 
 export const userPreferencesRelations = relations(userPreferences, ({ one }) => ({
@@ -405,11 +387,9 @@ export const discussionRepliesRelations = relations(discussionReplies, ({ one, m
     fields: [discussionReplies.userId],
     references: [users.id],
   }),
-  // Fix recursive relation
   parentReply: one(discussionReplies, {
     fields: [discussionReplies.parentReplyId],
     references: [discussionReplies.id],
-    relationName: 'parentReply',
   }),
   childReplies: many(discussionReplies),
 }));
@@ -639,11 +619,6 @@ export type Company = typeof companies.$inferSelect;
 export const insertCompanyProblemMapSchema = createInsertSchema(companyProblemMap);
 export type InsertCompanyProblemMap = z.infer<typeof insertCompanyProblemMapSchema>;
 export type CompanyProblemMap = typeof companyProblemMap.$inferSelect;
-
-// Insert schema for problemCategoryMap
-export const insertProblemCategoryMapSchema = createInsertSchema(problemCategoryMap);
-export type InsertProblemCategoryMap = z.infer<typeof insertProblemCategoryMapSchema>;
-export type ProblemCategoryMap = typeof problemCategoryMap.$inferSelect;
 
 // Insert schema for discussions
 export const insertDiscussionSchema = createInsertSchema(discussions).omit({
