@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
 import { 
   ArrowLeft, 
   FileText, 
@@ -183,12 +184,8 @@ export default function CodingEnvironment() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  // Create a dummy toast function that just logs to console instead of showing notifications
-  const toast = (config: any) => {
-    console.log(`[SUPPRESSED TOAST] ${config.title}: ${config.description}`);
-    // This function does nothing but log to console
-    return null;
-  };
+  // Import the useToast hook from our toast implementation
+  const { toast } = useToast();
   
   // Subscribe to container status updates via WebSocket
   const containerStatus = useContainerStatus(containerToken || undefined);
