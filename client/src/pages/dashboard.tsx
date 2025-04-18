@@ -722,6 +722,43 @@ export default function Dashboard() {
                         }
                       }
                       
+                      // Apply company filter - checking the companies associated with the problem
+                      if (company !== 'all') {
+                        // Company id from select dropdown
+                        const selectedCompanyId = parseInt(company);
+                        
+                        // Check problem's companies
+                        if (problem.companies) {
+                          // For array of company objects with id property (new structure)
+                          if (Array.isArray(problem.companies) && problem.companies.length > 0 && typeof problem.companies[0] === 'object') {
+                            // Check if any of the problem's companies match the selected company
+                            const hasMatchingCompany = problem.companies.some((comp: any) => comp.id === selectedCompanyId);
+                            if (!hasMatchingCompany) {
+                              return false;
+                            }
+                          } 
+                          // For array of company names (old structure) - try matching by name as fallback
+                          else if (Array.isArray(problem.companies) && problem.companies.length > 0) {
+                            const selectedCompanyObj = availableCompanies?.find(c => c.id === selectedCompanyId);
+                            if (selectedCompanyObj) {
+                              const hasMatchingCompany = problem.companies.some((companyName: string) => 
+                                companyName.toLowerCase() === selectedCompanyObj.name.toLowerCase()
+                              );
+                              if (!hasMatchingCompany) {
+                                return false;
+                              }
+                            } else {
+                              return false;
+                            }
+                          } else {
+                            return false;
+                          }
+                        } else {
+                          // No companies associated with this problem
+                          return false;
+                        }
+                      }
+                      
                       // Apply status filter - only works if user is authenticated
                       if (status !== 'all') {
                         // If user is not authenticated, and status is not 'Not Started', don't show problems

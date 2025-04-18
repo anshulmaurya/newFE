@@ -108,13 +108,15 @@ export default function ProblemCard({ problem, index = 0, statusIcon, handleSetu
                     <span className="text-xs text-gray-400 mr-2">Companies:</span>
                     <div className="group relative inline-block">
                       <div className="flex flex-wrap gap-1">
-                        {problem.companies.slice(0, 2).map((company: string, compIdx: number) => (
-                          company && (
+                        {problem.companies.slice(0, 2).map((company: any, compIdx: number) => {
+                          // Handle both string company names and object company entries
+                          const companyName = typeof company === 'string' ? company : company.name;
+                          return companyName && (
                             <Badge key={compIdx} className="bg-transparent text-gray-400 border border-gray-700 px-1.5 py-0 text-[10px]">
-                              {company}
+                              {companyName}
                             </Badge>
-                          )
-                        ))}
+                          );
+                        })}
                         
                         {problem.companies.length > 2 && (
                           <Badge className="bg-gray-800 text-gray-300 px-1 py-0 text-[10px] cursor-default">
@@ -126,13 +128,15 @@ export default function ProblemCard({ problem, index = 0, statusIcon, handleSetu
                       {problem.companies.length > 2 && (
                         <div className="absolute left-0 bottom-full mb-2 w-auto min-w-32 p-2 bg-[rgb(35,35,40)] rounded shadow-lg z-10 invisible group-hover:visible">
                           <div className="flex flex-col gap-1 text-xs">
-                            {problem.companies.map((company: string, compIdx: number) => (
-                              company && (
+                            {problem.companies.map((company: any, compIdx: number) => {
+                              // Handle both string company names and object company entries
+                              const companyName = typeof company === 'string' ? company : company.name;
+                              return companyName && (
                                 <span key={compIdx} className="text-gray-300 whitespace-nowrap">
-                                  {company}
+                                  {companyName}
                                 </span>
-                              )
-                            ))}
+                              );
+                            })}
                           </div>
                           <div className="absolute left-2 -bottom-1 w-2 h-2 bg-[rgb(35,35,40)] transform rotate-45"></div>
                         </div>
