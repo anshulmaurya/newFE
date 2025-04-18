@@ -213,7 +213,7 @@ export const discussionReplies = pgTable("discussion_replies", {
   content: text("content").notNull(),
   likes: integer("likes").default(0),
   dislikes: integer("dislikes").default(0),
-  parentReplyId: integer("parent_reply_id").references(() => discussionReplies.id),
+  parentReplyId: integer("parent_reply_id"), // Will be set up with relations instead
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
