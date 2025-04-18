@@ -30,25 +30,47 @@ interface UserStats {
   updatedAt: string;
 }
 
-// Function to get color based on count and daily goal
+// Function to get color based on count and daily goal - using teal gradient approach
 const getColorForCount = (count: number, dailyGoal: number): string => {
-  if (count === 0) return 'bg-[rgb(32,32,36)]';
-  if (count >= dailyGoal) return 'bg-[rgb(34,139,34)]'; // Dark green for meeting/exceeding daily goal
-  return 'bg-[rgb(144,238,144)]'; // Light green for solving at least one problem
+  if (count === 0) return 'bg-[rgb(32,32,36)]'; // Dark background for no activity
+  
+  // Calculate percentage of daily goal
+  const percentComplete = Math.min(count / dailyGoal, 1);
+  
+  if (percentComplete <= 0.25) {
+    return 'bg-[rgb(213,242,240)]'; // Very light teal - 25% of goal
+  } else if (percentComplete <= 0.5) {
+    return 'bg-[rgb(129,212,209)]'; // Light teal - 50% of goal
+  } else if (percentComplete <= 0.75) {
+    return 'bg-[rgb(56,178,172)]'; // Medium teal - 75% of goal
+  } else {
+    return 'bg-[rgb(35,78,82)]'; // Dark teal - 100% of goal
+  }
 };
 
-// Function to get text color based on count
-const getTextColorForCount = (count: number): string => {
-  return count >= 4 ? 'text-gray-900' : 'text-white';
+// Function to get text color based on count and daily goal
+const getTextColorForCount = (count: number, dailyGoal: number): string => {
+  if (count === 0) return 'text-gray-400';
+  const percentComplete = Math.min(count / dailyGoal, 1);
+  
+  // For darker teal backgrounds, use white text
+  if (percentComplete > 0.5) {
+    return 'text-white';
+  }
+  // For lighter teal backgrounds, use dark text
+  return 'text-gray-800';
 };
 
 // Function to get text color for the count indicator
-const getCountTextColor = (count: number): string => {
-  if (count >= 3) {
-    return 'text-gray-900';
-  } else {
+const getCountTextColor = (count: number, dailyGoal: number): string => {
+  const percentComplete = Math.min(count / dailyGoal, 1);
+  
+  // For darker teal backgrounds, use white text
+  if (percentComplete > 0.5) {
     return 'text-white';
   }
+  // For lighter teal backgrounds, use dark text
+  return 'text-gray-800';
 };
 
 // Function to check if date is today
@@ -333,28 +355,30 @@ export default function MonthlyHeatmap() {
           
           // Determine background color based on count and daily goal
           const bgColor = currentMonth ? getColorForCount(data.count, dailyGoal) : 'bg-[rgb(25,25,28)]';
-          const textColor = currentMonth ? getTextColorForCount(data.count) : 'text-gray-500';
+          const textColor = currentMonth ? getTextColorForCount(data.count, dailyGoal) : 'text-gray-500';
           const opacity = currentMonth ? 'opacity-100' : 'opacity-40';
           
           // Check if the date is today for highlighting
           const isDateToday = isToday(date);
           
-          // Create border style for login days and highlight style for today
-          const borderStyle = data.isActive ? 'border-2 border-green-500' : '';
-          const todayHighlight = isDateToday ? 'ring-2 ring-yellow-400' : '';
+          // Create subtle indicator for login days
+          const loginIndicator = data.isActive && currentMonth ? 'after:content-[""] after:absolute after:right-1 after:top-1 after:h-1.5 after:w-1.5 after:rounded-full after:bg-emerald-500' : '';
+          
+          // Create subtle pulsing animation for today's date
+          const todayHighlight = isDateToday ? 'ring-1 ring-blue-300' : '';
           
           return (
             <div
               key={index}
-              className={`h-8 w-full ${bgColor} ${opacity} ${borderStyle} ${todayHighlight} rounded-[2px] flex items-center justify-center relative transition-colors`}
+              className={`h-8 w-full ${bgColor} ${opacity} ${loginIndicator} ${todayHighlight} rounded-sm flex items-center justify-center relative transition-colors`}
               title={currentMonth ? `${dateStr}: ${data.count} problems solved${data.isActive ? ' (Logged in)' : ''}` : dateStr}
             >
               <div className={`text-[11px] leading-none font-medium ${textColor}`}>
                 {date.getDate()}
               </div>
               {currentMonth && data.count > 0 && (
-                <div className="absolute top-0.5 right-1">
-                  <span className={`text-[8px] font-bold ${getCountTextColor(data.count)}`}>
+                <div className="absolute bottom-1 right-1">
+                  <span className={`text-[8px] font-medium ${getCountTextColor(data.count, dailyGoal)}`}>
                     {data.count}
                   </span>
                 </div>
