@@ -1007,6 +1007,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({ error: "Server error" });
     }
   });
+  
+  // Code Submission endpoint
+  apiRouter.post("/code-submissions", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      // Validate the submission data
+      const submissionData = insertCodeSubmissionSchema.parse({
+        ...req.body,
+        userId: req.userId
+      });
+      
+      // Save the submission to the database
+      const submission = await storage.createCodeSubmission(submissionData);
+      
+      return res.status(201).json({
+        status: "success",
+        message: "Code submission recorded successfully",
+        submission
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid submission data", 
+          errors: error.errors 
+        });
+      }
+      
+      console.error("Error recording code submission:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to record code submission" 
+      });
+    }
+  });
+  
+  // Get code submissions for a user (optionally filtered by problem)
+  apiRouter.get("/code-submissions", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const problemId = req.query.problemId ? parseInt(req.query.problemId as string) : undefined;
+      
+      const submissions = await storage.getCodeSubmissions(req.userId, problemId);
+      
+      return res.json({
+        status: "success",
+        submissions
+      });
+    } catch (error) {
+      console.error("Error fetching code submissions:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch code submissions" 
+      });
+    }
+  });
+  
+  // Get a specific code submission by ID
+  apiRouter.get("/code-submissions/:id", getUserId, async (req: Request, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const submissionId = parseInt(req.params.id);
+      if (isNaN(submissionId)) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid submission ID" 
+        });
+      }
+      
+      const submission = await storage.getCodeSubmissionById(submissionId);
+      
+      if (!submission) {
+        return res.status(404).json({ 
+          status: "error", 
+          message: "Submission not found" 
+        });
+      }
+      
+      // Ensure the user can only access their own submissions
+      if (submission.userId !== req.userId) {
+        return res.status(403).json({ 
+          status: "error", 
+          message: "You do not have permission to access this submission" 
+        });
+      }
+      
+      return res.json({
+        status: "success",
+        submission
+      });
+    } catch (error) {
+      console.error("Error fetching code submission:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch code submission" 
+      });
+    }
+  });
 
   const httpServer = createServer(app);
   
