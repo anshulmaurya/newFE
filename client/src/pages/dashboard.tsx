@@ -195,6 +195,7 @@ type ProblemResponse = {
 export default function Dashboard() {
   // State
   const [category, setCategory] = useState<string>('all');
+  const [company, setCompany] = useState<string>('all');
   const [difficulty, setDifficulty] = useState<string>('all');
   const [status, setStatus] = useState<string>('all');
   const [language, setLanguage] = useState<string>('c'); // Default language is C
@@ -228,6 +229,15 @@ export default function Dashboard() {
     queryKey: ['/api/categories'],
     queryFn: async () => {
       const response = await apiRequest('GET', '/api/categories');
+      return await response.json();
+    },
+  });
+  
+  // Fetch available companies from database
+  const { data: availableCompanies, isLoading: isLoadingCompanies } = useQuery({
+    queryKey: ['/api/companies'],
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/companies');
       return await response.json();
     },
   });
@@ -589,6 +599,35 @@ export default function Dashboard() {
                             className="text-gray-200 focus:bg-[rgb(45,45,50)]"
                           >
                             {category.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="w-1/3 md:w-auto">
+                  <Select
+                    value={company}
+                    onValueChange={setCompany}
+                  >
+                    <SelectTrigger className="h-9 bg-[rgb(24,24,27)] border-[rgb(45,45,50)] focus:ring-[rgb(214,251,65)] w-full text-xs">
+                      <SelectValue placeholder="Company" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[rgb(24,24,27)] border-[rgb(45,45,50)] text-xs">
+                      <SelectItem value="all" className="text-gray-200 focus:bg-[rgb(45,45,50)]">Company</SelectItem>
+                      {isLoadingCompanies ? (
+                        <SelectItem value="loading" disabled className="text-gray-500 focus:bg-[rgb(45,45,50)]">
+                          Loading companies...
+                        </SelectItem>
+                      ) : (
+                        availableCompanies?.map((company) => (
+                          <SelectItem 
+                            key={company.id.toString()} 
+                            value={company.id.toString()} 
+                            className="text-gray-200 focus:bg-[rgb(45,45,50)]"
+                          >
+                            {company.name}
                           </SelectItem>
                         ))
                       )}
