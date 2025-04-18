@@ -152,6 +152,33 @@ export interface IStorage {
   // Company-Problem association methods (using companyIds array in problems table)
   associateProblemWithCompany(problemId: number, companyId: number, relevanceScore?: number): Promise<{ problemId: number, companyId: number, relevanceScore: number | null }>;
   removeProblemCompanyAssociation(problemId: number, companyId: number): Promise<boolean>;
+  
+  // Discussion methods
+  getDiscussions(options?: {
+    problemId?: number;
+    userId?: number;
+    category?: string;
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }): Promise<{ discussions: (Discussion & { user: { id: number, username: string, avatarUrl?: string | null } })[]; total: number }>;
+  getDiscussion(id: number): Promise<(Discussion & { 
+    user: { id: number, username: string, avatarUrl?: string | null },
+    replies?: (DiscussionReply & { user: { id: number, username: string, avatarUrl?: string | null } })[]
+  }) | undefined>;
+  createDiscussion(discussion: InsertDiscussion): Promise<Discussion>;
+  updateDiscussion(id: number, discussion: Partial<Discussion>): Promise<Discussion | undefined>;
+  deleteDiscussion(id: number): Promise<boolean>;
+  
+  // Discussion Reply methods
+  getDiscussionReplies(discussionId: number): Promise<(DiscussionReply & { 
+    user: { id: number, username: string, avatarUrl?: string | null } 
+  })[]>;
+  createDiscussionReply(reply: InsertDiscussionReply): Promise<DiscussionReply>;
+  updateDiscussionReply(id: number, reply: Partial<DiscussionReply>): Promise<DiscussionReply | undefined>;
+  deleteDiscussionReply(id: number): Promise<boolean>;
+  voteDiscussionReply(id: number, vote: 'like' | 'dislike'): Promise<DiscussionReply | undefined>;
 }
 
 // Create PostgreSQL session store
@@ -1178,6 +1205,276 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error removing problem-company association:", error);
       return false;
+    }
+  }
+
+  // Discussion methods
+  async getDiscussions(options?: {
+    problemId?: number;
+    userId?: number;
+    category?: string;
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }): Promise<{ discussions: (Discussion & { user: { id: number, username: string, avatarUrl?: string | null } })[]; total: number }> {
+    try {
+      const { 
+        problemId, 
+        userId, 
+        category, 
+        page = 1, 
+        limit = 10,
+        sortBy = 'createdAt',
+        sortOrder = 'desc'
+      } = options || {};
+      
+      // Apply filters
+      const whereConditions = [];
+      
+      if (problemId) {
+        whereConditions.push(eq(discussions.problemId, problemId));
+      }
+      
+      if (userId) {
+        whereConditions.push(eq(discussions.userId, userId));
+      }
+      
+      if (category && category !== 'all') {
+        whereConditions.push(eq(discussions.category, category));
+      }
+      
+      // Get total count for pagination
+      const countQuery = db.select({ count: sql<number>`count(*)` })
+        .from(discussions);
+      
+      if (whereConditions.length > 0) {
+        countQuery.where(and(...whereConditions));
+      }
+      
+      const [countResult] = await countQuery;
+      const total = countResult?.count || 0;
+      
+      // Build the query with proper typing
+      let query = db.select({
+        discussion: discussions,
+        user: {
+          id: users.id,
+          username: users.username,
+          avatarUrl: users.avatarUrl
+        }
+      })
+      .from(discussions)
+      .leftJoin(users, eq(discussions.userId, users.id));
+      
+      if (whereConditions.length > 0) {
+        query = query.where(and(...whereConditions));
+      }
+      
+      // Apply sorting
+      if (sortBy === 'createdAt') {
+        query = query.orderBy(sortOrder === 'asc' ? asc(discussions.createdAt) : desc(discussions.createdAt));
+      } else if (sortBy === 'title') {
+        query = query.orderBy(sortOrder === 'asc' ? asc(discussions.title) : desc(discussions.title));
+      } else if (sortBy === 'updatedAt') {
+        query = query.orderBy(sortOrder === 'asc' ? asc(discussions.updatedAt) : desc(discussions.updatedAt));
+      }
+      
+      // Apply pagination
+      query = query.limit(limit).offset((page - 1) * limit);
+      
+      // Execute the query
+      const result = await query;
+      
+      // Transform the result with proper null checking
+      const discussionsList = result.map(row => {
+        return {
+          ...row.discussion,
+          user: row.user || { id: 0, username: 'Unknown User' }
+        };
+      });
+      
+      return {
+        discussions: discussionsList,
+        total
+      };
+    } catch (error) {
+      console.error('Error getting discussions:', error);
+      return { discussions: [], total: 0 };
+    }
+  }
+  
+  async getDiscussion(id: number): Promise<(Discussion & { 
+    user: { id: number, username: string, avatarUrl?: string | null },
+    replies?: (DiscussionReply & { user: { id: number, username: string, avatarUrl?: string | null } })[]
+  }) | undefined> {
+    try {
+      // Get the discussion with the user
+      const [discussionResult] = await db.select({
+        discussion: discussions,
+        user: {
+          id: users.id,
+          username: users.username,
+          avatarUrl: users.avatarUrl
+        }
+      })
+      .from(discussions)
+      .leftJoin(users, eq(discussions.userId, users.id))
+      .where(eq(discussions.id, id));
+      
+      if (!discussionResult) {
+        return undefined;
+      }
+      
+      // Get replies for this discussion
+      const replies = await this.getDiscussionReplies(id);
+      
+      // Combine and return the data with null checking
+      return {
+        ...discussionResult.discussion,
+        user: discussionResult.user || { id: 0, username: 'Unknown User' },
+        replies
+      };
+    } catch (error) {
+      console.error(`Error getting discussion ${id}:`, error);
+      return undefined;
+    }
+  }
+  
+  async createDiscussion(discussion: InsertDiscussion): Promise<Discussion> {
+    const [newDiscussion] = await db.insert(discussions)
+      .values(discussion)
+      .returning();
+    
+    return newDiscussion;
+  }
+  
+  async updateDiscussion(id: number, discussion: Partial<Discussion>): Promise<Discussion | undefined> {
+    const [updatedDiscussion] = await db.update(discussions)
+      .set({
+        ...discussion,
+        updatedAt: new Date()
+      })
+      .where(eq(discussions.id, id))
+      .returning();
+    
+    return updatedDiscussion;
+  }
+  
+  async deleteDiscussion(id: number): Promise<boolean> {
+    try {
+      // First delete all replies to this discussion
+      await db.delete(discussionReplies)
+        .where(eq(discussionReplies.discussionId, id));
+      
+      // Then delete the discussion
+      const result = await db.delete(discussions)
+        .where(eq(discussions.id, id))
+        .returning();
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error deleting discussion:", error);
+      return false;
+    }
+  }
+  
+  // Discussion Reply methods
+  async getDiscussionReplies(discussionId: number): Promise<(DiscussionReply & { 
+    user: { id: number, username: string, avatarUrl?: string | null } 
+  })[]> {
+    try {
+      const result = await db.select({
+        reply: discussionReplies,
+        user: {
+          id: users.id,
+          username: users.username,
+          avatarUrl: users.avatarUrl
+        }
+      })
+      .from(discussionReplies)
+      .leftJoin(users, eq(discussionReplies.userId, users.id))
+      .where(eq(discussionReplies.discussionId, discussionId))
+      .orderBy(asc(discussionReplies.createdAt));
+      
+      // Transform the result with proper null handling
+      return result.map(row => {
+        return {
+          ...row.reply,
+          user: row.user || { id: 0, username: 'Unknown User' }
+        };
+      });
+    } catch (error) {
+      console.error(`Error getting discussion replies for discussion ${discussionId}:`, error);
+      return [];
+    }
+  }
+  
+  async createDiscussionReply(reply: InsertDiscussionReply): Promise<DiscussionReply> {
+    const [newReply] = await db.insert(discussionReplies)
+      .values(reply)
+      .returning();
+    
+    return newReply;
+  }
+  
+  async updateDiscussionReply(id: number, reply: Partial<DiscussionReply>): Promise<DiscussionReply | undefined> {
+    const [updatedReply] = await db.update(discussionReplies)
+      .set({
+        ...reply,
+        updatedAt: new Date()
+      })
+      .where(eq(discussionReplies.id, id))
+      .returning();
+    
+    return updatedReply;
+  }
+  
+  async deleteDiscussionReply(id: number): Promise<boolean> {
+    try {
+      // Remove as parent from all child replies
+      await db.update(discussionReplies)
+        .set({ parentReplyId: null })
+        .where(eq(discussionReplies.parentReplyId, id));
+      
+      // Then delete the reply
+      const result = await db.delete(discussionReplies)
+        .where(eq(discussionReplies.id, id))
+        .returning();
+      
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error deleting discussion reply:", error);
+      return false;
+    }
+  }
+  
+  async voteDiscussionReply(id: number, vote: 'like' | 'dislike'): Promise<DiscussionReply | undefined> {
+    try {
+      // Get the current reply
+      const [reply] = await db.select().from(discussionReplies).where(eq(discussionReplies.id, id));
+      
+      if (!reply) {
+        return undefined;
+      }
+      
+      // Update the votes
+      const updateData = vote === 'like' 
+        ? { likes: (reply.likes || 0) + 1 }
+        : { dislikes: (reply.dislikes || 0) + 1 };
+      
+      const [updatedReply] = await db.update(discussionReplies)
+        .set({
+          ...updateData,
+          updatedAt: new Date()
+        })
+        .where(eq(discussionReplies.id, id))
+        .returning();
+      
+      return updatedReply;
+    } catch (error) {
+      console.error(`Error ${vote}ing discussion reply:`, error);
+      return undefined;
     }
   }
 }
