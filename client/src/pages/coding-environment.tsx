@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { 
@@ -307,38 +307,62 @@ export default function CodingEnvironment() {
   }, [user]); // Removed toast dependency
   
   // Fetch problem description from the external API using file_path
-  const { data: problemDescription, isLoading: isLoadingDescription } = useQuery<ProblemDescriptionResponse>({
+  const { data: problemDescription, isLoading: isLoadingDescription, error: descriptionError } = useQuery<ProblemDescriptionResponse>({
     queryKey: ['problemDescription', problemId],
     queryFn: async () => {
-      // Try to get problem data including file_path
-      const problemRes = await fetch(`/api/problems/${problemId}`);
-      if (!problemRes.ok) {
-        throw new Error('Failed to fetch problem data');
+      try {
+        console.log('Fetching problem data for ID:', problemId);
+        // Try to get problem data including file_path
+        const problemRes = await fetch(`/api/problems/${problemId}`);
+        if (!problemRes.ok) {
+          console.error('Failed to fetch problem data:', await problemRes.text());
+          throw new Error('Failed to fetch problem data');
+        }
+        
+        const problemData = await problemRes.json();
+        console.log('Problem data received:', JSON.stringify(problemData, null, 2));
+        
+        if (problemData.question_id) {
+          // Set question ID for other uses if it's available
+          console.log('Setting question ID:', problemData.question_id);
+          setQuestionId(problemData.question_id);
+        }
+        
+        // Use file_path to fetch the problem description and solution
+        if (!problemData.file_path) {
+          console.error('File path is missing for this problem');
+          throw new Error('File path is missing for this problem');
+        }
+        
+        const apiUrl = `https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_file_path?file_path=${encodeURIComponent(problemData.file_path)}`;
+        console.log('Fetching problem description using URL:', apiUrl);
+        
+        const descRes = await fetch(apiUrl);
+        
+        if (!descRes.ok) {
+          const errorText = await descRes.text();
+          console.error('Failed to fetch problem description:', errorText);
+          throw new Error(`Failed to fetch problem description: ${errorText}`);
+        }
+        
+        const responseData = await descRes.json();
+        console.log('Problem description response:', JSON.stringify(responseData, null, 2));
+        return responseData;
+      } catch (error) {
+        console.error('Error in problem description query:', error);
+        throw error;
       }
-      
-      const problemData = await problemRes.json();
-      
-      if (problemData.question_id) {
-        // Set question ID for other uses if it's available
-        setQuestionId(problemData.question_id);
-      }
-      
-      // Use file_path to fetch the problem description and solution
-      if (!problemData.file_path) {
-        throw new Error('File path is missing for this problem');
-      }
-      
-      console.log('Fetching problem description using file_path:', problemData.file_path);
-      const descRes = await fetch(`https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_file_path?file_path=${encodeURIComponent(problemData.file_path)}`);
-      
-      if (!descRes.ok) {
-        throw new Error('Failed to fetch problem description');
-      }
-      
-      return descRes.json();
     },
     enabled: !!problemId,
+    retry: 2,
   });
+  
+  // Log any errors for debugging
+  React.useEffect(() => {
+    if (descriptionError) {
+      console.error('Problem description query error:', descriptionError);
+    }
+  }, [descriptionError]);
   
   const refreshIframe = () => {
     if (iframeRef.current && iframeRef.current.src) {

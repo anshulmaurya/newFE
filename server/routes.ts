@@ -326,10 +326,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         // Fetch all problems from the external API
         const response = await fetch('https://dspcoder-backend-prod.azurewebsites.net/api/get_problems');
-        const problems = await response.json();
+        const responseData = await response.json();
+        
+        console.log('External API response structure:', Object.keys(responseData));
+        
+        // Get the problems array from the response (if it's in the expected format)
+        const problems = responseData.problems || responseData;
         
         // Find the problem with the matching ID
-        const problem = problems.find((p: any) => p.id === problemId);
+        const problem = problems.find((p: any) => 
+          p.id.toString() === problemId || 
+          (p.question_id && p.question_id.toString() === problemId)
+        );
+        
+        console.log('Found problem from external API:', problem ? 'yes' : 'no');
         
         if (problem) {
           return res.json(problem);
