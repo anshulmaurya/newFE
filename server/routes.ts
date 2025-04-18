@@ -1008,6 +1008,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Test endpoint for retrieving a specific code submission by ID (doesn't require authentication - for testing only)
+  apiRouter.get("/test-code-submissions/:id", async (req: Request, res: Response) => {
+    try {
+      const submissionId = parseInt(req.params.id);
+      if (isNaN(submissionId)) {
+        return res.status(400).json({ 
+          status: "error", 
+          message: "Invalid submission ID" 
+        });
+      }
+      
+      const submission = await storage.getCodeSubmissionById(submissionId);
+      
+      if (!submission) {
+        return res.status(404).json({ 
+          status: "error", 
+          message: "Submission not found" 
+        });
+      }
+      
+      return res.json({
+        status: "success",
+        submission
+      });
+    } catch (error) {
+      console.error("Error fetching code submission:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch code submission",
+        error: String(error)
+      });
+    }
+  });
+  
+  // Test endpoint for retrieving code submissions (doesn't require authentication - for testing only)
+  apiRouter.get("/test-code-submissions", async (req: Request, res: Response) => {
+    try {
+      // Use a default user ID for testing (id: 1)
+      const testUserId = 1;
+      
+      const problemId = req.query.problemId ? parseInt(req.query.problemId as string) : undefined;
+      
+      const submissions = await storage.getCodeSubmissions(testUserId, problemId);
+      
+      return res.json({
+        status: "success",
+        submissions
+      });
+    } catch (error) {
+      console.error("Error fetching code submissions:", error);
+      return res.status(500).json({ 
+        status: "error", 
+        message: "Failed to fetch code submissions",
+        error: String(error)
+      });
+    }
+  });
+  
   // Test endpoint for code submissions (doesn't require authentication - for testing only)
   apiRouter.post("/test-code-submissions", async (req: Request, res: Response) => {
     try {

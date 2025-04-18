@@ -1,0 +1,121 @@
+Let me provide you with a comprehensive database architecture plan for your embedded systems learning platform. This architecture will ensure all your website features are properly integrated with your database.
+
+Database Architecture Plan for DSPCoder
+1. Current Database Schema (PostgreSQL)
+Your application is already using a PostgreSQL database with the following tables:
+
+Core Tables
+users: User authentication and profile information
+problems: Embedded systems coding challenges and exercises
+user_progress: Tracks user progress on individual problems
+user_stats: Stores aggregated statistics for each user
+user_activity: Records daily user activity (for streak tracking)
+session: Manages user sessions for authentication
+
+2. Proposed Enhancements
+Based on the features I've identified in your codebase, here's a comprehensive database architecture to ensure all aspects of your application are covered:
+
+Authentication & User Management
+Existing: users, session
+New Tables:
+user_preferences: Store user interface preferences, notification settings
+- id (PK)
+- user_id (FK to users)
+- theme (light/dark)
+- notification_settings (JSON)
+- editor_preferences (JSON)
+- created_at, updated_at
+Learning Content & Problems
+Existing: problems
+
+New Tables:
+problem_categories: Normalized table for categories
+- id (PK)
+- name (Memory Management, Multithreading, etc.)
+- slug
+- description
+- icon_path
+- order (for display order)
+
+learning_paths: Predefined sequences of problems
+- id (PK)
+- title
+- description
+- difficulty
+- estimated_hours
+- category_id (FK)
+- created_at, updated_at
+learning_path_items: Problems in learning paths
+- id (PK)
+- learning_path_id (FK)
+- problem_id (FK)
+- order
+- required (boolean)
+
+Company-Specific Preparation
+New Tables:
+companies: Store information about companies (Apple, Nvidia, Tesla)
+- id (PK)
+- name
+- logo_url
+- description
+- interview_focus (text)
+company_problem_map: Links problems to specific companies
+- company_id (FK)
+- problem_id (FK)
+- relevance_score (1-10)
+
+User Progress & Learning
+Existing: user_progress, user_stats, user_activity
+New Tables:
+learning_path_progress: Track progress on learning paths
+- id (PK)
+- user_id (FK)
+- learning_path_id (FK)
+- started_at
+- completed_at
+- completion_percentage
+- active (boolean)
+
+user_notes: Personal notes per problem
+- id (PK)
+- user_id (FK)
+- problem_id (FK)
+- content (text)
+- created_at, updated_at
+
+Community & Interaction
+New Tables:
+discussions: Forum/discussion threads
+- id (PK)
+- title
+- content
+- user_id (FK)
+- problem_id (FK, optional)
+- category (general, help, etc.)
+- created_at, updated_at
+discussion_replies: Responses to discussions
+- id (PK)
+- discussion_id (FK)
+- user_id (FK)
+- content
+- like
+- dislike
+- parent_reply_id (FK, self-referencing for nested replies)
+- created_at, updated_at
+
+user_achievements: Badges and achievements
+- id (PK)
+- user_id (FK)
+- achievement_type (streak, problem_count, etc.)
+- level (bronze, silver, gold)
+- earned_at
+
+3. Database Relationships
+Key relationships to implement:
+
+One user has many problem attempts, notes, and achievements
+Problems belong to categories
+Learning paths contain multiple problems in a specific order
+Companies are associated with relevant problems
+Discussions can be linked to specific problems
