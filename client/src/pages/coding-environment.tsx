@@ -467,7 +467,7 @@ export default function CodingEnvironment() {
                 folderName = questionIdParts.slice(1).join('_');
                 // Convert to proper format with first letters capitalized
                 folderName = folderName.split('_')
-                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                  .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
                   .join('_');
                 
                 console.log('Derived folder name from question ID:', folderName);
@@ -589,6 +589,7 @@ export default function CodingEnvironment() {
   const { 
     data: discussionData, 
     isLoading: isLoadingDiscussions,
+    error: discussionsError,
     refetch: refetchDiscussions
   } = useQuery({
     queryKey: ['discussions', problemId],
@@ -598,9 +599,19 @@ export default function CodingEnvironment() {
       const numericProblemId = problemId ? parseInt(problemId) : 0;
       if (isNaN(numericProblemId)) throw new Error('Invalid problem ID');
       
-      const response = await fetch(`/api/problems/${numericProblemId}/discussions`);
-      if (!response.ok) throw new Error('Failed to fetch discussions');
-      return response.json();
+      try {
+        const response = await fetch(`/api/problems/${numericProblemId}/discussions`);
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Error fetching discussions:', errorData);
+          throw new Error(errorData.error || 'Failed to fetch discussions');
+        }
+        return response.json();
+      } catch (error) {
+        console.error('Error fetching discussions:', error);
+        // Return an empty discussions array to prevent UI errors
+        return { discussions: [] };
+      }
     },
     refetchOnWindowFocus: false,
   });
@@ -1442,7 +1453,7 @@ The solution file for this problem could not be found or is inaccessible.
                               </div>
                             ) : discussionData?.discussions?.length > 0 ? (
                               <>
-                                {discussionData.discussions.map((discussion) => (
+                                {discussionData.discussions.map((discussion: Discussion) => (
                                   <div 
                                     key={discussion.id} 
                                     className={cn(
@@ -1587,7 +1598,7 @@ The solution file for this problem could not be found or is inaccessible.
                                 <h4 className="font-medium">Replies</h4>
                                 
                                 {discussionWithReplies.replies && discussionWithReplies.replies.length > 0 ? (
-                                  discussionWithReplies.replies.map((reply) => (
+                                  discussionWithReplies.replies.map((reply: DiscussionReply) => (
                                     <div 
                                       key={reply.id} 
                                       className={cn(
