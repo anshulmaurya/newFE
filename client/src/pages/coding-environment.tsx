@@ -597,49 +597,7 @@ export default function CodingEnvironment() {
   
   const problem = problemDescription?.data;
   
-  // This is a debug component to show API response
-  const DebugPanel = () => {
-    return (
-      <div className="bg-black/80 text-white p-4 absolute bottom-0 right-0 max-w-[600px] max-h-[400px] overflow-auto text-xs">
-        <div className="flex justify-between items-center">
-          <h3 className="font-bold">Debug Info:</h3>
-          <Button variant="outline" size="sm" className="h-6 text-xs" onClick={() => console.log('Full problemDescription:', problemDescription)}>
-            Log to Console
-          </Button>
-        </div>
-        <div className="mt-1">
-          <div className="grid grid-cols-2 gap-x-4">
-            <p className="font-semibold">Problem ID: <span className="font-normal text-blue-300">{problemId}</span></p>
-            <p className="font-semibold">Question ID: <span className="font-normal text-blue-300">{questionId}</span></p>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-x-4 mt-1">
-            <p className="font-semibold">Loading: <span className={isLoadingDescription ? "text-yellow-300" : "text-green-300"}>{isLoadingDescription ? 'Yes' : 'No'}</span></p>
-            <p className="font-semibold">API Error: <span className={descriptionError ? "text-red-300" : "text-green-300"}>{descriptionError ? 'Yes' : 'No'}</span></p>
-          </div>
-          
-          {descriptionError && (
-            <p className="my-1 font-semibold text-red-400 border border-red-800 bg-red-950/50 p-1 rounded">
-              {String(descriptionError)}
-            </p>
-          )}
-          
-          <p className="font-semibold mt-2 border-t border-gray-700 pt-1">Property Names Check:</p>
-          <div className="grid grid-cols-2 gap-x-2 mt-1 text-2xs">
-            <p><span className="text-gray-400">file_path:</span> <span className="text-green-300">{problemDescription && problemDescription.file_path ? '✓' : '✗'}</span></p>
-            <p><span className="text-gray-400">filePath:</span> <span className="text-green-300">{problemDescription && problemDescription.filePath ? '✓' : '✗'}</span></p>
-            <p><span className="text-gray-400">question_id:</span> <span className="text-green-300">{problemDescription && problemDescription.question_id ? '✓' : '✗'}</span></p>
-            <p><span className="text-gray-400">questionId:</span> <span className="text-green-300">{problemDescription && problemDescription.questionId ? '✓' : '✗'}</span></p>
-          </div>
-          
-          <p className="font-semibold mt-2 border-t border-gray-700 pt-1">API Response:</p>
-          <pre className="text-green-400 mt-1 whitespace-pre-wrap bg-black/50 p-2 rounded max-h-60 overflow-auto text-2xs">
-            {problemDescription ? JSON.stringify(problemDescription, null, 2) : 'No data'}
-          </pre>
-        </div>
-      </div>
-    );
-  };
+  // Removed debug component
 
   return (
     <motion.div 
@@ -1656,8 +1614,6 @@ The solution file for this problem could not be found or is inaccessible.
         </div>
       </div>
       
-      {/* Add Debug Panel */}
-      <DebugPanel />
       
     </motion.div>
   );
