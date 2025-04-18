@@ -429,10 +429,6 @@ export const insertProblemSchema = createInsertSchema(problems).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-}).extend({
-  // Optional fields for working with names instead of IDs
-  categoryName: z.string().optional(),
-  companyNames: z.array(z.string()).optional(),
 });
 
 export const insertUserProgressSchema = createInsertSchema(userProgress).pick({

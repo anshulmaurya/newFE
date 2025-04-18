@@ -2,8 +2,6 @@ import express, { type Request, Response, NextFunction } from "express";
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { db } from "./db";
-import { eq } from "drizzle-orm";
 import { 
   insertProblemSchema,
   insertUserProgressSchema,
@@ -329,9 +327,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   apiRouter.post("/problems", async (req: Request, res: Response) => {
     try {
-      // Parse problem data with the extended schema that includes categoryName and companyNames
       const problemData = insertProblemSchema.parse(req.body);
-      // Pass the data to storage.createProblem which will handle name to ID conversion
       const problem = await storage.createProblem(problemData);
       return res.status(201).json(problem);
     } catch (error) {
@@ -339,35 +335,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: error.errors });
       }
       console.error("Error creating problem:", error);
-      return res.status(500).json({ error: "Server error" });
-    }
-  });
-  
-  // Update existing problem - allows using categoryName and companyNames
-  apiRouter.put("/problems/:id", async (req: Request, res: Response) => {
-    try {
-      const problemId = parseInt(req.params.id);
-      if (isNaN(problemId)) {
-        return res.status(400).json({ error: "Invalid problem ID" });
-      }
-      
-      // Validate request body using the extended schema that includes categoryName and companyNames
-      const problemData = insertProblemSchema.partial().parse(req.body);
-      
-      // Get the existing problem to verify it exists
-      const existingProblem = await storage.getProblem(problemId);
-      if (!existingProblem) {
-        return res.status(404).json({ error: "Problem not found" });
-      }
-      
-      // Update the problem - the storage method will handle name to ID conversion
-      const updatedProblem = await storage.updateProblem(problemId, problemData);
-      return res.json(updatedProblem);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: error.errors });
-      }
-      console.error("Error updating problem:", error);
       return res.status(500).json({ error: "Server error" });
     }
   });
@@ -1904,44 +1871,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      const { companyId, companyName, relevanceScore } = req.body;
-      let actualCompanyId: number;
+      const { companyId, relevanceScore } = req.body;
       
-      // Allow using company name or ID
-      if (companyName) {
-        // Look up company by name
-        const [company] = await db
-          .select()
-          .from(companies)
-          .where(eq(companies.name, companyName));
-        
-        if (!company) {
-          return res.status(404).json({ 
-            status: "error", 
-            message: "Company not found with name: " + companyName 
-          });
-        }
-        
-        actualCompanyId = company.id;
-      } else if (companyId) {
-        // Validate if ID is provided
-        if (isNaN(parseInt(String(companyId)))) {
-          return res.status(400).json({ 
-            status: "error", 
-            message: "Invalid company ID" 
-          });
-        }
-        actualCompanyId = parseInt(String(companyId));
-      } else {
+      if (!companyId || isNaN(parseInt(companyId))) {
         return res.status(400).json({ 
           status: "error", 
-          message: "Either companyId or companyName must be provided" 
+          message: "Invalid company ID" 
         });
       }
       
       const mapping = await storage.associateProblemWithCompany(
         problemId, 
-        actualCompanyId, 
+        parseInt(companyId), 
         relevanceScore
       );
       
