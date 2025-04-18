@@ -75,6 +75,7 @@ export const problems = pgTable("problems", {
   importance: importanceEnum("importance"), // Using the new enum: low, medium, high
   questionId: text("question_id").unique(), // Unique identifier like "10101_reverse_linked_list"
   categoryId: integer("category_id").references(() => problemCategories.id), // Using a reference to problemCategories
+  companyIds: integer("company_ids").array(), // Array of company IDs from the companies table
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -265,7 +266,6 @@ export const problemRelations = relations(problems, ({ many, one }) => ({
   submissions: many(codeSubmissions),
   notes: many(userNotes),
   learningPathItems: many(learningPathItems),
-  companyMappings: many(companyProblemMap),
   discussions: many(discussions),
   category: one(problemCategories, {
     fields: [problems.categoryId],
@@ -328,7 +328,7 @@ export const userNotesRelations = relations(userNotes, ({ one }) => ({
 }));
 
 export const companiesRelations = relations(companies, ({ many }) => ({
-  problemMappings: many(companyProblemMap),
+  // No direct relations needed with the new approach
 }));
 
 export const companyProblemMapRelations = relations(companyProblemMap, ({ one }) => ({
