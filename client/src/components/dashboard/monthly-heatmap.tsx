@@ -30,7 +30,7 @@ interface UserStats {
   updatedAt: string;
 }
 
-// Function to get color based on count and daily goal - using Emerald Green gradient
+// Function to get color based on count and daily goal - using Teal gradient
 const getColorForCount = (count: number, dailyGoal: number): string => {
   if (count === 0) return 'bg-[rgb(32,32,36)]'; // Original dark shade - no activity
   
@@ -38,26 +38,26 @@ const getColorForCount = (count: number, dailyGoal: number): string => {
   const percentComplete = Math.min(count / dailyGoal, 1);
   
   if (percentComplete <= 0.25) {
-    return 'bg-[rgb(6,78,59)]'; // Emerald dark - 25% of goal
+    return 'bg-[rgb(15,52,58)]'; // Dark teal - 25% of goal
   } else if (percentComplete <= 0.5) {
-    return 'bg-[rgb(5,150,105)]'; // Emerald medium - 50% of goal
+    return 'bg-[rgb(20,97,116)]'; // Medium teal - 50% of goal
   } else if (percentComplete <= 0.75) {
-    return 'bg-[rgb(52,211,153)]'; // Emerald light - 75% of goal
+    return 'bg-[rgb(56,148,165)]'; // Light teal - 75% of goal
   } else {
-    return 'bg-[rgb(167,243,208)]'; // Mint - 100% of goal
+    return 'bg-[rgb(107,181,191)]'; // Muted teal - 100% of goal (not too bright)
   }
 };
 
-// Function to get text color based on count and daily goal (for Emerald Green gradient)
+// Function to get text color based on count and daily goal (for Teal gradient)
 const getTextColorForCount = (count: number, dailyGoal: number): string => {
   if (count === 0) return 'text-gray-400';
   const percentComplete = Math.min(count / dailyGoal, 1);
   
-  // For darker Emerald backgrounds (lower percentages), use white text
+  // For darker Teal backgrounds (lower percentages), use white text
   if (percentComplete <= 0.5) {
     return 'text-white';
   }
-  // For lighter Emerald backgrounds (higher percentages), use dark text
+  // For lighter Teal backgrounds (higher percentages), use dark text
   return 'text-gray-900';
 };
 
@@ -65,11 +65,11 @@ const getTextColorForCount = (count: number, dailyGoal: number): string => {
 const getCountTextColor = (count: number, dailyGoal: number): string => {
   const percentComplete = Math.min(count / dailyGoal, 1);
   
-  // For darker Emerald backgrounds (lower percentages), use white text
+  // For darker Teal backgrounds (lower percentages), use white text
   if (percentComplete <= 0.5) {
     return 'text-white';
   }
-  // For lighter Emerald backgrounds (higher percentages), use dark text
+  // For lighter Teal backgrounds (higher percentages), use dark text
   return 'text-gray-900';
 };
 
@@ -354,7 +354,7 @@ export default function MonthlyHeatmap() {
           const dailyGoal = userStats?.dailyGoal || 3;
           
           // Determine background color based on count and daily goal
-          const bgColor = currentMonth ? getColorForCount(data.count, dailyGoal) : 'bg-[rgb(20,24,23)]';
+          const bgColor = currentMonth ? getColorForCount(data.count, dailyGoal) : 'bg-[rgb(17,28,30)]';
           const textColor = currentMonth ? getTextColorForCount(data.count, dailyGoal) : 'text-gray-500';
           const opacity = currentMonth ? 'opacity-100' : 'opacity-40';
           
@@ -362,10 +362,10 @@ export default function MonthlyHeatmap() {
           const isDateToday = isToday(date);
           
           // Create subtle indicator for login days
-          const loginIndicator = data.isActive && currentMonth ? 'after:content-[""] after:absolute after:right-1 after:top-1 after:h-1.5 after:w-1.5 after:rounded-full after:bg-emerald-400' : '';
+          const loginIndicator = data.isActive && currentMonth ? 'after:content-[""] after:absolute after:right-1 after:top-1 after:h-1.5 after:w-1.5 after:rounded-full after:bg-[rgb(76,168,185)]' : '';
           
-          // Create subtle highlight for today's date with matching emerald theme
-          const todayHighlight = isDateToday ? 'ring-2 ring-emerald-300 ring-opacity-60' : '';
+          // Create subtle highlight for today's date with matching teal theme
+          const todayHighlight = isDateToday ? 'ring-2 ring-[rgb(76,168,185)] ring-opacity-60' : '';
           
           return (
             <div
