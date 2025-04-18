@@ -70,7 +70,7 @@ export interface IStorage {
     type?: string;
     company?: string;
     importance?: string;
-  }): Promise<{ problems: Problem[]; total: number }>;
+  }): Promise<{ problems: (Problem & { category?: { id: number, name: string } })[]; total: number }>;
   getProblem(id: number): Promise<(Problem & { 
     category?: { id: number, name: string },
     companies?: { id: number, name: string, logoUrl?: string | null }[]
@@ -552,7 +552,7 @@ export class DatabaseStorage implements IStorage {
         
       if (problem) {
         // Find the category for this problem
-        let enrichedProblem = { ...problem };
+        let enrichedProblem: Problem & { category?: { id: number, name: string } } = { ...problem };
         
         if (problem.categoryId) {
           const category = categories.find(c => c.id === problem.categoryId);
