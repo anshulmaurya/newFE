@@ -1354,233 +1354,344 @@ The solution file for this problem could not be found or is inaccessible.
                     <div className="space-y-6">
                       <h3 className="font-medium text-lg">Discussion Forum</h3>
                       
-                      {/* Comment form */}
-                      <div className="bg-[#2D2D30] p-3 rounded-md">
-                        <h4 className="text-sm font-medium mb-2">Add your thoughts</h4>
-                        <Textarea 
-                          placeholder="Share your solution approach, tips, or ask questions..." 
-                          className="resize-none bg-[#1E1E1E] border-[#3E3E42]" 
-                          value={commentText}
-                          onChange={(e) => setCommentText(e.target.value)}
-                          rows={4}
-                        />
-                        <div className="flex justify-end mt-2">
-                          <Button 
-                            size="sm" 
-                            className="gap-1"
-                            disabled={!commentText.trim() || !user}
-                            onClick={() => {
-                              if (!problemId || !user) return;
-
-                              // In a real app, this would be an API call
-                              const newComment: Comment = {
-                                id: comments.length + 1,
-                                problemId: problemId,
-                                userId: user.id,
-                                username: user.username,
-                                avatarUrl: user.avatarUrl || undefined,
-                                content: commentText,
-                                createdAt: new Date().toISOString(),
-                                upvotes: 0,
-                                downvotes: 0,
-                              };
-
-                              setComments([...comments, newComment]);
-                              setCommentText('');
-                              toast({
-                                title: 'Comment added',
-                                description: 'Your comment has been posted successfully',
-                              });
-                            }}
-                          >
-                            <Send className="h-3.5 w-3.5" />
-                            Post
+                      {/* View modes */}
+                      <div className="flex space-x-2">
+                        <Button 
+                          variant={!currentDiscussion ? "secondary" : "outline"} 
+                          size="sm"
+                          onClick={() => setCurrentDiscussion(null)}
+                        >
+                          All Discussions
+                        </Button>
+                        {currentDiscussion && (
+                          <Button variant="outline" size="sm" onClick={() => setCurrentDiscussion(null)}>
+                            <ArrowLeft className="h-4 w-4 mr-1" />
+                            Back to List
                           </Button>
-                        </div>
-                        {!user && (
-                          <p className="text-xs text-gray-400 mt-1 text-center">
-                            You need to be logged in to post comments.
-                          </p>
                         )}
                       </div>
 
-                      {/* Comments list */}
-                      <div className="space-y-4">
-                        {/* Sort comments by upvotes and put user's comments at the top */}
-                        {comments
-                          .slice()
-                          .sort((a, b) => {
-                            // First put user's comments at the top
-                            if (user && a.userId === user.id && b.userId !== user.id) return -1;
-                            if (user && a.userId !== user.id && b.userId === user.id) return 1;
-                            // Then sort by upvotes
-                            return (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes);
-                          })
-                          .map((comment) => (
-                          <div 
-                            key={comment.id} 
-                            className={cn(
-                              "p-3 rounded-md",
-                              user && comment.userId === user.id 
-                                ? "bg-gradient-to-r from-[#2D2D30] to-[#2D3340] border border-blue-700/20" 
-                                : "bg-[#2D2D30]"
-                            )}>
-                            <div className="flex justify-between items-start">
-                              <div className="flex items-center gap-2">
-                                <Avatar className="h-8 w-8">
-                                  <AvatarImage src={comment.avatarUrl} />
-                                  <AvatarFallback>{comment.username.charAt(0).toUpperCase()}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <p className="text-sm font-medium">{comment.username}</p>
-                                  <p className="text-xs text-gray-400">
-                                    {format(new Date(comment.createdAt), 'MMM d, yyyy')}
-                                  </p>
+                      {!currentDiscussion ? (
+                        <>
+                          {/* New discussion form */}
+                          <div className="bg-[#2D2D30] p-3 rounded-md">
+                            <h4 className="text-sm font-medium mb-2">Start a new discussion</h4>
+                            <Input
+                              placeholder="Title"
+                              className="mb-2 bg-[#1E1E1E] border-[#3E3E42]"
+                              value={discussionTitle}
+                              onChange={(e) => setDiscussionTitle(e.target.value)}
+                            />
+                            <Textarea 
+                              placeholder="Share your solution approach, tips, or ask questions..." 
+                              className="resize-none bg-[#1E1E1E] border-[#3E3E42]" 
+                              value={discussionContent}
+                              onChange={(e) => setDiscussionContent(e.target.value)}
+                              rows={4}
+                            />
+                            <div className="flex justify-end mt-2">
+                              <Button 
+                                size="sm" 
+                                className="gap-1"
+                                disabled={!discussionTitle.trim() || !discussionContent.trim() || !user || createDiscussionMutation.isPending}
+                                onClick={() => {
+                                  if (!problemId || !user) return;
+                                  
+                                  // Post the discussion via API
+                                  createDiscussionMutation.mutate({
+                                    problemId: parseInt(problemId),
+                                    title: discussionTitle,
+                                    content: discussionContent
+                                  });
+                                }}
+                              >
+                                {createDiscussionMutation.isPending ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                  <Send className="h-3.5 w-3.5" />
+                                )}
+                                Post Discussion
+                              </Button>
+                            </div>
+                            {!user && (
+                              <p className="text-xs text-gray-400 mt-1 text-center">
+                                You need to be logged in to post discussions.
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Discussions list */}
+                          <div className="space-y-4">
+                            {isLoadingDiscussions ? (
+                              <div className="flex justify-center py-8">
+                                <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                              </div>
+                            ) : discussionData?.discussions?.length > 0 ? (
+                              <>
+                                {discussionData.discussions.map((discussion) => (
+                                  <div 
+                                    key={discussion.id} 
+                                    className={cn(
+                                      "p-3 rounded-md cursor-pointer transition-colors hover:bg-[#3D3D40]",
+                                      user && discussion.user.id === user.id 
+                                        ? "bg-gradient-to-r from-[#2D2D30] to-[#2D3340] border border-blue-700/20" 
+                                        : "bg-[#2D2D30]"
+                                    )}
+                                    onClick={() => setCurrentDiscussion(discussion)}
+                                  >
+                                    <div className="flex justify-between items-start">
+                                      <div className="flex items-center gap-2">
+                                        <Avatar className="h-8 w-8">
+                                          <AvatarImage src={discussion.user.avatarUrl || undefined} />
+                                          <AvatarFallback>
+                                            {discussion.user.username?.charAt(0).toUpperCase() || 'U'}
+                                          </AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                          <p className="text-sm font-medium">{discussion.user.username}</p>
+                                          <p className="text-xs text-gray-400">
+                                            {format(new Date(discussion.createdAt), 'MMM d, yyyy')}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="mt-2">
+                                      <h4 className="font-medium">{discussion.title}</h4>
+                                      <p className="text-sm text-gray-300 line-clamp-2 mt-1">
+                                        {discussion.content}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </>
+                            ) : (
+                              <div className="text-center py-8">
+                                <MessagesSquare className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                                <p className="text-gray-400">No discussions yet. Be the first to start a conversation!</p>
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        // Single discussion view with replies
+                        <>
+                          {isLoadingDiscussionDetails ? (
+                            <div className="flex justify-center py-8">
+                              <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                            </div>
+                          ) : discussionWithReplies ? (
+                            <div className="space-y-6">
+                              {/* Discussion details */}
+                              <div className="bg-[#2D2D30] p-4 rounded-md">
+                                <div className="flex justify-between items-start">
+                                  <div className="flex items-center gap-2">
+                                    <Avatar className="h-8 w-8">
+                                      <AvatarImage src={discussionWithReplies.user.avatarUrl || undefined} />
+                                      <AvatarFallback>
+                                        {discussionWithReplies.user.username?.charAt(0).toUpperCase() || 'U'}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                      <p className="text-sm font-medium">{discussionWithReplies.user.username}</p>
+                                      <p className="text-xs text-gray-400">
+                                        {format(new Date(discussionWithReplies.createdAt), 'MMM d, yyyy')}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  
+                                  {user && discussionWithReplies.userId === user.id && (
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                                          <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end">
+                                        <DropdownMenuItem onClick={() => {
+                                          navigator.clipboard.writeText(discussionWithReplies.content);
+                                          toast({
+                                            title: 'Copied to clipboard',
+                                            description: 'Discussion text copied to clipboard'
+                                          });
+                                        }}>
+                                          <Copy className="h-4 w-4 mr-2" />
+                                          Copy text
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem className="text-red-500">
+                                          <Trash className="h-4 w-4 mr-2" />
+                                          Delete
+                                        </DropdownMenuItem>
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  )}
+                                </div>
+                                
+                                <h3 className="text-lg font-medium mt-3">{discussionWithReplies.title}</h3>
+                                <div className="mt-2 text-sm whitespace-pre-wrap">
+                                  {discussionWithReplies.content}
                                 </div>
                               </div>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem
+                              
+                              {/* Reply form */}
+                              <div className="bg-[#2D2D30] p-3 rounded-md">
+                                <h4 className="text-sm font-medium mb-2">Add a reply</h4>
+                                <Textarea 
+                                  placeholder="Share your thoughts on this discussion..." 
+                                  className="resize-none bg-[#1E1E1E] border-[#3E3E42]" 
+                                  value={replyContent}
+                                  onChange={(e) => setReplyContent(e.target.value)}
+                                  rows={3}
+                                />
+                                <div className="flex justify-end mt-2">
+                                  <Button 
+                                    size="sm" 
+                                    className="gap-1"
+                                    disabled={!replyContent.trim() || !user || createReplyMutation.isPending}
                                     onClick={() => {
-                                      // This would be an API call in a real app
-                                      navigator.clipboard.writeText(comment.content);
-                                      toast({
-                                        title: 'Comment copied',
-                                        description: 'Comment text copied to clipboard',
-                                      });
+                                      if (!user) return;
+                                      createReplyMutation.mutate(replyContent);
                                     }}
                                   >
-                                    Copy text
-                                  </DropdownMenuItem>
-                                  {user && comment.userId === user.id && (
-                                    <DropdownMenuItem
-                                      onClick={() => {
-                                        // This would be an API call in a real app
-                                        setComments(comments.filter(c => c.id !== comment.id));
-                                        toast({
-                                          title: 'Comment deleted',
-                                          description: 'Your comment has been deleted',
-                                        });
-                                      }}
-                                      className="text-red-500"
-                                    >
-                                      Delete
-                                    </DropdownMenuItem>
-                                  )}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                            <div className="mt-2 text-sm">
-                              {comment.content}
-                            </div>
-                            <div className="mt-3 flex items-center gap-2">
-                              <Button 
-                                variant="ghost" 
-                                size="sm"
-                                className="h-7 px-2 text-xs gap-1 text-gray-400 hover:text-white"
-                                onClick={() => {
-                                  // This would be an API call in a real app
-                                  const updatedComments = comments.map(c => {
-                                    if (c.id === comment.id) {
-                                      // If already upvoted, remove upvote
-                                      if (c.userVote === 'upvote') {
-                                        return { 
-                                          ...c, 
-                                          upvotes: c.upvotes - 1,
-                                          userVote: null as ('upvote' | 'downvote' | null)
-                                        };
-                                      } 
-                                      // If downvoted, switch to upvote
-                                      else if (c.userVote === 'downvote') {
-                                        return { 
-                                          ...c, 
-                                          upvotes: c.upvotes + 1,
-                                          downvotes: c.downvotes - 1,
-                                          userVote: 'upvote' as ('upvote' | 'downvote' | null)
-                                        };
-                                      } 
-                                      // If no vote, add upvote
-                                      else {
-                                        return { 
-                                          ...c, 
-                                          upvotes: c.upvotes + 1,
-                                          userVote: 'upvote' as ('upvote' | 'downvote' | null)
-                                        };
-                                      }
-                                    }
-                                    return c;
-                                  });
-                                  setComments(updatedComments as Comment[]);
-                                }}
-                              >
-                                <ThumbsUp className={cn(
-                                  "h-3.5 w-3.5",
-                                  comment.userVote === 'upvote' && "fill-current text-blue-500"
-                                )} />
-                                {comment.upvotes > 0 && <span>{comment.upvotes}</span>}
-                              </Button>
+                                    {createReplyMutation.isPending ? (
+                                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                    ) : (
+                                      <Send className="h-3.5 w-3.5" />
+                                    )}
+                                    Post Reply
+                                  </Button>
+                                </div>
+                                {!user && (
+                                  <p className="text-xs text-gray-400 mt-1 text-center">
+                                    You need to be logged in to reply.
+                                  </p>
+                                )}
+                              </div>
                               
-                              <Button 
-                                variant="ghost" 
-                                size="sm"
-                                className="h-7 px-2 text-xs gap-1 text-gray-400 hover:text-white"
-                                onClick={() => {
-                                  // This would be an API call in a real app
-                                  const updatedComments = comments.map(c => {
-                                    if (c.id === comment.id) {
-                                      // If already downvoted, remove downvote
-                                      if (c.userVote === 'downvote') {
-                                        return { 
-                                          ...c, 
-                                          downvotes: c.downvotes - 1,
-                                          userVote: null as ('upvote' | 'downvote' | null)
-                                        };
-                                      } 
-                                      // If upvoted, switch to downvote
-                                      else if (c.userVote === 'upvote') {
-                                        return { 
-                                          ...c, 
-                                          upvotes: c.upvotes - 1,
-                                          downvotes: c.downvotes + 1,
-                                          userVote: 'downvote' as ('upvote' | 'downvote' | null)
-                                        };
-                                      } 
-                                      // If no vote, add downvote
-                                      else {
-                                        return { 
-                                          ...c, 
-                                          downvotes: c.downvotes + 1,
-                                          userVote: 'downvote' as ('upvote' | 'downvote' | null)
-                                        };
-                                      }
-                                    }
-                                    return c;
-                                  });
-                                  setComments(updatedComments as Comment[]);
-                                }}
-                              >
-                                <ThumbsDown className={cn(
-                                  "h-3.5 w-3.5",
-                                  comment.userVote === 'downvote' && "fill-current text-red-500"
-                                )} />
-                                {comment.downvotes > 0 && <span>{comment.downvotes}</span>}
-                              </Button>
+                              {/* Replies list */}
+                              <div className="space-y-4">
+                                <h4 className="font-medium">Replies</h4>
+                                
+                                {discussionWithReplies.replies && discussionWithReplies.replies.length > 0 ? (
+                                  discussionWithReplies.replies.map((reply) => (
+                                    <div 
+                                      key={reply.id} 
+                                      className={cn(
+                                        "p-3 rounded-md ml-4 border-l-2",
+                                        user && reply.user.id === user.id 
+                                          ? "bg-gradient-to-r from-[#2D2D30] to-[#2D3340] border-blue-700/70" 
+                                          : "bg-[#2D2D30] border-gray-700"
+                                      )}
+                                    >
+                                      <div className="flex justify-between items-start">
+                                        <div className="flex items-center gap-2">
+                                          <Avatar className="h-6 w-6">
+                                            <AvatarImage src={reply.user.avatarUrl || undefined} />
+                                            <AvatarFallback>
+                                              {reply.user.username?.charAt(0).toUpperCase() || 'U'}
+                                            </AvatarFallback>
+                                          </Avatar>
+                                          <div>
+                                            <p className="text-sm font-medium">{reply.user.username}</p>
+                                            <p className="text-xs text-gray-400">
+                                              {format(new Date(reply.createdAt), 'MMM d, yyyy')}
+                                            </p>
+                                          </div>
+                                        </div>
+                                        
+                                        {user && reply.userId === user.id && (
+                                          <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                              <Button size="sm" variant="ghost" className="h-7 w-7 p-0">
+                                                <MoreHorizontal className="h-3.5 w-3.5" />
+                                              </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                              <DropdownMenuItem onClick={() => {
+                                                navigator.clipboard.writeText(reply.content);
+                                                toast({
+                                                  title: 'Copied to clipboard',
+                                                  description: 'Reply text copied to clipboard'
+                                                });
+                                              }}>
+                                                <Copy className="h-4 w-4 mr-2" />
+                                                Copy text
+                                              </DropdownMenuItem>
+                                              <DropdownMenuItem className="text-red-500">
+                                                <Trash className="h-4 w-4 mr-2" />
+                                                Delete
+                                              </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                          </DropdownMenu>
+                                        )}
+                                      </div>
+                                      
+                                      <div className="mt-2 text-sm whitespace-pre-wrap">
+                                        {reply.content}
+                                      </div>
+                                      
+                                      <div className="flex mt-3 items-center gap-4">
+                                        <div className="flex items-center">
+                                          <Button 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            className="h-7 px-2"
+                                            disabled={voteReplyMutation.isPending}
+                                            onClick={() => {
+                                              if (!user) return;
+                                              voteReplyMutation.mutate({
+                                                replyId: reply.id,
+                                                vote: 'like'
+                                              });
+                                            }}
+                                          >
+                                            <ThumbsUp className={cn(
+                                              "h-3.5 w-3.5 mr-1", 
+                                              reply.userVote === 'like' && "fill-current text-blue-500"
+                                            )} />
+                                            {reply.likes > 0 && <span className="text-xs">{reply.likes}</span>}
+                                          </Button>
+                                        </div>
+                                        
+                                        <div className="flex items-center">
+                                          <Button 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            className="h-7 px-2"
+                                            disabled={voteReplyMutation.isPending}
+                                            onClick={() => {
+                                              if (!user) return;
+                                              voteReplyMutation.mutate({
+                                                replyId: reply.id,
+                                                vote: 'dislike'
+                                              });
+                                            }}
+                                          >
+                                            <ThumbsDown className={cn(
+                                              "h-3.5 w-3.5 mr-1", 
+                                              reply.userVote === 'dislike' && "fill-current text-red-500"
+                                            )} />
+                                            {reply.dislikes > 0 && <span className="text-xs">{reply.dislikes}</span>}
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <div className="text-center py-4">
+                                    <p className="text-gray-400 text-sm">No replies yet. Be the first to respond!</p>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        ))}
-
-                        {comments.length === 0 && (
-                          <div className="text-center py-8">
-                            <MessagesSquare className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-                            <p className="text-gray-400">No comments yet. Be the first to share your thoughts!</p>
-                          </div>
-                        )}
-                      </div>
+                          ) : (
+                            <div className="text-center py-8">
+                              <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+                              <p className="text-gray-400">Failed to load discussion details. Please try again.</p>
+                            </div>
+                          )}
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
