@@ -69,7 +69,6 @@ export const problems = pgTable("problems", {
   description: text("description").notNull(),
   difficulty: difficultyEnum("difficulty").notNull(),
   type: problemTypeEnum("type").notNull(),
-  company: companyEnum("company"), // Single company, not an array
   filePath: text("file_path"), // file_path in MongoDB
   successfulSubmissions: integer("successful_submissions").default(0),
   failedSubmissions: integer("failed_submissions").default(0),
