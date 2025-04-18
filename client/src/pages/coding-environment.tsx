@@ -1822,9 +1822,10 @@ The solution file for this problem could not be found or is inaccessible.
                   onClick={async () => {
                     if (!questionId || !user) {
                       toast({
-                        title: 'Error',
-                        description: 'Problem ID or user information is missing.',
-                        variant: 'destructive'
+                        title: 'Missing Information',
+                        description: 'Unable to submit solution. Problem ID or user information is missing.',
+                        variant: 'destructive',
+                        className: 'border-orange-800 bg-orange-700'
                       });
                       return;
                     }
