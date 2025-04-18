@@ -685,7 +685,9 @@ export default function Dashboard() {
                     })
                     .map((problem: any, idx: number) => {
                       // Get the problem status from userProgress data if available, otherwise default to "Not Started"
-                      const progressData = userProgressData?.find((p: any) => p.problemId === problem.id);
+                      const progressData = userProgressData?.find((p: any) => 
+                        parseInt(p.problemId) === parseInt(problem.id)
+                      );
                       const problemStatus = progressData?.status || 'Not Started';
                       const statusIcon = getStatusIcon(problemStatus);
                       
