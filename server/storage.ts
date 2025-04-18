@@ -849,15 +849,16 @@ export class DatabaseStorage implements IStorage {
         }
         
         // Update user stats
+        console.log("Updating user stats for userId:", submission.userId);
         const userStatsRecord = await this.getUserStatsRecord(submission.userId);
         
         // Get problem difficulty
         const problem = await this.getProblem(submission.problemId);
         
-        if (problem && userStatsRecord) {
+        if (problem) {
           // Since lastActiveDate is a DATE type in PostgreSQL
           const updateData: Partial<UserStats> = {
-            totalSolved: (userStatsRecord.totalSolved || 0) + 1,
+            totalSolved: ((userStatsRecord?.totalSolved) || 0) + 1,
             // Use the SQL template literal but cast it to any to bypass TypeScript's type checking
             // since we know this will work correctly with PostgreSQL
             lastActiveDate: sql`CURRENT_DATE` as any
@@ -865,14 +866,29 @@ export class DatabaseStorage implements IStorage {
           
           // Update difficulty-specific counters
           if (problem.difficulty === 'Easy') {
-            updateData.easySolved = (userStatsRecord.easySolved || 0) + 1;
+            updateData.easySolved = ((userStatsRecord?.easySolved) || 0) + 1;
           } else if (problem.difficulty === 'Medium') {
-            updateData.mediumSolved = (userStatsRecord.mediumSolved || 0) + 1;
+            updateData.mediumSolved = ((userStatsRecord?.mediumSolved) || 0) + 1;
           } else if (problem.difficulty === 'Hard') {
-            updateData.hardSolved = (userStatsRecord.hardSolved || 0) + 1;
+            updateData.hardSolved = ((userStatsRecord?.hardSolved) || 0) + 1;
           }
           
-          await this.updateUserStats(submission.userId, updateData);
+          if (userStatsRecord) {
+            console.log("Updating existing user stats record");
+            await this.updateUserStats(submission.userId, updateData);
+          } else {
+            console.log("Creating new user stats record");
+            // Create a new user stats record if it doesn't exist
+            await this.createUserStats({
+              userId: submission.userId,
+              totalSolved: 1,
+              easySolved: problem.difficulty === 'Easy' ? 1 : 0,
+              mediumSolved: problem.difficulty === 'Medium' ? 1 : 0,
+              hardSolved: problem.difficulty === 'Hard' ? 1 : 0,
+              totalAttempted: 1,
+              lastActiveDate: new Date()
+            });
+          }
         }
         
       } catch (error) {
