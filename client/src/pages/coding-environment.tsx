@@ -334,6 +334,8 @@ export default function CodingEnvironment() {
           throw new Error('File path is missing for this problem');
         }
         
+        console.log('Original file_path from database:', problemData.file_path);
+        
         // Extract the folder name from container URL or file_path
         let folderName = problemData.file_path;
         
@@ -419,10 +421,18 @@ export default function CodingEnvironment() {
           throw new Error('Missing folder name for problem description');
         }
         
-        // Add direct support for Reverse_Linked_List_C
-        if (questionId && questionId.includes('reverse_linked_list')) {
-          folderName = 'Reverse_Linked_List_C';
-          console.log('Forced folder name for Reverse Linked List:', folderName);
+        // For handling the format of file_path from the database
+        // The file_path in the database is like "https://dspcoderproblem.blob.core.windows.net/problem-bucket/10101_reverse_linked_list/"
+        // The API works with the full URL, so we should keep it as is
+        if (folderName && folderName.includes('dspcoderproblem.blob.core.windows.net/problem-bucket/')) {
+          console.log('Using full file_path URL from database:', folderName);
+          // Keep the full URL as is - the API works with it
+        }
+        
+        // Add direct support for Reverse Linked List as fallback with full path format
+        if ((!folderName || folderName === "") && questionId && questionId.includes('reverse_linked_list')) {
+          folderName = 'https://dspcoderproblem.blob.core.windows.net/problem-bucket/10101_reverse_linked_list/';
+          console.log('Using hard-coded full URL for Reverse Linked List:', folderName);
         }
 
         // Let's try both API endpoints - first by file path, then by question ID if that fails
