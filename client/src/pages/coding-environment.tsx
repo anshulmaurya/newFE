@@ -558,6 +558,13 @@ export default function CodingEnvironment() {
     }
   }, [descriptionError]);
   
+  // Update document title when problem title is available
+  React.useEffect(() => {
+    // Use database title first, then external API title, then default
+    const problemTitle = dbProblemTitle || (problem?.title || "Coding Problem");
+    document.title = `${problemTitle} | DSP Coder`;
+  }, [dbProblemTitle, problem]);
+  
   const refreshIframe = () => {
     if (iframeRef.current && iframeRef.current.src) {
       iframeRef.current.src = iframeRef.current.src;
@@ -805,9 +812,11 @@ export default function CodingEnvironment() {
                 </h2>
               </div>
               
-              {problem && (
-                <Badge variant="outline" className={getDifficultyColor(problem.difficulty)}>
-                  {problem.difficulty}
+              {isLoadingDescription ? (
+                <Skeleton className="h-5 w-16" />
+              ) : (
+                <Badge variant="outline" className={getDifficultyColor(dbProblemDifficulty || (problem?.difficulty || "Easy"))}>
+                  {dbProblemDifficulty || (problem?.difficulty || "Easy")}
                 </Badge>
               )}
             </div>
