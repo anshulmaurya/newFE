@@ -364,8 +364,8 @@ export default function MonthlyHeatmap() {
           // Create subtle indicator for login days
           const loginIndicator = data.isActive && currentMonth ? 'after:content-[""] after:absolute after:right-1 after:top-1 after:h-1.5 after:w-1.5 after:rounded-full after:bg-[rgb(76,168,185)]' : '';
           
-          // Create subtle highlight for today's date with matching teal theme
-          const todayHighlight = isDateToday ? 'ring-2 ring-[rgb(76,168,185)] ring-opacity-60' : '';
+          // No border highlight for today's date, we'll use bold text instead
+          const todayHighlight = '';
           
           return (
             <div
@@ -373,7 +373,7 @@ export default function MonthlyHeatmap() {
               className={`h-8 w-full ${bgColor} ${opacity} ${loginIndicator} ${todayHighlight} rounded-sm flex items-center justify-center relative transition-colors`}
               title={currentMonth ? `${dateStr}: ${data.count} problems solved${data.isActive ? ' (Logged in)' : ''}` : dateStr}
             >
-              <div className={`text-[11px] leading-none font-medium ${textColor}`}>
+              <div className={`${isDateToday ? 'text-[12px] font-bold' : 'text-[11px] font-medium'} leading-none ${textColor}`}>
                 {date.getDate()}
               </div>
               {currentMonth && data.count > 0 && (
