@@ -419,20 +419,62 @@ export default function CodingEnvironment() {
           throw new Error('Missing folder name for problem description');
         }
         
-        const apiUrl = `https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_file_path?file_path=${encodeURIComponent(folderName)}`;
-        console.log('Fetching problem description using URL:', apiUrl);
-        
-        const descRes = await fetch(apiUrl);
-        
-        if (!descRes.ok) {
-          const errorText = await descRes.text();
-          console.error('Failed to fetch problem description:', errorText);
-          throw new Error(`Failed to fetch problem description: ${errorText}`);
+        // Add direct support for Reverse_Linked_List_C
+        if (questionId && questionId.includes('reverse_linked_list')) {
+          folderName = 'Reverse_Linked_List_C';
+          console.log('Forced folder name for Reverse Linked List:', folderName);
         }
-        
-        const responseData = await descRes.json();
-        console.log('Problem description response:', JSON.stringify(responseData, null, 2));
-        return responseData;
+
+        // Let's try both API endpoints - first by file path, then by question ID if that fails
+        try {
+          // Try with file_path approach first
+          const filePathUrl = `https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_file_path?file_path=${encodeURIComponent(folderName)}`;
+          console.log('Fetching problem description using URL (file_path method):', filePathUrl);
+          
+          const filePathRes = await fetch(filePathUrl);
+          
+          if (!filePathRes.ok) {
+            const errorText = await filePathRes.text();
+            console.warn(`File path method failed with: ${errorText}`);
+            throw new Error('File path method failed');
+          }
+          
+          const filePathData = await filePathRes.json();
+          console.log('Problem description response (file_path method):', filePathData);
+          
+          console.log('Final problem description response:', JSON.stringify(filePathData, null, 2));
+          return filePathData;
+        } catch (filePathError) {
+          console.log('File path method failed, trying question_id method...');
+          
+          // Try the question_id approach as a fallback
+          if (questionId) {
+            try {
+              const questionIdUrl = `https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description?question_id=${encodeURIComponent(questionId)}`;
+              console.log('Fetching problem description using URL (question_id method):', questionIdUrl);
+              
+              const questionIdRes = await fetch(questionIdUrl);
+              
+              if (!questionIdRes.ok) {
+                const errorText = await questionIdRes.text();
+                console.error('Question ID method also failed:', errorText);
+                throw new Error(`Failed to fetch problem description: ${errorText}`);
+              }
+              
+              const questionIdData = await questionIdRes.json();
+              console.log('Problem description response (question_id method):', questionIdData);
+              
+              console.log('Final problem description response:', JSON.stringify(questionIdData, null, 2));
+              return questionIdData;
+            } catch (questionIdError) {
+              console.error('Both methods failed to get problem description');
+              throw questionIdError;
+            }
+          } else {
+            console.error('No question ID available for fallback');
+            throw filePathError;
+          }
+        }
       } catch (error) {
         console.error('Error in problem description query:', error);
         throw error;
