@@ -1756,8 +1756,7 @@ The solution file for this problem could not be found or is inaccessible.
                       toast({
                         title: 'Missing Information',
                         description: 'Unable to run code. Problem ID or user information is missing.',
-                        variant: 'destructive',
-                        className: 'border-orange-800 bg-orange-700'
+                        variant: 'warning'
                       });
                       return;
                     }
@@ -1765,7 +1764,7 @@ The solution file for this problem could not be found or is inaccessible.
                     toast({
                       title: 'Running Code',
                       description: 'Compiling and executing your solution...',
-                      className: 'bg-blue-600 text-white border-blue-800',
+                      variant: 'info'
                     });
                     
                     try {
@@ -1788,15 +1787,14 @@ The solution file for this problem could not be found or is inaccessible.
                         toast({
                           title: 'Success',
                           description: 'Code ran successfully! View output in the console.',
-                          className: 'bg-green-600 text-white border-green-800',
+                          variant: 'success'
                         });
                         console.log('Run result:', data);
                       } else {
                         toast({
                           title: 'Run Failed',
                           description: data.message || 'Your code could not be executed. Please check for compilation errors.',
-                          variant: 'destructive',
-                          className: 'border-red-800 bg-red-700'
+                          variant: 'destructive'
                         });
                       }
                     } catch (error) {
