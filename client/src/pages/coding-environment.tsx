@@ -27,7 +27,20 @@ import {
   AlertCircle,
   CheckCircle2,
   XCircle,
-  Loader2
+  Loader2,
+  Copy,
+  Trash,
+  Maximize2,
+  Minimize2,
+  X,
+  AlignJustify,
+  Pause,
+  RotateCw,
+  SplitSquareVertical,
+  Settings,
+  Moon,
+  SunMedium,
+  MonitorSmartphone
 } from 'lucide-react';
 import { useContainerStatus } from '@/hooks/use-container-status';
 import { Button } from '@/components/ui/button';
@@ -41,6 +54,7 @@ import { fadeIn } from '@/lib/animation-utils';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { format } from 'date-fns';
