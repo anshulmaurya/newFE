@@ -275,6 +275,23 @@ export const insertUserActivitySchema = createInsertSchema(userActivity)
 export type InsertUserStats = z.infer<typeof insertUserStatsSchema>;
 export type InsertUserActivity = z.infer<typeof insertUserActivitySchema>;
 
+// Insert schema for code submissions
+export const insertCodeSubmissionSchema = createInsertSchema(codeSubmissions)
+  .pick({
+    userId: true,
+    problemId: true,
+    status: true,
+    executionTime: true,
+    language: true,
+  })
+  .extend({
+    memoryStats: z.record(z.any()).optional(),
+    submittedAt: z.date().default(() => new Date())
+  });
+
+export type InsertCodeSubmission = z.infer<typeof insertCodeSubmissionSchema>;
+export type CodeSubmission = typeof codeSubmissions.$inferSelect;
+
 // Add GitHub user profile fields to the users table
 export const githubUserSchema = createInsertSchema(users).extend({
   githubId: z.string(),
