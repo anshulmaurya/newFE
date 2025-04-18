@@ -62,6 +62,7 @@ export interface IStorage {
   updateUser(id: number, user: Partial<User>): Promise<User | undefined>;
   
   // Problem methods
+  getProblemByQuestionIdPattern(questionIdPattern: string): Promise<Problem | undefined>;
   getProblems(options?: {
     category?: string;
     difficulty?: string;
@@ -900,8 +901,7 @@ export class DatabaseStorage implements IStorage {
               easySolved: problem.difficulty === 'Easy' ? 1 : 0,
               mediumSolved: problem.difficulty === 'Medium' ? 1 : 0,
               hardSolved: problem.difficulty === 'Hard' ? 1 : 0,
-              totalAttempted: 1,
-              lastActiveDate: new Date()
+              totalAttempted: 1
             });
           }
         }
