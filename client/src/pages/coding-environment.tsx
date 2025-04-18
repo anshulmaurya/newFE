@@ -334,7 +334,31 @@ export default function CodingEnvironment() {
           throw new Error('File path is missing for this problem');
         }
         
-        const apiUrl = `https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_file_path?file_path=${encodeURIComponent(problemData.file_path)}`;
+        // Extract the folder name from container URL or file_path
+        let folderName = problemData.file_path;
+        
+        // If the file_path contains a full path, extract just the folder name
+        if (folderName && folderName.includes('/')) {
+          folderName = folderName.split('/').pop();
+        }
+        
+        // Containers might use a folder param in format "/home/username/FolderName"
+        // We want to extract just "FolderName" for the API call
+        if (!folderName && containerUrl) {
+          const folderParam = new URL(containerUrl).searchParams.get('folder');
+          if (folderParam) {
+            folderName = folderParam.split('/').pop();
+          }
+        }
+        
+        console.log('Extracted folder name for problem description:', folderName);
+        
+        if (!folderName) {
+          console.error('Could not determine folder name from file_path or container URL');
+          throw new Error('Missing folder name for problem description');
+        }
+        
+        const apiUrl = `https://dspcoder-backend-prod.azurewebsites.net/api/get_problem_description_by_file_path?file_path=${encodeURIComponent(folderName)}`;
         console.log('Fetching problem description using URL:', apiUrl);
         
         const descRes = await fetch(apiUrl);
@@ -687,7 +711,19 @@ export default function CodingEnvironment() {
                           code: ({node, ...props}) => <code {...props} />,
                           pre: ({node, ...props}) => <pre {...props} />
                         }}>
-                          {problem.readme || "No description available."}
+                          {problem.readme === "Readme file not found or inaccessible." ? 
+                            `## Problem Description Not Available 
+
+This problem's README file could not be found or is inaccessible.
+
+**Problem Details:**
+- Problem ID: ${problemId}
+- Question ID: ${questionId}
+- File Path: ${problem?.file_path || 'Not provided'}
+
+You can still work on the problem in the coding environment.`
+                            : 
+                            problem.readme || "No description available."}
                         </ReactMarkdown>
                       </div>
                     </div>
@@ -706,7 +742,17 @@ export default function CodingEnvironment() {
                         code: ({node, ...props}) => <code {...props} />,
                         pre: ({node, ...props}) => <pre {...props} />
                       }}>
-                        {problem.solution || "Solution is not available yet."}
+                        {problem.solution === "Solution file not found or inaccessible." ? 
+                          `## Solution Not Available 
+
+The solution file for this problem could not be found or is inaccessible.
+
+**Problem Details:**
+- Problem ID: ${problemId}
+- Question ID: ${questionId}
+- File Path: ${problem?.file_path || 'Not provided'}`
+                          : 
+                          problem.solution || "Solution is not available yet."}
                       </ReactMarkdown>
                     </div>
                   )}
