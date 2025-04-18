@@ -397,12 +397,7 @@ export default function MonthlyHeatmap() {
         })}
       </div>
       
-      {mostActiveDate && (
-        <div className="mt-2 text-[10px] text-gray-400 flex items-center">
-          <Calendar className="h-3.5 w-3.5 mr-1.5" />
-          Most active: {new Date(mostActiveDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} with {7} problems
-        </div>
-      )}
+      {/* Most active section removed as requested */}
     </div>
   );
 }
