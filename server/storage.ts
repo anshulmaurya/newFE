@@ -516,20 +516,43 @@ export class DatabaseStorage implements IStorage {
   
   // Code Submissions methods
   async getCodeSubmissions(userId: number, problemId?: number): Promise<CodeSubmission[]> {
-    let query = db
+    let queryBuilder = db
       .select()
-      .from(codeSubmissions)
-      .where(eq(codeSubmissions.userId, userId));
+      .from(codeSubmissions);
+    
+    // Build where clauses
+    const whereConditions = [eq(codeSubmissions.userId, userId)];
     
     if (problemId) {
-      query = query.where(eq(codeSubmissions.problemId, problemId));
+      whereConditions.push(eq(codeSubmissions.problemId, problemId));
     }
     
-    return await query.orderBy(desc(codeSubmissions.submittedAt));
+    // Execute the query
+    const results = await queryBuilder
+      .where(and(...whereConditions))
+      .orderBy(desc(codeSubmissions.submittedAt));
+      
+    // Map the basic results to include properly typed memoryStats
+    return results.map(submission => {
+      // Cast the raw memoryStats data to the MemoryStatsData interface
+      const typedMemoryStats = submission.memoryStats as unknown as MemoryStatsData;
+      
+      return {
+        ...submission,
+        memoryStats: typedMemoryStats
+      };
+    });
   }
   
   // Get memory usage statistics for a user across all submissions or for a specific problem
-  async getMemoryStatsSummary(userId: number, problemId?: number): Promise<any> {
+  async getMemoryStatsSummary(userId: number, problemId?: number): Promise<{
+    count: number;
+    averageHeapUsage: number | null;
+    averageExecutionTime: number | null;
+    memoryLeakCount: number;
+    submissionsWithMemoryStats: number;
+    cacheHitRate: number | null;
+  }> {
     const submissions = await this.getCodeSubmissions(userId, problemId);
     
     // Filter for successful submissions only
@@ -538,10 +561,11 @@ export class DatabaseStorage implements IStorage {
     if (successfulSubmissions.length === 0) {
       return {
         count: 0,
-        averageMemoryUsage: null,
+        averageHeapUsage: null,
         averageExecutionTime: null,
         memoryLeakCount: 0,
-        submissionsWithMemoryStats: 0
+        submissionsWithMemoryStats: 0,
+        cacheHitRate: null
       };
     }
     
@@ -552,7 +576,7 @@ export class DatabaseStorage implements IStorage {
     
     // Calculate memory leak count
     const memoryLeakCount = submissionsWithMemoryStats.filter(
-      sub => sub.memoryStats && sub.memoryStats.memory_leak === true
+      sub => sub.memoryStats?.memory_leak === true
     ).length;
     
     // Calculate average heap usage
@@ -572,12 +596,12 @@ export class DatabaseStorage implements IStorage {
         totalExecutionTime += sub.executionTime;
       }
       
-      if (sub.memoryStats && sub.memoryStats.footprint && sub.memoryStats.footprint.heap_usage) {
+      if (sub.memoryStats?.footprint?.heap_usage) {
         totalHeapUsage += sub.memoryStats.footprint.heap_usage;
         heapUsageCount++;
       }
       
-      if (sub.memoryStats && sub.memoryStats.cache_profile) {
+      if (sub.memoryStats?.cache_profile) {
         if (sub.memoryStats.cache_profile.cache_hits !== undefined) {
           totalCacheHits += sub.memoryStats.cache_profile.cache_hits;
         }
@@ -687,7 +711,16 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(codeSubmissions)
       .where(eq(codeSubmissions.id, id));
-    return submission;
+      
+    if (!submission) return undefined;
+    
+    // Cast memoryStats to the proper type
+    const typedMemoryStats = submission.memoryStats as unknown as MemoryStatsData;
+    
+    return {
+      ...submission,
+      memoryStats: typedMemoryStats
+    };
   }
 
   // Problem Categories methods

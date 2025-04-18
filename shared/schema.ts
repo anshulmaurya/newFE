@@ -521,8 +521,23 @@ export const insertCodeSubmissionSchema = createInsertSchema(codeSubmissions)
     submittedAt: z.date().default(() => new Date())
   });
 
+// Define memory stats interface for better type checking
+export interface MemoryStatsData {
+  memory_leak?: boolean;
+  footprint?: {
+    heap_usage?: number;
+    stack_usage?: number;
+  };
+  cache_profile?: {
+    cache_hits?: number;
+    cache_misses?: number;
+  };
+}
+
 export type InsertCodeSubmission = z.infer<typeof insertCodeSubmissionSchema>;
-export type CodeSubmission = typeof codeSubmissions.$inferSelect;
+export type CodeSubmission = typeof codeSubmissions.$inferSelect & {
+  memoryStats?: MemoryStatsData;
+};
 
 // Add GitHub user profile fields to the users table
 export const githubUserSchema = createInsertSchema(users).extend({
