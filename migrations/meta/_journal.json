@@ -8,6 +8,13 @@
       "when": 1744870473405,
       "tag": "0000_reflective_doctor_faustus",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1744948606971,
+      "tag": "0001_clumsy_vin_gonzales",
+      "breakpoints": true
     }
   ]
 }
