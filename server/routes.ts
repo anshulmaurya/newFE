@@ -305,6 +305,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Get problem by question_id - this route must be before the :id route to avoid conflict
+  apiRouter.get("/problems/by-question-id/:questionId", optionalAuth, async (req: Request, res: Response) => {
+    try {
+      const questionId = req.params.questionId;
+      if (!questionId) {
+        return res.status(400).json({ error: "Question ID is required" });
+      }
+      
+      // Try to get the problem from the database by question_id
+      const dbProblem = await storage.getProblemByQuestionId(questionId);
+      if (dbProblem) {
+        return res.json(dbProblem);
+      }
+      
+      console.log(`Problem with question_id ${questionId} not found in database`);
+      return res.status(404).json({ error: "Problem not found" });
+    } catch (error) {
+      console.error("Error fetching problem by question_id:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
+  });
+  
   apiRouter.get("/problems/:id", optionalAuth, async (req: Request, res: Response) => {
     try {
       const problemId = req.params.id;

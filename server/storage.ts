@@ -327,7 +327,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProblemByQuestionId(questionId: string): Promise<Problem | undefined> {
-    const [problem] = await db.select().from(problems).where(eq(problems.question_id, questionId));
+    const [problem] = await db.select().from(problems).where(eq(problems.questionId, questionId));
     return problem;
   }
   
