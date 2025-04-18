@@ -23,6 +23,8 @@ import {
   learningPathItems,
   userPreferences,
   userNotes,
+  companies,
+  companyProblemMap,
   type ProblemCategory,
   type InsertProblemCategory,
   type LearningPath,
@@ -32,7 +34,11 @@ import {
   type UserPreferences,
   type InsertUserPreferences,
   type UserNote,
-  type InsertUserNote
+  type InsertUserNote,
+  type Company,
+  type InsertCompany,
+  type CompanyProblemMap,
+  type InsertCompanyProblemMap
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, sql, like, ilike, or } from "drizzle-orm";
@@ -125,6 +131,17 @@ export interface IStorage {
   getUserNotes(userId: number, problemId?: number): Promise<UserNote[]>;
   createUserNote(note: InsertUserNote): Promise<UserNote>;
   updateUserNote(id: number, note: Partial<UserNote>): Promise<UserNote | undefined>;
+  
+  // Company methods
+  getCompanies(): Promise<Company[]>;
+  getCompanyById(id: number): Promise<Company | undefined>;
+  getCompaniesByProblemId(problemId: number): Promise<Company[]>;
+  createCompany(company: InsertCompany): Promise<Company>;
+  updateCompany(id: number, company: Partial<Company>): Promise<Company | undefined>;
+  
+  // Company-Problem mapping methods
+  associateProblemWithCompany(problemId: number, companyId: number, relevanceScore?: number): Promise<CompanyProblemMap>;
+  removeProblemCompanyAssociation(problemId: number, companyId: number): Promise<boolean>;
 }
 
 // Create PostgreSQL session store
@@ -347,14 +364,31 @@ export class DatabaseStorage implements IStorage {
       filteredProblems = filteredProblems.filter(p => (p as any).importance === importance);
     }
     
-    // Safe check for company filter - only apply if we have problems and they have the field
-    if (company && filteredProblems.length > 0 && 'company' in filteredProblems[0]) {
-      filteredProblems = filteredProblems.filter(p => {
-        if (Array.isArray((p as any).company)) {
-          return (p as any).company.includes(company);
-        }
-        return (p as any).company === company;
-      });
+    // For company filter, we need to query the company_problem_map table
+    if (company && company !== 'all') {
+      // First find the company ID by name
+      const companyRecord = await db
+        .select()
+        .from(companies)
+        .where(eq(companies.name, company))
+        .limit(1);
+      
+      if (companyRecord.length > 0) {
+        const companyId = companyRecord[0].id;
+        
+        // Find all problems associated with this company
+        const companyProblemMappings = await db
+          .select()
+          .from(companyProblemMap)
+          .where(eq(companyProblemMap.companyId, companyId));
+        
+        // Filter problems by the IDs found in the mappings
+        const problemIds = companyProblemMappings.map(mapping => mapping.problemId);
+        filteredProblems = filteredProblems.filter(p => problemIds.includes(p.id));
+      } else {
+        // If company not found, return empty list
+        filteredProblems = [];
+      }
     }
     
     if (search) {
@@ -980,6 +1014,128 @@ export class DatabaseStorage implements IStorage {
       .where(eq(userNotes.id, id))
       .returning();
     return updatedNote;
+  }
+  
+  // Company methods
+  async getCompanies(): Promise<Company[]> {
+    return await db
+      .select()
+      .from(companies)
+      .orderBy(asc(companies.name));
+  }
+  
+  async getCompanyById(id: number): Promise<Company | undefined> {
+    const [company] = await db
+      .select()
+      .from(companies)
+      .where(eq(companies.id, id));
+    return company;
+  }
+  
+  async getCompaniesByProblemId(problemId: number): Promise<Company[]> {
+    // First get all mappings for this problem
+    const mappings = await db
+      .select()
+      .from(companyProblemMap)
+      .where(eq(companyProblemMap.problemId, problemId));
+    
+    if (mappings.length === 0) {
+      return [];
+    }
+    
+    // Get all company IDs from the mappings
+    const companyIds = mappings.map(mapping => mapping.companyId);
+    
+    // Now get the company details for each ID
+    const companyList: Company[] = [];
+    for (const companyId of companyIds) {
+      const [company] = await db
+        .select()
+        .from(companies)
+        .where(eq(companies.id, companyId));
+      
+      if (company) {
+        companyList.push(company);
+      }
+    }
+    
+    return companyList;
+  }
+  
+  async createCompany(company: InsertCompany): Promise<Company> {
+    const [createdCompany] = await db
+      .insert(companies)
+      .values(company)
+      .returning();
+    return createdCompany;
+  }
+  
+  async updateCompany(id: number, company: Partial<Company>): Promise<Company | undefined> {
+    const [updatedCompany] = await db
+      .update(companies)
+      .set({
+        ...company,
+        updatedAt: new Date(),
+      })
+      .where(eq(companies.id, id))
+      .returning();
+    return updatedCompany;
+  }
+  
+  // Company-Problem mapping methods
+  async associateProblemWithCompany(problemId: number, companyId: number, relevanceScore: number = 5): Promise<CompanyProblemMap> {
+    // Check if association already exists
+    const [existingMapping] = await db
+      .select()
+      .from(companyProblemMap)
+      .where(
+        and(
+          eq(companyProblemMap.problemId, problemId),
+          eq(companyProblemMap.companyId, companyId)
+        )
+      );
+    
+    if (existingMapping) {
+      // Update relevance score if it exists
+      const [updatedMapping] = await db
+        .update(companyProblemMap)
+        .set({
+          relevanceScore
+        })
+        .where(
+          and(
+            eq(companyProblemMap.problemId, problemId),
+            eq(companyProblemMap.companyId, companyId)
+          )
+        )
+        .returning();
+      return updatedMapping;
+    } else {
+      // Create new mapping
+      const [newMapping] = await db
+        .insert(companyProblemMap)
+        .values({
+          problemId,
+          companyId,
+          relevanceScore
+        })
+        .returning();
+      return newMapping;
+    }
+  }
+  
+  async removeProblemCompanyAssociation(problemId: number, companyId: number): Promise<boolean> {
+    const result = await db
+      .delete(companyProblemMap)
+      .where(
+        and(
+          eq(companyProblemMap.problemId, problemId),
+          eq(companyProblemMap.companyId, companyId)
+        )
+      );
+    
+    // Return true if at least one row was deleted
+    return result.count > 0;
   }
 }
 
