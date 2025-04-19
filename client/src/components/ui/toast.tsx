@@ -14,7 +14,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      "fixed top-4 right-4 z-[100] flex max-h-screen w-full flex-col gap-2 p-4 md:max-w-[380px]",
       className
     )}
     {...props}
@@ -23,17 +23,17 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-3 overflow-hidden rounded-md border-0 p-4 pr-8 shadow-md transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+  "group pointer-events-auto relative flex w-full items-center justify-between space-x-3 overflow-hidden rounded-xl border-0 p-4 pr-8 shadow-lg transition-all backdrop-blur-sm border-l-4 data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-slide-in-from-right data-[state=closed]:animate-slide-out-to-right",
   {
     variants: {
       variant: {
-        default: "bg-blue-600 text-white",
-        success: "bg-green-600 text-white",
-        warning: "bg-amber-600 text-white",
-        info: "bg-blue-600 text-white",
-        destructive: "bg-red-600 text-white",
-        running: "bg-blue-600 text-white",
-        submitting: "bg-purple-600 text-white",
+        default: "bg-blue-600/90 border-blue-500 text-white",
+        success: "bg-green-600/90 border-green-500 text-white",
+        warning: "bg-amber-600/90 border-amber-500 text-white",
+        info: "bg-blue-600/90 border-blue-500 text-white",
+        destructive: "bg-red-600/90 border-red-500 text-white",
+        running: "bg-blue-600/90 border-blue-500 text-white",
+        submitting: "bg-purple-600/90 border-purple-500 text-white",
       },
     },
     defaultVariants: {
@@ -56,7 +56,9 @@ const Toast = React.forwardRef<
         {...props}
       >
         <div className="flex items-center gap-3">
-          <Loader2 className="h-5 w-5 animate-spin text-white" />
+          <div className="h-6 w-6 flex items-center justify-center">
+            <Loader2 className="h-5 w-5 animate-spin text-white" />
+          </div>
           <div className="flex-1">
             {props.children}
           </div>
@@ -85,7 +87,9 @@ const Toast = React.forwardRef<
       {...props}
     >
       <div className="flex items-center gap-3">
-        <StatusIcon className="h-5 w-5 text-white" />
+        <div className="h-6 w-6 flex items-center justify-center">
+          <StatusIcon className="h-5 w-5 text-white" />
+        </div>
         <div className="flex-1">
           {props.children}
         </div>
