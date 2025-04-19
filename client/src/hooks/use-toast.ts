@@ -7,6 +7,7 @@ import type {
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1500 // Auto-dismiss after 1.5 seconds
+const SUCCESS_TOAST_REMOVE_DELAY = 1000 // Auto-dismiss success toasts after 1 second
 
 type ToasterToast = ToastProps & {
   id: string
@@ -55,10 +56,18 @@ interface State {
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
 
-const addToRemoveQueue = (toastId: string) => {
+const addToRemoveQueue = (toastId: string, toast?: ToasterToast) => {
   if (toastTimeouts.has(toastId)) {
     return
   }
+
+  // Use shorter timeout for success and test related toasts
+  const isSuccessOrTest = toast?.variant === "success" || 
+                          (toast?.title && 
+                           (typeof toast.title === "string" && 
+                            (toast.title.toLowerCase().includes("success") || 
+                             toast.title.toLowerCase().includes("test") || 
+                             toast.title.toLowerCase().includes("completed"))));
 
   const timeout = setTimeout(() => {
     toastTimeouts.delete(toastId)
@@ -66,18 +75,35 @@ const addToRemoveQueue = (toastId: string) => {
       type: "REMOVE_TOAST",
       toastId: toastId,
     })
-  }, TOAST_REMOVE_DELAY)
+  }, isSuccessOrTest ? SUCCESS_TOAST_REMOVE_DELAY : TOAST_REMOVE_DELAY)
 
   toastTimeouts.set(toastId, timeout)
 }
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case "ADD_TOAST":
+    case "ADD_TOAST": {
+      // Auto-dismiss for success toasts
+      const newToast = action.toast;
+      
+      // If it's a success or test-related toast, set it to auto-dismiss
+      if (newToast.variant === "success" || 
+          (newToast.title && 
+           typeof newToast.title === "string" && 
+           (newToast.title.toLowerCase().includes("success") || 
+            newToast.title.toLowerCase().includes("test") || 
+            newToast.title.toLowerCase().includes("completed")))) {
+        // Schedule auto-dismiss for the success toast
+        setTimeout(() => {
+          dispatch({ type: "DISMISS_TOAST", toastId: newToast.id });
+        }, SUCCESS_TOAST_REMOVE_DELAY);
+      }
+
       return {
         ...state,
         toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
       }
+    }
 
     case "UPDATE_TOAST":
       return {
@@ -93,11 +119,12 @@ export const reducer = (state: State, action: Action): State => {
       // ! Side effects ! - This could be extracted into a dismissToast() action,
       // but I'll keep it here for simplicity
       if (toastId) {
-        addToRemoveQueue(toastId)
+        const toast = state.toasts.find(t => t.id === toastId);
+        addToRemoveQueue(toastId, toast);
       } else {
         state.toasts.forEach((toast) => {
-          addToRemoveQueue(toast.id)
-        })
+          addToRemoveQueue(toast.id, toast);
+        });
       }
 
       return {
