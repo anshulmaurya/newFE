@@ -14,7 +14,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-4 right-4 z-[100] flex max-h-screen w-full flex-col gap-2 p-4 md:max-w-[400px]",
+      "fixed bottom-4 right-4 z-[100] flex max-h-screen w-full flex-col gap-2 p-4 md:max-w-[400px]",
       className
     )}
     {...props}
@@ -27,13 +27,13 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-blue-600/75 border-blue-400 text-white",
-        success: "bg-emerald-600/75 border-emerald-400 text-white",
-        warning: "bg-amber-600/75 border-amber-400 text-white",
-        info: "bg-sky-600/75 border-sky-400 text-white",
-        destructive: "bg-red-600/75 border-red-400 text-white",
-        running: "bg-blue-600/75 border-blue-400 text-white",
-        submitting: "bg-indigo-600/75 border-indigo-400 text-white",
+        default: "bg-zinc-900/90 border-blue-500 text-white",
+        success: "bg-zinc-900/90 border-green-500 text-white",
+        warning: "bg-zinc-900/90 border-amber-500 text-white",
+        info: "bg-zinc-900/90 border-blue-500 text-white",
+        destructive: "bg-zinc-900/90 border-red-500 text-white",
+        running: "bg-zinc-900/90 border-blue-500 text-white",
+        submitting: "bg-zinc-900/90 border-blue-500 text-white",
       },
     },
     defaultVariants: {
@@ -57,7 +57,7 @@ const Toast = React.forwardRef<
       >
         <div className="flex items-center gap-3">
           <div className="h-5 w-5 flex items-center justify-center">
-            <Loader2 className="h-4 w-4 animate-spin text-white" />
+            <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
           </div>
           <div className="flex-1">
             {props.children}
@@ -69,15 +69,20 @@ const Toast = React.forwardRef<
   
   // For other states
   let StatusIcon = Info;
+  let iconColor = "text-blue-500";
   
   if (variant === "success") {
     StatusIcon = CheckCircle;
+    iconColor = "text-green-500";
   } else if (variant === "warning") {
     StatusIcon = AlertTriangle;
+    iconColor = "text-amber-500";
   } else if (variant === "destructive") {
     StatusIcon = AlertCircle;
+    iconColor = "text-red-500";
   } else if (variant === "info") {
     StatusIcon = Info;
+    iconColor = "text-blue-500";
   }
   
   return (
@@ -88,7 +93,7 @@ const Toast = React.forwardRef<
     >
       <div className="flex items-center gap-3">
         <div className="h-5 w-5 flex items-center justify-center">
-          <StatusIcon className="h-4 w-4 text-white" />
+          <StatusIcon className={`h-4 w-4 ${iconColor}`} />
         </div>
         <div className="flex-1">
           {props.children}

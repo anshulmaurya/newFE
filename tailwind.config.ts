@@ -103,8 +103,8 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "slide-in-from-right": "slide-in-from-right 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
-        "slide-out-to-right": "slide-out-to-right 0.15s ease-in",
+        "slide-in-from-right": "slide-in-from-right 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+        "slide-out-to-right": "slide-out-to-right 0.5s ease-in",
       },
     },
   },
