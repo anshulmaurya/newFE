@@ -7,7 +7,7 @@ import type {
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1500 // Auto-dismiss after 1.5 seconds
-const SUCCESS_TOAST_REMOVE_DELAY = 1000 // Auto-dismiss success toasts after 1 second
+const SUCCESS_TOAST_REMOVE_DELAY = 2000 // Auto-dismiss success toasts after 2 seconds
 
 type ToasterToast = ToastProps & {
   id: string
