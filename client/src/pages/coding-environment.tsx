@@ -1762,7 +1762,7 @@ The solution file for this problem could not be found or is inaccessible.
                     }
                     
                     // Create a loading toast that will be updated when the operation completes
-                    const { id: toastId, update } = toast({
+                    const { id: toastId } = toast({
                       title: 'Running Code',
                       description: 'Compiling and executing your solution...',
                       variant: 'running',
@@ -1787,7 +1787,8 @@ The solution file for this problem could not be found or is inaccessible.
                       
                       if (response.ok) {
                         // Update the existing toast with success info
-                        update({
+                        toast.dismiss(toastId);
+                        toast({
                           title: 'Success',
                           description: 'Code ran successfully! View output in the console.',
                           variant: 'success'
@@ -1795,7 +1796,8 @@ The solution file for this problem could not be found or is inaccessible.
                         console.log('Run result:', data);
                       } else {
                         // Update the existing toast with error info
-                        update({
+                        toast.dismiss(toastId);
+                        toast({
                           title: 'Run Failed',
                           description: data.message || 'Your code could not be executed. Please check for compilation errors.',
                           variant: 'destructive'
@@ -1804,10 +1806,11 @@ The solution file for this problem could not be found or is inaccessible.
                     } catch (error) {
                       console.error('Error running code:', error);
                       // Update existing toast with error info
-                      update({
-                          title: 'Connection Error',
-                          description: 'Unable to connect to the code execution server. Please try again later.',
-                          variant: 'destructive'
+                      toast.dismiss(toastId);
+                      toast({
+                        title: 'Connection Error',
+                        description: 'Unable to connect to the code execution server. Please try again later.',
+                        variant: 'destructive'
                       });
                     }
                   }}
@@ -1828,8 +1831,8 @@ The solution file for this problem could not be found or is inaccessible.
                       return;
                     }
                     
-                    // Create loading toast for submission that will be updated
-                    const { id: toastId, update } = toast({
+                    // Create loading toast for submission
+                    const { id: toastId } = toast({
                       title: 'Submitting Solution',
                       description: 'Evaluating your code against all test cases...',
                       variant: 'submitting',
@@ -1922,8 +1925,9 @@ The solution file for this problem could not be found or is inaccessible.
                         }
                         
                         const status = dataAzure.response.output.overall_status;
-                        // Update the existing toast with the result
-                        update({
+                        // Dismiss the loading toast and show the result
+                        toast.dismiss(toastId);
+                        toast({
                           title: status === 'pass' ? 'Solution Accepted!' : 'Tests Completed',
                           description: status === 'pass' 
                             ? 'Your solution passed all test cases. Great job!' 
@@ -1932,8 +1936,9 @@ The solution file for this problem could not be found or is inaccessible.
                         });
                         console.log('Submit result:', dataAzure);
                       } else {
-                        // Update existing toast with submission info
-                        update({
+                        // Dismiss loading toast and show info 
+                        toast.dismiss(toastId);
+                        toast({
                           title: 'Solution Submitted',
                           description: 'Your solution has been recorded, but detailed results are not available.',
                           variant: 'info'
@@ -1941,8 +1946,9 @@ The solution file for this problem could not be found or is inaccessible.
                       }
                     } catch (error) {
                       console.error('Error submitting solution:', error);
-                      // Update existing toast with error info
-                      update({
+                      // Dismiss loading toast and show error
+                      toast.dismiss(toastId);
+                      toast({
                         title: 'Submission Error',
                         description: 'Unable to submit your solution. Please check your connection and try again later.',
                         variant: 'destructive'
