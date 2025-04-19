@@ -81,7 +81,7 @@ export default {
         },
         "slide-in-from-right": {
           "0%": {
-            transform: "translateX(100%)",
+            transform: "translateX(120%)",
             opacity: "0"
           },
           "100%": {
@@ -95,7 +95,7 @@ export default {
             opacity: "1"
           },
           "100%": {
-            transform: "translateX(100%)",
+            transform: "translateX(120%)",
             opacity: "0"
           },
         },
