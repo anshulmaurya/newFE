@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: rgb(12, 12, 14);">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=0.9" />
@@ -38,6 +38,32 @@
             link.setAttribute('href', currentHref + (currentHref.includes('?') ? '&' : '?') + 'ts=' + new Date().getTime());
           }
         });
+
+        // Set browser zoom to 90%
+        document.body.style.zoom = "90%";
+        
+        // Fix for overflow issues that might cause black patches
+        document.documentElement.style.backgroundColor = "rgb(12, 12, 14)";
+        document.body.style.backgroundColor = "rgb(12, 12, 14)";
+        document.body.style.minHeight = "100vh";
+        document.body.style.minWidth = "100vw";
+        
+        // Ensure the root element fills the viewport fully
+        const rootElement = document.getElementById('root');
+        if (rootElement) {
+          rootElement.style.minHeight = "100vh";
+          rootElement.style.width = "100%";
+          rootElement.style.backgroundColor = "rgb(12, 12, 14)";
+        }
+        
+        // For Firefox
+        if (navigator.userAgent.indexOf('Firefox') !== -1) {
+          document.body.style.MozTransform = "scale(0.9)";
+          document.body.style.MozTransformOrigin = "0 0";
+          // Adjust body size to prevent overflow
+          document.body.style.width = "111.11%"; // 100% / 0.9
+          document.body.style.height = "111.11%"; // 100% / 0.9
+        }
       });
     </script>
   </body>
